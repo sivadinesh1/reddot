@@ -1,0 +1,97 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import "~@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+
+.select-modal {
+	.modal-wrapper {
+		height: 80vh;
+		width: 90%;
+	}
+}
+
+.vendor-comp-styl {
+	.modal-wrapper {
+		width: 400px;
+		height: 300px;
+	}
+}
+
+.txt-right-align {
+	text-align: right;
+}
+
+.txt-left-align {
+	text-align: left;
+}
+
+.txt-center-align {
+	text-align: center;
+}
+
+.align-self-center {
+	align-self: center;
+}
+
+.justify-self {
+	justify-self: center;
+}
+
+.left-pad20 {
+	padding-left: 20px;
+}
+
+.fsize50 {
+	font-size: 50px;
+}
+.fsize40 {
+	font-size: 40px;
+}
+
+.fweight500 {
+	font-weight: 500;
+}
+
+.odd {
+	background-color: #eeeeee;
+}
+.even {
+	background-color: #faf7ff;
+}
+.active {
+	background-color: blue !important;
+}
+
+.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: not-allowed;
+}
+
+.highlighted {
+	opacity: 0.4;
+	pointer-events: none;
+	cursor: not-allowed;
+}

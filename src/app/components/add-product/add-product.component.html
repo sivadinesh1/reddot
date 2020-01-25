@@ -1,0 +1,98 @@
+<div class="add-prod-wrap">
+	<div class="row1">
+		<div class="search_box">
+			<ion-searchbar
+				autofocus
+				debounce="700"
+				placeholder="Search By Part number or desc"
+				#mySearchbar
+				showCancelButton
+				cancelButtonText="Clear"
+				(ionClear)="reset()"
+				(ionInput)="openDialog($event.target.value)"
+			></ion-searchbar>
+		</div>
+		<div class="close">
+			<img src="/assets/images/svg/close.svg" (click)="closeModal()" width="20px" height="20px" />
+		</div>
+	</div>
+	<div class="header-row">
+		<div class="col">#</div>
+		<div class="col">Product Info</div>
+		<div class="col txt-right-align ">Available Qty</div>
+		<div class="col txt-right-align ">MRP</div>
+		<div class="col">&nbsp;</div>
+	</div>
+	<div class="row2">
+		<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
+			<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="addProduct(item)">
+				<div class="item1 ">{{ idx + 1 }}</div>
+				<div class="item2">
+					<div class="item21">{{ item.product_code }}</div>
+					<div class="item22 desc-styl">{{ item.description }}</div>
+				</div>
+				<div class="item3 txt-right-align ">{{ item.available_stock }}</div>
+				<div class="item4 txt-right-align ">{{ item.mrp }}</div>
+				<div class="item4 txt-right-align ">
+					<img src="/assets/images/svg/more.svg" width="24px" height="24px" />
+				</div>
+			</div>
+		</ng-container>
+	</div>
+	<div class="row3">
+		<div class="row-cnt">
+			<span *ngIf="resultList">
+				<span *ngIf="resultList.length > 50"> Matches: {{ resultList.length }}+ </span>
+				<span *ngIf="resultList.length <= 50"> Matches: {{ resultList.length }} </span>
+			</span>
+		</div>
+		<div class="scan">
+			<div class="scan-btn">
+				Scan Bar Code
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 
+
+<div *ngIf="member404">{{member404}}</div>
+
+	<div
+		*ngFor="let item of resultList let i = index; let isOdd=odd; 
+ let isEven=even;"
+		class="innerpad"
+	>
+		<div class="grid" [class.odd]="isOdd" [class.even]="isEven">
+			<div class="griditem1">
+				<div class="part-no"><span class="part-label">PART# </span>{{item.item_code}}</div>
+				<div class="part-desc">{{item.description}}</div>
+			</div>
+			<div class="griditem2">
+				<div class="subgriditem2-1">
+					<span class="gray-small-label">
+						MRP
+					</span>
+				</div>
+				<div class="subgriditem2-2 blue-color">
+					{{item.mrp | currency:'INR':'symbol' : '1.0'}}
+				</div>
+			</div>
+			<div class="griditem3">
+				<div class="subgriditem3-1">
+					<span class="gray-small-label">Qty:</span>
+				</div>
+				<div class="subgriditem3-2 ash-color">
+					{{item.curr_stock | zeroToVal: 'No Stock'}}
+				</div>
+			</div>
+			<div class="griditem4">
+				<ion-icon
+					name="add-circle-outline"
+					(click)="addPartsToCart(item)"
+					class="ion-1point5x ash-color"
+				></ion-icon>
+			</div>
+			
+		</div>
+	</div> -->

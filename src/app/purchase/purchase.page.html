@@ -1,0 +1,325 @@
+<ion-content>
+	<ion-header>
+		<ion-toolbar>
+			<ion-title slot="start">
+				LOGO
+			</ion-title>
+			<ion-title slot="end">
+				{{vendorname}}
+				<div *ngIf="vendorselected" (click)="showAllVendorsComp()">
+					<span class="change">Change</span
+					><span>
+						<img src="../../assets/images/svg/down-arrow.svg" width="10px" height="10px" />
+					</span>
+				</div>
+			</ion-title>
+		</ion-toolbar>
+	</ion-header>
+
+	<form [formGroup]="submitForm">
+		<div class="purchase-wrap">
+			<div class="left">
+				<div class="row1">
+					<div class="item1 headstyl-left txt-center-align">#</div>
+					<div class="item2 headstyl-left">Product Information</div>
+					<div class="item3 headstyl-center">MRP</div>
+					<div class="item3 headstyl-center">Qty</div>
+					<div class="item3 headstyl-center">Rate <br />Item</div>
+
+					<div class="item4 headstyl-center">Total <br />Value</div>
+					<div class="item4 headstyl txt-center-align tax-style">
+						<div class="headstyl-center">Tax</div>
+						<hr color="#D1D1D1" style="margin: 4px;" />
+						<ng-container *ngIf="vendorselected">
+							<div *ngIf="i_gst" class="headstyl-center" style="font-size: 14px;">IGST</div>
+							<div *ngIf="!i_gst" class="headstyl-center" style="font-size: 14px;">CGST / SGST</div>
+						</ng-container>
+					</div>
+				</div>
+				<div class="row2">
+					<ng-container *ngIf="vendorselected; then showproductsection; else beginsetup"> </ng-container>
+
+					<ng-template #beginsetup>
+						<div class="sel-vendor">
+							<span (click)="showAllVendorsComp()">
+								+ Add Vendor
+							</span>
+						</div>
+					</ng-template>
+					<ng-template #showproductsection>
+						<div *ngIf="listArr.length === 0" class="sel-vendor">
+							<span (click)="vendorselected && showAddProductComp()">
+								+ Add Product
+							</span>
+						</div>
+						<div *ngFor="let item of listArr ? listArr : []; let idx = index" class="list-item">
+							<div class="item1 txt-left-align">{{idx + 1}}</div>
+							<div class="item2">
+								{{item.product_code}}
+								<div class="desc">
+									{{item.product_desc}}
+								</div>
+							</div>
+
+							<div class="item3 txt-center-align">
+								<input
+									matInput
+									value="{{item.mrp}}"
+									type="text"
+									class="styl-txt-box-small txt-pad"
+									formControlName="lrno"
+									(click)="openMrpCurrencyPad(idx)"
+									appPreventCutCopyPaste
+									readonly
+								/>
+							</div>
+
+							<div class="item3 txt-center-align">
+								<input
+									matInput
+									value="{{item.qty}}"
+									type="text"
+									class="styl-txt-box-small txt-pad"
+									formControlName="lrno"
+									(click)="openCurrencyPad(idx)"
+									appPreventCutCopyPaste
+									readonly
+								/>
+							</div>
+
+							<div class="item4 txt-right-align num-format-cell-style">{{item.unit_price}}</div>
+							<div class="item4 txt-right-align num-format-cell-style">
+								{{item.taxable_value | number:'1.2-2'}}
+							</div>
+							<div class="item4 txt-center-align tax-style">
+								<div *ngIf="i_gst">
+									{{item.taxrate}}
+								</div>
+								<div *ngIf="!i_gst">
+									{{item.taxrate / 2}}% / {{item.taxrate / 2}}%
+								</div>
+
+								<hr color="#D1D1D1" style="margin: 4px;" />
+								<ng-container>
+									{{(item.tax_value) | number:'1.2-2'}}
+								</ng-container>
+								<ng-container *ngIf="!i_gst">
+									{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) |
+									number:'1.2-2'}}
+								</ng-container>
+							</div>
+
+							<div
+								class="item4"
+								(click)="deleteProduct(item, idx)"
+								class="txt-center-align align-self-center"
+							>
+								<img src="/assets/images/svg/minus.svg" width="24px" height="24px" />
+							</div>
+						</div>
+					</ng-template>
+				</div>
+				<div class="row3">
+					<ng-container>
+						<div class="item" (click)="vendorselected && showAddProductComp()">
+							<img src="/assets/images/svg/more.svg" width="28px" height="28px" />
+							<div class="label">Add Product</div>
+						</div>
+
+						<div class="item" (click)="vendorselected && clearAll()">
+							<img src="/assets/images/svg/trash.svg" width="28px" height="28px" />
+							<div class="label">Clear All</div>
+						</div>
+					</ng-container>
+				</div>
+				<div class="row4">
+					<div class="item">
+						<div class="align-self-center overview">Overview</div>
+						<div class="align-self-center">&nbsp;</div>
+						<div>Total Items</div>
+						<div>{{listArr.length}}</div>
+					</div>
+					<div class="item">
+						<div class="subitem align-self-center" *ngIf="i_gst">IGST</div>
+						<div class="subitem align-self-center" *ngIf="i_gst">{{igstTotal}}</div>
+
+						<div class="subitem align-self-center" *ngIf="!i_gst">CGST</div>
+						<div class="subitem align-self-center" *ngIf="!i_gst">{{cgstTotal}}</div>
+
+						<div class="subitem align-self-center" *ngIf="!i_gst">SGST</div>
+						<div class="subitem align-self-center" *ngIf="!i_gst">{{sgstTotal}}</div>
+					</div>
+					<div class="item">
+						<div class="align-self-center txt-right-align">Total:</div>
+						<div class="align-self-center left-pad20 fsize40 fweight500">{{this.total}}</div>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+				<div class="row1">
+					<ion-item class="input-item" lines="none">
+						<mat-form-field class="mat-input-wrapper">
+							<input matInput placeholder="Invoice #" type="text" #invno formControlName="invoiceno" />
+
+							<mat-error
+								*ngIf="(submitForm.get('invoiceno').hasError('required') || submitForm.get('invoiceno').hasError('patternInvalid'))  && submitForm.get('invoiceno').touched"
+							>
+								Invalid (or) Missing entry
+							</mat-error>
+						</mat-form-field>
+					</ion-item>
+
+					<ion-item class="input-item" lines="none">
+						<mat-form-field class="mat-input-wrapper">
+							<input
+								matInput
+								readonly
+								[matDatepicker]="pickerinv"
+								formControlName="invoicedate"
+								placeholder="Invoice date"
+								(focus)="pickerinv.open()"
+							/>
+							<mat-datepicker-toggle matSuffix [for]="pickerinv"></mat-datepicker-toggle>
+							<mat-datepicker #pickerinv></mat-datepicker>
+						</mat-form-field>
+					</ion-item>
+
+					<ion-item class="input-item" lines="none">
+						<mat-form-field class="mat-input-wrapper">
+							<input matInput placeholder="Order #" type="text" formControlName="orderno" />
+
+							<mat-error
+								*ngIf="(submitForm.get('orderno').hasError('required') || submitForm.get('orderno').hasError('patternInvalid'))  && submitForm.get('orderno').touched"
+							>
+								Invalid (or) Missing entry
+							</mat-error>
+						</mat-form-field>
+					</ion-item>
+
+					<ion-item class="input-item" lines="none">
+						<mat-form-field class="mat-input-wrapper">
+							<input
+								matInput
+								readonly
+								[matDatepicker]="pickerod"
+								placeholder="Order date"
+								formControlName="orderdate"
+								(focus)="pickerod.open()"
+							/>
+							<mat-datepicker-toggle matSuffix [for]="pickerod"></mat-datepicker-toggle>
+							<mat-datepicker #pickerod></mat-datepicker>
+						</mat-form-field>
+					</ion-item>
+
+					<ion-item class="input-item" lines="none">
+						<mat-form-field class="mat-input-wrapper">
+							<input matInput placeholder="Lr #" type="text" formControlName="lrno" />
+
+							<mat-error
+								*ngIf="(submitForm.get('lrno').hasError('required') || submitForm.get('lrno').hasError('patternInvalid'))  && submitForm.get('lrno').touched"
+							>
+								Invalid (or) Missing entry
+							</mat-error>
+						</mat-form-field>
+					</ion-item>
+
+					<ion-item class="input-item" lines="none">
+						<mat-form-field class="mat-input-wrapper">
+							<input
+								matInput
+								readonly
+								[matDatepicker]="pickerlr"
+								placeholder="Lr date"
+								(focus)="pickerlr.open()"
+								formControlName="lrdate"
+							/>
+							<mat-datepicker-toggle matSuffix [for]="pickerlr"></mat-datepicker-toggle>
+							<mat-datepicker #pickerlr></mat-datepicker>
+						</mat-form-field>
+					</ion-item>
+
+					<ion-item class="input-item" lines="none">
+						<mat-form-field class="mat-input-wrapper">
+							<input
+								matInput
+								readonly
+								[matDatepicker]="pickerrcvd"
+								placeholder="Received date"
+								formControlName="orderrcvddt"
+								(focus)="pickerrcvd.open()"
+							/>
+							<mat-datepicker-toggle matSuffix [for]="pickerrcvd"></mat-datepicker-toggle>
+							<mat-datepicker #pickerrcvd></mat-datepicker>
+						</mat-form-field>
+					</ion-item>
+
+					<ion-item class="input-item">
+						<ion-label>
+							# of Boxes
+						</ion-label>
+						<input
+							matInput
+							value="0"
+							type="text"
+							class="styl-txt-box-small txt-pad"
+							formControlName="noofboxes"
+							appPreventCutCopyPaste
+							readonly
+							(click)="openNumberPad('noofboxes')"
+						/>
+					</ion-item>
+					<ion-item class="input-item">
+						<ion-label>
+							Transport Chrgs
+						</ion-label>
+						<input
+							matInput
+							value="0"
+							type="text"
+							class="styl-txt-box-small txt-pad"
+							formControlName="transport_charges"
+							appPreventCutCopyPaste
+							readonly
+							(click)="openNumberPad('transport_charges')"
+						/>
+					</ion-item>
+					<ion-item class="input-item">
+						<ion-label>
+							Unloading Chrgs
+						</ion-label>
+						<input
+							matInput
+							value="0"
+							type="text"
+							class="styl-txt-box-small txt-pad"
+							formControlName="unloading_charges"
+							appPreventCutCopyPaste
+							readonly
+							(click)="openNumberPad('unloading_charges')"
+						/>
+					</ion-item>
+					<ion-item class="input-item">
+						<ion-label>
+							Misc Chrgs
+						</ion-label>
+						<input
+							matInput
+							value="0"
+							type="text"
+							class="styl-txt-box-small txt-pad"
+							formControlName="misc_charges"
+							appPreventCutCopyPaste
+							readonly
+							(click)="openNumberPad('misc_charges')"
+						/>
+					</ion-item>
+				</div>
+				<div class="row2">
+					<button (click)="onSubmit()" class="neuBtn">
+						Save
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</ion-content>

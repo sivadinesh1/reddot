@@ -1,0 +1,47 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-back-button></ion-back-button>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding forms-validations-content">
+	<div class="cart-caption">Estimation</div>
+	<div class="billing-head hr">
+		<div class="col1">ITEMS ({{resultList?.length}} Items)</div>
+		<div class="col2">QTY</div>
+		<div class="col3">PRICE</div>
+	</div>
+
+	<div *ngFor="let item of resultList let i=index" class="billing-grid-wrapper">
+		<div class="billing-grid">
+			<div class="col1">
+				<div>
+					{{item?.partno}}
+				</div>
+				<div>
+					{{item?.description | titlecase}}
+				</div>
+				<div><span>MRP:</span><span>{{item?.mrp | currency:'INR':'symbol' : '1.0'}}</span></div>
+			</div>
+
+			<div class="col2">
+				<ion-icon name="remove-circle-outline" (click)="decrease(i)"></ion-icon>
+				{{item.quantity}}
+				<ion-icon name="add-circle-outline" (click)="increase(item)"></ion-icon>
+			</div>
+
+			<div class="col3" (click)="increase(item)">
+				{{item?.mrp * item?.quantity | currency:'INR':'symbol' : '1.0'}}
+			</div>
+			<div (click)="remove(i)"><span class="remove">Remove</span></div>
+		</div>
+	</div>
+
+	<div class="billing-footer hr">
+		<div class="col1">&nbsp;</div>
+		<div class="col2">Total</div>
+		<div class="col3">{{total | currency:'INR':'symbol' : '1.0'}}</div>
+	</div>
+</ion-content>

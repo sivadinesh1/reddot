@@ -1,0 +1,7 @@
+{
+  "name": "reddot",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
