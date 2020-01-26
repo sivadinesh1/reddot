@@ -114,6 +114,7 @@ export class SalesPage implements OnInit {
       this.customername = custData.name;
       this.customerselected = true;
       this.setTaxLabel();
+      this.setTaxSegment(custData.taxrate);
 
       this._cdr.markForCheck();
 

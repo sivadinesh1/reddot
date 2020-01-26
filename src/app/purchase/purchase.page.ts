@@ -120,6 +120,7 @@ export class PurchasePage implements OnInit {
       this.vendorname = vendData.name;
       this.vendorselected = true;
       this.setTaxLabel();
+      this.setTaxSegment(vendData.taxrate);
 
       this._cdr.markForCheck();
 
