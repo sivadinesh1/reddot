@@ -42,8 +42,8 @@
 	<div class="row3">
 		<div class="row-cnt">
 			<span *ngIf="resultList">
-				<span *ngIf="resultList.length > 50"> Matches: {{ resultList.length }}+ </span>
-				<span *ngIf="resultList.length <= 50"> Matches: {{ resultList.length }} </span>
+				<span *ngIf="resultList.length >= 50"> Matches: {{ resultList.length }} + </span>
+				<span *ngIf="resultList.length < 50"> Matches: {{ resultList.length }} </span>
 			</span>
 		</div>
 		<div class="scan">

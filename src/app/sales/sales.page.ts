@@ -7,28 +7,29 @@ import { PickerOptions } from '@ionic/core';
 import { MatDialog } from '@angular/material';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 import { ShowVendorsComponent } from '../components/show-vendors/show-vendors.component';
+import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
 
 @Component({
-  selector: 'app-purchase',
-  templateUrl: './purchase.page.html',
-  styleUrls: ['./purchase.page.scss'],
+  selector: 'app-sales',
+  templateUrl: './sales.page.html',
+  styleUrls: ['./sales.page.scss'],
 })
-export class PurchasePage implements OnInit {
+export class SalesPage implements OnInit {
 
-  vendorname: string = '';
+  customername: string = '';
 
   listArr = [];
 
   total = "0.00";
 
   test1: any;
-  vendor_state_code: any;
+  customer_state_code: any;
   center_state_code: any
   i_gst: any;
-  vendordata: any;
+  customerdata: any;
   submitForm: FormGroup;
 
-  vendorselected: any;
+  customerselected: any;
 
   no_of_boxes: any;
 
@@ -60,7 +61,7 @@ export class PurchasePage implements OnInit {
   ngOnInit() {
 
     this.submitForm = this._fb.group({
-      vendor: new FormControl(null, Validators.required),
+      customer: new FormControl(null, Validators.required),
       invoiceno: new FormControl(null, Validators.required),
       invoicedate: new FormControl(''),
       orderno: new FormControl(''),
@@ -86,39 +87,32 @@ export class PurchasePage implements OnInit {
 
     });
 
+    this.customerselected = false;
 
-    this._commonApiService.getAllActiveVendors(1).subscribe(data => {
-      this.vendordata = data;
-      console.log('object.....' + JSON.stringify(this.vendordata));
-      this._cdr.markForCheck();
-    });
-
-    this.vendorselected = false;
-    this.no_of_boxes = new Array(200).fill(null).map((x, i) => ({ 'text': i, 'value': i }));
   }
 
 
-  async showAllVendorsComp() {
+  async showAllCustomersComp() {
 
     const modal = await this._modalcontroller.create({
-      component: ShowVendorsComponent,
+      component: ShowCustomersComponent,
       componentProps: {},
-      cssClass: 'vendor-comp-styl'
+      cssClass: 'customer-comp-styl'
 
     });
 
 
     modal.onDidDismiss().then((result) => {
-      let vendData = result.data;
+      let custData = result.data;
 
-      this.vendor_state_code = vendData.code;
+      this.customer_state_code = custData.code;
 
       this.submitForm.patchValue({
-        vendor: vendData,
+        customer: custData,
       });
 
-      this.vendorname = vendData.name;
-      this.vendorselected = true;
+      this.customername = custData.name;
+      this.customerselected = true;
       this.setTaxLabel();
 
       this._cdr.markForCheck();
@@ -261,7 +255,7 @@ export class PurchasePage implements OnInit {
 
 
   setTaxSegment(taxrate: number) {
-    if (this.vendor_state_code !== this.center_state_code) {
+    if (this.customer_state_code !== this.center_state_code) {
       this.i_gst = true;
       this.igst = taxrate;
       this.cgst = 0;
@@ -275,7 +269,7 @@ export class PurchasePage implements OnInit {
   }
 
   setTaxLabel() {
-    if (this.vendor_state_code !== this.center_state_code) {
+    if (this.customer_state_code !== this.center_state_code) {
       this.i_gst = true;
 
     } else {
@@ -358,8 +352,8 @@ export class PurchasePage implements OnInit {
 
     let vendorvalue = this.submitForm.value.vendor;
     console.log('print list ' + JSON.stringify(vendorvalue));
-    this.vendor_state_code = vendorvalue.code;
-    this.vendorselected = true;
+    this.customer_state_code = vendorvalue.code;
+    this.customerselected = true;
     this.setTaxLabel();
 
     this._cdr.markForCheck();
@@ -532,7 +526,7 @@ export class PurchasePage implements OnInit {
           text: 'Okay',
           handler: () => {
             console.log('Confirm Okay');
-            this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
+            this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('object.. ' + JSON.stringify(data));
 
               this._cdr.markForCheck();

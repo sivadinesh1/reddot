@@ -5,8 +5,8 @@
 				LOGO
 			</ion-title>
 			<ion-title slot="end">
-				{{vendorname}}
-				<div *ngIf="vendorselected" (click)="showAllVendorsComp()">
+				{{customername}}
+				<div *ngIf="customerselected" (click)="showAllCustomersComp()">
 					<span class="change">Change</span
 					><span>
 						<img src="../../assets/images/svg/down-arrow.svg" width="10px" height="10px" />
@@ -15,6 +15,9 @@
 			</ion-title>
 		</ion-toolbar>
 	</ion-header>
+	<div class="screen-header">
+		Sales
+	</div>
 
 	<form [formGroup]="submitForm">
 		<div class="purchase-wrap">
@@ -30,25 +33,25 @@
 					<div class="item4 headstyl txt-center-align tax-style">
 						<div class="headstyl-center">Tax</div>
 						<hr color="#D1D1D1" style="margin: 4px;" />
-						<ng-container *ngIf="vendorselected">
+						<ng-container *ngIf="customerselected">
 							<div *ngIf="i_gst" class="headstyl-center" style="font-size: 14px;">IGST</div>
 							<div *ngIf="!i_gst" class="headstyl-center" style="font-size: 14px;">CGST / SGST</div>
 						</ng-container>
 					</div>
 				</div>
 				<div class="row2">
-					<ng-container *ngIf="vendorselected; then showproductsection; else beginsetup"> </ng-container>
+					<ng-container *ngIf="customerselected; then showproductsection; else beginsetup"> </ng-container>
 
 					<ng-template #beginsetup>
 						<div class="sel-vendor">
-							<span (click)="showAllVendorsComp()">
-								+ Add Vendor
+							<span (click)="showAllCustomersComp()">
+								+ Add Customer
 							</span>
 						</div>
 					</ng-template>
 					<ng-template #showproductsection>
 						<div *ngIf="listArr.length === 0" class="sel-vendor">
-							<span (click)="vendorselected && showAddProductComp()">
+							<span (click)="customerselected && showAddProductComp()">
 								+ Add Product
 							</span>
 						</div>
@@ -121,12 +124,12 @@
 				</div>
 				<div class="row3">
 					<ng-container>
-						<div class="item" (click)="vendorselected && showAddProductComp()">
+						<div class="item" (click)="customerselected && showAddProductComp()">
 							<img src="/assets/images/svg/more.svg" width="28px" height="28px" />
 							<div class="label">Add Product</div>
 						</div>
 
-						<div class="item" (click)="vendorselected && clearAll()">
+						<div class="item" (click)="customerselected && clearAll()">
 							<img src="/assets/images/svg/trash.svg" width="28px" height="28px" />
 							<div class="label">Clear All</div>
 						</div>

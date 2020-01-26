@@ -13,8 +13,12 @@ export class CommonApiService {
     return this.httpClient.get(this.restApiUrl + '/api/inventory/all');
   }
 
-  getProductInfo(searchstr: string) {
-    return this.httpClient.get(this.restApiUrl + '/api/search-product/1/' + searchstr);
+  getProductInfo(center_id: string, searchstr: string) {
+    return this.httpClient.get(`${this.restApiUrl}/api/search-product/${center_id}/${searchstr}`);
+  }
+
+  getCustomerInfo(center_id: string, searchstr: string) {
+    return this.httpClient.get(`${this.restApiUrl}/api/search-customer/${center_id}/${searchstr}`);
   }
 
 
@@ -27,6 +31,10 @@ export class CommonApiService {
     return this.httpClient.get(this.restApiUrl + '/api/all-active-vendors/' + centerid);
   }
 
+  getAllActiveCustomers(centerid) {
+    return this.httpClient.get(this.restApiUrl + '/api/all-active-customers/' + centerid);
+  }
+
 
 
   getDetailsByEnquiryId(enquiryid: string) {
@@ -35,6 +43,10 @@ export class CommonApiService {
 
   savePurchaseOrder(purchaseObj) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/insert-purchase-details/', purchaseObj, { observe: 'response' });
+  }
+
+  saveSaleOrder(saleObj) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/insert-sale-details/', saleObj, { observe: 'response' });
   }
 
 

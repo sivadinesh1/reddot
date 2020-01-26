@@ -59,7 +59,7 @@ export class SearchPage implements OnInit {
   openDialog(searchstring): void {
 
     if (searchstring.length > 2) {
-      this.commonApiService.getProductInfo(searchstring).subscribe(
+      this.commonApiService.getProductInfo('1', searchstring).subscribe(
         data => {
           this.resultList = data;
           //    console.log('ABCD >> ' + JSON.stringify(this.resultList));

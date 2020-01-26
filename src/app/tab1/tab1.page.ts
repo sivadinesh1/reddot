@@ -47,4 +47,8 @@ export class Tab1Page implements OnInit {
     this._router.navigateByUrl(`/purchase`);
   }
 
+  goSalesScreen() {
+    this._router.navigateByUrl(`/sales`);
+  }
+
 }

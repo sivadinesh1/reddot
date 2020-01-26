@@ -19,7 +19,11 @@ const routes: Routes = [
   },
   {
     path: 'purchase',
-    loadChildren: () => import('./purchase/purchase.module').then( m => m.PurchasePageModule)
+    loadChildren: () => import('./purchase/purchase.module').then(m => m.PurchasePageModule)
+  },
+  {
+    path: 'sales',
+    loadChildren: () => import('./sales/sales.module').then(m => m.SalesPageModule)
   },
   // {
   //   path: 'search',

@@ -21,6 +21,7 @@ import { AddProductComponent } from './components/add-product/add-product.compon
 import { CurrencyPadComponent } from './components/currency-pad/currency-pad.component';
 import { PreventCutCopyPasteDirective } from './directive/prevent-cut-copy-paste.directive';
 import { ShowVendorsComponent } from './components/show-vendors/show-vendors.component';
+import { ShowCustomersComponent } from './components/show-customers/show-customers.component';
 
 const components = [
 
@@ -41,7 +42,8 @@ const components = [
 
   AddProductComponent,
   CurrencyPadComponent,
-  ShowVendorsComponent
+  ShowVendorsComponent,
+  ShowCustomersComponent
 
 ];
 
@@ -96,7 +98,7 @@ const matcomponents = [
     ...matcomponents, ...components, IonicModule
   ],
   entryComponents: [
-    AddProductComponent, CurrencyPadComponent, ShowVendorsComponent
+    AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent
   ]
 })
 export class SharedModule { }

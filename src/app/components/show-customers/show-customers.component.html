@@ -1,0 +1,44 @@
+<div class="show-vendor-wrap">
+	<div class="row1">
+		<div class="search_box">
+			<ion-searchbar
+				autofocus
+				debounce="700"
+				placeholder="Search by Customer name"
+				#mySearchbar
+				showCancelButton
+				cancelButtonText="Clear"
+				(ionClear)="reset()"
+				(ionInput)="openDialog($event.target.value)"
+			></ion-searchbar>
+		</div>
+		<div class="close">
+			<img src="/assets/images/svg/close.svg" (click)="closeModal()" width="20px" height="20px" />
+		</div>
+	</div>
+
+	<div class="header-row">
+		<div class="col">#</div>
+		<div class="col">Customer Name</div>
+		<div class="col">Location</div>
+	</div>
+
+	<div class="row2">
+		<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
+			<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="addCustomer(item)">
+				<div class="item1 ">{{ idx + 1 }}</div>
+				<div class="item1 ">
+					<div>
+						{{ item.name }}
+					</div>
+					<div style="font-size: 12px;opacity: 0.7;">
+						{{ item.address1 }}
+					</div>
+				</div>
+				<div class="item1" style="font-size: 14px;opacity: 0.8;">
+					{{ item.district }}
+				</div>
+			</div>
+		</ng-container>
+	</div>
+</div>
