@@ -4,9 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ViewVendorsPageRoutingModule } from './view-vendors-routing.module';
+import { EditCenterPageRoutingModule } from './edit-center-routing.module';
 
-import { ViewVendorsPage } from './view-vendors.page';
+import { EditCenterPage } from './edit-center.page';
 import { SharedModule } from '../../../shared.module';
 
 @NgModule({
@@ -17,8 +17,8 @@ import { SharedModule } from '../../../shared.module';
     IonicModule,
     SharedModule,
     ReactiveFormsModule,
-    ViewVendorsPageRoutingModule
+    EditCenterPageRoutingModule
   ],
-  declarations: [ViewVendorsPage]
+  declarations: [EditCenterPage]
 })
-export class ViewVendorsPageModule { }
+export class EditCenterPageModule { }

@@ -37,12 +37,10 @@ export class AdminPage implements OnInit {
 
   }
 
-  viewCenter() {
+  editCenter() {
 
   }
 
-  viewCompany() {
 
-  }
 
 }

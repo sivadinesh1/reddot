@@ -4,9 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ViewVendorsPageRoutingModule } from './view-vendors-routing.module';
+import { AddCustomerPageRoutingModule } from './add-customer-routing.module';
 
-import { ViewVendorsPage } from './view-vendors.page';
+import { AddCustomerPage } from './add-customer.page';
 import { SharedModule } from '../../../shared.module';
 
 @NgModule({
@@ -17,8 +17,8 @@ import { SharedModule } from '../../../shared.module';
     IonicModule,
     SharedModule,
     ReactiveFormsModule,
-    ViewVendorsPageRoutingModule
+    AddCustomerPageRoutingModule
   ],
-  declarations: [ViewVendorsPage]
+  declarations: [AddCustomerPage]
 })
-export class ViewVendorsPageModule { }
+export class AddCustomerPageModule { }

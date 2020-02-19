@@ -16,6 +16,10 @@ export class CommonApiService {
 
   constructor(private httpClient: HttpClient) { }
 
+  getStates() {
+    return this.httpClient.get(this.restApiUrl + '/api/admin/get-states');
+  }
+
   getAllPartsStockData() {
     return this.httpClient.get(this.restApiUrl + '/api/inventory/all');
   }
@@ -163,6 +167,41 @@ export class CommonApiService {
 
   updateProduct(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-product', submitForm, { observe: 'response' });
+  }
+
+  //vendor
+  getVendorDetails(center_id, vendor_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/get-vendor-details/${center_id}/${vendor_id}`);
+  }
+
+  updateVendor(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-vendor', submitForm, { observe: 'response' });
+  }
+
+  addVendor(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/admin/add-vendor', submitForm, { observe: 'response' });
+  }
+
+  // customers
+  getCustomerDetails(center_id, customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/get-customer-details/${center_id}/${customer_id}`);
+  }
+
+  updateCustomer(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-customer', submitForm, { observe: 'response' });
+  }
+
+  addCustomer(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/admin/add-customer', submitForm, { observe: 'response' });
+  }
+
+  // centers
+  getCenterDetails(center_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/get-center-details/${center_id}`);
+  }
+
+  updateCenter(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-center', submitForm, { observe: 'response' });
   }
 
 }

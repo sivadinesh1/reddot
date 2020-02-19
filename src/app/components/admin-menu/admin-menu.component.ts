@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { MatMenu } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'app-admin-menu',
@@ -9,9 +10,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class AdminMenuComponent implements OnInit {
 
+  center_id: any;
+
   @ViewChild(MatMenu, { static: true }) menu: MatMenu;
 
-  constructor(private _router: Router) { }
+  constructor(private _router: Router, private _authservice: AuthenticationService) {
+    const currentUser = this._authservice.currentUserValue;
+    this.center_id = currentUser.center_id;
+  }
 
   ngOnInit() { }
 
@@ -25,15 +31,13 @@ export class AdminMenuComponent implements OnInit {
   }
 
   viewCustomer() {
-
+    this._router.navigate([`/home/view-customers`]);
   }
 
-  viewCenter() {
-
+  editCenter() {
+    this._router.navigate([`/home/center/edit`, this.center_id]);
   }
 
-  viewCompany() {
 
-  }
 
 }

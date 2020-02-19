@@ -104,45 +104,6 @@ export class EditProductPage implements OnInit {
   ngOnInit() {
 
 
-
-    // this.submitForm = this._formBuilder.group({
-    //   formArray: this._formBuilder.array([
-    //     this._formBuilder.group({
-    //       center_id: [this.center_id],
-    //       product_code: [this.product_code, Validators.required],
-    //       description: [this.productinfo.description, Validators.required],
-    //       vendorid: [this.productinfo.vendorid, Validators.required],
-
-    //     }),
-    //     this._formBuilder.group({
-    //       unit: [this.productinfo.unit, Validators.required],
-    //       packetsize: [this.productinfo.packetsize, Validators.required],
-    //       hsncode: [this.productinfo.hsncode, Validators.required],
-    //       taxrate: [this.productinfo.taxrate, Validators.required],
-    //       minqty: [this.productinfo.minqty, Validators.required],
-    //     }),
-
-    //     this._formBuilder.group({
-    //       unit_price: [this.productinfo.unit_price, Validators.required],
-    //       mrp: [this.productinfo.mrp, Validators.required],
-    //       purchaseprice: [this.productinfo.purchaseprice, Validators.required],
-    //       salesprice: [this.productinfo.salesprice, Validators.required],
-    //       maxdiscount: [this.productinfo.maxdiscount, Validators.required],
-
-    //       currentstock: [this.productinfo.currentstock],
-    //       rackno: [this.productinfo.rackno],
-    //       location: [this.productinfo.location],
-    //       alternatecode: [this.productinfo.alternatecode],
-    //       reorderqty: [this.productinfo.reorderqty],
-    //       avgpurprice: [this.productinfo.avgpurprice],
-    //       avgsaleprice: [this.productinfo.avgsaleprice],
-    //       itemdiscount: [this.productinfo.itemdiscount],
-    //       margin: [this.productinfo.margin],
-    //     }),
-
-
-    //   ])
-    // });
   }
 
 

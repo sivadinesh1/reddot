@@ -37,12 +37,7 @@ export class AppComponent {
     this.initializeApp();
   }
 
-  // initializeApp() {
-  //   this.platform.ready().then(() => {
-  //     this.statusBar.styleDefault();
-  //     this.splashScreen.hide();
-  //   });
-  // }
+
 
 
   initializeApp() {
@@ -60,36 +55,6 @@ export class AppComponent {
         }
 
       });
-
-
-      // this._authservice.userdata.subscribe(data => {
-      //   console.log('In app component >  ', data);
-      //   this.appPages = [];
-
-      //   if (data) {
-      //     console.log('In  app component object test >> ' + JSON.stringify(data));
-
-      //     let role = data.role;
-      //     this._authservice.setRole(role);
-      //     this._authservice.setUserid(data.userid);
-
-      //     if (role === 'admin') {
-
-
-      //       this.adminmenu.forEach(element => {
-      //         this.appPages.push(element);
-      //       });
-
-      //       this._router.navigateByUrl(`/dashboard/admin-dashboard/${data.userid}`);
-      //     }
-
-      //     this._cdr.markForCheck();
-      //   }
-
-      // }
-
-      // );
-
 
 
     });

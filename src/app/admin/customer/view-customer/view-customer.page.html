@@ -4,8 +4,8 @@
 			&nbsp;
 		</div>
 
-		<div (click)="addVendor()">
-			+ Add Vendor
+		<div (click)="addCustomer()">
+			+ Add Customer
 		</div>
 
 		<div [matMenuTriggerFor]="childComponentMenu?.menu">
@@ -16,9 +16,9 @@
 	</div>
 
 	<div class="content">
-		<div class="header">List of Vendors</div>
+		<div class="header">List of Customers</div>
 		<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
-			<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="editVendor(item)">
+			<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="editCustomer(item)">
 				<div class="item1 ">{{ idx + 1 }}</div>
 				<div class="item2">
 					<div class="item21">{{ item.name }}</div>

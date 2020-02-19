@@ -70,6 +70,37 @@ const routes: Routes = [
         loadChildren: () => import('../admin/vendor/view-vendors/view-vendors.module').then(m => m.ViewVendorsPageModule)
       },
 
+      {
+        path: 'vendor/edit/:center_id/:vendor_id',
+        loadChildren: () => import('../admin/vendor/edit-vendor/edit-vendor.module').then(m => m.EditVendorPageModule)
+      },
+
+      {
+        path: 'vendor/add',
+        loadChildren: () => import('../admin/vendor/add-vendor/add-vendor.module').then(m => m.AddVendorPageModule)
+      },
+
+      // customers
+      {
+        path: 'view-customers',
+        loadChildren: () => import('../admin/customer/view-customer/view-customer.module').then(m => m.ViewCustomerPageModule)
+      },
+
+      {
+        path: 'customer/edit/:center_id/:customer_id',
+        loadChildren: () => import('../admin/customer/edit-customer/edit-customer.module').then(m => m.EditCustomerPageModule)
+      },
+
+      {
+        path: 'customer/add',
+        loadChildren: () => import('../admin/customer/add-customer/add-customer.module').then(m => m.AddCustomerPageModule)
+      },
+
+      // centers
+      {
+        path: 'center/edit/:center_id',
+        loadChildren: () => import('../admin/center/edit-center/edit-center.module').then(m => m.EditCenterPageModule)
+      },
 
     ]
   },

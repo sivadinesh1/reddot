@@ -42,28 +42,52 @@ const routes: Routes = [
   },
   {
     path: 'view-product',
-    loadChildren: () => import('./admin/product/view-product/view-product.module').then( m => m.ViewProductPageModule)
+    loadChildren: () => import('./admin/product/view-product/view-product.module').then(m => m.ViewProductPageModule)
   },
   {
     path: 'add-product',
-    loadChildren: () => import('./admin/product/add-product/add-product.module').then( m => m.AddProductPageModule)
+    loadChildren: () => import('./admin/product/add-product/add-product.module').then(m => m.AddProductPageModule)
   },
   {
     path: 'edit-product',
-    loadChildren: () => import('./admin/product/edit-product/edit-product.module').then( m => m.EditProductPageModule)
+    loadChildren: () => import('./admin/product/edit-product/edit-product.module').then(m => m.EditProductPageModule)
   },
   {
     path: 'admin',
-    loadChildren: () => import('./admin/admin/admin.module').then( m => m.AdminPageModule)
+    loadChildren: () => import('./admin/admin/admin.module').then(m => m.AdminPageModule)
   },
   {
     path: 'view-products',
-    loadChildren: () => import('./admin/product/view-products/view-products.module').then( m => m.ViewProductsPageModule)
+    loadChildren: () => import('./admin/product/view-products/view-products.module').then(m => m.ViewProductsPageModule)
   },
   {
-    path: 'view-vendors',
-    loadChildren: () => import('./admin/vendor/view-vendors/view-vendors.module').then( m => m.ViewVendorsPageModule)
+    path: 'add-customer',
+    loadChildren: () => import('./admin/customer/add-customer/add-customer.module').then( m => m.AddCustomerPageModule)
   },
+  {
+    path: 'edit-customer',
+    loadChildren: () => import('./admin/customer/edit-customer/edit-customer.module').then( m => m.EditCustomerPageModule)
+  },
+  {
+    path: 'view-customer',
+    loadChildren: () => import('./admin/customer/view-customer/view-customer.module').then( m => m.ViewCustomerPageModule)
+  },
+  {
+    path: 'edit-center',
+    loadChildren: () => import('./admin/center/edit-center/edit-center.module').then( m => m.EditCenterPageModule)
+  },
+  // {
+  //   path: 'view-vendors',
+  //   loadChildren: () => import('./admin/vendor/view-vendors/view-vendors.module').then( m => m.ViewVendorsPageModule)
+  // },
+  // {
+  //   path: 'edit-vendor',
+  //   loadChildren: () => import('./admin/vendor/edit-vendor/edit-vendor.module').then( m => m.EditVendorPageModule)
+  // },
+  // {
+  //   path: 'add-vendor',
+  //   loadChildren: () => import('./admin/vendor/add-vendor/add-vendor.module').then( m => m.AddVendorPageModule)
+  // },
 
 
 

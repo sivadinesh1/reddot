@@ -6,12 +6,12 @@ import { IonSearchbar } from '@ionic/angular';
 import { AdminMenuComponent } from 'src/app/components/admin-menu/admin-menu.component';
 
 @Component({
-  selector: 'app-view-vendors',
-  templateUrl: './view-vendors.page.html',
-  styleUrls: ['./view-vendors.page.scss'],
+  selector: 'app-view-customer',
+  templateUrl: './view-customer.page.html',
+  styleUrls: ['./view-customer.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ViewVendorsPage implements OnInit {
+export class ViewCustomerPage implements OnInit {
 
   center_id: any;
   resultList: any;
@@ -29,18 +29,18 @@ export class ViewVendorsPage implements OnInit {
 
   ngOnInit() {
 
-    this._commonApiService.getAllActiveVendors(this.center_id).subscribe((data: any) => {
+    this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
       this.resultList = data;
       this._cdr.markForCheck();
     });
   }
 
-  addVendor() {
-    this._router.navigate([`/home/vendor/add`]);
+  addCustomer() {
+    this._router.navigate([`/home/customer/add`]);
   }
 
-  editVendor(item) {
-    this._router.navigate([`/home/vendor/edit`, this.center_id, item.id]);
+  editCustomer(item) {
+    this._router.navigate([`/home/customer/edit`, this.center_id, item.id]);
   }
 
 }

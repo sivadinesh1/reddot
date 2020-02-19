@@ -15,24 +15,11 @@
 	margin: 0 auto;
 }
 
-.list-item {
-	display: grid;
-	grid-template-columns: 60px 1fr 1fr;
+.mat-width-ext {
+	width: 400px;
 }
 
-.item1,
-.item2,
-.item3 {
-	padding: 10px;
-}
-
-.item31 {
-	font-size: 14px;
-	color: #333333;
-}
-
-.header {
-	padding: 10px;
-	font-size: 20px;
-	color: #222222;
+.gap {
+	padding: 0px 10px;
+	cursor: pointer;
 }
