@@ -1,0 +1,37 @@
+.mat-stepper-horizontal {
+	margin-top: 8px;
+}
+
+.mat-form-field {
+	margin-top: 16px;
+}
+
+.content {
+	display: grid;
+	width: 80%;
+	margin: 0 auto;
+}
+
+.prod-info {
+	display: grid;
+}
+
+.mat-width-ext {
+	width: 400px;
+}
+
+.step2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.screen-header {
+	display: flex;
+	margin-left: 80px;
+	padding: 8px;
+	font-size: 16px;
+	font-weight: 500;
+	color: #222222;
+	background-color: rgb(250, 250, 250);
+	justify-content: space-between;
+}

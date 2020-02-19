@@ -1,0 +1,74 @@
+<ion-content>
+	<div class="login-content">
+		<div class="left">
+			<h2 class="auth-title">
+				Welcome!
+				<br />
+				Discover the new Ionic 4
+			</h2>
+		</div>
+		<div class="right">
+			<form [formGroup]="loginForm" (ngSubmit)="doLogin()">
+				<ion-list class="inputs-list" lines="full">
+					<ion-item class="input-item">
+						<ion-input
+							type="text"
+							placeholder="Mobile Number"
+							placeholder="Enter Mobile Number"
+							formControlName="phone"
+							clearInput
+							inputmode="number"
+						></ion-input>
+					</ion-item>
+
+					<div class="error-container">
+						<ng-container *ngFor="let validation of validation_messages.phone">
+							<div
+								class="error-message"
+								*ngIf="
+                loginForm.get('phone').hasError(validation.type) &&
+                (loginForm.get('phone').dirty || loginForm.get('phone').touched)
+              "
+							>
+								<ion-icon name="information-circle-outline"></ion-icon>
+								<span>{{ validation.message }}</span>
+							</div>
+						</ng-container>
+					</div>
+
+					<ion-item class="input-item">
+						<app-show-hide-password>
+							<ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
+						</app-show-hide-password>
+					</ion-item>
+					<div class="error-container">
+						<ng-container *ngFor="let validation of validation_messages.password">
+							<div
+								class="error-message"
+								*ngIf="
+                loginForm.get('password').hasError(validation.type) &&
+                (loginForm.get('password').dirty || loginForm.get('password').touched)
+              "
+							>
+								<ion-icon name="information-circle-outline"></ion-icon>
+								<span>{{ validation.message }}</span>
+							</div>
+						</ng-container>
+					</div>
+				</ion-list>
+				{{ responsemsg }}
+				<ion-button class="login-btn" type="submit" expand="block" [disabled]="!loginForm.valid"
+					>Log In</ion-button
+				>
+				<ion-row class="other-auth-options-row">
+					<ion-button class="forgot-btn" fill="clear" [routerLink]="['/auth/forgot-password']">
+						Forgot Password?
+					</ion-button>
+					<ion-button class="signup-btn" fill="clear" [routerLink]="['/auth/signup']">
+						Sign Up!
+					</ion-button>
+				</ion-row>
+			</form>
+		</div>
+	</div>
+</ion-content>

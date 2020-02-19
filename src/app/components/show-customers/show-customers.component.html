@@ -6,7 +6,7 @@
 				debounce="700"
 				placeholder="Search by Customer name"
 				#mySearchbar
-				showCancelButton
+				showCancelButton="focus"
 				cancelButtonText="Clear"
 				(ionClear)="reset()"
 				(ionInput)="openDialog($event.target.value)"
@@ -24,7 +24,9 @@
 	</div>
 
 	<div class="row2">
-		<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
+		<ng-container
+			*ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even; let activeIndex = i"
+		>
 			<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="addCustomer(item)">
 				<div class="item1 ">{{ idx + 1 }}</div>
 				<div class="item1 ">

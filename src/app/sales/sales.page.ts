@@ -3,11 +3,15 @@ import { ModalController, PickerController, AlertController } from '@ionic/angul
 import { AddProductComponent } from '../components/add-product/add-product.component';
 import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { PickerOptions } from '@ionic/core';
+
 import { MatDialog } from '@angular/material';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
-import { ShowVendorsComponent } from '../components/show-vendors/show-vendors.component';
+
 import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
+import { AuthenticationService } from '../services/authentication.service';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-sales',
@@ -16,24 +20,20 @@ import { ShowCustomersComponent } from '../components/show-customers/show-custom
 })
 export class SalesPage implements OnInit {
 
+  center_id: any;
+
   customername: string = '';
-
   listArr = [];
-
   total = "0.00";
 
-  test1: any;
   customer_state_code: any;
   center_state_code: any
   i_gst: any;
   customerdata: any;
   submitForm: FormGroup;
 
-  customerselected: any;
+  customerselected: boolean = false;
 
-  no_of_boxes: any;
-
-  selNoOfBoxes: any;
   igst: any;
   cgst: any;
   sgst: any;
@@ -45,16 +45,46 @@ export class SalesPage implements OnInit {
   tax_percentage: any;
   taxable_value: any;
 
+  fromEnquiry = false;
+
+  cust_discount_prcnt: any;
+  cust_discount_type: any;
+
+  enqid: string;
+  maxDate = new Date();
+
+
+  GST_18_sub_total: any;
+  GST_18_total_value: any;
+  GST_18_disc: any;
+  GST_18_cgst: any;
+  GST_18_sgst: any;
+  GST_18_igst: any;
+  GST_18_gst: any;
+
+  GST_28_sub_total: any;
+  GST_28_total_value: any;
+  GST_28_disc: any;
+  GST_28_cgst: any;
+  GST_28_sgst: any;
+  GST_28_igst: any;
+  GST_28_gst: any;
+
+
   @ViewChild('invno', { static: false }) inputEl: ElementRef;
 
   constructor(private _modalcontroller: ModalController, private _pickerctrl: PickerController,
+    private _route: ActivatedRoute, private _router: Router,
+    private _authservice: AuthenticationService,
     public dialog: MatDialog, public alertController: AlertController,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
 
+    const currentUser = this._authservice.currentUserValue;
+    this.center_state_code = currentUser.code;
+    this.center_id = currentUser.center_id;
 
-    this.center_state_code = '33';
-
+    this.enqid = this._route.snapshot.params['enqid'];
 
   }
 
@@ -62,14 +92,9 @@ export class SalesPage implements OnInit {
 
     this.submitForm = this._fb.group({
       customer: new FormControl(null, Validators.required),
-      invoiceno: new FormControl(null, Validators.required),
-      invoicedate: new FormControl(''),
-      orderno: new FormControl(''),
-      orderdate: new FormControl(''),
-      lrno: new FormControl(''),
-      lrdate: new FormControl(''),
-      noofboxes: new FormControl(0),
-      orderrcvddt: new FormControl(''),
+
+      invoicedate: new FormControl(new Date()),
+
       noofitems: new FormControl(0),
       totalqty: new FormControl(0),
       value: new FormControl(0),
@@ -77,26 +102,147 @@ export class SalesPage implements OnInit {
       igst: new FormControl(0),
       cgst: new FormControl(0),
       sgst: new FormControl(0),
-      transport_charges: new FormControl(0),
-      unloading_charges: new FormControl(0),
-      misc_charges: new FormControl(0),
+
       net_total: new FormControl(0),
       taxable_value: new FormControl(0),
 
-      productarr: new FormControl(null, Validators.required)
+      productarr: new FormControl(null, Validators.required),
+      enqref: new FormControl(this.enqid, Validators.required)
 
     });
 
-    this.customerselected = false;
+
+    // enquiry to Sale block. enqid = 0 is direct sale, 
+    if (this.enqid !== '0') {
+
+      this.fromEnquiry = true;
+
+      this._commonApiService.getCustomerData(this.enqid).subscribe((custData: any) => {
+
+        this.customerdata = custData[0];
+        this.customer_state_code = custData[0].code;
+
+        this.submitForm.patchValue({
+          customer: custData[0],
+        });
+
+        this.customername = custData[0].name;
+        this.customerselected = true;
+
+        // this.cust_discount_prcnt = custData[0].discount;
+        // this.cust_discount_type = custData[0].discount_type;
+
+
+        this.setTaxLabel();
+        this.setTaxSegment(custData.taxrate);
+
+        let invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+
+        // prod details
+        this._commonApiService.getEnquiredProductData(this.center_id, this.customerdata.id, this.enqid, invdt).subscribe((prodData: any) => {
+          let proddata = prodData;
+
+          proddata.forEach(element => {
+            this.processItems(element);
+          });
+
+          this._cdr.markForCheck();
+        });
+
+        this._cdr.markForCheck();
+      });
+
+
+
+    }
 
   }
+
+
+
+  processItems(item) {
+
+    this.setTaxSegment(item.taxrate);
+
+    let subtotal = 0;
+    let taxableval = 0;
+    let totalval = 0;
+    let discval = 0;
+
+    let qty = 0;
+    if (this.enqid === '0') {
+      qty = item.packetsize;
+    } else {
+      qty = item.qty
+    }
+
+    let disc_info = item.disc_info;
+    this.cust_discount_type = disc_info.substring(disc_info.indexOf("~") + 1);
+    this.cust_discount_prcnt = disc_info.substring(0, disc_info.indexOf("~"));
+
+
+
+
+    if (this.cust_discount_type === 'NET') {
+
+      subtotal = (qty * item.mrp);
+      taxableval = ((qty * item.mrp) * (100 - this.cust_discount_prcnt)) / (100 + item.taxrate);
+      discval = ((qty * item.mrp) * (this.cust_discount_prcnt)) / (100 + item.taxrate);
+      totalval = (qty * item.mrp) * (100 - this.cust_discount_prcnt) / 100;
+
+    } else if (this.cust_discount_type === 'GROSS') {
+
+
+      subtotal = (qty * item.mrp);
+      taxableval = ((qty * item.mrp) * (100 - this.cust_discount_prcnt)) / 100;
+      discval = ((qty * item.mrp) * (this.cust_discount_prcnt)) / 100;
+      totalval = ((qty * item.mrp) * (100 - this.cust_discount_prcnt) / 100) * (1 + (item.taxrate / 100));
+    }
+
+
+    // from product tblß
+    this.listArr.push(
+      {
+        "product_id": item.id,
+        "product_code": item.product_code,
+        "product_desc": item.description,
+        "qty": qty,
+        "packetsize": item.packetsize,
+        "unit_price": item.unit_price,
+        "mrp": item.mrp,
+        "mrp_change_flag": 'N',
+        "taxrate": item.taxrate,
+        "sub_total": (subtotal).toFixed(2),
+        "taxable_value": (taxableval).toFixed(2),
+        "disc_value": (discval).toFixed(2),
+        "total_value": (totalval).toFixed(2),
+        "tax_value": (totalval - taxableval).toFixed(2),
+
+        "igst": this.igst,
+        "cgst": this.cgst,
+        "sgst": this.sgst,
+        "igst_value": ((taxableval * this.igst) / 100).toFixed(2),
+        "cgst_value": ((taxableval * this.cgst) / 100).toFixed(2),
+        "sgst_value": ((taxableval * this.sgst) / 100).toFixed(2),
+
+
+        "stock_pk": item.stock_pk
+      });
+
+
+    this.calc();
+
+
+    this._cdr.markForCheck();
+  }
+
+
 
 
   async showAllCustomersComp() {
 
     const modal = await this._modalcontroller.create({
       component: ShowCustomersComponent,
-      componentProps: {},
       cssClass: 'customer-comp-styl'
 
     });
@@ -106,11 +252,15 @@ export class SalesPage implements OnInit {
       let custData = result.data;
 
       this.customer_state_code = custData.code;
+      this.cust_discount_prcnt = custData.discount;
+      this.cust_discount_type = custData.discount_type;
+
 
       this.submitForm.patchValue({
         customer: custData,
       });
 
+      this.customerdata = custData;
       this.customername = custData.name;
       this.customerselected = true;
       this.setTaxLabel();
@@ -125,9 +275,13 @@ export class SalesPage implements OnInit {
 
   async showAddProductComp() {
 
+    let invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+
+
+
     const modal = await this._modalcontroller.create({
       component: AddProductComponent,
-      componentProps: {},
+      componentProps: { center_id: this.center_id, customer_id: this.customerdata.id, order_date: invdt },
       cssClass: 'select-modal'
 
     });
@@ -136,106 +290,7 @@ export class SalesPage implements OnInit {
       console.log('The result:', result);
       let temp = result.data;
 
-      console.log('MMM' + this.listArr);
-
-      // let taxrate = temp.taxrate;
-
-      this.setTaxSegment(temp.taxrate);
-
-      // from product tbl
-      this.listArr.push(
-        {
-          "product_id": temp.id,
-          "product_code": temp.product_code,
-          "product_desc": temp.description,
-          "qty": temp.packetsize,
-          "packetsize": temp.packetsize,
-          "unit_price": temp.unit_price,
-          "mrp": temp.mrp,
-          "mrp_change_flag": 'N',
-          "taxrate": temp.taxrate,
-
-          // "tax_amt": ((temp.unit_price) * ((temp.taxrate) / 100)).toFixed(2),
-
-          "tax_value": ((temp.unit_price * temp.packetsize) * ((temp.taxrate) / 100)).toFixed(2),
-
-          "taxable_value": (temp.unit_price * temp.packetsize),
-          "total_value": ((temp.unit_price * temp.packetsize) + (temp.unit_price * (temp.packetsize) * temp.taxrate) / 100).toFixed(2),
-          "igst": this.igst,
-          "cgst": this.cgst,
-          "sgst": this.sgst
-        });
-
-
-
-      const tempArr = this.listArr.map(arrItem => {
-        return parseFloat(arrItem.total_value)
-      }
-      );
-
-      const tempArrCostPrice = this.listArr.map(arr => {
-        return parseFloat(arr.unit_price)
-      })
-
-      const xIgst = this.listArr.map(item => {
-        console.log('xIgst....' + item.unit_price * parseFloat(this.igst) / 100);
-
-        return item.unit_price * item.qty * parseFloat(this.igst) / 100;
-      })
-
-      const xCgst = this.listArr.map(item => {
-
-        return item.unit_price * item.qty * (parseFloat(this.cgst) / 100);
-      })
-
-      const xSgst = this.listArr.map(item => {
-
-        return item.unit_price * item.qty * parseFloat(this.sgst) / 100;
-      })
-
-
-      this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-      console.log("TCL: PurchasePage -> showAddProductComp -> this.total", this.total)
-
-
-      this.taxable_value = tempArrCostPrice.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-
-      this.submitForm.patchValue({
-        taxable_value: this.taxable_value,
-      });
-
-
-
-      if (this.i_gst) {
-        this.igstTotal = xIgst.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-
-        this.submitForm.patchValue({
-          igst: this.igstTotal,
-        });
-
-        this.submitForm.patchValue({
-          cgst: 0,
-        });
-        this.submitForm.patchValue({
-          sgst: 0,
-        });
-
-      } else {
-        this.cgstTotal = xCgst.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-        this.sgstTotal = xSgst.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-        this.submitForm.patchValue({
-          cgst: this.cgstTotal,
-        });
-        this.submitForm.patchValue({
-          sgst: this.sgstTotal,
-        });
-        this.submitForm.patchValue({
-          igst: 0,
-        });
-      }
-
-
-
+      this.processItems(temp);
 
       this._cdr.markForCheck();
     });
@@ -275,8 +330,6 @@ export class SalesPage implements OnInit {
 
     } else {
       this.i_gst = false;
-
-
     }
 
   }
@@ -288,53 +341,22 @@ export class SalesPage implements OnInit {
     }
 
     if (this.listArr.length > 0) {
-      if (this.submitForm.value.invoiceno == null) {
-        this.presentAlert('Invoice number is empty!');
-        this.inputEl.nativeElement.focus();
-      } else {
-        this.presentAlertConfirm();
 
-        this.submitForm.patchValue({
-          productarr: this.listArr,
-        });
-
-        this.submitForm.patchValue({
-          noofitems: this.listArr.length,
-        });
-
-        const tot_qty_check_Arr = this.listArr.map(arrItem => {
-          return parseFloat(arrItem.qty)
-        }
-        );
-
-        let tmpTotQty = tot_qty_check_Arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-
-        this.submitForm.patchValue({
-          totalqty: tmpTotQty,
-        });
-
-        this.submitForm.patchValue({
-          totalvalue: this.total
-        })
-
-        let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges) +
-          parseFloat(this.submitForm.value.unloading_charges) +
-          parseFloat(this.submitForm.value.misc_charges);
+      let tmpnoofitems = this.listArr
+        .map(arrItem => parseFloat(arrItem.qty))
+        .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
 
+      this.submitForm.patchValue({
+        productarr: this.listArr,
+        totalqty: this.listArr.length,
+        noofitems: tmpnoofitems,
+        taxable_value: this.taxable_value,
+        totalvalue: this.total
+      });
 
-        this.submitForm.patchValue({
-          net_total: tmpNetTot
-        })
-
-
-
-      }
-
-
-
+      this.presentAlertConfirm();
     }
-
 
   }
 
@@ -349,22 +371,8 @@ export class SalesPage implements OnInit {
     await alert.present();
   }
 
-  selectVendor() {
 
-    let vendorvalue = this.submitForm.value.vendor;
-    console.log('print list ' + JSON.stringify(vendorvalue));
-    this.customer_state_code = vendorvalue.code;
-    this.customerselected = true;
-    this.setTaxLabel();
-
-    this._cdr.markForCheck();
-  }
-
-
-
-
-
-  openCurrencyPad(idx) {
+  openNumberPad(idx, field) {
 
     const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
 
@@ -372,59 +380,49 @@ export class SalesPage implements OnInit {
       data => {
         if (data != undefined && data.length > 0 && data != 0) {
 
-          this.listArr[idx].qty = data;
+          if (field === 'qty') {
+            this.listArr[idx].qty = data;
+            this.qtyChange(idx);
+          } else if (field === 'mrp') {
+            if (this.listArr[idx].mrp !== data) {
+              this.listArr[idx].mrp = data;
+              this.listArr[idx].mrp_change_flag = 'Y'
+            }
 
-          this.qtyChange(idx);
+          } else if (field === 'discount') {
+            this.cust_discount_prcnt = data;
+            this.qtyChange(idx);
+          }
+
+
         }
 
         this._cdr.markForCheck();
       }
     );
   }
-
-  openMrpCurrencyPad(idx) {
-
-    const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
-
-    dialogRef.afterClosed().subscribe(
-      data => {
-        if ((data != undefined) && (data.length > 0) && (data != 0) && this.listArr[idx].mrp !== data) {
-
-          this.listArr[idx].mrp = data;
-          this.listArr[idx].mrp_change_flag = 'Y'
-
-        }
-
-        this._cdr.markForCheck();
-      }
-    );
-  }
-
-
-  openNumberPad(field) {
-
-    const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
-
-    dialogRef.afterClosed().subscribe(
-      data => {
-        if (data != undefined && data.length > 0 && data != 0) {
-
-          this.submitForm.controls[field].setValue(data);
-
-        }
-
-
-        this._cdr.markForCheck();
-      }
-    );
-  }
-
 
   qtyChange(idx) {
 
-    this.listArr[idx].total_value = ((this.listArr[idx].unit_price * this.listArr[idx].qty) + (this.listArr[idx].unit_price * (this.listArr[idx].qty) * this.listArr[idx].taxrate) / 100).toFixed(2)
-    this.listArr[idx].taxable_value = ((this.listArr[idx].qty) * (this.listArr[idx].unit_price)).toFixed(2);
-    this.listArr[idx].tax_value = ((this.listArr[idx].taxable_value) * ((this.listArr[idx].taxrate) / 100)).toFixed(2);
+    if (this.cust_discount_type === 'NET') {
+      this.listArr[idx].sub_total = (this.listArr[idx].qty * this.listArr[idx].mrp).toFixed(2);
+      this.listArr[idx].total_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.cust_discount_prcnt) / 100).toFixed(2);
+      this.listArr[idx].disc_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (this.cust_discount_prcnt) / 100).toFixed(2);
+      this.listArr[idx].taxable_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.cust_discount_prcnt)) / (100 + this.listArr[idx].taxrate)).toFixed(2);
+      this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
+
+    } else {
+      this.listArr[idx].sub_total = (this.listArr[idx].qty * this.listArr[idx].mrp).toFixed(2);
+      this.listArr[idx].total_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.cust_discount_prcnt) / 100) * (1 + (this.listArr[idx].taxrate) / 100)).toFixed(2);
+      this.listArr[idx].disc_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (this.cust_discount_prcnt) / 100) * (1 + (this.listArr[idx].taxrate) / 100)).toFixed(2);
+      this.listArr[idx].taxable_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.cust_discount_prcnt)) / 100).toFixed(2);
+      this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
+
+    }
+
+    this.listArr[idx].igst_value = ((this.listArr[idx].taxable_value * this.igst) / 100).toFixed(2);
+    this.listArr[idx].cgst_value = ((this.listArr[idx].taxable_value * this.cgst) / 100).toFixed(2);
+    this.listArr[idx].sgst_value = ((this.listArr[idx].taxable_value * this.sgst) / 100).toFixed(2);
 
     this.calc();
 
@@ -433,71 +431,122 @@ export class SalesPage implements OnInit {
 
   calc() {
 
-    const tempArr = this.listArr.map(arrItem => {
-      return parseFloat(arrItem.taxable_value) + parseFloat(arrItem.tax_value);
-    }
-    );
+    this.GST_18_sub_total = this.listArr
+      .filter(e => e.taxrate === 18.00)
+      .map(e => parseFloat(e.sub_total))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_18", this.GST_18_sub_total);
 
-    this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-    console.log("TCL: PurchasePage -> calc -> this.total", this.total)
+    this.GST_18_total_value = this.listArr
+      .filter(e => e.taxrate === 18.00)
+      .map(e => parseFloat(e.total_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_18", this.GST_18_total_value);
 
-    const tempArrCostPrice = this.listArr.map(arr => {
-      return parseFloat(arr.unit_price)
-    })
+    this.GST_18_disc = this.listArr
+      .filter(e => e.taxrate === 18.00)
+      .map(e => parseFloat(e.disc_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_18", this.GST_18_disc);
 
-    const xIgst = this.listArr.map(item => {
-      console.log('igst....' + item.unit_price);
+    this.GST_18_cgst = this.listArr
+      .filter(e => e.taxrate === 18.00)
+      .map(e => parseFloat(e.cgst_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_18", this.GST_18_cgst);
 
-      return item.unit_price * item.qty * parseFloat(this.igst) / 100;
-    })
-
-    const xCgst = this.listArr.map(item => {
-
-      return item.unit_price * item.qty * (parseFloat(this.cgst) / 100);
-    })
-
-    const xSgst = this.listArr.map(item => {
-      console.log('igst....' + item.unit_price);
-
-      return item.unit_price * item.qty * parseFloat(this.sgst) / 100;
-    })
+    this.GST_18_sgst = this.listArr
+      .filter(e => e.taxrate === 18.00)
+      .map(e => parseFloat(e.sgst_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_18", this.GST_18_sgst);
 
 
-    this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
-    this.taxable_value = tempArrCostPrice.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+    this.GST_18_gst = this.listArr
+      .filter(e => e.taxrate === 18.00)
+      .map(e => parseFloat(e.cgst_value) + parseFloat(e.sgst_value) + parseFloat(e.igst_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_18", this.GST_18_sgst);
 
-    this.submitForm.patchValue({
-      taxable_value: this.taxable_value,
-    });
 
+
+    this.GST_28_sub_total = this.listArr
+      .filter(e => e.taxrate === 28.00)
+      .map(e => parseFloat(e.sub_total))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_28", this.GST_28_sub_total);
+
+    this.GST_28_total_value = this.listArr
+      .filter(e => e.taxrate === 28.00)
+      .map(e => parseFloat(e.total_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_18", this.GST_28_total_value);
+
+    this.GST_28_disc = this.listArr
+      .filter(e => e.taxrate === 28.00)
+      .map(e => parseFloat(e.disc_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_28", this.GST_28_disc);
+
+    this.GST_28_cgst = this.listArr
+      .filter(e => e.taxrate === 28.00)
+      .map(e => parseFloat(e.cgst_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_28", this.GST_28_cgst);
+
+    this.GST_28_sgst = this.listArr
+      .filter(e => e.taxrate === 28.00)
+      .map(e => parseFloat(e.sgst_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_18", this.GST_28_sgst);
+
+    this.GST_18_gst = this.listArr
+      .filter(e => e.taxrate === 28.00)
+      .map(e => parseFloat(e.cgst_value) + parseFloat(e.sgst_value) + parseFloat(e.igst_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+    console.log("TCL: SalesPage -> calc -> GST_28", this.GST_28_sgst);
+
+
+
+
+    this.total = this.listArr
+      .map(e => parseFloat(e.total_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+
+
+    this.taxable_value = this.listArr
+      .map(e => parseFloat(e.taxable_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+
+
+    this.cgstTotal = this.listArr
+      .map(e => parseFloat(e.cgst_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
+
+    this.sgstTotal = this.listArr
+      .map(e => parseFloat(e.sgst_value))
+      .reduce((acc, curr) => acc + curr, 0).toFixed(2);
 
     if (this.i_gst) {
-      this.igstTotal = xIgst.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+      this.igstTotal = this.listArr
+        .map(e => parseFloat(e.igst_value))
+        .reduce((acc, curr) => acc + curr, 0).toFixed(2);
 
       this.submitForm.patchValue({
         igst: this.igstTotal,
-      });
-
-      this.submitForm.patchValue({
         cgst: 0,
-      });
-      this.submitForm.patchValue({
         sgst: 0,
       });
 
     } else {
-      this.cgstTotal = xCgst.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-      this.sgstTotal = xSgst.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+
       this.submitForm.patchValue({
         cgst: this.cgstTotal,
-      });
-      this.submitForm.patchValue({
         sgst: this.sgstTotal,
-      });
-      this.submitForm.patchValue({
         igst: 0,
       });
+
     }
 
   }
@@ -528,7 +577,12 @@ export class SalesPage implements OnInit {
           handler: () => {
             console.log('Confirm Okay');
             this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
-              console.log('object.. ' + JSON.stringify(data));
+              console.log('Final Result.. ' + JSON.stringify(data));
+
+              if (data.body.result === 'success') {
+
+                this._router.navigate(['/home/enquiry/open-enquiry']);
+              }
 
               this._cdr.markForCheck();
             });
@@ -538,6 +592,54 @@ export class SalesPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  onPrint() {
+    this._commonApiService.print().subscribe((data: any) => {
+      console.log('object...PRINTED');
+
+
+      const blob = new Blob([data], { type: 'application/pdf' });
+
+      // to save as file in ionic projects dnd
+      // FileSaver.saveAs(blob, '_export_' + new Date().getTime() + '.pdf');
+
+      // dnd - opens as iframe and ready for print (opens with print dialog box)
+      // const blobUrl = URL.createObjectURL(blob);
+      // const iframe = document.createElement('iframe');
+      // iframe.style.display = 'none';
+      // iframe.src = blobUrl;
+      // document.body.appendChild(iframe);
+      // iframe.contentWindow.print();
+
+
+      // dnd to open in new tab - does not work with pop up blocked
+      var link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.target = "_blank";
+      link.click();
+      // if need to download with file name
+      //  link.download = "filename.ext"
+
+
+
+      // dnd - if need to do anyhting on click - not much use
+      // link.onclick = function () {
+      //   window.open(window.URL.createObjectURL(blob),
+      //     '_blank',
+      //     'width=300,height=250');
+      //   return false;
+      // };
+
+
+      // var newWin = window.open(url);             
+      // if(!newWin || newWin.closed || typeof newWin.closed=='undefined') 
+      // { 
+      //POPUP BLOCKED
+      // }
+
+
+    });
   }
 
 }

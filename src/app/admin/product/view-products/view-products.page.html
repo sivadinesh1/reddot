@@ -1,0 +1,74 @@
+<ion-content>
+	<div class="screen-header">
+		<div>
+			&nbsp;
+		</div>
+
+		<div (click)="addProduct()">
+			+ Add Product
+		</div>
+
+		<div [matMenuTriggerFor]="childComponentMenu?.menu">
+			<span class="s-menu">
+				<img src="/assets/svg/grid-menu.svg" width="20px" height="20px" />
+			</span>
+		</div>
+	</div>
+	<div class="content">
+		<div class="heading">
+			Products List
+		</div>
+		<div class="found">
+			Found {{pcount}}
+		</div>
+
+		<div class="add-prod-wrap">
+			<div class="row1">
+				<div class="search_box">
+					<ion-searchbar
+						autofocus
+						debounce="700"
+						placeholder="Search by part number or description"
+						#mySearchbar
+						show-cancel-button="focus"
+						(ionClear)="reset()"
+						(ionInput)="openDialog($event.target.value)"
+					></ion-searchbar>
+				</div>
+			</div>
+			<div class="header-row">
+				<div class="col">#</div>
+				<div class="col">Product Info</div>
+				<div class="col txt-right-align ">Available Qty</div>
+				<div class="col txt-right-align ">MRP</div>
+				<div class="col">&nbsp;</div>
+			</div>
+			<div class="row2">
+				<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
+					<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="editProduct(item)">
+						<div class="item1 ">{{ idx + 1 }}</div>
+						<div class="item2">
+							<div class="item21">{{ item.product_code }}</div>
+							<div class="item22 desc-styl">{{ item.description }}</div>
+						</div>
+						<div class="item3 txt-right-align ">{{ item.available_stock }}</div>
+						<div class="item4 txt-right-align ">{{ item.mrp }}</div>
+					</div>
+				</ng-container>
+			</div>
+			<div class="row3">
+				<div class="row-cnt">
+					<span *ngIf="resultList">
+						<span *ngIf="resultList.length >= 50"> Matches: {{ resultList.length }} + </span>
+						<span *ngIf="resultList.length < 50"> Matches: {{ resultList.length }} </span>
+					</span>
+				</div>
+				<div class="scan">
+					&nbsp;
+				</div>
+			</div>
+		</div>
+	</div>
+</ion-content>
+
+<app-admin-menu></app-admin-menu>

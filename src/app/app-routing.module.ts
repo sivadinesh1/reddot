@@ -4,27 +4,69 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
 
   // { path: '', redirectTo: 'tabs/tab1/search', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // {
+  //   path: '',
+  //   loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+  // },
 
-  {
-    path: '',
-    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
-  },
-  {
-    path: 'cart',
-    loadChildren: () => import('./cart/cart.module').then(m => m.CartPageModule)
-  },
   {
     path: 'billing/:enquiryid',
     loadChildren: () => import('./billing/billing.module').then(m => m.BillingPageModule)
   },
+  // {
+  //   path: 'purchase',
+  //   loadChildren: () => import('./purchase/purchase.module').then(m => m.PurchasePageModule)
+  // },
+  // {
+  //   path: 'sales/:enqid',
+  //   loadChildren: () => import('./sales/sales.module').then(m => m.SalesPageModule)
+  // },
+
+  // {
+  //   path: 'enquiry',
+  //   loadChildren: () => import('./enquiry/enquiry.module').then(m => m.EnquiryPageModule)
+  // },
   {
-    path: 'purchase',
-    loadChildren: () => import('./purchase/purchase.module').then(m => m.PurchasePageModule)
+    path: 'login',
+    loadChildren: () => import('./auth/login/login.module').then(m => m.LoginPageModule)
+  },
+  // {
+  //   path: 'dashboard',
+  //   loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardPageModule)
+  // },
+
+  {
+    path: 'home',
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
   },
   {
-    path: 'sales',
-    loadChildren: () => import('./sales/sales.module').then(m => m.SalesPageModule)
+    path: 'view-product',
+    loadChildren: () => import('./admin/product/view-product/view-product.module').then( m => m.ViewProductPageModule)
   },
+  {
+    path: 'add-product',
+    loadChildren: () => import('./admin/product/add-product/add-product.module').then( m => m.AddProductPageModule)
+  },
+  {
+    path: 'edit-product',
+    loadChildren: () => import('./admin/product/edit-product/edit-product.module').then( m => m.EditProductPageModule)
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin/admin.module').then( m => m.AdminPageModule)
+  },
+  {
+    path: 'view-products',
+    loadChildren: () => import('./admin/product/view-products/view-products.module').then( m => m.ViewProductsPageModule)
+  },
+  {
+    path: 'view-vendors',
+    loadChildren: () => import('./admin/vendor/view-vendors/view-vendors.module').then( m => m.ViewVendorsPageModule)
+  },
+
+
+
   // {
   //   path: 'search',
   //   loadChildren: () => import('./search/search.module').then( m => m.SearchPageModule)
@@ -32,8 +74,10 @@ const routes: Routes = [
 ];
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, onSameUrlNavigation: 'reload', scrollPositionRestoration: 'enabled' })
   ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
+

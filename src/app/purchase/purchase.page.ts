@@ -7,6 +7,7 @@ import { PickerOptions } from '@ionic/core';
 import { MatDialog } from '@angular/material';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 import { ShowVendorsComponent } from '../components/show-vendors/show-vendors.component';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'app-purchase',
@@ -48,12 +49,12 @@ export class PurchasePage implements OnInit {
 
   constructor(private _modalcontroller: ModalController, private _pickerctrl: PickerController,
     public dialog: MatDialog, public alertController: AlertController,
+    private _authservice: AuthenticationService,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
 
-
-    this.center_state_code = '33';
-
+    const currentUser = this._authservice.currentUserValue;
+    this.center_state_code = currentUser.code;
 
   }
 

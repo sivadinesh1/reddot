@@ -33,11 +33,11 @@ export class BillingPage implements OnInit {
       // });
 
 
-      this._commonApiService.getDetailsByEnquiryId(this.enquiryid).subscribe(data => {
-        this.enquirydata = data;
-        console.log('object.....' + JSON.stringify(this.enquirydata));
-        this._cdr.markForCheck();
-      });
+      // this._commonApiService.getDetailsByEnquiryId(this.enquiryid).subscribe(data => {
+      //   this.enquirydata = data;
+      //   console.log('object.....' + JSON.stringify(this.enquirydata));
+      //   this._cdr.markForCheck();
+      // });
 
       this._cdr.markForCheck();
 

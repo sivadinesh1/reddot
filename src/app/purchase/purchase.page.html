@@ -1,5 +1,8 @@
+<!-- <app-menu-header></app-menu-header> -->
+
 <ion-content>
-	<ion-header>
+	<!-- <app-side-menu></app-side-menu> -->
+	<!-- <ion-header>
 		<ion-toolbar>
 			<ion-title slot="start">
 				LOGO
@@ -14,7 +17,16 @@
 				</div>
 			</ion-title>
 		</ion-toolbar>
-	</ion-header>
+	</ion-header> -->
+
+	<div class="screen-header">
+		<div>
+			{{vendorname}}
+			<span *ngIf="vendorselected" (click)="showAllVendorsComp()">
+				<img src="../../assets/images/svg/down-arrow.svg" width="10px" height="10px" />
+			</span>
+		</div>
+	</div>
 
 	<form [formGroup]="submitForm">
 		<div class="purchase-wrap">

@@ -19,12 +19,12 @@ export class Tab1Page implements OnInit {
 
   ngOnInit() {
 
-    this._commonApiService.getAllActiveEnquiries().subscribe(
-      data => {
-        this.enquiryList = data;
-        this._cdr.markForCheck();
-      }
-    );
+    // this._commonApiService.getAllActiveEnquiries().subscribe(
+    //   data => {
+    //     this.enquiryList = data;
+    //     this._cdr.markForCheck();
+    //   }
+    // );
   }
 
 
@@ -48,7 +48,15 @@ export class Tab1Page implements OnInit {
   }
 
   goSalesScreen() {
-    this._router.navigateByUrl(`/sales`);
+    this._router.navigateByUrl(`/sales/0`);
+  }
+
+  goEnquiryScreen() {
+    this._router.navigateByUrl(`/enquiry`);
+  }
+
+  goOpenEquiries() {
+    this._router.navigateByUrl(`/home/enquiry/open-enquiry`);
   }
 
 }

@@ -5,7 +5,10 @@
 export const environment = {
   production: false,
   restApiUrl: 'http://localhost:5060',
+
 };
+
+export const errorApiUrl = 'http://localhost:5555';
 
 /*
  * For easier debugging in development mode, you can import the following file

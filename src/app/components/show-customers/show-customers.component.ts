@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { CommonApiService } from '../../services/common-api.service';
 import { ModalController, IonSearchbar } from '@ionic/angular';
 
@@ -50,7 +50,7 @@ export class ShowCustomersComponent implements OnInit {
       this._commonApiService.getCustomerInfo('1', searchstring).subscribe(
         data => {
           this.resultList = data;
-          // console.log('ABCD >> ' + JSON.stringify(this.resultList));
+          console.log('ABCD >> ' + JSON.stringify(this.resultList));
           if (this.resultList.length === 0) {
 
             this.noMatch = 'No Matching Records';
@@ -58,6 +58,7 @@ export class ShowCustomersComponent implements OnInit {
 
           } else if (this.resultList.length > 0) {
             this.noMatch = '';
+
             this._cdr.markForCheck();
           }
 

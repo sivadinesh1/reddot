@@ -6,8 +6,7 @@
 				debounce="700"
 				placeholder="Search By Part number or desc"
 				#mySearchbar
-				showCancelButton
-				cancelButtonText="Clear"
+				show-cancel-button="focus"
 				(ionClear)="reset()"
 				(ionInput)="openDialog($event.target.value)"
 			></ion-searchbar>
@@ -53,46 +52,3 @@
 		</div>
 	</div>
 </div>
-
-<!-- 
-
-<div *ngIf="member404">{{member404}}</div>
-
-	<div
-		*ngFor="let item of resultList let i = index; let isOdd=odd; 
- let isEven=even;"
-		class="innerpad"
-	>
-		<div class="grid" [class.odd]="isOdd" [class.even]="isEven">
-			<div class="griditem1">
-				<div class="part-no"><span class="part-label">PART# </span>{{item.item_code}}</div>
-				<div class="part-desc">{{item.description}}</div>
-			</div>
-			<div class="griditem2">
-				<div class="subgriditem2-1">
-					<span class="gray-small-label">
-						MRP
-					</span>
-				</div>
-				<div class="subgriditem2-2 blue-color">
-					{{item.mrp | currency:'INR':'symbol' : '1.0'}}
-				</div>
-			</div>
-			<div class="griditem3">
-				<div class="subgriditem3-1">
-					<span class="gray-small-label">Qty:</span>
-				</div>
-				<div class="subgriditem3-2 ash-color">
-					{{item.curr_stock | zeroToVal: 'No Stock'}}
-				</div>
-			</div>
-			<div class="griditem4">
-				<ion-icon
-					name="add-circle-outline"
-					(click)="addPartsToCart(item)"
-					class="ion-1point5x ash-color"
-				></ion-icon>
-			</div>
-			
-		</div>
-	</div> -->

@@ -15,10 +15,7 @@ const routes: Routes = [
             loadChildren: () =>
               import('../tab1/tab1.module').then(m => m.Tab1PageModule)
           },
-          {
-            path: 'search',
-            loadChildren: () => import('../search/search.module').then(m => m.SearchPageModule)
-          }
+
         ]
       },
       {

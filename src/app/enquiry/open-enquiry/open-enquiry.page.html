@@ -1,0 +1,60 @@
+<ion-content class="icontent">
+	<div class="content">
+		<div class="open">
+			<div class="new-enq">New Enquiries - {{this.openenq?.length}} Items</div>
+			<div
+				*ngFor="let item of this.openenq; let idx = index; let isOdd = odd; let isEven = even;"
+				(click)="processEnquiry(item)"
+			>
+				<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="processEnquiry(item)">
+					<div class="idx">
+						{{idx + 1}})
+					</div>
+					<div class="o-enq-details">
+						<div class="custname">
+							{{item.custname}}
+						</div>
+						<div class="edate">
+							{{item.enquiry_date | date: 'dd/MMM/yyyy h:mm a'}}
+						</div>
+					</div>
+
+					<div class="items">
+						ITEMS: {{item.noofitems}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="completed">
+			<div class="new-enq">Ready For Invoicing - {{this.readyforsale?.length}} Items</div>
+
+			<div
+				*ngFor="let item of this.readyforsale; let idx = index; let isOdd = odd; let isEven = even;"
+				(click)="moveToSale(item)"
+			>
+				<div class="list-item" [class.odd]="isOdd" [class.even]="isEven">
+					<div class="idx">
+						{{idx + 1}})
+					</div>
+					<div class="o-enq-details">
+						<div class="custname">
+							{{item.custname}}
+						</div>
+						<div class="edate">
+							{{item.enquiry_date | date: 'dd/MMM/yyyy h:mm a'}}
+						</div>
+					</div>
+
+					<div class="items">
+						ITEMS: {{item.noofitems}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+		<ion-fab-button (click)="goEnquiryScreen()">
+			<ion-icon name="add"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
+</ion-content>

@@ -12,6 +12,10 @@ export class AddProductComponent implements OnInit {
   resultList: any;
   noMatch: any;
 
+  customer_id;
+  center_id;
+  order_date;
+
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
   constructor(private _commonApiService: CommonApiService, private _modalcontroller: ModalController,
@@ -32,22 +36,44 @@ export class AddProductComponent implements OnInit {
 
     if (searchstring.length > 2) {
 
-      this._commonApiService.getProductInfo('1', searchstring).subscribe(
-        data => {
-          this.resultList = data;
-          // console.log('ABCD >> ' + JSON.stringify(this.resultList));
-          if (this.resultList.length === 0) {
+      if (this.customer_id === 0) {
+        this._commonApiService.getProductInfo(this.center_id, searchstring).subscribe(
+          data => {
+            this.resultList = data;
+            // console.log('ABCD >> ' + JSON.stringify(this.resultList));
+            if (this.resultList.length === 0) {
 
-            this.noMatch = 'No Matching Records';
-            this._cdr.markForCheck();
+              this.noMatch = 'No Matching Records';
+              this._cdr.markForCheck();
 
-          } else if (this.resultList.length > 0) {
-            this.noMatch = '';
-            this._cdr.markForCheck();
-          }
+            } else if (this.resultList.length > 0) {
+              this.noMatch = '';
+              this._cdr.markForCheck();
+            }
 
-        }
-      );
+          });
+
+
+      } else {
+        this._commonApiService.getProductInformation(this.center_id, this.customer_id, this.order_date, searchstring).subscribe(
+          data => {
+            this.resultList = data;
+            // console.log('ABCD >> ' + JSON.stringify(this.resultList));
+            if (this.resultList.length === 0) {
+
+              this.noMatch = 'No Matching Records';
+              this._cdr.markForCheck();
+
+            } else if (this.resultList.length > 0) {
+              this.noMatch = '';
+              this._cdr.markForCheck();
+            }
+
+          });
+      }
+
+
+
 
     }
   }
