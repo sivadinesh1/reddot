@@ -99,18 +99,16 @@ export class AuthenticationService {
     login(username: string, password: string) {
 
         return this.httpClient.post<any>(`${this.restApiUrl}/api/auth/login`, { username, password })
-            .pipe(map(userData => {
-                debugger;
+            .pipe(map(data => {
 
-                if (userData.message === 'SUCCESS') {
+
+                if (data.result === 'success') {
                     this.storagemode.clear();
 
-                    this.storagemode.set('currentUser', JSON.stringify(userData.obj));
-                    this.currentUserSubject.next(userData.obj);
+                    this.storagemode.set('currentUser', JSON.stringify(data.obj));
+                    this.currentUserSubject.next(data.obj);
                 }
-
-
-                return userData;
+                return data;
             }));
     }
 

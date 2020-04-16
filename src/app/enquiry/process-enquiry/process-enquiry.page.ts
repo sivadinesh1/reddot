@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
 import { MatDialog } from '@angular/material';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { AddProductComponent } from 'src/app/components/add-product/add-product.component';
 import * as moment from 'moment';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -27,7 +27,7 @@ export class ProcessEnquiryPage implements OnInit {
 
   constructor(private _route: ActivatedRoute, private _router: Router,
     private dialog: MatDialog, private _modalcontroller: ModalController,
-    private _authservice: AuthenticationService,
+    private _authservice: AuthenticationService, public alertController: AlertController,
     private _commonApiService: CommonApiService,
     private _cdr: ChangeDetectorRef) {
     const currentUser = this._authservice.currentUserValue;
@@ -42,17 +42,28 @@ export class ProcessEnquiryPage implements OnInit {
 
 
       this.enqDetailsOrig.forEach(element => {
+        let tmpGiveqty = 0;
+        if (element.status === 'D') {
+          tmpGiveqty = element.giveqty || 1;
+        } else {
+          tmpGiveqty = element.askqty;
+        }
+
         this.productArr.push({
           "id": element.id, "enquiry_id": element.enquiry_id, "notes": element.notes,
-          "askqty": element.askqty, "giveqty": element.askqty,
-          "status": element.status, "invoiceno": element.invoiceno, "center_id": this.center_id,
-          "product_id": '',
-          "product_code": '',
-          "product_desc": '',
-          "qty": '',
-          "packetsize": '',
-          "unit_price": '',
-          "mrp": '',
+          "askqty": element.askqty, "giveqty": tmpGiveqty,
+          "status": "P", "invoiceno": element.invoiceno, "center_id": this.center_id,
+          "product_id": element.product_id,
+          "product_code": element.pcode,
+          "product_desc": element.pdesc,
+          "rackno": element.rackno,
+          "qty": element.packetsize,
+          "packetsize": element.packetsize,
+          "unit_price": element.unit_price,
+          "mrp": element.mrp,
+          "available_stock": element.available_stock,
+          "stockid": element.stock_pk,
+          "processed": element.processed
         });
       });
 
@@ -96,7 +107,7 @@ export class ProcessEnquiryPage implements OnInit {
       if (result.data !== undefined) {
         let temp = result.data;
 
-        this.productArr[idx].product_id = temp.id;
+        this.productArr[idx].product_id = temp.product_id;
         this.productArr[idx].product_code = temp.product_code;
         this.productArr[idx].product_desc = temp.description;
         this.productArr[idx].qty = temp.packetsize;
@@ -118,7 +129,26 @@ export class ProcessEnquiryPage implements OnInit {
 
 
 
+  save() {
 
+    this._commonApiService.draftEnquiry(this.productArr).subscribe((data: any) => {
+      console.log('object.. ' + JSON.stringify(data));
+
+      if (data.body.result === 'success') {
+
+
+        console.log('object...SUCCESS..')
+        this._router.navigate([`/home/enquiry/open-enquiry`]);
+
+      } else {
+
+      }
+
+      this._cdr.markForCheck();
+    });
+
+
+  }
 
 
   onClick(selItem) {
@@ -130,6 +160,11 @@ export class ProcessEnquiryPage implements OnInit {
     if (item.id === this.selectedEnq) {
       return 'grey';
     }
+  }
+
+  checkedRow(idx) {
+    this.productArr[idx].processed = 'YS';
+    this._cdr.markForCheck();
   }
 
   // getStrikeThroughClass(idx) {
@@ -175,7 +210,33 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   goEnquiryScreen() {
-    this._router.navigateByUrl(`/enquiry`);
+    this._router.navigateByUrl(`/home/enquiry`);
+  }
+
+  async presentAlertConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'Are you sure, Orders processing completed?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Yes, Move to Sale',
+          handler: () => {
+            console.log('Confirm Okay');
+            this.moveToSale();
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
 }

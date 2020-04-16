@@ -58,7 +58,7 @@
 
 .add-prod-wrap {
 	display: grid;
-	grid-template-rows: 60px 60px 1fr 60px;
+	grid-template-rows: 60px 30px 60px 1fr 60px;
 	min-height: 100%;
 
 	.row1 {
@@ -177,4 +177,15 @@
 	color: grey;
 	font-weight: 400;
 	padding: 0px 10px;
+}
+
+.head {
+	display: flex;
+	justify-content: flex-start;
+	padding-top: 50px;
+}
+
+.add-btn {
+	margin-left: auto;
+	align-items: center;
 }

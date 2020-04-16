@@ -1,0 +1,33 @@
+<ion-content>
+	<div class="content">
+		<h3>Accounts Receivables</h3>
+		<h5>List of last 20 Transactions</h5>
+		<div class="header header-style">
+			<div>Customer</div>
+			<div>Received Amt</div>
+			<div>Received Date</div>
+			<div>Payment Mode</div>
+			<div>Bank Ref</div>
+			<div>Gnrl Ref</div>
+		</div>
+
+		<div *ngFor="let item of resultList" class="listitem row-color">
+			<div>{{item.customer_name}}</div>
+			<div style="text-align: right;">{{item.received_amt}}</div>
+			<div>{{item.received_date | date: 'dd/MMM/yyyy'}}</div>
+			<div>{{item.pymt_mode}}</div>
+			<div>{{item.bank_ref}}</div>
+			<div>{{item.gnrl_ref}}</div>
+		</div>
+	</div>
+
+	<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+		<ion-fab-button (click)="goAccountsReceivables()">
+			<ion-icon name="add"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
+</ion-content>
+
+<!-- "id": 26, "center_id": 1, "customer_id": 98, "received_amt": 999,
+ "received_date": "2020-04-07T18:30:00.000Z", "pymt_mode": "CASH", 
+ "bank_ref": "asfdsa", "gnrl_ref": "", "last_updated": "2020-04-08T10:49:42.000Z" } -->

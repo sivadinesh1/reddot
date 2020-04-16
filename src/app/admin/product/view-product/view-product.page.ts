@@ -21,12 +21,14 @@ export class ViewProductPage implements OnInit {
     this._route.params.subscribe(params => {
       this.center_id = params['center_id'];
       this.product_id = params['product_id'];
+
       this._cdr.markForCheck();
     });
 
   }
 
   ngOnInit() {
+
     this.productinfo = this._commonApiService
       .viewProductInfo(this.center_id, this.product_id).subscribe((data: any) => {
 

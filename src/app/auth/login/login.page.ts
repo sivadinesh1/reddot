@@ -41,7 +41,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     public router: Router,
-    private cdr: ChangeDetectorRef,
+    private _cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
   ) {
 
@@ -105,34 +105,26 @@ export class LoginPage implements OnInit {
     this.authenticationService.login(username, password).subscribe(
       async data => {
 
-        if (data.message === 'SUCCESS') {
-
-          console.log('object......' + JSON.stringify(data));
-
+        if (data.result === 'success') {
           let role = data.role;
-          // this.authenticationService.setRole(role);
-          // this.authenticationService.setUserid(data.userid);
-
-
-
           if (role === 'ADMIN') {
-
             this.router.navigate([`/home`]);
 
             this.invalidLogin = false;
-            this.cdr.markForCheck();
+
           }
 
-
-        } else if (data.message === 'FAILURE') {
+        } else if (data.result === 'error') {
           this.invalidLogin = true;
 
-          if (data.additionalinfo === 'INVALID_CREDENTIALS') {
+          if (data.statusCode === '600') {
             this.responsemsg = "Login Failed. Invalid Credentials";
+          } else if (data.statusCode === '100') {
+            this.responsemsg = "Login Failed. Database Connection Error";
           }
 
         }
-
+        this._cdr.markForCheck();
 
       }
 

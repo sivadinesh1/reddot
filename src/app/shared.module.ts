@@ -28,9 +28,13 @@ import { ShowHidePasswordComponent } from './components/show-hide-password/show-
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { MenuHeaderComponent } from './components/menu-header/menu-header.component';
 import { WindowComponent } from './components/window.component';
-import { AdminMenuComponent } from './components/admin-menu/admin-menu.component';
 
-
+import { ChangeTaxComponent } from './components/change-tax/change-tax.component';
+import { ChangeMrpComponent } from './components/change-mrp/change-mrp.component';
+import { PreventDoubleClickDirective } from './util/directives/prevent-double-click.directive';
+import { VendorDialogComponent } from './components/vendor-dialog/vendor-dialog.component';
+import { LoadingComponent } from './components/loading/loading.component';
+import { MessagesComponent } from './components/messages/messages.component';
 
 const components = [
 
@@ -50,18 +54,24 @@ const components = [
   ZeroToValPipe,
 
   AddProductComponent,
+  VendorDialogComponent,
   CurrencyPadComponent,
   ShowVendorsComponent,
   ShowCustomersComponent,
+  ChangeTaxComponent,
+  ChangeMrpComponent,
   AutoFocusDirective,
   FocusedDirective,
+  PreventDoubleClickDirective,
 
   ShowHidePasswordComponent,
   SideMenuComponent,
   MenuHeaderComponent,
-  AdminMenuComponent,
+
 
   WindowComponent,
+  LoadingComponent,
+  MessagesComponent,
 
 
 ];
@@ -109,6 +119,8 @@ const matcomponents = [
 @NgModule({
   declarations: [...components, PreventCutCopyPasteDirective],
   imports: [
+
+
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
@@ -118,7 +130,8 @@ const matcomponents = [
     ...matcomponents, ...components, IonicModule
   ],
   entryComponents: [
-    AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent
+    AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
+    ChangeTaxComponent, ChangeMrpComponent, VendorDialogComponent
   ]
 })
 export class SharedModule { }

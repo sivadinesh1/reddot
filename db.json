@@ -1,0 +1,32 @@
+{
+	"grade": [
+		{
+			"id": 1,
+			"title": "Grade 1",
+			"section": [
+				{
+					"id": "1a",
+					"value": "1-A"
+				},
+				{
+					"id": "1b",
+					"value": "1-B"
+				}
+			]
+		},
+		{
+			"id": 2,
+			"title": "Grade 2",
+			"section": [
+				{
+					"id": "2a",
+					"value": "2-A"
+				},
+				{
+					"id": "2b",
+					"value": "2-B"
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,27 @@
+.search-wrap {
+	display: grid;
+	width: 80%;
+	margin: 0 auto;
+	padding-top: 40px;
+}
+
+.form-wrap {
+	display: flex;
+}
+
+.search-btn {
+	padding-left: 20px;
+	padding-top: 20px;
+}
+
+.header,
+.listItem {
+	display: grid;
+	grid-template-columns: 180px 150px 2fr 1fr 1fr 1fr 1fr 80px;
+	padding: 5px;
+}
+
+.header-style {
+	background-color: #757575;
+	color: #ffffff;
+}

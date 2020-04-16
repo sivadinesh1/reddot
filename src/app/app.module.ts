@@ -17,12 +17,15 @@ import { Network } from '@ionic-native/network/ngx';
 import { OpenNativeSettings } from '@ionic-native/open-native-settings/ngx';
 
 
+import { SharedModule } from 'src/app/shared.module';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [BrowserModule,
-    HttpClientModule,
 
+    HttpClientModule,
+    SharedModule,
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(), AppRoutingModule, BrowserAnimationsModule],
   exports: [BrowserModule],
@@ -32,6 +35,7 @@ import { OpenNativeSettings } from '@ionic-native/open-native-settings/ngx';
     NativeStorage,
     Network,
     OpenNativeSettings,
+
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: MAT_DATE_LOCALE, useValue: 'en-IN' }
   ],

@@ -3,7 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from '../../../services/common-api.service';
 import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
-import { AdminMenuComponent } from 'src/app/components/admin-menu/admin-menu.component';
+import { patternValidator } from 'src/app/util/validators/pattern-validator';
+import { GSTN_REGEX, country, PINCODE_REGEX, EMAIL_REGEX } from 'src/app/util/helper/patterns';
+import { PhoneValidator } from 'src/app/util/validators/phone.validator';
+
 
 @Component({
   selector: 'app-add-customer',
@@ -21,7 +24,6 @@ export class AddCustomerPage implements OnInit {
   statesdata: any;
   isLinear = true;
 
-  @ViewChild(AdminMenuComponent, { static: true }) childComponentMenu: AdminMenuComponent;
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
     private _formBuilder: FormBuilder,
@@ -43,18 +45,26 @@ export class AddCustomerPage implements OnInit {
 
           district: [''],
           state_id: ['', Validators.required],
-          pin: [''],
+          pin: ['', [patternValidator(PINCODE_REGEX)]],
         }),
         this._formBuilder.group({
-          gst: [''],
-          phone: [''],
-          mobile: [''],
-          mobile2: [''],
-          whatsapp: [''],
+          gst: ['', [patternValidator(GSTN_REGEX)]],
+          phone: ['', Validators.compose([
+            Validators.required, PhoneValidator.invalidCountryPhone(country)
+          ])],
+          mobile: ['', Validators.compose([
+            Validators.required, PhoneValidator.invalidCountryPhone(country)
+          ])],
+          mobile2: ['', Validators.compose([
+            Validators.required, PhoneValidator.invalidCountryPhone(country)
+          ])],
+          whatsapp: ['', Validators.compose([
+            Validators.required, PhoneValidator.invalidCountryPhone(country)
+          ])],
         }),
 
         this._formBuilder.group({
-          email: [''],
+          email: ['', [patternValidator(EMAIL_REGEX)]],
         }),
 
       ])

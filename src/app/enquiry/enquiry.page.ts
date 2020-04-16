@@ -6,6 +6,7 @@ import { ModalController } from '@ionic/angular';
 import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
 import { CommonApiService } from '../services/common-api.service';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'app-enquiry',
@@ -16,16 +17,27 @@ import { Router } from '@angular/router';
 export class EnquiryPage implements OnInit {
 
   submitForm: FormGroup;
-  currentcount = 0;
+
   customerAdded = false;
   customerData: any;
+
+  removeRowArr = [];
+  showDelIcon = false;
+  centerid: any;
+  userid: any;
+
 
   // @ViewChild("firstenquiry", { static: false }) firstenquiry: ElementRef;
 
   constructor(private _fb: FormBuilder, public dialog: MatDialog,
     private _modalcontroller: ModalController, private _router: Router,
-    private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService
+    private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
+    private _authservice: AuthenticationService,
   ) {
+
+    const currentUser = this._authservice.currentUserValue;
+    this.centerid = currentUser.center_id;
+    this.userid = currentUser.userid;
 
   }
 
@@ -43,7 +55,7 @@ export class EnquiryPage implements OnInit {
 
     this.submitForm = this._fb.group({
       customer: [null, Validators.required],
-      centerid: [1, Validators.required],
+      centerid: [this.centerid, Validators.required],
       remarks: [''],
 
       productarr: this._fb.array([])
@@ -54,6 +66,8 @@ export class EnquiryPage implements OnInit {
     this.addProduct();
     this.addProduct();
     this.addProduct();
+    this.addProduct();
+    this.addProduct();
 
     this._cdr.markForCheck();
 
@@ -61,22 +75,63 @@ export class EnquiryPage implements OnInit {
 
   initProduct() {
     return this._fb.group({
+      checkbox: [false],
+      product_code: [''],
       notes: ['', Validators.required],
-      quantity: ['1'],
+      quantity: [1, [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
     });
   }
 
+
+
+
   addProduct() {
-    this.currentcount = this.currentcount++;
     const control = <FormArray>this.submitForm.controls['productarr'];
-    const productCtrl = this.initProduct();
-    control.push(productCtrl);
+    control.push(this.initProduct());
+    this._cdr.markForCheck();
   }
 
 
-  onRemoveProduct(i) {
-    (<FormArray>this.submitForm.get('productarr')).removeAt(i);
+
+  onRemoveRows() {
+    this.removeRowArr.sort().reverse();
+    this.removeRowArr.forEach((idx) => {
+      this.onRemoveProduct(idx);
+    });
+
+    this.removeRowArr = [];
+  }
+
+  onRemoveProduct(idx) {
+    console.log('object ' + this.removeRowArr);
+    (<FormArray>this.submitForm.get('productarr')).removeAt(idx);
+  }
+
+
+  checkedRow(idx: number) {
+
+    const faControl =
+      (<FormArray>this.submitForm.controls['productarr']).at(idx);
+    faControl['controls'].checkbox;
+
+    if (!faControl.value.checkbox) {
+      this.removeRowArr.push(idx);
+    } else {
+      this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
+    }
+    this.delIconStatus();
+    console.log('object..' + this.removeRowArr);
+
+  }
+
+
+  delIconStatus() {
+    if (this.removeRowArr.length > 0) {
+      this.showDelIcon = true;
+    } else {
+      this.showDelIcon = false;
+    }
   }
 
 

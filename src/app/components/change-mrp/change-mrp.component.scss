@@ -1,0 +1,15 @@
+.element-edit-wrap {
+	display: grid;
+	align-content: start;
+	padding: 20px;
+}
+
+.save {
+	display: grid;
+	grid-template-columns: 1fr;
+	justify-items: center;
+}
+
+.element {
+	padding-left: 20px;
+}

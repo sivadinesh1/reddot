@@ -1,124 +1,129 @@
 <ion-content>
-	<div class="screen-header">
-		<div>
-			New Enquiry
+	<div class="content">
+		<div style="font-size: 20px; align-self: center;">
+			Add enquiry
 		</div>
 		<div>
-			<div [matMenuTriggerFor]="menu">
-				<span class="s-menu" [matMenuTriggerFor]="menu">
-					<img src="/assets/svg/grid-menu.svg" width="20px" height="20px" />
-				</span>
-			</div>
+			<button
+				appPreventDoubleClick
+				(throttledClick)="addProduct()"
+				[throttleTime]="500"
+				mat-raised-button
+				color="primary"
+			>
+				+ Add Item
+			</button>
 		</div>
 	</div>
+	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm">
+		<div class="enq-form">
+			<div class="actn-row">
+				<div style="padding-left: 7px; cursor: pointer;">
+					<img
+						src="/assets/images/svg/trash.svg"
+						width="18px"
+						height="18px"
+						*ngIf="showDelIcon"
+						(click)="onRemoveRows()"
+					/>
+					<span class="itms-lbl" *ngIf="showDelIcon">&nbsp;Delete</span>
+				</div>
+				<div class="itms-lbl">
+					{{productarr.controls.length || 0}} Items
+				</div>
+			</div>
 
-	<div class="enq-form">
-		<form (ngSubmit)="onSubmit()" [formGroup]="submitForm" class="e-form">
-			<div class="list-item">
-				<div formArrayName="productarr">
-					<div class="item-details" *ngFor="let product of productarr.controls; let idx = index">
+			<div formArrayName="productarr" class="list-block">
+				<div class="item-details" *ngFor="let product of productarr.controls; let idx = index">
+					<ng-container [formGroupName]="idx">
 						<div class="id">
-							{{ idx+1}})
+							<!-- {{ idx+1}}) -->
+							<mat-checkbox (click)="checkedRow(idx)" formControlName="checkbox"></mat-checkbox>
 						</div>
-						<ng-container [formGroupName]="idx">
-							<div>
-								<mat-form-field class="example-full-width">
-									<textarea
-										autofocus="*ngIf=idx === 1"
-										matInput
-										rows="1"
-										formControlName="notes"
-										placeholder="Item description"
-									></textarea>
-								</mat-form-field>
-							</div>
 
-							<div>
+						<div>
+							<mat-form-field class="example-full-width">
+								<mat-label>Item Code</mat-label>
 								<input
 									matInput
+									autofocus="*ngIf=idx === 1"
 									type="text"
-									class="styl-txt-box-small txt-pad"
-									formControlName="quantity"
-									(click)="openCurrencyPad(idx)"
-									appPreventCutCopyPaste
-									id="theItem"
-									readonly
+									formControlName="product_code"
 								/>
-							</div>
-							<div>
-								<img
-									src="/assets/images/svg/trash.svg"
-									width="24px"
-									height="24px"
-									(click)="onRemoveProduct(idx)"
-								/>
-							</div>
-						</ng-container>
-					</div>
-					<div class="add-item" (click)="addProduct()">
-						<span>
-							+ Add Item
-						</span>
-					</div>
-				</div>
-			</div>
-			<div class="o-form">
-				<div *ngIf="!customerAdded; else elseBlock" class="add-cust">
-					<img
-						src="/assets/images/svg/more.svg"
-						class="cursor"
-						(click)="showAllCustomersComp()"
-						width="24px"
-						height="24px"
-					/>
-					&nbsp;&nbsp;
-					<div class="add-cust-lbl cursor" (click)="showAllCustomersComp()">Add Customer</div>
+							</mat-form-field>
+						</div>
+						<div>
+							<mat-form-field class="example-full-width">
+								<input matInput formControlName="notes" placeholder="Item description" />
+							</mat-form-field>
+						</div>
+
+						<div>
+							<mat-form-field class="example-full-width">
+								<mat-label>Qty(max 1000)</mat-label>
+								<input matInput type="number" formControlName="quantity" />
+								<mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon>
+							</mat-form-field>
+						</div>
+					</ng-container>
 				</div>
 			</div>
 
-			<div class="actn-btn-sec">
-				<div class="add-remarks">
-					<mat-form-field class="remarks-txtarea">
-						<textarea matInput formControlName="remarks" placeholder="Remarks (Optional)"></textarea>
-					</mat-form-field>
-				</div>
-				<div class="add-items">
+			<div class="add-item">
+				<div *ngIf="!customerAdded; else elseBlock" style="align-self: center;">
 					<button
+						appPreventDoubleClick
+						(throttledClick)="showAllCustomersComp()"
+						[throttleTime]="500"
 						mat-raised-button
 						color="primary"
-						type="submit"
-						name="action"
-						class="cursor"
-						[disabled]="!submitForm.valid"
 					>
-						Add Enquiry
+						+ Add Customer
 					</button>
+
+					<!-- <span (click)="showAllCustomersComp()">
+						<img src="/assets/images/svg/more.svg" class="cursor" width="24px" height="24px" />
+					</span>
+
+					&nbsp;&nbsp;
+					<span (click)="showAllCustomersComp()" style="align-self: center;" class="cursor"
+						>Add Customer</span
+					> -->
+				</div>
+
+				<div>
+					<mat-form-field class="example-full-width">
+						<mat-label>Remarks (Optional)</mat-label>
+						<input matInput type="text" formControlName="remarks" />
+					</mat-form-field>
 				</div>
 			</div>
-		</form>
-	</div>
+
+			<div class="submit">
+				<button
+					mat-raised-button
+					color="primary"
+					type="submit"
+					name="action"
+					class="cursor"
+					[disabled]="!submitForm.valid"
+				>
+					Add Enquiry
+				</button>
+			</div>
+		</div>
+	</form>
 </ion-content>
 
-<mat-menu #menu="matMenu">
-	<button mat-menu-item (click)="openEnquiry()" style="padding-right: 16px; ">
-		<span style="padding-right: 16px; ">
-			<img src="../../assets/svg/enquiry.svg" width="24px" height="24px" style="vertical-align: middle;" />
-		</span>
-		<span>Order Queue</span>
-	</button>
-	<button mat-menu-item (click)="openBackOrder()">
-		<span style="padding-right: 16px; ">
-			<img src="../../assets/svg/backorder.svg" width="24px" height="24px" style="vertical-align: middle;" />
-		</span>
-		<span>Back Order</span>
-	</button>
-	<button mat-menu-item>
-		<span style="padding-right: 16px; ">
-			<img src="../../assets/svg/logout.svg" width="24px" height="24px" style="vertical-align: middle;" />
-		</span>
-
-		<span>Log Out</span>
-	</button>
-</mat-menu>
-
-<ng-template #elseBlock> {{customerData.name}} </ng-template>
+<ng-template #elseBlock>
+	<div class="elseblock">
+		<div style="font-size: 12px; color: #797979;">
+			Customer Name &nbsp;&nbsp;<span
+				style="font-size: 12px; color: rgb(13, 13, 190);"
+				(click)="showAllCustomersComp()"
+				>[Change]</span
+			>
+		</div>
+		{{customerData.name}}
+	</div>
+</ng-template>

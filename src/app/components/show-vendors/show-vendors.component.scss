@@ -19,10 +19,5 @@
 .show-vendor-wrap {
 	display: grid;
 	padding: 10px;
-}
-
-.row:hover {
-	background-color: #bebdc8;
-
-	opacity: 1;
+	overflow-y: auto;
 }

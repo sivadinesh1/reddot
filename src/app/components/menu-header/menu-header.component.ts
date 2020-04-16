@@ -12,9 +12,12 @@ export class MenuHeaderComponent implements OnInit {
 
 
   userdata: any;
+  center_id: any;
 
-
-  constructor(private _authservice: AuthenticationService, private _router: Router) { }
+  constructor(private _authservice: AuthenticationService, private _router: Router) {
+    const currentUser = this._authservice.currentUserValue;
+    this.center_id = currentUser.center_id;
+  }
 
   ngOnInit() {
 
@@ -33,6 +36,27 @@ export class MenuHeaderComponent implements OnInit {
   async logout() {
     await this._authservice.logOut();
     this._router.navigateByUrl('');
+  }
+
+
+  viewProduct() {
+    this._router.navigate([`/home/view-products`]);
+  }
+
+  viewVendor() {
+    this._router.navigate([`/home/view-vendors`]);
+  }
+
+  viewCustomer() {
+    this._router.navigate([`/home/view-customers`]);
+  }
+
+  editCenter() {
+    this._router.navigate([`/home/center/edit`, this.center_id]);
+  }
+
+  openBackOrder() {
+    this._router.navigateByUrl('/home/enquiry/back-order');
   }
 
 }

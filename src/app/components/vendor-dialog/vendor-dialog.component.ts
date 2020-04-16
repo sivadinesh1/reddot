@@ -1,0 +1,144 @@
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthenticationService } from 'src/app/services/authentication.service';
+
+import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
+
+import { CommonApiService } from 'src/app/services/common-api.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Vendor } from 'src/app/models/Vendor';
+import { LoadingService } from '../loading/loading.service';
+import { patternValidator } from 'src/app/util/validators/pattern-validator';
+
+import { GSTN_REGEX, EMAIL_REGEX, PINCODE_REGEX, country } from "../../util/helper/patterns";
+import { PhoneValidator } from 'src/app/util/validators/phone.validator';
+
+
+
+@Component({
+  selector: 'app-vendor-dialog',
+  templateUrl: './vendor-dialog.component.html',
+  styleUrls: ['./vendor-dialog.component.scss'],
+  providers: [
+    LoadingService
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class VendorDialogComponent implements OnInit {
+
+  center_id: any;
+  vendor_id: any;
+  resultList: any;
+  submitForm: any;
+
+  statesdata: any;
+  isLinear = true;
+
+  vendor: Vendor;
+
+
+
+  constructor(private _cdr: ChangeDetectorRef, private _router: Router,
+    private _formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) vendor: Vendor,
+    private dialogRef: MatDialogRef<VendorDialogComponent>,
+    private _route: ActivatedRoute, private _authservice: AuthenticationService,
+    private _loadingService: LoadingService,
+    private _commonApiService: CommonApiService) {
+    const currentUser = this._authservice.currentUserValue;
+    this.center_id = currentUser.center_id;
+
+    this.vendor = vendor;
+
+
+    this.submitForm = this._formBuilder.group({
+      formArray: this._formBuilder.array([
+        this._formBuilder.group({
+          vendor_id: [this.vendor.id],
+          center_id: [this.center_id],
+          name: [this.vendor.name, Validators.required],
+          address1: [this.vendor.address1],
+          address2: [this.vendor.address2],
+          address3: [this.vendor.address3],
+
+          district: [this.vendor.district],
+          state_id: [this.vendor.state_id, Validators.required],
+          pin: [this.vendor.pin, [patternValidator(PINCODE_REGEX)]],
+        }),
+        this._formBuilder.group({
+          gst: [this.vendor.gst, [patternValidator(GSTN_REGEX)]],
+
+          phone: [this.vendor.phone, Validators.compose([
+            Validators.required, PhoneValidator.invalidCountryPhone(country)
+          ])],
+
+          mobile: [this.vendor.mobile, Validators.compose([
+            Validators.required, PhoneValidator.invalidCountryPhone(country)
+          ])],
+
+          mobile2: [this.vendor.mobile2, Validators.compose([
+            Validators.required, PhoneValidator.invalidCountryPhone(country)
+          ])],
+
+          whatsapp: [this.vendor.whatsapp, Validators.compose([
+            Validators.required, PhoneValidator.invalidCountryPhone(country)
+          ])],
+
+          email: [this.vendor.email, [patternValidator(EMAIL_REGEX)]],
+        }),
+
+
+
+      ])
+    });
+
+
+    this._commonApiService.getStates().subscribe((data: any) => {
+      this.statesdata = data;
+    });
+
+  }
+
+  ngOnInit() {
+
+
+  }
+
+  /** Returns a FormArray with the name 'formArray'. */
+  get formArray(): AbstractControl | null { return this.submitForm.get('formArray'); }
+
+
+  submit() {
+    const changes = this.submitForm.value;
+    const updateVendor$ = this._commonApiService.updateVendor(this.vendor.id, changes);
+
+    this._loadingService.showLoaderUntilCompleted(updateVendor$)
+      .subscribe((data: any) => {
+        console.log('object.. vendor updated ..')
+        this.dialogRef.close(data);
+      });
+
+    // this._commonApiService.updateVendor(this.vendor.id, changes).subscribe((data: any) => {
+    //   console.log('object.. vendor updated ..')
+    //   this.dialogRef.close(data);
+    // });
+
+
+  }
+
+  searchVendors() {
+
+    this._router.navigate([`/home/view-vendors`]);
+  }
+
+  addVendor() {
+    this._router.navigate([`/home/vendor/add`]);
+  }
+
+  close() {
+    this.dialogRef.close();
+  }
+
+}
+
+// dnd
+//   (this.submitForm.get('formArray')).get([0]).patchValue({ 'name': this.resultList.name });

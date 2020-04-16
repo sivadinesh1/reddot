@@ -8,17 +8,18 @@ const routes: Routes = [
   {
     path: '',
     component: HomePage, children: [
-      {
-        path: 'admin',
-        loadChildren: () => import('../admin/admin/admin.module').then(m => m.AdminPageModule)
-      },
+
       {
         path: 'enquiry',
         loadChildren: () => import('../enquiry/enquiry.module').then(m => m.EnquiryPageModule)
       },
       {
-        path: 'purchase',
+        path: 'purchase/:purchaseid',
         loadChildren: () => import('../purchase/purchase.module').then(m => m.PurchasePageModule)
+      },
+      {
+        path: 'search-purchase',
+        loadChildren: () => import('../purchase/search-purchase/search-purchase.module').then(m => m.SearchPurchasePageModule)
       },
       {
         path: 'sales/:enqid',
@@ -60,7 +61,7 @@ const routes: Routes = [
       },
 
       {
-        path: 'product/edit/:center_id/:product_id',
+        path: 'product/edit/:centerid/:productid',
         loadChildren: () => import('../admin/product/edit-product/edit-product.module').then(m => m.EditProductPageModule)
       },
 
@@ -70,10 +71,7 @@ const routes: Routes = [
         loadChildren: () => import('../admin/vendor/view-vendors/view-vendors.module').then(m => m.ViewVendorsPageModule)
       },
 
-      {
-        path: 'vendor/edit/:center_id/:vendor_id',
-        loadChildren: () => import('../admin/vendor/edit-vendor/edit-vendor.module').then(m => m.EditVendorPageModule)
-      },
+
 
       {
         path: 'vendor/add',
@@ -100,6 +98,15 @@ const routes: Routes = [
       {
         path: 'center/edit/:center_id',
         loadChildren: () => import('../admin/center/edit-center/edit-center.module').then(m => m.EditCenterPageModule)
+      },
+      // accounts
+      {
+        path: 'accounts/accounts-dash',
+        loadChildren: () => import('../accounts/accounts-dash/accounts-dash.module').then(m => m.AccountsDashPageModule)
+      },
+      {
+        path: 'accounts/accounts-receivable',
+        loadChildren: () => import('../accounts/accounts-receivable/accounts-receivable.module').then(m => m.AccountsReceivablePageModule)
       },
 
     ]

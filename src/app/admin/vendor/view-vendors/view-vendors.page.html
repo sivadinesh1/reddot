@@ -1,36 +1,30 @@
 <ion-content>
-	<div class="screen-header">
-		<div>
-			&nbsp;
-		</div>
-
-		<div (click)="addVendor()">
-			+ Add Vendor
-		</div>
-
-		<div [matMenuTriggerFor]="childComponentMenu?.menu">
-			<span class="s-menu">
-				<img src="/assets/svg/grid-menu.svg" width="20px" height="20px" />
-			</span>
-		</div>
-	</div>
-
 	<div class="content">
-		<div class="header">List of Vendors</div>
-		<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
-			<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="editVendor(item)">
-				<div class="item1 ">{{ idx + 1 }}</div>
+		<app-messages></app-messages>
+		<div class="header">
+			<div>
+				<div>
+					List of Vendors
+				</div>
+				<div style="font-size: 12px; color: #797979;">
+					{{(vendors$| async)?.length }} Records
+				</div>
+			</div>
+			<div><span (click)="addVendor()" class="cursor"> + Add Vendors</span></div>
+		</div>
+		<ng-container
+			*ngFor="let item of (vendors$ | async); 
+		let idx = index; "
+		>
+			<div class="list-item row-color" (click)="editVendor(item)">
 				<div class="item2">
 					<div class="item21">{{ item.name }}</div>
 				</div>
 				<div class="item3">
 					<div class="item31">{{ item.address1 }}</div>
 					<div class="item31">{{ item.address2 || 'N/A' }}</div>
-					<div class="item31">{{ item.description || 'N/A' }}</div>
 				</div>
 			</div>
 		</ng-container>
 	</div>
 </ion-content>
-
-<app-admin-menu></app-admin-menu>

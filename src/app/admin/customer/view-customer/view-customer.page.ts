@@ -3,7 +3,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { IonSearchbar } from '@ionic/angular';
-import { AdminMenuComponent } from 'src/app/components/admin-menu/admin-menu.component';
+
 
 @Component({
   selector: 'app-view-customer',
@@ -18,7 +18,7 @@ export class ViewCustomerPage implements OnInit {
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
-  @ViewChild(AdminMenuComponent, { static: true }) childComponentMenu: AdminMenuComponent;
+
 
   constructor(private _authservice: AuthenticationService, private _cdr: ChangeDetectorRef,
     private _commonApiService: CommonApiService,

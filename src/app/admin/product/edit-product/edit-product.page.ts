@@ -3,6 +3,9 @@ import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/fo
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { patternValidator } from 'src/app/util/validators/pattern-validator';
+import { HSNCODE_REGEX, DISC_REGEX } from 'src/app/util/helper/patterns';
 
 @Component({
   selector: 'app-edit-product',
@@ -13,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class EditProductPage implements OnInit {
   isLinear = true;
   center_id: any;
-  vendors: any;
+  vendors$: Observable<any>;
 
   submitForm: FormGroup;
 
@@ -22,6 +25,7 @@ export class EditProductPage implements OnInit {
   product_id: any;
 
   loading = false;
+  currentStep: any;
 
   uom = [
     { key: 'Nos', viewValue: 'Nos' },
@@ -33,23 +37,24 @@ export class EditProductPage implements OnInit {
     private _route: ActivatedRoute, private _cdr: ChangeDetectorRef,
     private _commonApiService: CommonApiService,
     private _authservice: AuthenticationService) {
+    this.currentStep = 0;
 
     this._route.params.subscribe(params => {
-      this.product_id = params["product_id"];
-    });
+      this.center_id = params['centerid'];
+      this.product_id = params['productid'];
 
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
-
-
-    this._commonApiService.getAllActiveVendors(this.center_id).subscribe((data) => {
-      this.vendors = data;
       this._cdr.markForCheck();
     });
 
 
+    this.vendors$ = this._commonApiService.getAllActiveVendors(_route.snapshot.params.centerid);
 
-    this._commonApiService.viewProductInfo(this.center_id, this.product_id).subscribe((data) => {
+    this._cdr.markForCheck();
+
+
+
+
+    this._commonApiService.viewProductInfo(_route.snapshot.params.centerid, _route.snapshot.params.productid).subscribe((data) => {
       this.productinfo = data[0];
 
 
@@ -58,12 +63,11 @@ export class EditProductPage implements OnInit {
       this._cdr.markForCheck();
     });
 
-
     this.submitForm = this._formBuilder.group({
       formArray: this._formBuilder.array([
         this._formBuilder.group({
-          product_id: [this.product_id],
-          center_id: [this.center_id],
+          product_id: _route.snapshot.params.productid,
+          center_id: _route.snapshot.params.centerid,
           product_code: [null, Validators.required],
           description: [null, Validators.required],
           vendorid: [null, Validators.required],
@@ -72,7 +76,7 @@ export class EditProductPage implements OnInit {
         this._formBuilder.group({
           unit: [null, Validators.required],
           packetsize: [null, Validators.required],
-          hsncode: [null, Validators.required],
+          hsncode: ['', [patternValidator(HSNCODE_REGEX)]],
           taxrate: [null, Validators.required],
           minqty: [null, Validators.required],
         }),
@@ -82,7 +86,7 @@ export class EditProductPage implements OnInit {
           mrp: [null, Validators.required],
           purchaseprice: [null, Validators.required],
           salesprice: [null, Validators.required],
-          maxdiscount: [null, Validators.required],
+          maxdiscount: ['', [patternValidator(DISC_REGEX)]],
 
           currentstock: [null],
           rackno: [null],
@@ -146,7 +150,11 @@ export class EditProductPage implements OnInit {
 
     this._commonApiService.updateProduct(this.submitForm.value).subscribe((data: any) => {
       console.log('object... update successful');
-      //  this._router.navigate([`/home/view-product`, this.center_id, this.product_code]);
+
+      if (data.body.result === 'success') {
+        this.searchProducts();
+      }
+
     });
 
 

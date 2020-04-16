@@ -15,36 +15,46 @@
 
 	<div class="container">
 		<div class="cust-header" *ngIf="enqDetailsOrig">
-			<div class="cust-lbl">Customer:</div>
 			<div>
-				{{enqDetailsOrig[0].name}}
+				<div class="cust-lbl">Customer:</div>
+				<div>
+					<div>{{enqDetailsOrig[0].name}}</div>
+					<div>{{enqDetailsOrig[0].address1}}</div>
+					<div>{{enqDetailsOrig[0].address2}}</div>
+					<div>{{enqDetailsOrig[0].district}}</div>
+				</div>
+			</div>
+			<div>
+				<div class="cust-lbl">Remarks</div>
+				<div>{{enqDetailsOrig[0].remarks}}</div>
 			</div>
 		</div>
 		<div class="process-enq-wrap">
 			<div class="process-prep-enq-heading">
 				<div class="c-pad-mini">#</div>
 				<div class="c-pad-mini">Prod Info</div>
+				<div class="c-pad-mini">Rack#</div>
 				<div class="c-pad-mini">Alot. Qty</div>
 				<div class="c-pad-mini">Notes</div>
 				<div class="c-pad-mini">Req. Qty</div>
+				<div class="c-pad-mini">&nbsp;</div>
 			</div>
 			<div class="list-items">
-				<div
-					*ngFor="let item of this.productArr; let idx = index;
-					let idx = index; let isOdd = odd; let isEven = even;"
-					(click)="onClick(item)"
-				>
-					<div class="process-enq-list" [class.odd]="isOdd" [class.even]="isEven">
+				<div *ngFor="let item of this.productArr; let idx = index;" (click)="onClick(item)">
+					<div class="process-enq-list">
 						<div>
 							<div class="c-pad">
 								{{idx+1}}
 							</div>
 						</div>
 						<div>
-							<div *ngIf="item.product_code" class="pdetails ">
+							<div *ngIf="item.product_code" class="pdetails">
 								<div class="pcode">
 									{{item.product_code}}
-									<span class="avlstock">Stock: {{item.available_stock}}</span>
+									<span class="avlstock">Stock: {{item.available_stock}}</span>&nbsp;&nbsp;&nbsp;
+									<span class="" *ngIf="item.product_code" (click)="showAddProductComp(idx)">
+										<span style="font-size: 12px; color: rgb(230, 61, 10);">Edit</span>
+									</span>
 								</div>
 								<div class="pdesc">{{item.product_desc}}</div>
 							</div>
@@ -56,10 +66,21 @@
 								</div>
 							</div>
 						</div>
+						<div style="font-size: 14px;">{{item.rackno}}</div>
 
-						<div (click)="openCurrencyPad(idx)" class="styl-txt-box-small txt-pad">
-							{{item.giveqty}}
+						<div>
+							<mat-form-field class="example-full-width">
+								<input matInput type="number" value="{{item.giveqty}}" readonly />
+								<mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon>
+							</mat-form-field>
+							<!-- <span>{{item.giveqty}}</span> -->
 						</div>
+
+						<!-- <div (click)="openCurrencyPad(idx)" class="styl-txt-box-small txt-pad">
+							<span><input matInput type="number" formControlName="quantity" /></span>
+							<span>{{item.giveqty}}</span>
+							<span> <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon></span>
+						</div> -->
 
 						<div>
 							<div class="c-pad">
@@ -67,16 +88,23 @@
 							</div>
 						</div>
 
-						<div [class.oddDark]="isOdd" [class.evenDark]="isEven">
+						<div>
 							<div class="c-pad">
 								{{item.askqty}}
 							</div>
+						</div>
+						<div style="justify-self: center; align-self: center;">
+							<mat-checkbox
+								[checked]="item.processed === 'YS'? true : false"
+								(click)="checkedRow(idx)"
+							></mat-checkbox>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="save-sec">
-				<ion-button type="submit" (click)="moveToSale()">Ready for Invoice</ion-button>
+				<ion-button type="submit" fill="outline" (click)="presentAlertConfirm()">Ready for Invoice</ion-button>
+				<ion-button type="button" (click)="save()">Save Draft</ion-button>
 			</div>
 		</div>
 	</div>
@@ -89,8 +117,8 @@
 </ion-content>
 
 <mat-menu #menu="matMenu">
-	<button mat-menu-item (click)="openEnquiry()" style="padding-right: 16px; ">
-		<span style="padding-right: 16px; ">
+	<button mat-menu-item (click)="openEnquiry()" style="padding-right: 16px;">
+		<span style="padding-right: 16px;">
 			<img src="../../assets/svg/enquiry.svg" width="24px" height="24px" style="vertical-align: middle;" />
 		</span>
 		<span>Order Queue</span>
@@ -100,7 +128,7 @@
 		<span>check Settings</span>
 	</button>
 	<button mat-menu-item>
-		<span style="padding-right: 16px; ">
+		<span style="padding-right: 16px;">
 			<img src="../../assets/svg/logout.svg" width="24px" height="24px" style="vertical-align: middle;" />
 		</span>
 

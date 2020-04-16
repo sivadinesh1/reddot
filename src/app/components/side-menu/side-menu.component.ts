@@ -55,6 +55,11 @@ export class SideMenuComponent implements OnInit {
     this._router.navigateByUrl(`/home/purchase`);
   }
 
+  goSearchPurchaseScreen() {
+    this.selectedMenu = 'purchase';
+    this._router.navigateByUrl(`/home/search-purchase`);
+  }
+
   goSalesScreen() {
     this.selectedMenu = 'sales';
     this._router.navigateByUrl(`/home/sales/0`);
@@ -62,11 +67,15 @@ export class SideMenuComponent implements OnInit {
 
   goEnquiryScreen() {
     this.selectedMenu = 'enquiry';
-    this._router.navigateByUrl(`/home/enquiry`);
+    this._router.navigateByUrl(`/home/enquiry/open-enquiry`);
   }
 
   goOpenEquiries() {
     this._router.navigateByUrl(`/home/enquiry/open-enquiry`);
+  }
+
+  goAccountsScreen() {
+    this._router.navigateByUrl(`/home/accounts/accounts-dash`);
   }
 
 }

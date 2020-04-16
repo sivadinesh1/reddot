@@ -32,6 +32,13 @@
 	}
 }
 
+.tax-edit-modal {
+	.modal-wrapper {
+		height: 210px;
+		width: 40%;
+	}
+}
+
 .vendor-comp-styl {
 	.modal-wrapper {
 		width: 400px;
@@ -105,4 +112,30 @@
 
 .cursor {
 	cursor: pointer;
+}
+
+button {
+	cursor: pointer;
+}
+
+.row-color {
+	background: rgb(241, 241, 241);
+}
+.row-color:nth-of-type(even) {
+	background: rgb(226, 226, 226);
+}
+.row-color:hover {
+	background: rgb(195, 194, 194);
+	cursor: pointer;
+}
+
+.row-color-nohover {
+	background: rgb(241, 241, 241);
+}
+.row-color-nohover:nth-of-type(even) {
+	background: rgb(226, 226, 226);
+}
+
+.error {
+	color: rgb(156, 0, 0);
 }

@@ -23,8 +23,8 @@
 		<div class="col">&nbsp;</div>
 	</div>
 	<div class="row2">
-		<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
-			<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="addProduct(item)">
+		<ng-container *ngFor="let item of resultList; let idx = index">
+			<div class="list-item row-color" (click)="addProduct(item)">
 				<div class="item1 ">{{ idx + 1 }}</div>
 				<div class="item2">
 					<div class="item21">{{ item.product_code }}</div>

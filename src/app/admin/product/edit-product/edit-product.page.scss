@@ -12,8 +12,12 @@
 	margin: 0 auto;
 }
 
-.prod-info {
+.prod-info,
+.general-info,
+.addl-info {
 	display: grid;
+	grid-template-columns: auto auto auto;
+	grid-gap: 10px;
 }
 
 .mat-width-ext {
@@ -22,16 +26,20 @@
 
 .screen-header {
 	display: flex;
-	margin-left: 80px;
-	padding: 8px;
+
+	padding-top: 30px;
 	font-size: 16px;
 	font-weight: 500;
 	color: #222222;
-	background-color: rgb(250, 250, 250);
-	justify-content: space-between;
+
+	// justify-content: space-between;
 }
 
 .gap {
 	padding: 0px 10px;
 	cursor: pointer;
+}
+
+.addbtn {
+	margin-left: auto;
 }

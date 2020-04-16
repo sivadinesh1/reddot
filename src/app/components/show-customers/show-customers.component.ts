@@ -45,11 +45,14 @@ export class ShowCustomersComponent implements OnInit {
   openDialog(searchstring): void {
 
 
+
     if (searchstring.length > 2) {
+
 
       this._commonApiService.getCustomerInfo('1', searchstring).subscribe(
         data => {
           this.resultList = data;
+
           console.log('ABCD >> ' + JSON.stringify(this.resultList));
           if (this.resultList.length === 0) {
 

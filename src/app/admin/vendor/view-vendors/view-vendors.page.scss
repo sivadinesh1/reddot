@@ -1,14 +1,3 @@
-.screen-header {
-	display: flex;
-	margin-left: 80px;
-	padding: 8px;
-	font-size: 16px;
-	font-weight: 500;
-	color: #222222;
-	background-color: rgb(250, 250, 250);
-	justify-content: space-between;
-}
-
 .content {
 	display: grid;
 	width: 80%;
@@ -17,7 +6,7 @@
 
 .list-item {
 	display: grid;
-	grid-template-columns: 60px 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
 }
 
 .item1,
@@ -32,7 +21,9 @@
 }
 
 .header {
-	padding: 10px;
+	display: flex;
+	justify-content: space-between;
+	padding: 20px 10px 10px 10px;
 	font-size: 20px;
 	color: #222222;
 }

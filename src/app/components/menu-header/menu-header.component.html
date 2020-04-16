@@ -23,7 +23,7 @@
 						src="../../assets/svg/account.svg"
 						width="28px"
 						height="28px"
-						class="img"
+						class="img cursor"
 						[matMenuTriggerFor]="menu"
 					/>
 				</div>
@@ -37,12 +37,19 @@
 		<mat-icon>person</mat-icon>
 		<span>Profile</span>
 	</button>
-	<button mat-menu-item (click)="goAdmin()">
+	<button mat-menu-item [matMenuTriggerFor]="admin">
+		<span style="padding-right: 16px; vertical-align: middle;">
+			<img src="../../assets/svg/manager.svg" width="24px" height="24px" style="vertical-align: middle;" />
+		</span>
+		Admin
+	</button>
+
+	<!-- <button mat-menu-item (click)="goAdmin()">
 		<span style="padding-right: 16px; vertical-align: middle;">
 			<img src="../../assets/svg/manager.svg" width="24px" height="24px" style="vertical-align: middle;" />
 		</span>
 		<span>Admin</span>
-	</button>
+	</button> -->
 	<button mat-menu-item>
 		<mat-icon>settings</mat-icon>
 		<span>Settings</span>
@@ -53,5 +60,26 @@
 		</span>
 
 		<span>Log Out</span>
+	</button>
+</mat-menu>
+
+<mat-menu #admin="matMenu">
+	<button mat-menu-item (click)="viewProduct()" style="padding-right: 16px; ">
+		<span>Product</span>
+	</button>
+	<button mat-menu-item (click)="viewVendor()">
+		<span>Vendor</span>
+	</button>
+
+	<button mat-menu-item (click)="viewCustomer()">
+		<span>Customers</span>
+	</button>
+
+	<button mat-menu-item (click)="editCenter()">
+		<span>Centers</span>
+	</button>
+
+	<button mat-menu-item (click)="openBackOrder()">
+		<span>Back Orders</span>
 	</button>
 </mat-menu>

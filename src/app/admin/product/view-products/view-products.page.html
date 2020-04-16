@@ -1,25 +1,25 @@
 <ion-content>
-	<div class="screen-header">
-		<div>
-			&nbsp;
-		</div>
-
-		<div (click)="addProduct()">
-			+ Add Product
-		</div>
-
-		<div [matMenuTriggerFor]="childComponentMenu?.menu">
-			<span class="s-menu">
-				<img src="/assets/svg/grid-menu.svg" width="20px" height="20px" />
-			</span>
-		</div>
-	</div>
 	<div class="content">
-		<div class="heading">
-			Products List
-		</div>
-		<div class="found">
-			Found {{pcount}}
+		<div class="head">
+			<div>
+				<div class="heading">
+					Products List
+				</div>
+				<div class="found">
+					Found {{pcount | number:'2.'}}
+				</div>
+			</div>
+			<div class="add-btn">
+				<button
+					appPreventDoubleClick
+					(throttledClick)="addProduct()"
+					[throttleTime]="500"
+					mat-raised-button
+					color="primary"
+				>
+					+ Add Product
+				</button>
+			</div>
 		</div>
 
 		<div class="add-prod-wrap">
@@ -36,6 +36,16 @@
 					></ion-searchbar>
 				</div>
 			</div>
+			<div class="row-cnt">
+				<span *ngIf="resultList">
+					<span *ngIf="resultList.length >= 50" style="font-size: 14px; color: #797979;">
+						Matches: {{ resultList.length }} +
+					</span>
+					<span *ngIf="resultList.length < 50" style="font-size: 14px; color: #797979;">
+						Matches: {{ resultList.length }}
+					</span>
+				</span>
+			</div>
 			<div class="header-row">
 				<div class="col">#</div>
 				<div class="col">Product Info</div>
@@ -44,8 +54,8 @@
 				<div class="col">&nbsp;</div>
 			</div>
 			<div class="row2">
-				<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
-					<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="editProduct(item)">
+				<ng-container *ngFor="let item of resultList; let idx = index; ">
+					<div class="list-item row-color" (click)="editProduct(item)">
 						<div class="item1 ">{{ idx + 1 }}</div>
 						<div class="item2">
 							<div class="item21">{{ item.product_code }}</div>
@@ -56,19 +66,6 @@
 					</div>
 				</ng-container>
 			</div>
-			<div class="row3">
-				<div class="row-cnt">
-					<span *ngIf="resultList">
-						<span *ngIf="resultList.length >= 50"> Matches: {{ resultList.length }} + </span>
-						<span *ngIf="resultList.length < 50"> Matches: {{ resultList.length }} </span>
-					</span>
-				</div>
-				<div class="scan">
-					&nbsp;
-				</div>
-			</div>
 		</div>
 	</div>
 </ion-content>
-
-<app-admin-menu></app-admin-menu>

@@ -1,0 +1,133 @@
+<ion-content>
+	<app-loading></app-loading>
+	<div class="screen-header">
+		<div>
+			Edit Vendor
+		</div>
+		<div>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+		</div>
+	</div>
+
+	<div class="content">
+		<form [formGroup]="submitForm">
+			<mat-horizontal-stepper [linear]="isLinear" #stepper formArrayName="formArray">
+				<mat-step formGroupName="0" [stepControl]="formArray?.get([0])">
+					<ng-template matStepLabel>Fill Company Details</ng-template>
+					<div class="vendor-info">
+						<div class="name">
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Name</mat-label>
+								<input matInput placeholder="Name" readonly formControlName="name" required />
+								<mat-error>This field is required</mat-error>
+							</mat-form-field>
+						</div>
+						<div class="address1">
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Address Line 1</mat-label>
+								<input matInput placeholder="Address Line 1" formControlName="address1" />
+							</mat-form-field>
+						</div>
+						<div class="address2">
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Address Line 2</mat-label>
+								<input matInput placeholder="Address Line 2" formControlName="address2" />
+							</mat-form-field>
+						</div>
+						<div class="address3">
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Address Line 3</mat-label>
+								<input matInput placeholder="Address Line 3" formControlName="address3" />
+							</mat-form-field>
+						</div>
+
+						<div class="district">
+							<mat-form-field class="mat-width-ext">
+								<mat-label>District</mat-label>
+								<input matInput placeholder="District" formControlName="district" />
+							</mat-form-field>
+						</div>
+
+						<div class="state">
+							<mat-form-field class="mat-width-ext">
+								<mat-label>State</mat-label>
+								<mat-select formControlName="state_id" required>
+									<mat-option *ngFor="let item of statesdata" [value]="item.id">
+										{{ item.description }}
+									</mat-option>
+								</mat-select>
+							</mat-form-field>
+						</div>
+
+						<div class="pin">
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Pin</mat-label>
+								<input matInput placeholder="State" formControlName="pin" />
+								<mat-error>Missing or wrong format</mat-error>
+							</mat-form-field>
+						</div>
+					</div>
+
+					<div>
+						<button mat-button matStepperNext>Next</button>
+					</div>
+				</mat-step>
+
+				<mat-step formGroupName="1" [stepControl]="formArray?.get([1])">
+					<ng-template matStepLabel>Fill General Info</ng-template>
+					<div class="general-info">
+						<div>
+							<mat-form-field class="mat-width-ext">
+								<mat-label>GST</mat-label>
+								<input type="text" matInput formControlName="gst" placeholder="GST" />
+								<mat-error>Missing or wrong format</mat-error>
+							</mat-form-field>
+						</div>
+						<div>
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Phone</mat-label>
+								<input type="number" matInput formControlName="phone" placeholder="Phone" />
+								<mat-error>Missing or wrong format</mat-error>
+							</mat-form-field>
+						</div>
+						<div>
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Mobile 1</mat-label>
+								<input type="number" matInput formControlName="mobile" placeholder="Mobile 1" />
+								<mat-error>Missing or wrong format</mat-error>
+							</mat-form-field>
+						</div>
+
+						<div>
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Mobile 2</mat-label>
+								<input type="number" matInput formControlName="mobile2" placeholder="Mobile 2" />
+								<mat-error>Missing or wrong format</mat-error>
+							</mat-form-field>
+						</div>
+
+						<div>
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Whatsapp</mat-label>
+								<input type="number" matInput formControlName="whatsapp" placeholder="Whatsapp" />
+								<mat-error>Missing or wrong format</mat-error>
+							</mat-form-field>
+						</div>
+
+						<div>
+							<mat-form-field class="mat-width-ext">
+								<mat-label>Email</mat-label>
+								<input type="text" matInput formControlName="email" placeholder="Email" />
+								<mat-error>Missing or wrong format</mat-error>
+							</mat-form-field>
+						</div>
+					</div>
+					<div>
+						<button mat-button matStepperPrevious>Back</button>
+						<button mat-button (click)="submit()">Update Details</button>
+					</div>
+				</mat-step>
+			</mat-horizontal-stepper>
+		</form>
+	</div>
+</ion-content>

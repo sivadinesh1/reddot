@@ -4,7 +4,7 @@
 			<h2 class="auth-title">
 				Welcome!
 				<br />
-				Discover the new Ionic 4
+				One Cloud, Business Management Software
 			</h2>
 		</div>
 		<div class="right">
@@ -12,12 +12,10 @@
 				<ion-list class="inputs-list" lines="full">
 					<ion-item class="input-item">
 						<ion-input
-							type="text"
-							placeholder="Mobile Number"
+							type="number"
 							placeholder="Enter Mobile Number"
 							formControlName="phone"
 							clearInput
-							inputmode="number"
 						></ion-input>
 					</ion-item>
 
@@ -56,7 +54,10 @@
 						</ng-container>
 					</div>
 				</ion-list>
-				{{ responsemsg }}
+				<div class="error">
+					{{ responsemsg }}
+				</div>
+
 				<ion-button class="login-btn" type="submit" expand="block" [disabled]="!loginForm.valid"
 					>Log In</ion-button
 				>

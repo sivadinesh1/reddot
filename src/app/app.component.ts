@@ -3,7 +3,7 @@ import { Component, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { LoadingService } from './services/loading.service';
+
 import { NetworkService } from './services/network.service';
 import { AuthenticationService } from './services/authentication.service';
 import { Router } from '@angular/router';
@@ -31,7 +31,7 @@ export class AppComponent {
   constructor(
     private platform: Platform, private _cdr: ChangeDetectorRef,
     private splashScreen: SplashScreen, private _authservice: AuthenticationService,
-    private statusBar: StatusBar, private _loadingservice: LoadingService,
+    private statusBar: StatusBar,
     private networkService: NetworkService, private _router: Router,
   ) {
     this.initializeApp();
@@ -49,8 +49,8 @@ export class AppComponent {
         this.isConnected = connected;
         console.log('network value' + connected);
         if (!connected) {
-          this._loadingservice.presentToastWithOptions('Oops !!! Internet Connection Lost.', 'bottom', false, '');
-          this._loadingservice.confirm
+          // this._loadingservice.presentToastWithOptions('Oops !!! Internet Connection Lost.', 'bottom', false, '');
+          // this._loadingservice.confirm
           this.networkService.openNetworkSettings();
         }
 

@@ -1,0 +1,37 @@
+<div class="tax-edit-wrap">
+	<h4 style="text-align: center;">Change Tax(%) - {{ center_id }}</h4>
+
+	<form [formGroup]="submitForm">
+		<div class="tax">
+			<mat-form-field>
+				<mat-label>Tax(%)</mat-label>
+				<input type="number" matInput placeholder="Tax(%)" min="1" max="50" formControlName="tax" required />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+
+		<div class="save">
+			<div>
+				<button
+					mat-raised-button
+					color="primary"
+					(click)="applyOnce()"
+					style="font-size: 1rem; padding: 0px 20px;"
+				>
+					Apply Once
+				</button>
+			</div>
+
+			<div>
+				<button
+					mat-raised-button
+					color="primary"
+					(click)="permanentTaxChange()"
+					style="font-size: 1rem; padding: 0px 20px;"
+				>
+					Permanently Change
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
