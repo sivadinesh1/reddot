@@ -7,7 +7,15 @@ const routes: Routes = [
   {
     path: '',
     component: SalesPage
-  }
+  },
+  {
+    path: 'search-sales',
+    loadChildren: () => import('./search-sales/search-sales.module').then(m => m.SearchSalesPageModule)
+  },
+  {
+    path: 'search-sales',
+    loadChildren: () => import('./search-sales/search-sales.module').then( m => m.SearchSalesPageModule)
+  },
 ];
 
 @NgModule({

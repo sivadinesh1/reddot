@@ -1,4 +1,4 @@
-export class Purchase {
+export class Sales {
     id: number;
     center_id: number;
     vendor_id: number;

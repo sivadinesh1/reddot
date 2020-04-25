@@ -22,6 +22,10 @@ const routes: Routes = [
         loadChildren: () => import('../purchase/search-purchase/search-purchase.module').then(m => m.SearchPurchasePageModule)
       },
       {
+        path: 'search-sales',
+        loadChildren: () => import('../sales/search-sales/search-sales.module').then(m => m.SearchSalesPageModule)
+      },
+      {
         path: 'sales/:enqid',
         loadChildren: () => import('../sales/sales.module').then(m => m.SalesPageModule)
       },

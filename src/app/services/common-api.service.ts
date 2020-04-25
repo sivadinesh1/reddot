@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import * as FileSaver from 'file-saver';
-import { purchase } from '../models/purchase';
+import { Purchase } from '../models/Purchase';
+import { Customer } from '../models/Customer';
 import { Vendor } from '../models/Vendor';
 import { EnquiryDetail } from '../models/EnquiryDetail';
 
@@ -68,8 +69,8 @@ export class CommonApiService {
 
   }
 
-  getAllActiveCustomers(centerid) {
-    return this.httpClient.get(this.restApiUrl + '/api/all-active-customers/' + centerid);
+  getAllActiveCustomers(centerid): Observable<Customer[]> {
+    return this.httpClient.get<Customer[]>(this.restApiUrl + '/api/all-active-customers/' + centerid);
   }
 
 
@@ -230,10 +231,12 @@ export class CommonApiService {
   //   return this.httpClient.get(`${this.restApiUrl}/api/stock/search-purchase/${centerid}/${vendorid}/${status}/${fromdate}/${todate}`);
   // }
 
-  searchPurchases(centerid, vendorid, status, fromdate, todate): Observable<purchase[]> {
-    return this.httpClient.get<purchase[]>(`${this.restApiUrl}/api/stock/search-purchase/${centerid}/${vendorid}/${status}/${fromdate}/${todate}`);
+  searchPurchases(centerid, vendorid, status, fromdate, todate): Observable<Purchase[]> {
+    return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-purchase/${centerid}/${vendorid}/${status}/${fromdate}/${todate}`);
+  }
 
-
+  searchSales(centerid, customerid, status, fromdate, todate): Observable<Purchase[]> {
+    return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-sales/${centerid}/${customerid}/${status}/${fromdate}/${todate}`);
   }
 
 
@@ -246,8 +249,8 @@ export class CommonApiService {
   //     );
   // }
 
-  searchAllDraftPurchases(centerid): Observable<purchase[]> {
-    return this.httpClient.get<purchase[]>(`${this.restApiUrl}/api/stock/search-all-draft-purchase/${centerid}`)
+  searchAllDraftPurchases(centerid): Observable<Purchase[]> {
+    return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-all-draft-purchase/${centerid}`)
       .pipe(shareReplay());
 
   }

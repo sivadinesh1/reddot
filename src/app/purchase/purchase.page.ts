@@ -273,7 +273,7 @@ export class PurchasePage implements OnInit {
 
     let oldval = 0;
 
-    if (new NullToQuotePipe().transform(temp.id) !== '' && temp.status === 'D') {
+    if (new NullToQuotePipe().transform(temp.id) !== '' && this.editCompletedPurchase) {
       oldval = temp.qty;
     }
 

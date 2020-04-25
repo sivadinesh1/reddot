@@ -62,7 +62,8 @@ export class SideMenuComponent implements OnInit {
 
   goSalesScreen() {
     this.selectedMenu = 'sales';
-    this._router.navigateByUrl(`/home/sales/0`);
+    // this._router.navigateByUrl(`/home/sales/0`);
+    this._router.navigateByUrl(`/home/search-sales`);
   }
 
   goEnquiryScreen() {

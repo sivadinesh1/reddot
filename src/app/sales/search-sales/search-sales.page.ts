@@ -5,28 +5,28 @@ import * as moment from 'moment';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Purchase } from '../../models/Purchase';
-import { Vendor } from 'src/app/models/Vendor';
+import { Sales } from '../../models/Sales';
+import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
 
 
 @Component({
-  selector: 'app-search-purchase',
-  templateUrl: './search-purchase.page.html',
-  styleUrls: ['./search-purchase.page.scss'],
+  selector: 'app-search-sales',
+  templateUrl: './search-sales.page.html',
+  styleUrls: ['./search-sales.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchPurchasePage implements OnInit {
+export class SearchSalesPage implements OnInit {
 
-  purchases$: Observable<Purchase[]>;
-  vendor$: Observable<Vendor[]>;
+  sales$: Observable<Sales[]>;
+  customer$: Observable<Customer[]>;
 
   resultList: any;
-  vendorList: any;
+  customerList: any;
   center_id: any;
 
   statusFlag = 'D';
-  selectedVend = 'all';
+  selectedCust = 'all';
 
   today = new Date();
   submitForm: FormGroup;
@@ -62,10 +62,10 @@ export class SearchPurchasePage implements OnInit {
   }
 
   init() {
-    this.vendor$ = this._commonApiService.getAllActiveVendors(this.center_id);
+    this.customer$ = this._commonApiService.getAllActiveCustomers(this.center_id);
 
     this.submitForm = this._fb.group({
-      vendorid: new FormControl('all'),
+      customerid: new FormControl('all'),
       todate: [this.todate, Validators.required],
       fromdate: [this.fromdate, Validators.required],
       status: new FormControl('D'),
@@ -78,8 +78,8 @@ export class SearchPurchasePage implements OnInit {
 
 
   search() {
-    this.purchases$ = this._commonApiService
-      .searchPurchases(this.center_id, this.submitForm.value.vendorid,
+    this.sales$ = this._commonApiService
+      .searchSales(this.center_id, this.submitForm.value.customerid,
         this.submitForm.value.status,
         this.submitForm.value.fromdate,
         this.submitForm.value.todate,
@@ -88,20 +88,20 @@ export class SearchPurchasePage implements OnInit {
     this._cdr.markForCheck();
   }
 
-  goPurchaseEditScreen(item) {
-    this._router.navigateByUrl(`/home/purchase/${item.id}`);
+  goSalesEditScreen(item) {
+    this._router.navigateByUrl(`/home/sales/${item.id}`);
   }
 
-  goPurchaseAddScreen() {
-    this._router.navigateByUrl(`/home/purchase/0`);
+  goSalesAddScreen() {
+    this._router.navigateByUrl(`/home/sales/0`);
   }
 
   statusChange($event) {
     this.statusChange = $event.source.value;
   }
 
-  selectedVendor($event) {
-    this.selectedVend = $event.source.value;
+  selectedCustomer($event) {
+    this.selectedCust = $event.source.value;
   }
 
   toDateSelected($event) {
