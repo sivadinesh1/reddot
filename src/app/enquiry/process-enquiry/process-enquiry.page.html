@@ -1,15 +1,12 @@
+<!-- @format -->
+
 <ion-content>
 	<div class="screen-header">
 		<div>
 			<b>Enquiry #{{enqid}} > Order Processing</b>
 		</div>
 		<div>
-			<!-- <span (click)="openEnquiry()" class="s-menu">
-				New Enquiries
-			</span> -->
-			<span class="s-menu" [matMenuTriggerFor]="menu">
-				<img src="/assets/svg/grid-menu.svg" width="20px" height="20px" />
-			</span>
+			&nbsp;
 		</div>
 	</div>
 
@@ -27,6 +24,15 @@
 			<div>
 				<div class="cust-lbl">Remarks</div>
 				<div>{{enqDetailsOrig[0].remarks}}</div>
+				<div *ngIf="status === 'E'">
+					<span STYLE="color: #797979; font-size: 13px;">STATUS:</span>&nbsp;<span style="color: red;">Executed</span>
+				</div>
+				<div *ngIf="status === 'D'">
+					<span STYLE="color: #797979; font-size: 13px;">STATUS:</span>&nbsp;<span style="color: red;">Draft</span>
+				</div>
+				<div *ngIf="status === 'O'">
+					<span STYLE="color: #797979; font-size: 13px;">STATUS:</span>&nbsp;<span style="color: red;">New</span>
+				</div>
 			</div>
 		</div>
 		<div class="process-enq-wrap">
@@ -40,7 +46,7 @@
 				<div class="c-pad-mini">&nbsp;</div>
 			</div>
 			<div class="list-items">
-				<div *ngFor="let item of this.productArr; let idx = index;" (click)="onClick(item)">
+				<div *ngFor="let item of productArr; let idx = index;" (click)="onClick(item)">
 					<div class="process-enq-list">
 						<div>
 							<div class="c-pad">
@@ -60,9 +66,7 @@
 							</div>
 							<div *ngIf="!item.product_code" class="left-align c-pad">
 								<div class="" *ngIf="!item.product_code" (click)="showAddProductComp(idx)">
-									<div>
-										<img src="/assets/images/svg/more.svg" width="18px" height="18px" /> Item Code
-									</div>
+									<div><img src="/assets/images/svg/more.svg" width="18px" height="18px" /> Item Code</div>
 								</div>
 							</div>
 						</div>
@@ -71,7 +75,7 @@
 						<div>
 							<mat-form-field class="example-full-width">
 								<input matInput type="number" value="{{item.giveqty}}" readonly />
-								<mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon>
+								<mat-icon *ngIf="status !== 'E'" matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon>
 							</mat-form-field>
 							<!-- <span>{{item.giveqty}}</span> -->
 						</div>
@@ -95,6 +99,7 @@
 						</div>
 						<div style="justify-self: center; align-self: center;">
 							<mat-checkbox
+								*ngIf="status !== 'E'"
 								[checked]="item.processed === 'YS'? true : false"
 								(click)="checkedRow(idx)"
 							></mat-checkbox>
@@ -102,7 +107,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="save-sec">
+			<div class="save-sec" *ngIf="status !== 'E'">
 				<ion-button type="submit" fill="outline" (click)="presentAlertConfirm()">Ready for Invoice</ion-button>
 				<ion-button type="button" (click)="save()">Save Draft</ion-button>
 			</div>
@@ -115,23 +120,3 @@
 		</ion-fab-button>
 	</ion-fab>
 </ion-content>
-
-<mat-menu #menu="matMenu">
-	<button mat-menu-item (click)="openEnquiry()" style="padding-right: 16px;">
-		<span style="padding-right: 16px;">
-			<img src="../../assets/svg/enquiry.svg" width="24px" height="24px" style="vertical-align: middle;" />
-		</span>
-		<span>Order Queue</span>
-	</button>
-	<button mat-menu-item>
-		<mat-icon>settings</mat-icon>
-		<span>check Settings</span>
-	</button>
-	<button mat-menu-item>
-		<span style="padding-right: 16px;">
-			<img src="../../assets/svg/logout.svg" width="24px" height="24px" style="vertical-align: middle;" />
-		</span>
-
-		<span>Log Out</span>
-	</button>
-</mat-menu>

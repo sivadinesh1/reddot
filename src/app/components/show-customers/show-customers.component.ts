@@ -15,6 +15,7 @@ export class ShowCustomersComponent implements OnInit {
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
+
   constructor(private _commonApiService: CommonApiService,
     private _modalcontroller: ModalController,
     private _cdr: ChangeDetectorRef) { }

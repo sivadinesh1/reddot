@@ -7,9 +7,11 @@ import { map, shareReplay } from 'rxjs/operators';
 
 import * as FileSaver from 'file-saver';
 import { Purchase } from '../models/Purchase';
+import { Sales } from '../models/Sales';
 import { Customer } from '../models/Customer';
 import { Vendor } from '../models/Vendor';
 import { EnquiryDetail } from '../models/EnquiryDetail';
+import { Enquiry } from '../models/Enquiry';
 
 @Injectable({
   providedIn: 'root'
@@ -79,13 +81,8 @@ export class CommonApiService {
     return this.httpClient.get(this.restApiUrl + '/api/enquiry/get-enquiry-details/' + enqid);
   }
 
-  savePurchaseOrder(purchaseObj) {
-    return this.httpClient.post<any>(this.restApiUrl + '/api/insert-purchase-details/', purchaseObj, { observe: 'response' });
-  }
 
-  saveSaleOrder(saleObj) {
-    return this.httpClient.post<any>(this.restApiUrl + '/api/insert-sale-details/', saleObj, { observe: 'response' });
-  }
+
 
   saveEnquiry(enqObj) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/enquiry/insert-enquiry-details/', enqObj, { observe: 'response' });
@@ -143,6 +140,8 @@ export class CommonApiService {
   getCustomerData(enqid: string) {
     return this.httpClient.get(this.restApiUrl + '/api/enquiry/get-customer-data/' + enqid);
   }
+
+
 
 
   getEnquiredProductData(center_id, customer_id, enqid, invdt) {
@@ -235,8 +234,12 @@ export class CommonApiService {
     return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-purchase/${centerid}/${vendorid}/${status}/${fromdate}/${todate}`);
   }
 
-  searchSales(centerid, customerid, status, fromdate, todate): Observable<Purchase[]> {
-    return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-sales/${centerid}/${customerid}/${status}/${fromdate}/${todate}`);
+  searchSales(centerid, customerid, status, fromdate, todate): Observable<Sales[]> {
+    return this.httpClient.get<Sales[]>(`${this.restApiUrl}/api/stock/search-sales/${centerid}/${customerid}/${status}/${fromdate}/${todate}`);
+  }
+
+  searchEnquiries(centerid, customerid, status, fromdate, todate): Observable<Enquiry[]> {
+    return this.httpClient.get<Enquiry[]>(`${this.restApiUrl}/api/enquiry/search-enquiries/${centerid}/${customerid}/${status}/${fromdate}/${todate}`);
   }
 
 
@@ -256,6 +259,11 @@ export class CommonApiService {
   }
 
 
+  // Purchase Screen API's
+
+  savePurchaseOrder(purchaseObj) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/insert-purchase-details/', purchaseObj, { observe: 'response' });
+  }
 
   purchaseDetails(id) {
     return this.httpClient.get(`${this.restApiUrl}/api/stock/purchase-details/${id}`);
@@ -265,22 +273,53 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/stock/purchase-master/${id}`);
   }
 
+
   deletePurchaseDetails(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/stock/delete-purchase-details', submitForm, { observe: 'response' });
   }
 
-  updatePurchaseMaster(submitForm) {
-    return this.httpClient.post<any>(this.restApiUrl + '/api/stock/update-purchase-master', submitForm, { observe: 'response' });
+  deleteSalesDetails(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/sale/delete-sales-details', submitForm, { observe: 'response' });
   }
 
-  isProdExists(pCode) {
-    return this.httpClient.get(`${this.restApiUrl}/api/admin/prod-exists/${pCode}`);
-  }
+  // updatePurchaseMaster(submitForm) {
+  //   return this.httpClient.post<any>(this.restApiUrl + '/api/stock/update-purchase-master', submitForm, { observe: 'response' });
+  // }
 
   deletePurchaseData(id) {
 
     return this.httpClient.delete(`${this.restApiUrl}/api/stock/delete-purchase/${id}`);
   }
+
+
+  // Sale Screen API's
+
+  saveSaleOrder(saleObj) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/insert-sale-details/', saleObj, { observe: 'response' });
+  }
+
+
+  salesMasterData(id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/stock/sales-master/${id}`);
+  }
+
+  saleDetails(id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/stock/sale-details/${id}`);
+  }
+
+  deleteSaleDetails(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/stock/delete-sale-details', submitForm, { observe: 'response' });
+  }
+
+  // updateSaleMaster(submitForm) {
+  //   return this.httpClient.post<any>(this.restApiUrl + '/api/stock/update-sale-master', submitForm, { observe: 'response' });
+  // }
+
+  // end
+  isProdExists(pCode) {
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/prod-exists/${pCode}`);
+  }
+
 
   addAccountReceived(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/accounts/add-account-received', submitForm, { observe: 'response' });

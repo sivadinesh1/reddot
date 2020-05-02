@@ -1,4 +1,7 @@
+<!-- @format -->
+
 <ion-content>
+	<div class="top-header"><h4>Purchase Add/Edit</h4></div>
 	<div class="screen-header">
 		<div>
 			<div *ngIf="vendorselected" style="color: #797979; font-size: 12px;">Vendor Name</div>
@@ -12,13 +15,7 @@
 
 		<ng-template #showPlusVendor>
 			<div class="add-actn cursor">
-				<button
-					appPreventDoubleClick
-					(throttledClick)="showAllVendorsComp()"
-					[throttleTime]="2000"
-					mat-raised-button
-					color="primary"
-				>
+				<button appPreventDoubleClick (throttledClick)="showAllVendorsComp()" [throttleTime]="2000" mat-raised-button color="primary">
 					+ Add Vendor
 				</button>
 			</div>
@@ -42,36 +39,20 @@
 		<div class="purchase-wrap">
 			<div class="wrap">
 				<div class="acton-btns">
-					<img
-						class="cursor"
-						src="/assets/svg/trash.svg"
-						width="16px"
-						height="16px"
-						*ngIf="showDelIcon"
-						(click)="presentDeleteConfirm()"
-					/>
+					<img class="cursor" src="/assets/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
 					<span class="sub-menu cursor" *ngIf="showDelIcon" (click)="presentDeleteConfirm()">Delete</span>
 				</div>
 
 				<div class="acton-btns">
-					<img
-						class="cursor"
-						src="/assets/svg/edit.svg"
-						width="16px"
-						height="16px"
+					<img class="cursor" src="/assets/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editTax()" /><span
+						class="sub-menu cursor"
 						*ngIf="singleRowSelected"
 						(click)="editTax()"
-					/><span class="sub-menu cursor" *ngIf="singleRowSelected" (click)="editTax()">Tax</span>
+						>Tax</span
+					>
 				</div>
 				<div class="acton-btns">
-					<img
-						class="cursor"
-						src="/assets/svg/edit.svg"
-						width="16px"
-						height="16px"
-						*ngIf="singleRowSelected"
-						(click)="editMrp()"
-					/>
+					<img class="cursor" src="/assets/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editMrp()" />
 					<span class="sub-menu cursor" *ngIf="singleRowSelected" (click)="editMrp()">Mrp</span>
 				</div>
 
@@ -100,12 +81,7 @@
 
 					<ng-template #beginsetup>
 						<div class="empty-add">
-							<span
-								class="cursor"
-								appPreventDoubleClick
-								[throttleTime]="2000"
-								(throttledClick)="showAllVendorsComp()"
-							>
+							<span class="cursor" appPreventDoubleClick [throttleTime]="2000" (throttledClick)="showAllVendorsComp()">
 								+ Add Vendor
 							</span>
 						</div>
@@ -157,8 +133,7 @@
 									{{(item.tax_value) | number:'1.2-2'}}
 								</ng-container>
 								<ng-container *ngIf="!i_gst">
-									{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) |
-									number:'1.2-2'}}
+									{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) | number:'1.2-2'}}
 								</ng-container>
 							</div>
 						</div>
@@ -192,9 +167,7 @@
 			</div>
 
 			<div *ngIf="editCompletedPurchase">
-				<span class="error" style="font-size: 36px;"
-					>Warning! You are Overwriting already completed purchase.
-				</span>
+				<span class="error" style="font-size: 36px;">Warning! You are Overwriting already completed purchase. </span>
 			</div>
 
 			<div class="purchase-wrap1">
@@ -205,13 +178,7 @@
 						<div class="row">
 							<ion-item class="input-item" lines="none">
 								<mat-form-field class="mat-input-wrapper">
-									<input
-										matInput
-										placeholder="Invoice #"
-										type="text"
-										#invno
-										formControlName="invoiceno"
-									/>
+									<input matInput placeholder="Invoice #" type="text" #invno formControlName="invoiceno" />
 
 									<mat-error
 										*ngIf="(submitForm.get('invoiceno').hasError('required') || submitForm.get('invoiceno').hasError('patternInvalid'))  && submitForm.get('invoiceno').touched"
@@ -249,13 +216,7 @@
 						<div>
 							<ion-item class="input-item" lines="none">
 								<mat-form-field class="mat-input-wrapper">
-									<input
-										matInput
-										placeholder="Order #"
-										#orderno
-										type="text"
-										formControlName="orderno"
-									/>
+									<input matInput placeholder="Order #" #orderno type="text" formControlName="orderno" />
 
 									<mat-error
 										*ngIf="(submitForm.get('orderno').hasError('required') || submitForm.get('orderno').hasError('patternInvalid'))  && submitForm.get('orderno').touched"
@@ -360,9 +321,7 @@
 								<div class="item4 txt-right-align num-format-cell-style">
 									<mat-form-field class="example-full-width cursor">
 										<input matInput type="number" formControlName="transport_charges" />
-										<mat-icon matSuffix (click)="openNumberPad('transport_charges')"
-											>view_comfy</mat-icon
-										>
+										<mat-icon matSuffix (click)="openNumberPad('transport_charges')">view_comfy</mat-icon>
 									</mat-form-field>
 								</div>
 							</ion-item>
@@ -376,9 +335,7 @@
 								<div class="item4 txt-right-align num-format-cell-style">
 									<mat-form-field class="example-full-width cursor">
 										<input matInput type="number" formControlName="unloading_charges" />
-										<mat-icon matSuffix (click)="openNumberPad('unloading_charges')"
-											>view_comfy</mat-icon
-										>
+										<mat-icon matSuffix (click)="openNumberPad('unloading_charges')">view_comfy</mat-icon>
 									</mat-form-field>
 								</div>
 							</ion-item>
@@ -392,9 +349,7 @@
 								<div class="item4 txt-right-align num-format-cell-style">
 									<mat-form-field class="example-full-width cursor">
 										<input matInput type="number" formControlName="misc_charges" />
-										<mat-icon matSuffix (click)="openNumberPad('misc_charges')"
-											>view_comfy</mat-icon
-										>
+										<mat-icon matSuffix (click)="openNumberPad('misc_charges')">view_comfy</mat-icon>
 									</mat-form-field>
 								</div>
 							</ion-item>

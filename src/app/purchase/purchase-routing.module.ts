@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { PurchasePage } from './purchase.page';
-import { ApiDataResolverService } from '../services/api-data-resolver.service';
+import { PurchaseDataResolverService } from '../services/purchase-data-resolver.service';
 
 const routes: Routes = [
   {
     path: '',
     component: PurchasePage,
-    resolve: { rawpurchasedata: ApiDataResolverService }
+    resolve: { rawpurchasedata: PurchaseDataResolverService }
   },
   {
     path: 'search-purchase',

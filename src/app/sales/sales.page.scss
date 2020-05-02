@@ -1,34 +1,38 @@
+/** @format */
+
+.top-header,
 .screen-header {
 	display: flex;
-	margin-left: 80px;
+	width: 80%;
+	margin: 0 auto;
 	padding: 8px;
 	font-size: 16px;
 	font-weight: 500;
 	color: #222222;
-	background-color: rgb(250, 250, 250);
+	background-color: #ffffff;
 	justify-content: space-between;
 }
 
 .purchase-wrap {
 	display: grid;
-	grid-template-columns: 70% 30%;
-	width: calc(100% - 80px);
-	margin-left: 80px;
-	height: calc(100vh - 91px);
+	width: 80%;
+	margin: 0 auto;
+	height: auto;
 	min-height: calc(100vh - 91px);
 
 	.left {
 		display: grid;
 		grid-template-rows: 50px 1fr 70px 90px;
 		padding: 10px;
+		min-height: 80vh;
 		//	background-color: palevioletred;
 
 		.row1 {
 			display: grid;
-			grid-template-columns: 30px 1.5fr 100px 100px 80px 120px 140px 50px;
-			align-self: center;
+			grid-template-columns: 40px minmax(350px, 600px) 120px 120px 120px 120px 120px 140px;
+			// align-self: center;
 			align-items: center;
-			padding: 10px;
+			// padding-bottom: 10px;
 			border-bottom: 2px solid grey;
 		}
 
@@ -39,12 +43,11 @@
 			max-height: 500px;
 			.list-item {
 				display: grid;
-				grid-template-columns: 30px 1.5fr 100px 100px 80px 120px 140px 50px;
+				grid-template-columns: 40px minmax(350px, 600px) 120px 120px 120px 120px 120px 140px;
 				align-self: center;
-				padding: 10px;
 				border-bottom: 1px solid grey;
-				border-radius: 5px;
-				margin: 12px 0px;
+				font-size: 14px;
+				padding-top: 5px;
 			}
 		}
 
@@ -53,7 +56,7 @@
 			justify-content: space-around;
 			border-top: 2px solid #acacac;
 			border-bottom: 2px solid #acacac;
-			padding: 10px;
+			padding: 5px;
 
 			.item {
 				text-align: center;
@@ -64,36 +67,21 @@
 
 		.row4 {
 			display: grid;
-		}
-		.row4-header {
-			display: grid;
-			grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+			grid-template-columns: 1fr 1fr 1.5fr;
 			padding: 10px;
-		}
-		.row4-details {
-			display: grid;
-			grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-			padding: 10px;
+			border-top: 1px solid grey;
+			border-bottom: 1px solid grey;
+
+			.item {
+				display: grid;
+				grid-template-columns: 1fr 1.5fr;
+			}
 		}
 	}
-	.right {
+
+	.row2 {
 		display: grid;
-		grid-template-rows: 1fr 100px;
-		min-height: 100%;
-		padding-top: 10px;
-		padding-right: 20px;
-		justify-self: right;
-
-		.row1 {
-			overflow-y: auto;
-			overflow-x: hidden;
-		}
-
-		.row2 {
-			display: grid;
-			justify-self: center;
-			align-self: center;
-		}
+		align-self: start;
 	}
 }
 
@@ -124,6 +112,12 @@
 	font-weight: 500;
 }
 
+.headstyl-right {
+	text-align: right;
+	font-size: 16px;
+	font-weight: 500;
+}
+
 .headstyl-center {
 	text-align: center;
 	font-size: 16px;
@@ -146,11 +140,15 @@
 	font-weight: 400;
 }
 
-.sel-vendor {
-	display: grid;
+.empty-add {
 	text-align: center;
-	align-content: center;
-	min-height: 150px;
+	padding: 50px;
+	font-size: 22px;
+	color: #3d31e6;
+}
+
+.add-actn {
+	text-align: center;
 	font-size: 22px;
 	color: #3d31e6;
 }
@@ -162,31 +160,52 @@
 	color: #0012ff;
 }
 
-.neuBtn {
-	position: relative;
-	display: inline-block;
-	padding: 10px 30px;
-	font-family: "Lato";
-	font-weight: 500;
-	letter-spacing: 1px;
-	color: #ffffff;
-	background-color: #949494;
-	font-size: 18px;
-	border-radius: 40px;
-	box-shadow: -2px -2px 8px rgba(148, 148, 148, 1), -2px -2px 12px rgba(148, 148, 148, 0.5),
-		inset 2px 2px 4px rgba(148, 148, 148, 0.1), 2px 2px 8px rgba(0, 0, 0, 0.15);
-}
-.neuBtn:hover {
-	box-shadow: inset -2px -2px 8px rgba(148, 148, 148, 1), inset -2px -2px 12px rgba(148, 148, 148, 0.5),
-		inset 2px 2px 4px rgba(148, 148, 148, 0.1), inset 2px 2px 8px rgba(0, 0, 0, 0.15);
-}
-.neuBtn:hover span {
-	display: inline-block;
-	transform: scale(0.98);
-}
-
 .change {
 	font-size: 12px;
 	color: #797979;
 	padding-right: 2px;
+}
+
+.purchase-wrap1 {
+	display: grid;
+	width: 100%;
+
+	align-content: start;
+	height: fit-content;
+
+	.row1 {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-gap: 20px;
+		padding-bottom: 10px;
+	}
+}
+
+.example-full-width {
+	width: 100px;
+	text-align: right;
+}
+
+.txt-align {
+	display: grid;
+	align-self: center;
+	justify-content: center;
+}
+
+.wrap {
+	display: flex;
+}
+
+.wrap div:last-child {
+	margin-left: auto;
+}
+
+.sub-menu {
+	font-size: 13px;
+	color: #797979;
+	padding-left: 4px;
+}
+
+.acton-btns {
+	padding: 4px 10px;
 }

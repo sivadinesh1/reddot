@@ -14,7 +14,7 @@ const routes: Routes = [
         loadChildren: () => import('../enquiry/enquiry.module').then(m => m.EnquiryPageModule)
       },
       {
-        path: 'purchase/:purchaseid',
+        path: 'purchase/:edit/:purchaseid',
         loadChildren: () => import('../purchase/purchase.module').then(m => m.PurchasePageModule)
       },
       {
@@ -26,7 +26,7 @@ const routes: Routes = [
         loadChildren: () => import('../sales/search-sales/search-sales.module').then(m => m.SearchSalesPageModule)
       },
       {
-        path: 'sales/:enqid',
+        path: 'sales/:mode/:id',
         loadChildren: () => import('../sales/sales.module').then(m => m.SalesPageModule)
       },
       {

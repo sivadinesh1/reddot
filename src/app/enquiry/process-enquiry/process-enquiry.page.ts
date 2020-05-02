@@ -8,6 +8,7 @@ import { AddProductComponent } from 'src/app/components/add-product/add-product.
 import * as moment from 'moment';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
+
 @Component({
   selector: 'app-process-enquiry',
   templateUrl: './process-enquiry.page.html',
@@ -25,6 +26,8 @@ export class ProcessEnquiryPage implements OnInit {
   enqid: any;
   center_id: any;
 
+  status: any;
+
   constructor(private _route: ActivatedRoute, private _router: Router,
     private dialog: MatDialog, private _modalcontroller: ModalController,
     private _authservice: AuthenticationService, public alertController: AlertController,
@@ -40,6 +43,7 @@ export class ProcessEnquiryPage implements OnInit {
     this._commonApiService.getEnquiryDetails(this.enqid).subscribe((data: any) => {
       this.enqDetailsOrig = data;
 
+      this.status = this.enqDetailsOrig[0].estatus;
 
       this.enqDetailsOrig.forEach(element => {
         let tmpGiveqty = 0;
@@ -163,27 +167,21 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   checkedRow(idx) {
-    this.productArr[idx].processed = 'YS';
-    this._cdr.markForCheck();
+    setTimeout(() => {
+      if (this.productArr[idx].processed === 'YS') {
+        this.productArr[idx].processed = 'NO';
+      } else if (this.productArr[idx].processed === 'NO') {
+        this.productArr[idx].processed = 'YS';
+      }
+      this._cdr.detectChanges();
+    }, 10);
   }
-
-  // getStrikeThroughClass(idx) {
-  //   let className = '';
-
-  //   if (this.productArr[idx].status === 'P') {
-  //     className = 'line-through';
-  //   }
-  //   if (this.productArr[idx].status === 'B') {
-  //     className = 'back-order';
-  //   }
-  //   return className;
-  // }
-
 
 
   moveToSale() {
 
     console.log('object.......' + this.productArr);
+
 
     this._commonApiService.moveToSale(this.productArr).subscribe((data: any) => {
       console.log('object.. ' + JSON.stringify(data));

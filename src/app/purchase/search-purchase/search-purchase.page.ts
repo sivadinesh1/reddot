@@ -33,7 +33,7 @@ export class SearchPurchasePage implements OnInit {
   maxDate = new Date();
   minDate = new Date();
   dobMaxDate = new Date();
-  statusList = [{ "id": "D", "value": "Draft" }, { "id": "C", "value": "Completed" }]
+  statusList = [{ "id": "all", "value": "All" }, { "id": "D", "value": "Draft" }, { "id": "C", "value": "Completed" }]
 
   fromdate = new Date();
   todate = new Date();
@@ -89,11 +89,11 @@ export class SearchPurchasePage implements OnInit {
   }
 
   goPurchaseEditScreen(item) {
-    this._router.navigateByUrl(`/home/purchase/${item.id}`);
+    this._router.navigateByUrl(`/home/purchase/edit/${item.id}`);
   }
 
   goPurchaseAddScreen() {
-    this._router.navigateByUrl(`/home/purchase/0`);
+    this._router.navigateByUrl(`/home/purchase/edit/0`);
   }
 
   statusChange($event) {

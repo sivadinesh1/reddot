@@ -18,6 +18,7 @@ import { OpenNativeSettings } from '@ionic-native/open-native-settings/ngx';
 
 
 import { SharedModule } from 'src/app/shared.module';
+import { KeyBoardService } from './services/keyboard.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,7 +36,7 @@ import { SharedModule } from 'src/app/shared.module';
     NativeStorage,
     Network,
     OpenNativeSettings,
-
+    KeyBoardService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: MAT_DATE_LOCALE, useValue: 'en-IN' }
   ],

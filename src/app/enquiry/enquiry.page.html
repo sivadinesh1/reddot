@@ -1,8 +1,9 @@
 <ion-content>
 	<div class="content">
-		<div style="font-size: 20px; align-self: center;">
+		<!-- <div style="font-size: 20px; align-self: center;">
 			Add enquiry
-		</div>
+		</div> -->
+		<div style="padding-top: 10px; padding-bottom: 10px;"><h3>Add Enquiry</h3></div>
 		<div>
 			<button
 				appPreventDoubleClick
@@ -15,7 +16,7 @@
 			</button>
 		</div>
 	</div>
-	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm">
+	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm" #myForm="ngForm">
 		<div class="enq-form">
 			<div class="actn-row">
 				<div style="padding-left: 7px; cursor: pointer;">
@@ -26,7 +27,7 @@
 						*ngIf="showDelIcon"
 						(click)="onRemoveRows()"
 					/>
-					<span class="itms-lbl" *ngIf="showDelIcon">&nbsp;Delete</span>
+					<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()">&nbsp;Delete</span>
 				</div>
 				<div class="itms-lbl">
 					{{productarr.controls.length || 0}} Items
@@ -54,7 +55,7 @@
 						</div>
 						<div>
 							<mat-form-field class="example-full-width">
-								<input matInput formControlName="notes" placeholder="Item description" />
+								<input matInput type="text" formControlName="notes" placeholder="Item description" />
 							</mat-form-field>
 						</div>
 

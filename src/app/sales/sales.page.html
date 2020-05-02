@@ -1,224 +1,382 @@
-<!-- <app-menu-header></app-menu-header> -->
+<!-- @format -->
+
 <ion-content>
-	<!-- <app-side-menu></app-side-menu> -->
-	<!-- <ion-header>
-		<ion-toolbar>
-			<ion-title slot="start">
-				LOGO
-			</ion-title>
-			<ion-title slot="end">
-				{{customername}}
-				<div *ngIf="customerselected" (click)="showAllCustomersComp()">
-					<span class="change">Change</span
-					><span>
-						<img src="../../assets/images/svg/down-arrow.svg" width="10px" height="10px" />
-					</span>
-				</div>
-			</ion-title>
-		</ion-toolbar>
-	</ion-header> -->
+	<div class="top-header"><h4>Sales Add/Edit</h4></div>
 	<div class="screen-header">
 		<div>
-			Sales <span *ngIf="!fromEnquiry">&nbsp;Direct</span
-			><span *ngIf="fromEnquiry">&nbsp;via Enquiry #{{this.enqid}}</span>
-		</div>
-
-		<div>
-			{{customername}}
-			<span *ngIf="customerselected" (click)="showAllCustomersComp()">
-				<img src="../../assets/images/svg/down-arrow.svg" width="10px" height="10px" />
+			<div *ngIf="customerselected" style="color: #797979; font-size: 12px;">Customer Name</div>
+			<span matTooltip="{{customerselected}}">{{customername}}</span>
+			<span *ngIf="customerselected" (click)="showAllCustomersComp()" class="cursor">
+				<span style="font-size: 12px; color: rgb(31, 31, 179);">&nbsp;(Change)</span>
 			</span>
 		</div>
+
+		<ng-container *ngIf="customerselected; then showPlusProduct; else showPlusCustomer"> </ng-container>
+
+		<ng-template #showPlusCustomer>
+			<div class="add-actn cursor">
+				<button appPreventDoubleClick (throttledClick)="showAllCustomersComp()" [throttleTime]="2000" mat-raised-button color="primary">
+					+ Add Customer
+				</button>
+			</div>
+		</ng-template>
+		<ng-template #showPlusProduct>
+			<div *ngIf="listArr.length >= 0" class="add-actn">
+				<button
+					appPreventDoubleClick
+					[throttleTime]="2000"
+					(throttledClick)="customerselected && showAddProductComp()"
+					mat-raised-button
+					color="primary"
+				>
+					+ Add Item
+				</button>
+			</div>
+		</ng-template>
 	</div>
 
-	<form [formGroup]="submitForm" class="purchase-wrap">
-		<div class="left">
-			<div class="row1">
-				<div class="item1 headstyl-left txt-center-align">#</div>
-				<div class="item2 headstyl-left">Product Information</div>
-				<div class="item3 headstyl-center">MRP</div>
-				<div class="item3 headstyl-center">Qty</div>
-				<div class="item3 headstyl-center">Discount %</div>
-
-				<div class="item4 headstyl-center">Total <br />Value</div>
-				<div class="item4 headstyl txt-center-align tax-style">
-					<div class="headstyl-center">Tax</div>
-					<hr color="#D1D1D1" style="margin: 4px;" />
-					<ng-container *ngIf="customerselected">
-						<div *ngIf="i_gst" class="headstyl-center" style="font-size: 14px;">IGST</div>
-						<div *ngIf="!i_gst" class="headstyl-center" style="font-size: 14px;">CGST / SGST</div>
-					</ng-container>
+	<form [formGroup]="submitForm">
+		<div class="purchase-wrap">
+			<div class="wrap">
+				<div class="acton-btns">
+					<img class="cursor" src="/assets/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
+					<span class="sub-menu cursor" *ngIf="showDelIcon" (click)="presentDeleteConfirm()">Delete</span>
 				</div>
+
+				<div class="acton-btns">
+					<img class="cursor" src="/assets/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editTax()" /><span
+						class="sub-menu cursor"
+						*ngIf="singleRowSelected"
+						(click)="editTax()"
+						>Tax</span
+					>
+				</div>
+				<div class="acton-btns">
+					<img class="cursor" src="/assets/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editMrp()" />
+					<span class="sub-menu cursor" *ngIf="singleRowSelected" (click)="editMrp()">Mrp</span>
+				</div>
+
+				<div class="sub-menu">Total Items:{{listArr.length}}</div>
 			</div>
-			<div class="row2">
-				<ng-container *ngIf="customerselected; then showproductsection; else beginsetup"> </ng-container>
+			<div class="left">
+				<div class="row1">
+					<div class="item1 headstyl-left txt-center-align">#</div>
+					<div class="item2 headstyl-left">Item Information</div>
+					<div class="item3 headstyl-right">MRP</div>
+					<div class="item3 headstyl-right">Qty</div>
+					<div class="item3 headstyl-right">Rate Item</div>
 
-				<ng-template #beginsetup>
-					<div class="sel-vendor">
-						<span (click)="showAllCustomersComp()">
-							+ Add Customer
-						</span>
+					<div class="item4 headstyl-right">Total Value</div>
+					<div class="item4 headstyl-right">Tax %</div>
+
+					<div class="item4 headstyl txt-center-align tax-style">
+						<ng-container *ngIf="customerselected">
+							<div *ngIf="i_gst" class="headstyl-center" style="font-size: 14px;">IGST</div>
+							<div *ngIf="!i_gst" class="headstyl-center" style="font-size: 14px;">CGST / SGST</div>
+						</ng-container>
 					</div>
-				</ng-template>
-				<ng-template #showproductsection>
-					<div *ngIf="listArr.length === 0" class="sel-vendor">
-						<span (click)="customerselected && showAddProductComp()">
-							+ Add Product
-						</span>
-					</div>
-					<div *ngFor="let item of listArr ? listArr : []; let idx = index" class="list-item">
-						<div class="item1 txt-left-align">{{idx + 1}}</div>
-						<div class="item2">
-							{{item.product_code}}
-							<div class="desc">
-								{{item.product_desc}}
+				</div>
+				<div class="row2">
+					<ng-container *ngIf="customerselected; then showproductsection; else beginsetup"> </ng-container>
+
+					<ng-template #beginsetup>
+						<div class="empty-add">
+							<span class="cursor" appPreventDoubleClick [throttleTime]="2000" (throttledClick)="showAllCustomersComp()">
+								+ Add Customer
+							</span>
+						</div>
+					</ng-template>
+					<ng-template #showproductsection>
+						<div *ngIf="listArr.length === 0" class="empty-add">
+							<span
+								class="cursor"
+								appPreventDoubleClick
+								[throttleTime]="2000"
+								(throttledClick)="customerselected && showAddProductComp()"
+							>
+								+ Add Item
+							</span>
+						</div>
+						<div *ngFor="let item of listArr ? listArr : []; let idx = index" class="list-item">
+							<div class="txt-align">
+								<!-- {{idx + 1}} -->
+								<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
 							</div>
-						</div>
+							<div class="item2">
+								{{item.product_code}}
+								<div class="desc">
+									{{item.product_desc}}
+								</div>
+							</div>
 
-						<div class="item3 txt-center-align">
-							<input
-								matInput
-								value="{{item.mrp}}"
-								type="text"
-								class="styl-txt-box-small txt-pad"
-								(click)="openNumberPad(idx, 'mrp')"
-								appPreventCutCopyPaste
-								readonly
-							/>
-						</div>
+							<div class="item4 txt-right-align num-format-cell-style">{{item.mrp | number:'1.2-2'}}</div>
 
-						<div class="item3 txt-center-align">
-							<input
-								matInput
-								value="{{item.qty}}"
-								type="text"
-								class="styl-txt-box-small txt-pad"
-								(click)="openNumberPad(idx, 'qty')"
-								appPreventCutCopyPaste
-								readonly
-							/>
-						</div>
+							<div class="item4 txt-right-align num-format-cell-style">
+								<mat-form-field class="example-full-width cursor" (click)="openCurrencyPad(idx)">
+									<input matInput type="number" value="{{item.qty}}" class="cursor" readonly />
+									<mat-icon matSuffix>view_comfy</mat-icon>
+								</mat-form-field>
+							</div>
 
-						<div class="item4 txt-right-align num-format-cell-style">
-							<input
-								matInput
-								value="{{this.cust_discount_prcnt | number:'1.2-2'}}"
-								type="text"
-								class="styl-txt-box-small txt-pad"
-								(click)="openNumberPad(idx, 'discount')"
-								appPreventCutCopyPaste
-								readonly
-							/>
-						</div>
-						<div class="item4 txt-right-align num-format-cell-style">
-							{{item.taxable_value | number:'1.2-2'}}
-						</div>
-						<div class="item4 txt-center-align tax-style">
-							<div *ngIf="i_gst">
+							<div class="item4 txt-right-align num-format-cell-style">{{item.unit_price}}</div>
+
+							<div class="item4 txt-right-align num-format-cell-style">
+								{{item.taxable_value | number:'1.2-2'}}
+							</div>
+
+							<div class="item4 txt-right-align num-format-cell-style">
 								{{item.taxrate}}
 							</div>
-							<div *ngIf="!i_gst">
-								{{item.cgst}}% / {{item.sgst}}%
+
+							<div class="txt-align">
+								<ng-container *ngIf="i_gst">
+									{{(item.tax_value) | number:'1.2-2'}}
+								</ng-container>
+								<ng-container *ngIf="!i_gst">
+									{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) | number:'1.2-2'}}
+								</ng-container>
 							</div>
+						</div>
+					</ng-template>
+				</div>
 
-							<hr color="#D1D1D1" style="margin: 4px;" />
-							<ng-container *ngIf="i_gst">
-								{{(item.tax_value) | number:'1.2-2'}}
-							</ng-container>
-							<ng-container *ngIf="!i_gst">
-								{{(item.cgst_value) | number:'1.2-2'}} / {{(item.sgst_value) | number:'1.2-2'}}
-							</ng-container>
+				<div class="row4">
+					<div class="item">
+						<div class="align-self-center overview">Overview</div>
+						<div class="align-self-center">&nbsp;</div>
+						<div>Total Items</div>
+						<div>{{listArr.length}}</div>
+					</div>
+					<div class="item">
+						<div class="subitem align-self-center" *ngIf="i_gst">IGST</div>
+						<div class="subitem align-self-center" *ngIf="i_gst">{{igstTotal | number:'1.2-2'}}</div>
+
+						<div class="subitem align-self-center" *ngIf="!i_gst">CGST</div>
+						<div class="subitem align-self-center" *ngIf="!i_gst">{{cgstTotal | number:'1.2-2'}}</div>
+
+						<div class="subitem align-self-center" *ngIf="!i_gst">SGST</div>
+						<div class="subitem align-self-center" *ngIf="!i_gst">{{sgstTotal | number:'1.2-2'}}</div>
+					</div>
+					<div class="item">
+						<div class="align-self-center txt-right-align">Total:</div>
+						<div class="align-self-center left-pad20 fsize40 fweight500">
+							{{this.total | number:'1.2-2'}}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div *ngIf="editCompletedSales">
+				<span class="error" style="font-size: 24px;">Warning! You are Overwriting already completed sale. </span>
+			</div>
+
+			<div class="purchase-wrap1">
+				<div class="row1">
+					<fieldset>
+						<legend>Customer</legend>
+						<div style="grid-column: 1/-1;">{{customername}}</div>
+						<div class="row">
+							<ion-item class="input-item" lines="none">
+								<mat-form-field class="mat-input-wrapper">
+									<input matInput placeholder="Invoice #" type="text" #invno formControlName="invoiceno" readonly />
+								</mat-form-field>
+							</ion-item>
 						</div>
 
-						<div
-							class="item4"
-							(click)="deleteProduct(item, idx)"
-							class="txt-center-align align-self-center"
+						<div>
+							<ion-item class="input-item" lines="none">
+								<mat-form-field class="mat-input-wrapper">
+									<input
+										matInput
+										formControlName="invoicedate"
+										[matDatepicker]="picker1"
+										type="text"
+										(focus)="picker1.open()"
+										[max]="maxDate"
+										(dateChange)="invoiceDateSelected($event)"
+									/>
+									<mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+									<mat-datepicker touchUi="true" #picker1></mat-datepicker>
+									<mat-placeholder>Invoice Date</mat-placeholder>
+									<mat-error
+										*ngIf="(submitForm.get('invoicedate').hasError('required') || submitForm.get('invoicedate').hasError('patternInvalid'))  && submitForm.get('invoicedate').touched"
+									>
+										Invalid (or) Missing entry
+									</mat-error>
+								</mat-form-field>
+							</ion-item>
+						</div>
+
+						<div>
+							<ion-item class="input-item" lines="none">
+								<mat-form-field class="mat-input-wrapper">
+									<input matInput placeholder="Order #" #orderno type="text" formControlName="orderno" />
+
+									<mat-error
+										*ngIf="(submitForm.get('orderno').hasError('required') || submitForm.get('orderno').hasError('patternInvalid'))  && submitForm.get('orderno').touched"
+									>
+										Invalid (or) Missing entry
+									</mat-error>
+								</mat-form-field>
+							</ion-item>
+						</div>
+						<div>
+							<ion-item class="input-item" lines="none">
+								<mat-form-field class="mat-input-wrapper">
+									<input
+										matInput
+										readonly
+										[matDatepicker]="pickerod"
+										placeholder="Order date"
+										formControlName="orderdate"
+										(focus)="pickerod.open()"
+										[max]="maxOrderDate"
+									/>
+									<mat-datepicker-toggle matSuffix [for]="pickerod"></mat-datepicker-toggle>
+									<mat-datepicker #pickerod></mat-datepicker>
+								</mat-form-field>
+							</ion-item>
+						</div>
+					</fieldset>
+
+					<fieldset>
+						<legend>Misc Details</legend>
+						<div>
+							<ion-item class="input-item" lines="none">
+								<mat-form-field class="mat-input-wrapper">
+									<input matInput placeholder="Lr #" #lrno type="text" formControlName="lrno" />
+
+									<mat-error
+										*ngIf="(submitForm.get('lrno').hasError('required') || submitForm.get('lrno').hasError('patternInvalid'))  && submitForm.get('lrno').touched"
+									>
+										Invalid (or) Missing entry
+									</mat-error>
+								</mat-form-field>
+							</ion-item>
+						</div>
+						<div>
+							<ion-item class="input-item" lines="none">
+								<mat-form-field class="mat-input-wrapper">
+									<input
+										matInput
+										readonly
+										[matDatepicker]="pickerlr"
+										placeholder="Lr date"
+										(focus)="pickerlr.open()"
+										formControlName="lrdate"
+										[max]="maxDate"
+									/>
+									<mat-datepicker-toggle matSuffix [for]="pickerlr"></mat-datepicker-toggle>
+									<mat-datepicker #pickerlr></mat-datepicker>
+								</mat-form-field>
+							</ion-item>
+						</div>
+						<div>
+							<ion-item class="input-item" lines="none">
+								<mat-form-field class="mat-input-wrapper">
+									<input
+										matInput
+										readonly
+										[matDatepicker]="pickerrcvd"
+										placeholder="Received date"
+										formControlName="orderrcvddt"
+										(focus)="pickerrcvd.open()"
+										[max]="maxDate"
+									/>
+									<mat-datepicker-toggle matSuffix [for]="pickerrcvd"></mat-datepicker-toggle>
+									<mat-datepicker #pickerrcvd></mat-datepicker>
+								</mat-form-field>
+							</ion-item>
+						</div>
+						<div>
+							<ion-item class="input-item">
+								<ion-label>
+									# of Boxes
+								</ion-label>
+
+								<div class="item4 txt-right-align num-format-cell-style">
+									<mat-form-field class="example-full-width cursor">
+										<input matInput type="number" formControlName="noofboxes" />
+										<mat-icon matSuffix (click)="openNumberPad('noofboxes')">view_comfy</mat-icon>
+									</mat-form-field>
+								</div>
+							</ion-item>
+						</div>
+					</fieldset>
+
+					<fieldset>
+						<legend>Misc Details</legend>
+						<div>
+							<ion-item class="input-item">
+								<ion-label>
+									Transport Chrgs
+								</ion-label>
+
+								<div class="item4 txt-right-align num-format-cell-style">
+									<mat-form-field class="example-full-width cursor">
+										<input matInput type="number" formControlName="transport_charges" />
+										<mat-icon matSuffix (click)="openNumberPad('transport_charges')">view_comfy</mat-icon>
+									</mat-form-field>
+								</div>
+							</ion-item>
+						</div>
+						<div>
+							<ion-item class="input-item">
+								<ion-label>
+									Unloading Chrgs
+								</ion-label>
+
+								<div class="item4 txt-right-align num-format-cell-style">
+									<mat-form-field class="example-full-width cursor">
+										<input matInput type="number" formControlName="unloading_charges" />
+										<mat-icon matSuffix (click)="openNumberPad('unloading_charges')">view_comfy</mat-icon>
+									</mat-form-field>
+								</div>
+							</ion-item>
+						</div>
+						<div>
+							<ion-item class="input-item">
+								<ion-label>
+									Misc Chrgs
+								</ion-label>
+
+								<div class="item4 txt-right-align num-format-cell-style">
+									<mat-form-field class="example-full-width cursor">
+										<input matInput type="number" formControlName="misc_charges" />
+										<mat-icon matSuffix (click)="openNumberPad('misc_charges')">view_comfy</mat-icon>
+									</mat-form-field>
+								</div>
+							</ion-item>
+						</div>
+					</fieldset>
+					<!-- *ngIf="(submitForm.get('status') !== "C")" -->
+
+					<div style="display: grid; align-content: center; justify-content: center;">
+						<button
+							*ngIf="(submitForm.get('status').value !== 'C' ) "
+							appPreventDoubleClick
+							[throttleTime]="1000"
+							(throttledClick)="onSave('draft')"
+							mat-raised-button
+							color="primary"
+							style="font-size: 1rem; padding: 0px 20px;"
 						>
-							<img src="/assets/images/svg/minus.svg" width="24px" height="24px" />
-						</div>
+							Save Draft
+						</button>
+
+						<br />
+						<button
+							appPreventDoubleClick
+							[throttleTime]="1000"
+							(throttledClick)="onSavenSubmit('add')"
+							mat-raised-button
+							color="primary"
+							style="font-size: 1rem; padding: 0px 20px;"
+						>
+							Invoice
+						</button>
 					</div>
-				</ng-template>
-			</div>
-			<div class="row3">
-				<ng-container>
-					<div class="item" (click)="customerselected && showAddProductComp()">
-						<img src="/assets/images/svg/more.svg" width="28px" height="28px" />
-						<div class="label">Add Product</div>
-					</div>
-
-					<div class="item" (click)="customerselected && clearAll()">
-						<img src="/assets/images/svg/trash.svg" width="28px" height="28px" />
-						<div class="label">Clear All</div>
-					</div>
-				</ng-container>
-			</div>
-			<div class="row4">
-				<div class="row4-header">
-					<div class="row4-header1">CLASS</div>
-					<div class="row4-header2">SUB TOTAL</div>
-					<div class="row4-header3">DISC</div>
-					<div class="row4-header4">AMOUNT</div>
-					<div class="row4-header6" *ngIf="i_gst">IGST</div>
-					<div class="row4-header5" *ngIf="!i_gst">SGST</div>
-					<div class="row4-header6" *ngIf="!i_gst">CGST</div>
-					<div class="row4-header7">GST</div>
-					<div class="row4-header8">TOTAL</div>
 				</div>
-
-				<div class="row4-details">
-					<div class="subitem align-self-center">GST 18%</div>
-					<div class="subitem align-self-center">{{GST_18_sub_total}}</div>
-
-					<div class="subitem align-self-center">{{GST_18_disc}}</div>
-					<div class="subitem align-self-center">{{GST_18_total_value}}</div>
-
-					<div class="subitem align-self-center" *ngIf="!i_gst">{{GST_18_cgst}}</div>
-					<div class="subitem align-self-center" *ngIf="!i_gst">{{GST_18_sgst}}</div>
-
-					<div class="subitem align-self-center">{{GST_18_gst}}</div>
-					<div class="subitem align-self-center">{{this.total}}</div>
-				</div>
-				<div class="row4-details">
-					<div class="subitem align-self-center">GST 28%</div>
-					<div class="subitem align-self-center">{{GST_28_sub_total}}</div>
-
-					<div class="subitem align-self-center">{{GST_28_disc}}</div>
-					<div class="subitem align-self-center">{{GST_28_total_value}}</div>
-
-					<div class="subitem align-self-center" *ngIf="!i_gst">{{GST_28_cgst}}</div>
-					<div class="subitem align-self-center" *ngIf="!i_gst">{{GST_28_sgst}}</div>
-
-					<div class="subitem align-self-center">{{GST_28_gst}}</div>
-					<div class="subitem align-self-center">{{this.total}}</div>
-				</div>
-			</div>
-		</div>
-		<div class="right">
-			<div class="row1">
-				<ion-item class="input-item" lines="none">
-					<mat-form-field class="mat-input-wrapper">
-						<input
-							matInput
-							readonly
-							[matDatepicker]="pickerinv"
-							formControlName="invoicedate"
-							placeholder="Invoice date (DD-MM-YYYY)"
-							(focus)="pickerinv.open()"
-						/>
-						<mat-datepicker-toggle matSuffix [for]="pickerinv"></mat-datepicker-toggle>
-						<mat-datepicker #pickerinv></mat-datepicker>
-					</mat-form-field>
-				</ion-item>
-			</div>
-			<div class="row2">
-				<button (click)="onSubmit()" class="neuBtn">
-					Save
-				</button>
-				<br />
-				<button (click)="onPrint()" class="neuBtn">
-					Pring
-				</button>
 			</div>
 		</div>
 	</form>

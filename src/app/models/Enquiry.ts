@@ -7,5 +7,7 @@ export class Enquiry {
     remarks: string;
     sale_id: number;
     processed_date: string;
-
+    customer_name: string;
+    status_txt: string;
+    noofitems: string;
 }

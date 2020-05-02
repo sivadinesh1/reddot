@@ -1,8 +1,10 @@
+/** @format */
+
 .search-wrap {
 	display: grid;
 	width: 80%;
 	margin: 0 auto;
-	padding-top: 40px;
+	padding-top: 30px;
 }
 
 .form-wrap {
@@ -24,4 +26,9 @@
 .header-style {
 	background-color: #757575;
 	color: #ffffff;
+}
+
+.listItem {
+	background-color: #fff;
+	border-bottom: 1px solid #f2f2f2;
 }

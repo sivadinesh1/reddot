@@ -1,3 +1,5 @@
+/** @format */
+
 .show-vendor-wrap {
 	display: grid;
 	grid-template-rows: 60px 60px 1fr 60px;
@@ -62,4 +64,10 @@
 .list-item:hover {
 	background-color: #c7c4d7;
 	opacity: 1;
+}
+
+.list-item:focus {
+	background-color: rgb(89, 89, 170);
+	opacity: 0.5;
+	outline: 3px solid red;
 }

@@ -1,11 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, Validators, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormControl, Validators, FormGroup, FormArray, NgForm } from '@angular/forms';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 import { MatDialog } from '@angular/material';
 import { ModalController } from '@ionic/angular';
 import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
 import { CommonApiService } from '../services/common-api.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
@@ -27,17 +27,23 @@ export class EnquiryPage implements OnInit {
   userid: any;
 
 
-  // @ViewChild("firstenquiry", { static: false }) firstenquiry: ElementRef;
+  @ViewChild('myForm', { static: true }) myForm: NgForm;
 
   constructor(private _fb: FormBuilder, public dialog: MatDialog,
-    private _modalcontroller: ModalController, private _router: Router,
+    private _modalcontroller: ModalController, private _router: Router, private _route: ActivatedRoute,
     private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _authservice: AuthenticationService,
   ) {
 
     const currentUser = this._authservice.currentUserValue;
-    this.centerid = currentUser.center_id;
-    this.userid = currentUser.userid;
+
+    this._route.params.subscribe(params => {
+      this.centerid = currentUser.center_id;
+      this.userid = currentUser.userid;
+
+      this.init();
+      this._cdr.markForCheck();
+    });
 
   }
 
@@ -51,7 +57,9 @@ export class EnquiryPage implements OnInit {
   }
 
   ngOnInit() {
+  }
 
+  init() {
 
     this.submitForm = this._fb.group({
       customer: [null, Validators.required],
@@ -60,17 +68,28 @@ export class EnquiryPage implements OnInit {
 
       productarr: this._fb.array([])
 
-
     });
 
+    this.customerData = "";
+    this.customerAdded = false;
+
+
     this.addProduct();
     this.addProduct();
     this.addProduct();
     this.addProduct();
     this.addProduct();
+
+
+
+
+    this.submitForm.patchValue({
+      centerid: this.centerid,
+    });
+
+
 
     this._cdr.markForCheck();
-
   }
 
   initProduct() {
@@ -197,7 +216,7 @@ export class EnquiryPage implements OnInit {
       if (data.body.result === 'success') {
 
         this.submitForm.reset();
-        console.log('object...SUCCESS..')
+        this.myForm.resetForm();
 
         this._router.navigate([`/home/enquiry/open-enquiry`]);
 

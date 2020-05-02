@@ -33,7 +33,7 @@ export class SearchSalesPage implements OnInit {
   maxDate = new Date();
   minDate = new Date();
   dobMaxDate = new Date();
-  statusList = [{ "id": "D", "value": "Draft" }, { "id": "C", "value": "Completed" }]
+  statusList = [{ "id": "all", "value": "All" }, { "id": "D", "value": "Draft" }, { "id": "C", "value": "Completed" }]
 
   fromdate = new Date();
   todate = new Date();
@@ -89,11 +89,11 @@ export class SearchSalesPage implements OnInit {
   }
 
   goSalesEditScreen(item) {
-    this._router.navigateByUrl(`/home/sales/${item.id}`);
+    this._router.navigateByUrl(`/home/sales/edit/${item.id}`);
   }
 
   goSalesAddScreen() {
-    this._router.navigateByUrl(`/home/sales/0`);
+    this._router.navigateByUrl(`/home/sales/edit/0`);
   }
 
   statusChange($event) {

@@ -1,14 +1,25 @@
+/** @format */
+
 .content {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr;
 	width: 80%;
 	margin: 0 auto;
 	padding: 10px;
 }
 
+.header {
+	padding: 10px;
+	background-color: grey;
+	color: #ffffff;
+}
+
+.header,
 .list-item {
 	display: grid;
-	grid-template-columns: 60px 2fr 1fr;
+	grid-template-columns: 60px 100px 1fr 1fr 1fr 1fr 1fr;
+	height: 40px;
+	align-items: center;
 }
 
 .o-enq-details {
@@ -34,7 +45,7 @@
 
 .new-enq {
 	display: grid;
-	text-align: center;
+	text-align: right;
 	padding: 10px;
 }
 
@@ -43,8 +54,21 @@
 	text-align: center;
 }
 
-.list-item:hover {
-	background-color: #c7c4d7;
-	opacity: 1;
-	cursor: pointer;
+// .list-item:hover {
+// 	background-color: #c7c4d7;
+// 	opacity: 1;
+// 	cursor: pointer;
+// }
+
+.form-wrap {
+	display: flex;
+}
+
+.search-btn {
+	padding-left: 20px;
+}
+
+.listItem {
+	background-color: #fff;
+	border-bottom: 1px solid #f2f2f2;
 }

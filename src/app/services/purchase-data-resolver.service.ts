@@ -9,7 +9,7 @@ import { AuthenticationService } from './authentication.service';
 @Injectable({
     providedIn: 'root',
 })
-export class ApiDataResolverService implements Resolve<any> {
+export class PurchaseDataResolverService implements Resolve<any> {
 
     constructor(private commonapiservice: CommonApiService, private authenticationService: AuthenticationService) {
 
