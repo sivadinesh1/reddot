@@ -25,4 +25,5 @@ export class Sales {
     status: string;
     sale_datetime: string;
     customer_name: string;
+    revision: string;
 }

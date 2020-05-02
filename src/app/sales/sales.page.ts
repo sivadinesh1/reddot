@@ -58,6 +58,9 @@ export class SalesPage implements OnInit {
 
 
   removeRowArr = [];
+
+  deletedRowArr = [];
+
   showDelIcon = false;
   singleRowSelected = false;
   salesid: any;
@@ -92,6 +95,7 @@ export class SalesPage implements OnInit {
 
     this._route.data.subscribe(data => {
       this.rawSalesData = data['rawsalesdata'];
+
       this.id = this._route.snapshot.params['id'];
       this.mode = this._route.snapshot.params['mode'];
       this.initialize();
@@ -200,7 +204,7 @@ export class SalesPage implements OnInit {
           net_total: this.rawSalesData[0].net_total,
           taxable_value: this.rawSalesData[0].taxable_value,
           status: this.rawSalesData[0].status,
-
+          revision: this.rawSalesData[0].revision
 
         });
 
@@ -286,6 +290,7 @@ export class SalesPage implements OnInit {
       taxable_value: new FormControl(0),
       status: new FormControl('D'),
       enqref: [0],
+      revision: [0],
 
       productarr: new FormControl(null, Validators.required)
 
@@ -397,7 +402,8 @@ export class SalesPage implements OnInit {
         "cgst": this.cgst,
         "sgst": this.sgst,
         "old_val": oldval,
-        "stock_pk": temp.stock_pk
+        "stock_pk": temp.stock_pk,
+        "del_flag": 'N'
       });
 
     const tempArr = this.listArr.map(arrItem => {
@@ -481,36 +487,49 @@ export class SalesPage implements OnInit {
 
 
     if (this.listArr[idx].sale_det_id != '') {
-      this._commonApiService.deleteSalesDetails({
-        id: this.listArr[idx].sale_det_id, salesid: this.listArr[idx].sales_id,
-        autidneeded: this.editCompletedSales
-      }).subscribe((data: any) => {
 
-
-        if (data.body.result === 'success') {
-          this.listArr.splice(idx, 1);
-          this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
-
-          this.delIconStatus();
-          this.checkIsSingleRow();
-          this.calc();
-
-
-
-        } else {
-          this.presentAlert('Error: Something went wrong Contact Admin!');
-        }
-
-        this._cdr.markForCheck();
-      });
-    } else {
-      this.listArr.splice(idx, 1);
-      this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
-
-      this.delIconStatus();
-      this.checkIsSingleRow();
-      this.calc();
+      this.listArr[idx].del_flag = 'Y';
+      this.deletedRowArr.push(this.listArr[idx]);
     }
+    this.listArr.splice(idx, 1);
+    this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
+
+    this.delIconStatus();
+    this.checkIsSingleRow();
+    this.calc();
+
+
+
+    // this._commonApiService.deleteSalesDetails({
+    //   id: this.listArr[idx].sale_det_id, salesid: this.listArr[idx].sales_id,
+    //   autidneeded: this.editCompletedSales
+    // }).subscribe((data: any) => {
+
+
+    //   if (data.body.result === 'success') {
+    //     this.listArr.splice(idx, 1);
+    //     this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
+
+    //     this.delIconStatus();
+    //     this.checkIsSingleRow();
+    //     this.calc();
+
+
+
+    //   } else {
+    //     this.presentAlert('Error: Something went wrong Contact Admin!');
+    //   }
+
+    //   this._cdr.markForCheck();
+    // });
+    // } else {
+    //   this.listArr.splice(idx, 1);
+    //   this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
+
+    //   this.delIconStatus();
+    //   this.checkIsSingleRow();
+    //   this.calc();
+    // }
 
 
 
@@ -812,7 +831,8 @@ export class SalesPage implements OnInit {
           text: 'Okay',
           handler: () => {
             console.log('Confirm Okay');
-            this.editCompletedSales = false;
+
+            this.executeDeletes();
 
             this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('saveSaleOrder ' + JSON.stringify(data));
@@ -826,6 +846,7 @@ export class SalesPage implements OnInit {
                 });
                 this.customername = "";
                 this.customerselected = false;
+                this.editCompletedSales = false;
                 this.listArr = [];
 
                 this.total = "0.00";
@@ -886,13 +907,53 @@ export class SalesPage implements OnInit {
 
 
   onRemoveRows() {
-
     this.removeRowArr.sort().reverse();
 
     this.removeRowArr.forEach((e) => {
       this.deleteProduct(e);
     });
   }
+
+  executeDeletes() {
+
+
+
+
+    this.deletedRowArr.sort().reverse();
+    this.deletedRowArr.forEach((e) => {
+      this.executeDeleteProduct(e);
+    });
+
+  }
+
+
+  executeDeleteProduct(elem) {
+
+
+    this._commonApiService.deleteSalesDetails({
+      id: elem.sale_det_id, salesid: elem.sales_id,
+      autidneeded: this.editCompletedSales
+    }).subscribe((data: any) => {
+
+
+      if (data.body.result === 'success') {
+        console.log('object >>> execute delete product ...')
+
+
+
+      } else {
+        this.presentAlert('Error: Something went wrong Contact Admin!');
+      }
+
+      this._cdr.markForCheck();
+    });
+
+
+
+
+    this._cdr.markForCheck();
+  }
+
 
 
   async editTax() {
@@ -1054,3 +1115,4 @@ export class SalesPage implements OnInit {
   }
 
 }
+

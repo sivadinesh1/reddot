@@ -103,6 +103,9 @@
 			<div>
 				&nbsp;
 			</div>
+			<div>
+				<span>Revision</span>
+			</div>
 		</div>
 
 		<div *ngFor="let item of (sales$ | async) " class="listItem">
@@ -117,6 +120,9 @@
 			</div>
 			<div class="item cursor" *ngIf="item.status === 'D'">
 				<img src="/assets/images/svg/trash.svg" width="18px" height="18px" (click)="presentAlertConfirm(item)" />
+			</div>
+			<div>
+				<span *ngIf="item.status === 'C'">{{item.revision}}</span>
 			</div>
 		</div>
 
