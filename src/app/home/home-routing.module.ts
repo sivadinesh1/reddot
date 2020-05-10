@@ -5,9 +5,13 @@ import { HomePage } from './home.page';
 
 
 const routes: Routes = [
+
   {
-    path: '',
-    component: HomePage, children: [
+
+
+    path: 'home',
+    component: HomePage,
+    children: [
 
       {
         path: 'enquiry',
@@ -44,10 +48,10 @@ const routes: Routes = [
         loadChildren: () => import('../enquiry/process-enquiry/process-enquiry.module').then(m => m.ProcessEnquiryPageModule)
       },
 
-      {
-        path: 'enquiry/back-order',
-        loadChildren: () => import('../enquiry/back-order/back-order.module').then(m => m.BackOrderPageModule)
-      },
+      // {
+      //   path: 'enquiry/back-order',
+      //   loadChildren: () => import('../enquiry/back-order/back-order.module').then(m => m.BackOrderPageModule)
+      // },
 
       {
         path: 'view-products',

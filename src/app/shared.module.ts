@@ -35,6 +35,10 @@ import { PreventDoubleClickDirective } from './util/directives/prevent-double-cl
 import { VendorDialogComponent } from './components/vendor-dialog/vendor-dialog.component';
 import { LoadingComponent } from './components/loading/loading.component';
 import { MessagesComponent } from './components/messages/messages.component';
+import { InvoiceSuccessComponent } from './components/invoice-success/invoice-success.component';
+import { SideMnuComponent } from './components/side-mnu/side-mnu.component';
+import { HeaderComponent } from './components/header/header.component';
+import { LeftMenuComponent } from './components/left-menu/left-menu.component';
 
 const components = [
 
@@ -56,6 +60,7 @@ const components = [
   AddProductComponent,
   VendorDialogComponent,
   CurrencyPadComponent,
+  InvoiceSuccessComponent,
   ShowVendorsComponent,
   ShowCustomersComponent,
   ChangeTaxComponent,
@@ -66,8 +71,10 @@ const components = [
 
   ShowHidePasswordComponent,
   SideMenuComponent,
+  SideMnuComponent,
   MenuHeaderComponent,
-
+  HeaderComponent,
+  LeftMenuComponent,
 
   WindowComponent,
   LoadingComponent,
@@ -119,8 +126,6 @@ const matcomponents = [
 @NgModule({
   declarations: [...components, PreventCutCopyPasteDirective],
   imports: [
-
-
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
@@ -131,7 +136,7 @@ const matcomponents = [
   ],
   entryComponents: [
     AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
-    ChangeTaxComponent, ChangeMrpComponent, VendorDialogComponent
+    ChangeTaxComponent, ChangeMrpComponent, VendorDialogComponent, InvoiceSuccessComponent
   ]
 })
 export class SharedModule { }

@@ -33,9 +33,9 @@ export class OpenEnquiryPage implements OnInit {
   fromdate = new Date();
   todate = new Date();
 
-  statusList = [{ "id": "O", "value": "New Enquiry" }, { "id": "D", "value": "Draft Enquiry" },
-  { "id": "P", "value": "Invoice Ready" },
-  { "id": "E", "value": "Executed" }
+  statusList = [{ "id": "O", "value": "Enquiry-New" }, { "id": "D", "value": "Enquiry-Cart" },
+  { "id": "P", "value": "Enquiry-Ready for Invoice" },
+  { "id": "E", "value": "Enquiry-Closed" }
   ]
 
   navigationSubscription: any;

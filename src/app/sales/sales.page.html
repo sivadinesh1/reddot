@@ -177,8 +177,9 @@
 						<div style="grid-column: 1/-1;">{{customername}}</div>
 						<div class="row">
 							<ion-item class="input-item" lines="none">
-								<mat-form-field class="mat-input-wrapper">
-									<input matInput placeholder="Invoice #" type="text" #invno formControlName="invoiceno" readonly />
+								<mat-form-field class="mat-input-wrapper" floatLabel="always">
+									<mat-placeholder>Invoice #</mat-placeholder>
+									<input matInput type="text" formControlName="invoiceno" readonly />
 								</mat-form-field>
 							</ion-item>
 						</div>
@@ -356,25 +357,35 @@
 							*ngIf="(submitForm.get('status').value !== 'C' ) "
 							appPreventDoubleClick
 							[throttleTime]="1000"
-							(throttledClick)="onSave('draft')"
+							(throttledClick)="onSubmit('draft')"
 							mat-raised-button
 							color="primary"
 							style="font-size: 1rem; padding: 0px 20px;"
 						>
-							Save Draft
+							Save as Draft
 						</button>
 
 						<br />
 						<button
 							appPreventDoubleClick
 							[throttleTime]="1000"
-							(throttledClick)="onSavenSubmit('add')"
+							(throttledClick)="onSubmit('add')"
 							mat-raised-button
 							color="primary"
 							style="font-size: 1rem; padding: 0px 20px;"
 						>
-							Invoice
+							Generate Invoice
 						</button>
+						<!-- <button
+							appPreventDoubleClick
+							[throttleTime]="1000"
+							(throttledClick)="onPrint()"
+							mat-raised-button
+							color="primary"
+							style="font-size: 1rem; padding: 0px 20px;"
+						>
+							Print
+						</button> -->
 					</div>
 				</div>
 			</div>

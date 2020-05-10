@@ -1,3 +1,5 @@
+/** @format */
+
 // Custom variables
 // Note:  These ones were added by us and have nothing to do with Ionic CSS Custom Properties
 :host {
@@ -67,4 +69,14 @@
 		justify-content: center;
 		margin: 0 auto;
 	}
+}
+
+.example-form {
+	min-width: 150px;
+	max-width: 500px;
+	width: 100%;
+}
+
+.example-full-width {
+	width: 100%;
 }

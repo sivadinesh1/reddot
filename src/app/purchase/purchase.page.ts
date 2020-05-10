@@ -53,6 +53,8 @@ export class PurchasePage implements OnInit {
   center_id: any;
 
   removeRowArr = [];
+  deletedRowArr = [];
+
   showDelIcon = false;
   singleRowSelected = false;
   purchaseid: any;
@@ -74,32 +76,24 @@ export class PurchasePage implements OnInit {
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
 
-    const currentUser = this._authservice.currentUserValue;
-    this.center_state_code = currentUser.code;
-    this.center_id = currentUser.center_id;
-
     this._route.data.subscribe(data => {
       this.rawPurchaseData = data['rawpurchasedata'];
-
+      const currentUser = this._authservice.currentUserValue;
+      this.center_state_code = currentUser.code;
+      this.center_id = currentUser.center_id;
+      this.initialize();
     });
 
 
   }
 
   ngOnInit() {
-
+  }
+  initialize() {
 
     this.init();
 
-    // this._commonApiService.getAllActiveVendors(this.center_id).subscribe(data => {
-    //   this.vendordata = data;
-    //   console.log('object.....' + JSON.stringify(this.vendordata));
-    //   this._cdr.markForCheck();
-    // });
-
     this.vendorselected = false;
-    // this.no_of_boxes = new Array(200).fill(null).map((x, i) => ({ 'text': i, 'value': i }));
-
 
     if (this.rawPurchaseData[0] !== undefined && this.rawPurchaseData[0].id !== 0) {
 
@@ -176,6 +170,7 @@ export class PurchasePage implements OnInit {
 
   init() {
     this.submitForm = this._fb.group({
+      centerid: new FormControl(this.center_id),
       purchaseid: new FormControl('', Validators.required),
       vendor: new FormControl(null, Validators.required),
       invoiceno: new FormControl(null, Validators.required),
@@ -387,38 +382,40 @@ export class PurchasePage implements OnInit {
 
 
     if (this.listArr[idx].pur_det_id != '') {
-      this._commonApiService.deletePurchaseDetails({ id: this.listArr[idx].pur_det_id, purchaseid: this.listArr[idx].purchase_id }).subscribe((data: any) => {
 
-
-        if (data.body.result === 'success') {
-          this.listArr.splice(idx, 1);
-          this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
-
-          this.delIconStatus();
-          this.checkIsSingleRow();
-          this.calc();
-
-          // recheck
-          // this.onSubmit('update');
-
-          // this._commonApiService.updatePurchaseMaster(this.submitForm.value).subscribe((data: any) => {
-          //   console.log('successfully updated purchase master !');
-          // });
-
-        } else {
-          this.presentAlert('Error: Something went wrong Contact Admin!');
-        }
-
-        this._cdr.markForCheck();
-      });
-    } else {
-      this.listArr.splice(idx, 1);
-      this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
-
-      this.delIconStatus();
-      this.checkIsSingleRow();
-      this.calc();
+      this.deletedRowArr.push(this.listArr[idx]);
     }
+
+    this.listArr.splice(idx, 1);
+    this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
+
+    this.delIconStatus();
+    this.checkIsSingleRow();
+    this.calc();
+
+
+    // this._commonApiService.deletePurchaseDetails({ id: this.listArr[idx].pur_det_id, purchaseid: this.listArr[idx].purchase_id }).subscribe((data: any) => {
+
+
+    //   if (data.body.result === 'success') {
+    //     this.listArr.splice(idx, 1);
+    //     this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
+
+    //     this.delIconStatus();
+    //     this.checkIsSingleRow();
+    //     this.calc();
+
+
+
+    //   } else {
+    //     this.presentAlert('Error: Something went wrong Contact Admin!');
+    //   }
+
+    //   this._cdr.markForCheck();
+    // });
+
+
+
 
 
 
@@ -464,17 +461,11 @@ export class PurchasePage implements OnInit {
   // draft - status
   onSave(action) {
     this.onSubmit(action);
-    this.submitForm.patchValue({
-      status: 'D',
-    });
   }
 
   // final c completed - status
   onSavenSubmit(action) {
     this.onSubmit(action);
-    this.submitForm.patchValue({
-      status: 'C',
-    });
   }
 
 
@@ -727,7 +718,18 @@ export class PurchasePage implements OnInit {
           text: 'Okay',
           handler: () => {
             console.log('Confirm Okay');
-            this.editCompletedPurchase = false;
+
+            this.executeDeletes();
+
+            if (action === 'add') {
+              this.submitForm.patchValue({
+                status: 'C',
+              });
+            } else if (action === 'draft') {
+              this.submitForm.patchValue({
+                status: 'D',
+              });
+            }
             this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('savePurchaseOrder ' + JSON.stringify(data));
 
@@ -740,6 +742,7 @@ export class PurchasePage implements OnInit {
                 });
                 this.vendorname = "";
                 this.vendorselected = false;
+                this.editCompletedPurchase = false;
                 this.listArr = [];
 
                 this.total = "0.00";
@@ -807,6 +810,47 @@ export class PurchasePage implements OnInit {
       this.deleteProduct(e);
     });
   }
+
+  executeDeletes() {
+
+
+
+
+    this.deletedRowArr.sort().reverse();
+    this.deletedRowArr.forEach((e) => {
+      this.executeDeleteProduct(e);
+    });
+
+  }
+
+
+  executeDeleteProduct(elem) {
+
+
+    this._commonApiService.deletePurchaseDetails({
+      id: elem.pur_det_id, purchaseid: elem.purchase_id,
+      autidneeded: this.editCompletedPurchase
+    }).subscribe((data: any) => {
+
+
+      if (data.body.result === 'success') {
+        console.log('object >>> execute delete product ...')
+
+
+
+      } else {
+        this.presentAlert('Error: Something went wrong Contact Admin!');
+      }
+
+      this._cdr.markForCheck();
+    });
+
+
+
+
+    this._cdr.markForCheck();
+  }
+
 
 
   async editTax() {

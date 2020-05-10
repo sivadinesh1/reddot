@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -20,15 +20,28 @@ import { OpenNativeSettings } from '@ionic-native/open-native-settings/ngx';
 import { SharedModule } from 'src/app/shared.module';
 import { KeyBoardService } from './services/keyboard.service';
 
+import { registerLocaleData } from '@angular/common';
+
+import localeIn from '@angular/common/locales/en-IN';
+import { HomePageModule } from './home/home.module';
+registerLocaleData(localeIn);
+
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [BrowserModule,
 
+
     HttpClientModule,
     SharedModule,
+    HomePageModule,
     IonicModule.forRoot(),
-    IonicStorageModule.forRoot(), AppRoutingModule, BrowserAnimationsModule],
+    IonicStorageModule.forRoot({
+      name: '__mydb',
+      driverOrder: ['indexeddb', 'sqlite', 'websql']
+    }),
+    AppRoutingModule, BrowserAnimationsModule],
   exports: [BrowserModule],
   providers: [
     StatusBar,
@@ -38,7 +51,8 @@ import { KeyBoardService } from './services/keyboard.service';
     OpenNativeSettings,
     KeyBoardService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: MAT_DATE_LOCALE, useValue: 'en-IN' }
+    { provide: MAT_DATE_LOCALE, useValue: 'en-IN' },
+
   ],
   bootstrap: [AppComponent]
 })

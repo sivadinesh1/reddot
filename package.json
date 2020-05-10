@@ -78,7 +78,8 @@
       "phonegap-plugin-barcodescanner": {},
       "cordova-plugin-nativestorage": {},
       "cordova-open-native-settings": {},
-      "cordova-plugin-network-information": {}
+      "cordova-plugin-network-information": {},
+      "cordova-sqlite-storage": {}
     }
   }
 }

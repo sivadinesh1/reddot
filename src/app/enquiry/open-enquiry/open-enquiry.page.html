@@ -117,12 +117,8 @@
 						{{item.noofitems}}
 					</div>
 					<div>
-						<ion-button *ngIf="item.estatus === 'O' " type="button" fill="outline" (click)="processEnquiry(item)">
-							Process Enquiry</ion-button
-						>
-						<ion-button *ngIf="item.estatus === 'D' " type="button" fill="outline" (click)="processEnquiry(item)"
-							>Draft Enquiry</ion-button
-						>
+						<ion-button *ngIf="item.estatus === 'O' " type="button" fill="outline" (click)="processEnquiry(item)"> Go to Cart</ion-button>
+						<ion-button *ngIf="item.estatus === 'D' " type="button" fill="outline" (click)="processEnquiry(item)">Go to Cart</ion-button>
 						<ion-button *ngIf="item.estatus === 'P' " type="button" fill="outline" (click)="moveToSale(item)">Convert to Sale</ion-button>
 						<ion-button *ngIf="item.estatus === 'E' " type="button" fill="outline" (click)="processEnquiry(item)">View</ion-button>
 					</div>

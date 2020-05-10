@@ -1,3 +1,5 @@
+<!-- @format -->
+
 <ion-content>
 	<div class="login-content">
 		<div class="left">
@@ -8,59 +10,27 @@
 			</h2>
 		</div>
 		<div class="right">
-			<form [formGroup]="loginForm" (ngSubmit)="doLogin()">
-				<ion-list class="inputs-list" lines="full">
-					<ion-item class="input-item">
-						<ion-input
-							type="number"
-							placeholder="Enter Mobile Number"
-							formControlName="phone"
-							clearInput
-						></ion-input>
-					</ion-item>
+			<form [formGroup]="loginForm" (ngSubmit)="doLogin()" class="inputs-list">
+				<mat-form-field class="example-full-width">
+					<mat-label>Mobile Number</mat-label>
+					<input matInput formControlName="phone" required />
 
-					<div class="error-container">
-						<ng-container *ngFor="let validation of validation_messages.phone">
-							<div
-								class="error-message"
-								*ngIf="
-                loginForm.get('phone').hasError(validation.type) &&
-                (loginForm.get('phone').dirty || loginForm.get('phone').touched)
-              "
-							>
-								<ion-icon name="information-circle-outline"></ion-icon>
-								<span>{{ validation.message }}</span>
-							</div>
-						</ng-container>
-					</div>
+					<mat-error *ngIf="loginForm.get('phone').hasError('required')"> Phone # is <strong>required</strong> </mat-error>
+					<mat-error *ngIf="loginForm.get('phone').hasError('invalidCountryPhone')"> Wrong phone # <strong>format</strong> </mat-error>
+				</mat-form-field>
 
-					<ion-item class="input-item">
-						<app-show-hide-password>
-							<ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
-						</app-show-hide-password>
-					</ion-item>
-					<div class="error-container">
-						<ng-container *ngFor="let validation of validation_messages.password">
-							<div
-								class="error-message"
-								*ngIf="
-                loginForm.get('password').hasError(validation.type) &&
-                (loginForm.get('password').dirty || loginForm.get('password').touched)
-              "
-							>
-								<ion-icon name="information-circle-outline"></ion-icon>
-								<span>{{ validation.message }}</span>
-							</div>
-						</ng-container>
-					</div>
-				</ion-list>
+				<mat-form-field class="example-full-width">
+					<mat-label>Password</mat-label>
+					<input matInput placeholder="Password" [type]="hide ? 'password' : 'text'" formControlName="password" required />
+					<mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+					<mat-error *ngIf="loginForm.get('password').hasError('required')"> Password is <strong>required</strong> </mat-error>
+				</mat-form-field>
+
 				<div class="error">
 					{{ responsemsg }}
 				</div>
 
-				<ion-button class="login-btn" type="submit" expand="block" [disabled]="!loginForm.valid"
-					>Log In</ion-button
-				>
+				<ion-button class="login-btn" type="submit" expand="block" [disabled]="!loginForm.valid">Log In</ion-button>
 				<ion-row class="other-auth-options-row">
 					<ion-button class="forgot-btn" fill="clear" [routerLink]="['/auth/forgot-password']">
 						Forgot Password?

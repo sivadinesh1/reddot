@@ -262,7 +262,7 @@ export class CommonApiService {
   // Purchase Screen API's
 
   savePurchaseOrder(purchaseObj) {
-    return this.httpClient.post<any>(this.restApiUrl + '/api/insert-purchase-details/', purchaseObj, { observe: 'response' });
+    return this.httpClient.post<any>(this.restApiUrl + '/api/purchase/insert-purchase-details/', purchaseObj, { observe: 'response' });
   }
 
   purchaseDetails(id) {
@@ -295,7 +295,7 @@ export class CommonApiService {
   // Sale Screen API's
 
   saveSaleOrder(saleObj) {
-    return this.httpClient.post<any>(this.restApiUrl + '/api/insert-sale-details/', saleObj, { observe: 'response' });
+    return this.httpClient.post<any>(this.restApiUrl + '/api/sale/insert-sale-details/', saleObj, { observe: 'response' });
   }
 
 

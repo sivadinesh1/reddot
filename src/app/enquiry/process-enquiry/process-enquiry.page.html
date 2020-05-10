@@ -41,12 +41,12 @@
 				<div class="c-pad-mini">Prod Info</div>
 				<div class="c-pad-mini">Rack#</div>
 				<div class="c-pad-mini">Alot. Qty</div>
-				<div class="c-pad-mini">Notes</div>
+				<div class="c-pad-mini" style="padding-left: 10px;">Notes</div>
 				<div class="c-pad-mini">Req. Qty</div>
 				<div class="c-pad-mini">&nbsp;</div>
 			</div>
 			<div class="list-items">
-				<div *ngFor="let item of productArr; let idx = index;" (click)="onClick(item)">
+				<div *ngFor="let item of productArr; let idx = index;" (click)="onClick(item)" style="border-bottom: 1px solid dimgrey;">
 					<div class="process-enq-list">
 						<div>
 							<div class="c-pad">
@@ -86,7 +86,7 @@
 							<span> <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon></span>
 						</div> -->
 
-						<div>
+						<div style="background-color: #ffffee; margin-left: 10px;">
 							<div class="c-pad">
 								{{item.notes}}
 							</div>

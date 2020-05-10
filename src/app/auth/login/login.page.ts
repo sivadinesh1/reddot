@@ -23,7 +23,7 @@ export class LoginPage implements OnInit {
   responsemsg: any;
   apiresponse: any;
 
-
+  hide = true;
 
   validation_messages = {
     'phone': [

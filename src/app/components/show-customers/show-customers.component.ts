@@ -54,7 +54,6 @@ export class ShowCustomersComponent implements OnInit {
         data => {
           this.resultList = data;
 
-          console.log('ABCD >> ' + JSON.stringify(this.resultList));
           if (this.resultList.length === 0) {
 
             this.noMatch = 'No Matching Records';

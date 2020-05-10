@@ -48,16 +48,18 @@ export class AuthenticationService {
                 this.device = 'mobile';
             }
 
-            let tempCurrentUser = await this.getLocalStoreItems('currentUser');
-
-            this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(tempCurrentUser));
-            this.currentUser = this.currentUserSubject.asObservable();
+            this.reloadLocalStorage();
 
         });
     }
 
 
-
+    async reloadLocalStorage() {
+        let tempCurrentUser = await this.getLocalStoreItems('currentUser');
+        debugger;
+        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(tempCurrentUser));
+        this.currentUser = this.currentUserSubject.asObservable();
+    }
 
     setLocalStoreItems(key, value) {
         this.storagemode.set(key, value);
@@ -93,7 +95,10 @@ export class AuthenticationService {
 
 
     public get currentUserValue(): User {
-        return this.currentUserSubject.value;
+        if (this.currentUserSubject !== undefined) {
+            return this.currentUserSubject.value;
+        }
+
     }
 
     login(username: string, password: string) {
@@ -106,6 +111,7 @@ export class AuthenticationService {
                     this.storagemode.clear();
 
                     this.storagemode.set('currentUser', JSON.stringify(data.obj));
+
                     this.currentUserSubject.next(data.obj);
                 }
                 return data;

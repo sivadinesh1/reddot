@@ -18,6 +18,7 @@ import * as moment from 'moment';
 import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
 import { SaleApiService } from '../services/sale-api.service';
 import { async } from 'rxjs/internal/scheduler/async';
+import { InvoiceSuccessComponent } from '../components/invoice-success/invoice-success.component';
 
 @Component({
   selector: 'app-sales',
@@ -572,21 +573,21 @@ export class SalesPage implements OnInit {
 
   }
 
-  // draft - status
-  onSave(action) {
-    this.submitForm.patchValue({
-      status: 'D',
-    });
-    this.onSubmit(action);
-  }
+  // // draft - status
+  // onSave(action) {
+  //   this.submitForm.patchValue({
+  //     status: 'D',
+  //   });
+  //   this.onSubmit(action);
+  // }
 
-  // final c completed - status
-  onSavenSubmit(action) {
-    this.submitForm.patchValue({
-      status: 'C',
-    });
-    this.onSubmit(action);
-  }
+  // // final c completed - status
+  // onSavenSubmit(action) {
+  //   this.submitForm.patchValue({
+  //     status: 'C',
+  //   });
+  //   this.onSubmit(action);
+  // }
 
 
   validateForms() {
@@ -643,8 +644,10 @@ export class SalesPage implements OnInit {
 
         if (action === 'add') {
           this.presentAlertConfirm('add');
+
         } else {
           this.presentAlertConfirm('draft');
+
         }
 
         this.submitForm.patchValue({
@@ -713,6 +716,25 @@ export class SalesPage implements OnInit {
     this._cdr.markForCheck();
   }
 
+
+
+
+  invoiceSuccess() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "400px";
+    dialogConfig.height = "80%";
+    // dialogConfig.data = vendor;
+
+    const dialogRef = this.dialog.open(InvoiceSuccessComponent, dialogConfig);
+
+    dialogRef.afterClosed();
+
+
+
+  }
 
 
 
@@ -834,6 +856,17 @@ export class SalesPage implements OnInit {
 
             this.executeDeletes();
 
+            if (action === 'add') {
+              this.submitForm.patchValue({
+                status: 'C',
+              });
+            } else if (action === 'draft') {
+              this.submitForm.patchValue({
+                status: 'D',
+              });
+            }
+
+
             this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('saveSaleOrder ' + JSON.stringify(data));
 
@@ -854,9 +887,19 @@ export class SalesPage implements OnInit {
                 this.cgstTotal = "0.00";
                 this.sgstTotal = "0.00";
 
+
+                this._saleApiService.getNxtSaleInvoiceNo(this.center_id).subscribe((data: any) => {
+
+                  this.submitForm.patchValue({
+                    invoiceno: data[0].NxtInvNo,
+                  });
+                });
+
                 this._cdr.markForCheck();
                 if (action === 'add') {
-                  this.presentAlert('Invoice Completed!');
+                  //this.presentAlert('Invoice Completed!');
+                  this.invoiceSuccess();
+                  // invoice add dialog
                 } else {
                   this.presentAlert('Saved to Draft!');
                 }
