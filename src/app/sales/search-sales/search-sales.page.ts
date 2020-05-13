@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { Sales } from '../../models/Sales';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, startWith } from 'rxjs/operators';
 
 
 @Component({
@@ -43,12 +43,12 @@ export class SearchSalesPage implements OnInit {
   maxDate = new Date();
   minDate = new Date();
   dobMaxDate = new Date();
-  statusList = [{ "id": "all", "value": "All" }, { "id": "D", "value": "Draft" }, { "id": "C", "value": "Completed" }]
 
   fromdate = new Date();
   todate = new Date();
 
-
+  filteredCustomer: Observable<any[]>;
+  customer_lis: Customer[];
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
@@ -65,6 +65,23 @@ export class SearchSalesPage implements OnInit {
       this.init();
     });
 
+
+
+  }
+
+
+
+  filtercustomer(value: any) {
+
+    if (typeof (value) == "object") {
+      return this.customer_lis.filter(customer =>
+        customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
+    } else if (typeof (value) == "string") {
+      return this.customer_lis.filter(customer =>
+        customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
+    }
+
+
   }
 
   ngOnInit() {
@@ -72,19 +89,49 @@ export class SearchSalesPage implements OnInit {
 
   }
 
-  init() {
-    this.customer$ = this._commonApiService.getAllActiveCustomers(this.center_id);
+  async init() {
 
     this.submitForm = this._fb.group({
-      customerid: new FormControl('all'),
+      customerid: ['all'],
+      customerctrl: ['All Customers'],
       todate: [this.todate, Validators.required],
       fromdate: [this.fromdate, Validators.required],
       status: new FormControl('D'),
     })
 
+    this.customer$ = this._commonApiService.getAllActiveCustomers(this.center_id);
+
+    this.customer_lis = await this.customer$.toPromise();
+
+
+    this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
+      .pipe(
+        startWith(''),
+        map(customer => customer ? this.filtercustomer(customer) : this.customer_lis.slice())
+      );
+
     this.search();
     this._cdr.markForCheck();
 
+  }
+
+  clearInput() {
+    this.submitForm.patchValue({
+      customerid: 'all',
+      customerctrl: ''
+    });
+    this._cdr.markForCheck();
+    this.search();
+  }
+
+  getPosts(event) {
+    this.submitForm.patchValue({
+      customerid: event.option.value.id,
+      customerctrl: event.option.value.name
+    });
+    this._cdr.markForCheck();
+
+    this.search();
   }
 
 
@@ -123,10 +170,10 @@ export class SearchSalesPage implements OnInit {
     this.statusChange = $event.source.value;
   }
 
-  selectedCustomer($event) {
-    this.selectedCust = $event.source.value;
-    this.search();
-  }
+  // selectedCustomer($event) {
+  //   this.selectedCust = $event.source.value;
+  //   this.search();
+  // }
 
   toDateSelected($event) {
     this.todate = $event.target.value;

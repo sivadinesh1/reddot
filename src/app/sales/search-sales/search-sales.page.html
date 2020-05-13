@@ -10,16 +10,23 @@
 	<form [formGroup]="submitForm">
 		<div class="form-wrap">
 			<div class="customers">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Customers</mat-label>
-					<mat-select formControlName="customerid" value="{selectedCust}" (selectionChange)="selectedCustomer($event)">
-						<mat-option value="all">
-							All
+				<mat-form-field class="width">
+					<input
+						matInput
+						[matAutocomplete]="auto"
+						formControlName="customerctrl"
+						required
+						matTooltip="Type to filter the Customer list"
+						matTooltipPosition="after"
+					/>
+					<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+						<mat-icon>close</mat-icon>
+					</button>
+					<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
+						<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
+							<span>{{ customer.name }} </span>
 						</mat-option>
-						<mat-option *ngFor="let item of (customer$ | async)" [value]="item.id">
-							{{item.name}}
-						</mat-option>
-					</mat-select>
+					</mat-autocomplete>
 				</mat-form-field>
 			</div>
 			<div>
