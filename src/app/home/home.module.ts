@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { HomePageRoutingModule } from './home-routing.module';
+
 
 import { HomePage } from './home.page';
 import { SharedModule } from 'src/app/shared.module';
@@ -17,7 +17,7 @@ import { SharedModule } from 'src/app/shared.module';
     IonicModule,
     ReactiveFormsModule,
     SharedModule,
-    HomePageRoutingModule
+
   ],
   declarations: [HomePage]
 })

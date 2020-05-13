@@ -37,10 +37,7 @@ registerLocaleData(localeIn);
     SharedModule,
     HomePageModule,
     IonicModule.forRoot(),
-    IonicStorageModule.forRoot({
-      name: '__mydb',
-      driverOrder: ['indexeddb', 'sqlite', 'websql']
-    }),
+    IonicStorageModule.forRoot(),
     AppRoutingModule, BrowserAnimationsModule],
   exports: [BrowserModule],
   providers: [

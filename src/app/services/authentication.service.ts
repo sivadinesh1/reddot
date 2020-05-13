@@ -18,8 +18,8 @@ import { User } from '../models/User';
 })
 export class AuthenticationService {
 
-    private currentUserSubject: BehaviorSubject<User>;
-    public currentUser: Observable<User>;
+    private currentUserSubject = new BehaviorSubject<User>(null);
+    public currentUser: Observable<User> = this.currentUserSubject.asObservable();
 
     restApiUrl = environment.restApiUrl;
 
@@ -56,9 +56,11 @@ export class AuthenticationService {
 
     async reloadLocalStorage() {
         let tempCurrentUser = await this.getLocalStoreItems('currentUser');
-        debugger;
-        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(tempCurrentUser));
-        this.currentUser = this.currentUserSubject.asObservable();
+
+        if (tempCurrentUser) {
+            this.currentUserSubject.next(JSON.parse(tempCurrentUser));
+        }
+
     }
 
     setLocalStoreItems(key, value) {
@@ -80,7 +82,11 @@ export class AuthenticationService {
 
                     this.storagemode.set('username', username);
                     this.storagemode.set('token', tokenStr);
-                    this.storagemode.set('localstoredata', userData.obj);
+                    this.storagemode.set('currentUser', JSON.stringify(userData.obj));
+
+                    this.currentUserSubject.next(userData.obj);
+
+
                     return userData;
                 }
             )
@@ -95,11 +101,10 @@ export class AuthenticationService {
 
 
     public get currentUserValue(): User {
-        if (this.currentUserSubject !== undefined) {
-            return this.currentUserSubject.value;
-        }
-
+        return this.currentUserSubject.value;
     }
+
+
 
     login(username: string, password: string) {
 

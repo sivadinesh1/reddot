@@ -5,25 +5,23 @@
 		<div class="user_menu">
 			<mat-nav-list>
 				<a mat-list-item>
-					<img
+					<!-- <img
 						class="jim"
 						src="https://a57.foxnews.com/media2.foxnews.com/BrightCove/694940094001/2018/06/21/931/524/694940094001_5800293009001_5800284148001-vs.jpg?ve=1&tl=1"
 						alt=""
-					/>
-					<span [@animateText]="linkText ? 'show' : 'hide'">dinesh </span>
+					/> -->
+					<img src="/assets/svg/manager.svg" width="22px" height="22px" />
+					<span [@animateText]="linkText ? 'show' : 'hide'">dddinesh 1 </span>
 				</a>
 			</mat-nav-list>
 			<mat-divider></mat-divider>
 		</div>
 
 		<div>
-			<mat-nav-list>
-				<a mat-list-item *ngFor="let page of pages">
-					<mat-icon (click)="routeTo(page.link)" style="padding-right: 5px;">
-						<!-- {{ page?.icon }} -->
+			<mat-nav-list dense>
+				<a mat-list-item *ngFor="let page of pages" (click)="routeTo(page.name, page.link)" [ngClass]="{ red: clickedItem === page?.name }">
+					<img src="{{ page?.icon }}" width="22px" height="22px" />
 
-						<img src="{{ page?.icon }}" width="22px" height="22px" />
-					</mat-icon>
 					<span [@animateText]="linkText ? 'show' : 'hide'">{{ page?.name }} </span>
 				</a>
 			</mat-nav-list>

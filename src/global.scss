@@ -1,4 +1,5 @@
-/*
+/**
+ * /*
  * App Global CSS
  * ----------------------------------------------------------------------------
  * Put style rules here that you want to apply globally. These styles are for
@@ -7,6 +8,8 @@
  * output CSS.
  * For more information on global stylesheets, visit the documentation:
  * https://ionicframework.com/docs/layout/global-stylesheets
+ *
+ * @format
  */
 
 /* Core CSS required for Ionic components to work properly */
@@ -138,4 +141,8 @@ button {
 
 .error {
 	color: rgb(156, 0, 0);
+}
+
+.sales-icon {
+	color: orange;
 }

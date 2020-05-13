@@ -2,9 +2,9 @@
 
 .search-wrap {
 	display: grid;
-	width: 80%;
+	width: 94%;
 	margin: 0 auto;
-	padding-top: 30px;
+	padding-top: 16px;
 }
 
 .form-wrap {
@@ -31,4 +31,9 @@
 .listItem {
 	background-color: #fff;
 	border-bottom: 1px solid #f2f2f2;
+}
+
+.title-row {
+	display: flex;
+	justify-content: space-between;
 }

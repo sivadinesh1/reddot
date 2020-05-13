@@ -10,10 +10,7 @@ const routes: Routes = [
     component: PurchasePage,
     resolve: { rawpurchasedata: PurchaseDataResolverService }
   },
-  {
-    path: 'search-purchase',
-    loadChildren: () => import('./search-purchase/search-purchase.module').then(m => m.SearchPurchasePageModule)
-  },
+
   {
     path: 'edit-purchase',
     loadChildren: () => import('./edit-purchase/edit-purchase.module').then(m => m.EditPurchasePageModule)

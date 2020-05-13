@@ -11,3 +11,19 @@
 	object-fit: cover;
 	border-radius: 50%;
 }
+
+:root {
+	--color_fill: yellow;
+}
+
+.mat-list-item:hover {
+	background-color: #f2f2f2;
+}
+
+.is-active {
+	background-color: red;
+}
+
+.red {
+	border-right: 5px solid red;
+}

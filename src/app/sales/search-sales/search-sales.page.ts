@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { Sales } from '../../models/Sales';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
+import { filter, map } from 'rxjs/operators';
 
 
 @Component({
@@ -20,6 +21,15 @@ export class SearchSalesPage implements OnInit {
 
   sales$: Observable<Sales[]>;
   customer$: Observable<Customer[]>;
+
+  draftSales$: Observable<Sales[]>;
+  fullfilledSales$: Observable<Sales[]>;
+
+  filteredSales$: Observable<Sales[]>;
+
+  filteredValues: any;
+  fullfilledOrder: any;
+  draftOrder: any;
 
   resultList: any;
   customerList: any;
@@ -37,6 +47,7 @@ export class SearchSalesPage implements OnInit {
 
   fromdate = new Date();
   todate = new Date();
+
 
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
@@ -77,7 +88,7 @@ export class SearchSalesPage implements OnInit {
   }
 
 
-  search() {
+  async search() {
     this.sales$ = this._commonApiService
       .searchSales(this.center_id, this.submitForm.value.customerid,
         this.submitForm.value.status,
@@ -85,7 +96,19 @@ export class SearchSalesPage implements OnInit {
         this.submitForm.value.todate,
 
       );
+
+    this.filteredSales$ = this.sales$;
+
+    // for initial load of first tab (ALL)
+    this.filteredValues = await this.filteredSales$.toPromise();
+
+    // to calculate the count on each status    
+    this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'D')));
+    this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'C')));
+
+
     this._cdr.markForCheck();
+
   }
 
   goSalesEditScreen(item) {
@@ -102,14 +125,17 @@ export class SearchSalesPage implements OnInit {
 
   selectedCustomer($event) {
     this.selectedCust = $event.source.value;
+    this.search();
   }
 
   toDateSelected($event) {
     this.todate = $event.target.value;
+    this.search();
   }
 
   fromDateSelected($event) {
     this.fromdate = $event.target.value;
+    this.search();
   }
 
   delete(item) {
@@ -143,6 +169,21 @@ export class SearchSalesPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async tabClick($event) {
+    let value = await this.filteredSales$.toPromise();
+
+    if ($event.index === 0) {
+      this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
+    } else if ($event.index === 1) {
+      this.filteredValues = value.filter((data: any) => data.status === 'D');
+    } else if ($event.index === 2) {
+      this.filteredValues = value.filter((data: any) => data.status === 'C');
+    }
+
+    this._cdr.markForCheck();
+
   }
 
 }

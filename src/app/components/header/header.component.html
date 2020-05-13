@@ -5,11 +5,13 @@
 		<mat-icon>menu</mat-icon>
 	</button>
 
-	<span style="align-self: center;">Inbox</span>
+	<span style="align-self: center;">{{ userdata?.center_name }}</span>
 	<span class="spacer"></span>
 	<span style="align-self: center;">
-		<div class="fname">{{ userdata?.firstname }}</div>
-		<div class="role">{{ userdata?.role }}</div>
+		<ng-container *ngIf="userdata">
+			<div class="fname">{{ userdata?.firstname }}</div>
+			<div class="role">{{ userdata?.role }}</div>
+		</ng-container>
 	</span>
 
 	<span style="align-self: center;">
@@ -62,9 +64,5 @@
 
 	<button mat-menu-item (click)="editCenter()">
 		<span>Centers</span>
-	</button>
-
-	<button mat-menu-item (click)="openBackOrder()">
-		<span>Back Orders</span>
 	</button>
 </mat-menu>

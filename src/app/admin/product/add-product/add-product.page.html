@@ -1,195 +1,151 @@
-<ion-content>
-	<div class="content">
-		<app-messages></app-messages>
-		<div class="screen-header">
-			<div>
-				<span (click)="searchProducts()">
-					<span style="font-size: 16px; color: #797979; cursor: pointer;">
-						Search Products
-					</span>
-					>
+<!-- @format -->
+
+<div class="content">
+	<app-messages></app-messages>
+	<div class="screen-header">
+		<div>
+			<span (click)="searchProducts()">
+				<span style="font-size: 16px; color: #797979; cursor: pointer;">
+					Search Products
 				</span>
-			</div>
-			<div>
-				&nbsp;Add Product
-			</div>
+				>
+			</span>
 		</div>
-
-		<form [formGroup]="submitForm">
-			<mat-horizontal-stepper [linear]="isLinear" #stepper formArrayName="formArray">
-				<mat-step formGroupName="0" [stepControl]="formArray?.get([0])">
-					<ng-template matStepLabel>Basic Info</ng-template>
-					<div class="step1">
-						<div class="code">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>Code</mat-label>
-								<input
-									matInput
-									placeholder="Code"
-									(blur)="isProdExists()"
-									formControlName="product_code"
-									required
-								/>
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-							<div *ngIf="pexists" class="error">
-								Already Exists <span class="cursor" (click)="goProdEdit()">{{this.prod_code}}</span>
-							</div>
-						</div>
-						<div class="desc">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>Description</mat-label>
-								<input matInput placeholder="Description" formControlName="description" required />
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-						<div class="vendor">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>Vendor</mat-label>
-								<mat-select formControlName="vendorid">
-									<mat-option *ngFor="let item of vendors" [value]="item.id">
-										{{item.name}}
-									</mat-option>
-								</mat-select>
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-					</div>
-
-					<div>
-						<button mat-button matStepperNext>Next</button>
-					</div>
-				</mat-step>
-				<mat-step formGroupName="1" [stepControl]="formArray?.get([1])">
-					<ng-template matStepLabel>General Info</ng-template>
-					<div class="step2">
-						<div>
-							<mat-form-field>
-								<mat-label>UOM</mat-label>
-								<mat-select formControlName="unit">
-									<mat-option *ngFor="let item of uom" [value]="item.key">
-										{{item.viewValue}}
-									</mat-option>
-								</mat-select>
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field>
-								<mat-label>Packet Size</mat-label>
-								<input
-									matInput
-									type="number"
-									formControlName="packetsize"
-									placeholder="Packet Size"
-									required
-								/>
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field class="mat-width-ext">
-								<mat-label>HSN Code</mat-label>
-								<input matInput formControlName="hsncode" placeholder="HSN Code" required />
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field>
-								<mat-label>Tax Rate (%)</mat-label>
-								<input
-									matInput
-									type="number"
-									formControlName="taxrate"
-									placeholder="Tax Rate (%)"
-									required
-								/>
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-
-						<div>
-							<mat-form-field>
-								<mat-label>Min. Qty</mat-label>
-								<input
-									matInput
-									type="number"
-									formControlName="minqty"
-									placeholder="Min Stock Qty"
-									required
-								/>
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-					</div>
-					<div>
-						<button mat-button matStepperPrevious>Back</button>
-						<button mat-button matStepperNext>Next</button>
-					</div>
-				</mat-step>
-
-				<mat-step formGroupName="2" [stepControl]="formArray?.get([2])">
-					<ng-template matStepLabel>Addl Info</ng-template>
-					<div class="step3">
-						<div>
-							<mat-form-field>
-								<mat-label>Unit/Price</mat-label>
-								<input
-									matInput
-									type="number"
-									formControlName="unit_price"
-									placeholder="Unit Price"
-									required
-								/>
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field>
-								<mat-label>MRP</mat-label>
-								<input matInput type="number" formControlName="mrp" placeholder="Mrp" required />
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field>
-								<mat-label>Purchase Price</mat-label>
-								<input
-									matInput
-									type="number"
-									formControlName="purchaseprice"
-									placeholder="Purchase PRice"
-									required
-								/>
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field>
-								<mat-label>Sale Price</mat-label>
-								<input matInput type="number" formControlName="salesprice" placeholder="Sale Price" />
-							</mat-form-field>
-						</div>
-
-						<div>
-							<mat-form-field>
-								<mat-label>Max. Discount</mat-label>
-								<input
-									matInput
-									type="number"
-									formControlName="maxdiscount"
-									required
-									placeholder="Max Discount"
-								/>
-							</mat-form-field>
-						</div>
-					</div>
-					<div>
-						<button mat-button matStepperPrevious>Back</button>
-						<button mat-button (click)="stepper.reset()">Clear</button>
-						<button mat-button (click)="submit()">+ Add Product</button>
-					</div>
-				</mat-step>
-			</mat-horizontal-stepper>
-		</form>
+		<div>
+			&nbsp;Add Product
+		</div>
 	</div>
-</ion-content>
+
+	<form [formGroup]="submitForm">
+		<mat-horizontal-stepper [linear]="isLinear" #stepper formArrayName="formArray">
+			<mat-step formGroupName="0" [stepControl]="formArray?.get([0])">
+				<ng-template matStepLabel>Basic Info</ng-template>
+				<div class="step1">
+					<div class="code">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Code</mat-label>
+							<input matInput placeholder="Code" (blur)="isProdExists()" formControlName="product_code" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+						<div *ngIf="pexists" class="error">Already Exists <span class="cursor" (click)="goProdEdit()">{{this.prod_code}}</span></div>
+					</div>
+					<div class="desc">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Description</mat-label>
+							<input matInput placeholder="Description" formControlName="description" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+					<div class="vendor">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Vendor</mat-label>
+							<mat-select formControlName="vendorid">
+								<mat-option *ngFor="let item of vendors" [value]="item.id">
+									{{item.name}}
+								</mat-option>
+							</mat-select>
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+				</div>
+
+				<div>
+					<button mat-button matStepperNext>Next</button>
+				</div>
+			</mat-step>
+			<mat-step formGroupName="1" [stepControl]="formArray?.get([1])">
+				<ng-template matStepLabel>General Info</ng-template>
+				<div class="step2">
+					<div>
+						<mat-form-field>
+							<mat-label>UOM</mat-label>
+							<mat-select formControlName="unit">
+								<mat-option *ngFor="let item of uom" [value]="item.key">
+									{{item.viewValue}}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field>
+							<mat-label>Packet Size</mat-label>
+							<input matInput type="number" formControlName="packetsize" placeholder="Packet Size" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>HSN Code</mat-label>
+							<input matInput formControlName="hsncode" placeholder="HSN Code" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field>
+							<mat-label>Tax Rate (%)</mat-label>
+							<input matInput type="number" formControlName="taxrate" placeholder="Tax Rate (%)" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+
+					<div>
+						<mat-form-field>
+							<mat-label>Min. Qty</mat-label>
+							<input matInput type="number" formControlName="minqty" placeholder="Min Stock Qty" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+				</div>
+				<div>
+					<button mat-button matStepperPrevious>Back</button>
+					<button mat-button matStepperNext>Next</button>
+				</div>
+			</mat-step>
+
+			<mat-step formGroupName="2" [stepControl]="formArray?.get([2])">
+				<ng-template matStepLabel>Addl Info</ng-template>
+				<div class="step3">
+					<div>
+						<mat-form-field>
+							<mat-label>Unit/Price</mat-label>
+							<input matInput type="number" formControlName="unit_price" placeholder="Unit Price" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field>
+							<mat-label>MRP</mat-label>
+							<input matInput type="number" formControlName="mrp" placeholder="Mrp" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field>
+							<mat-label>Purchase Price</mat-label>
+							<input matInput type="number" formControlName="purchaseprice" placeholder="Purchase PRice" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field>
+							<mat-label>Sale Price</mat-label>
+							<input matInput type="number" formControlName="salesprice" placeholder="Sale Price" />
+						</mat-form-field>
+					</div>
+
+					<div>
+						<mat-form-field>
+							<mat-label>Max. Discount</mat-label>
+							<input matInput type="number" formControlName="maxdiscount" required placeholder="Max Discount" />
+						</mat-form-field>
+					</div>
+				</div>
+				<div>
+					<button mat-button matStepperPrevious>Back</button>
+					<button mat-button (click)="stepper.reset()">Clear</button>
+					<button mat-raised-button color="primary" (click)="submit()">+ Add Product</button>
+				</div>
+			</mat-step>
+		</mat-horizontal-stepper>
+	</form>
+</div>

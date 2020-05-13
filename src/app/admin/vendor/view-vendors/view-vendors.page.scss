@@ -1,7 +1,10 @@
+/** @format */
+
 .content {
 	display: grid;
-	width: 80%;
+	width: 94%;
 	margin: 0 auto;
+	padding: 16px;
 }
 
 .list-item {
@@ -23,7 +26,7 @@
 .header {
 	display: flex;
 	justify-content: space-between;
-	padding: 20px 10px 10px 10px;
+	padding: 0px 0px 10px 0px;
 	font-size: 20px;
 	color: #222222;
 }

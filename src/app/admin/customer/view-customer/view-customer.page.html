@@ -1,28 +1,32 @@
-<ion-content>
-	<div class="screen-header">
+<!-- @format -->
+
+<div class="content">
+	<div class="header">
 		<div>
-			&nbsp;
-		</div>
-
-		<div (click)="addCustomer()">
-			+ Add Customer
-		</div>
-	</div>
-
-	<div class="content">
-		<div class="header">List of Customers</div>
-		<ng-container *ngFor="let item of resultList; let idx = index; let isOdd = odd; let isEven = even">
-			<div class="list-item" [class.odd]="isOdd" [class.even]="isEven" (click)="editCustomer(item)">
-				<div class="item1 ">{{ idx + 1 }}</div>
-				<div class="item2">
-					<div class="item21">{{ item.name }}</div>
-				</div>
-				<div class="item3">
-					<div class="item31">{{ item.address1 }}</div>
-					<div class="item31">{{ item.address2 || 'N/A' }}</div>
-					<div class="item31">{{ item.description || 'N/A' }}</div>
-				</div>
+			<div>
+				List of Customers
 			</div>
-		</ng-container>
+			<div style="font-size: 12px; color: #797979;">
+				{{(customer$| async)?.length }} Records
+			</div>
+		</div>
+		<div>
+			<button appPreventDoubleClick (throttledClick)="addCustomer()" [throttleTime]="500" mat-raised-button color="primary">
+				+ Add Customers
+			</button>
+		</div>
 	</div>
-</ion-content>
+
+	<ng-container *ngFor="let item of (customer$ | async); let idx = index;">
+		<div class="list-item row-color" (click)="editCustomer(item)">
+			<div class="item1">{{ idx + 1 }}</div>
+			<div class="item2">
+				<div class="item21">{{ item.name }}</div>
+			</div>
+			<div class="item3">
+				<div class="item31">{{ item.address1 }}</div>
+				<div class="item31">{{ item.address2 || 'N/A' }}</div>
+			</div>
+		</div>
+	</ng-container>
+</div>

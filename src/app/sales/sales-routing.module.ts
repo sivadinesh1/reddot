@@ -10,10 +10,7 @@ const routes: Routes = [
     component: SalesPage,
     resolve: { rawsalesdata: SalesDataResolverService }
   },
-  {
-    path: 'search-sales',
-    loadChildren: () => import('./search-sales/search-sales.module').then(m => m.SearchSalesPageModule)
-  },
+
 
 ];
 

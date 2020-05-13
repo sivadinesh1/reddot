@@ -1,16 +1,10 @@
-// .screen-header {
-// 	display: flex;
-// 	padding: 8px;
-// 	font-size: 18px;
-// 	font-weight: 500;
-// 	color: #222222;
-// 	justify-content: space-between;
-// }
+/** @format */
 
 .content {
 	display: grid;
-	width: 80%;
+	width: 94%;
 	margin: 0 auto;
+	padding: 16px;
 }
 
 .mat-width-ext {
@@ -27,12 +21,10 @@
 
 .screen-header {
 	display: flex;
-	width: 80%;
+	width: 94%;
 	margin: 0 auto;
-	padding-top: 30px;
+	padding-top: 16px;
 	font-size: 16px;
 	font-weight: 500;
 	color: #222222;
-
-	// justify-content: space-between;
 }

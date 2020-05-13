@@ -22,9 +22,10 @@ export class LeftMenuComponent implements OnInit {
 
   public sideNavState: boolean = false;
   public linkText: boolean = false;
+  clickedItem = 'dashboard';
 
   pages: Page[] = [
-    { name: 'Enquiry', link: '/home/search-enquiry', icon: '/assets/svg/enquiry.svg' },
+    { name: 'Enquiry', link: '/home/enquiry/open-enquiry', icon: '/assets/svg/enquiry.svg' },
     { name: 'Sale', link: '/home/search-sales', icon: '/assets/svg/sales.svg' },
     { name: 'Purchase', link: '/home/search-purchase', icon: '/assets/svg/purchase.svg' },
 
@@ -49,13 +50,13 @@ export class LeftMenuComponent implements OnInit {
     this._cdr.detectChanges();
   }
 
-  goSearchPurchaseScreen() {
-    // this.selectedMenu = 'purchase';
-    this._router.navigateByUrl(`/home/search-purchase`);
-  }
 
-  routeTo(url: string) {
+
+  routeTo(name: string, url: string) {
+    this.clickedItem = name;
     this._router.navigateByUrl(url);
+    this._cdr.markForCheck();
   }
 
 }
+

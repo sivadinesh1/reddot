@@ -3,7 +3,7 @@ export class User {
     username: string;
     firstname: string;
     role: string;
-    center_id: string;
+    center_id?: string;
     center_name?: string;
     company_id: number;
     company_name: string;

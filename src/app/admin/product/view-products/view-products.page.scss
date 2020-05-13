@@ -1,7 +1,10 @@
+/** @format */
+
 .content {
 	display: grid;
-	width: 80%;
+	width: 94%;
 	margin: 0 auto;
+	padding: 16px;
 }
 
 .main-info {
@@ -182,7 +185,7 @@
 .head {
 	display: flex;
 	justify-content: flex-start;
-	padding-top: 50px;
+	padding-top: 10px;
 }
 
 .add-btn {

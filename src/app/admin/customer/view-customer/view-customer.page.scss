@@ -1,3 +1,5 @@
+/** @format */
+
 .screen-header {
 	display: flex;
 	margin-left: 80px;
@@ -11,8 +13,9 @@
 
 .content {
 	display: grid;
-	width: 80%;
+	width: 94%;
 	margin: 0 auto;
+	padding: 16px;
 }
 
 .list-item {
@@ -32,7 +35,9 @@
 }
 
 .header {
-	padding: 10px;
+	display: flex;
+	justify-content: space-between;
+	padding: 0px 0px 10px 0px;
 	font-size: 20px;
 	color: #222222;
 }

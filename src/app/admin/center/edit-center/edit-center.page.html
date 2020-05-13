@@ -1,80 +1,69 @@
-<ion-content>
-	<div class="screen-header">
-		<div>
-			&nbsp;
-		</div>
-
-		<div (click)="addCenter()">
-			+ Add Center
-		</div>
-	</div>
-
-	<div class="content">
-		<form [formGroup]="submitForm">
-			<mat-horizontal-stepper [linear]="isLinear" #stepper formArrayName="formArray">
-				<mat-step formGroupName="0" [stepControl]="formArray?.get([0])">
-					<ng-template matStepLabel>Basic Info</ng-template>
-					<div class="vendor-info">
-						<div class="name">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>Name</mat-label>
-								<input matInput placeholder="Name" readonly formControlName="name" required />
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
-						<div class="address1">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>Address Line 1</mat-label>
-								<input matInput placeholder="Address Line 1" formControlName="address1" />
-							</mat-form-field>
-						</div>
-						<div class="address2">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>Address Line 2</mat-label>
-								<input matInput placeholder="Address Line 2" formControlName="address2" />
-							</mat-form-field>
-						</div>
-						<div class="address3">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>Address Line 3</mat-label>
-								<input matInput placeholder="Address Line 3" formControlName="address3" />
-							</mat-form-field>
-						</div>
-
-						<div class="district">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>District</mat-label>
-								<input matInput placeholder="District" formControlName="district" />
-							</mat-form-field>
-						</div>
-
-						<div class="state">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>State</mat-label>
-								<mat-select formControlName="state_id" required>
-									<mat-option *ngFor="let item of statesdata" [value]="item.id">
-										{{item.description}}
-									</mat-option>
-								</mat-select>
-							</mat-form-field>
-						</div>
-
-						<div class="pin">
-							<mat-form-field class="mat-width-ext">
-								<mat-label>Pin</mat-label>
-								<input matInput placeholder="State" formControlName="pin" />
-							</mat-form-field>
-						</div>
+<div class="content">
+	<form [formGroup]="submitForm">
+		<mat-horizontal-stepper [linear]="isLinear" #stepper formArrayName="formArray">
+			<mat-step formGroupName="0" [stepControl]="formArray?.get([0])">
+				<ng-template matStepLabel>Basic Info</ng-template>
+				<div class="center-info">
+					<div class="name">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Name</mat-label>
+							<input matInput placeholder="Name" readonly formControlName="name" required />
+							<mat-error>This field is required</mat-error>
+						</mat-form-field>
+					</div>
+					<div class="address1">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Address Line 1</mat-label>
+							<input matInput placeholder="Address Line 1" formControlName="address1" />
+						</mat-form-field>
+					</div>
+					<div class="address2">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Address Line 2</mat-label>
+							<input matInput placeholder="Address Line 2" formControlName="address2" />
+						</mat-form-field>
+					</div>
+					<div class="address3">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Address Line 3</mat-label>
+							<input matInput placeholder="Address Line 3" formControlName="address3" />
+						</mat-form-field>
 					</div>
 
-					<div>
-						<button mat-button matStepperNext>Next</button>
+					<div class="district">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>District</mat-label>
+							<input matInput placeholder="District" formControlName="district" />
+						</mat-form-field>
 					</div>
-				</mat-step>
 
-				<mat-step formGroupName="1" [stepControl]="formArray?.get([1])">
-					<ng-template matStepLabel>General Info</ng-template>
+					<div class="state">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>State</mat-label>
+							<mat-select formControlName="state_id" required>
+								<mat-option *ngFor="let item of statesdata" [value]="item.id">
+									{{item.description}}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
 
+					<div class="pin">
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Pin</mat-label>
+							<input matInput placeholder="State" formControlName="pin" />
+						</mat-form-field>
+					</div>
+				</div>
+
+				<div>
+					<button mat-button matStepperNext>Next</button>
+				</div>
+			</mat-step>
+
+			<mat-step formGroupName="1" [stepControl]="formArray?.get([1])">
+				<ng-template matStepLabel>General Info</ng-template>
+				<div class="center-info1">
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>GST</mat-label>
@@ -107,15 +96,16 @@
 							<input type="number" matInput formControlName="whatsapp" placeholder="Whatsapp" />
 						</mat-form-field>
 					</div>
+				</div>
+				<div>
+					<button mat-button matStepperPrevious>Back</button>
+					<button mat-button matStepperNext>Next</button>
+				</div>
+			</mat-step>
 
-					<div>
-						<button mat-button matStepperPrevious>Back</button>
-						<button mat-button matStepperNext>Next</button>
-					</div>
-				</mat-step>
-
-				<mat-step formGroupName="2" [stepControl]="formArray?.get([2])">
-					<ng-template matStepLabel>Addl Info</ng-template>
+			<mat-step formGroupName="2" [stepControl]="formArray?.get([2])">
+				<ng-template matStepLabel>Addl Info</ng-template>
+				<div class="center-info2">
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Email</mat-label>
@@ -150,23 +140,13 @@
 							<input type="text" matInput formControlName="branch" placeholder="Branch" />
 						</mat-form-field>
 					</div>
-
-					<div>
-						<button mat-button matStepperPrevious>Back</button>
-						<button mat-button matStepperNext>Next</button>
-					</div>
-				</mat-step>
-
-				<mat-step>
-					<ng-template matStepLabel>Done</ng-template>
-					<p>Vendor Informationg Ready for Saving.</p>
-					<div>
-						<button mat-button matStepperPrevious>Back</button>
-						<button mat-button (click)="stepper.reset()">Clear</button>
-						<button mat-button (click)="submit()">Update Center</button>
-					</div>
-				</mat-step>
-			</mat-horizontal-stepper>
-		</form>
-	</div>
-</ion-content>
+				</div>
+				<div>
+					<button mat-button matStepperPrevious>Back</button>
+					<button mat-button (click)="stepper.reset()">Clear</button>
+					<button mat-button (click)="submit()">Update Center</button>
+				</div>
+			</mat-step>
+		</mat-horizontal-stepper>
+	</form>
+</div>

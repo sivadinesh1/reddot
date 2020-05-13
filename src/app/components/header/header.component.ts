@@ -2,7 +2,9 @@ import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } 
 import { MatSidenav } from '@angular/material';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
-
+import { Observable } from 'rxjs';
+import { User } from '../../models/User';
+import { filter, map, defaultIfEmpty } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -13,19 +15,28 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit {
 
   userdata: any;
-  center_id: any;
 
+
+  userdata$: Observable<User>;
 
   @Input() sidenav: MatSidenav
 
   constructor(private _authservice: AuthenticationService, private _cdr: ChangeDetectorRef,
     private _router: Router) {
-    // const currentUser = this._authservice.currentUserValue;
-    // this.center_id = currentUser.center_id;
+
+    this.userdata$ = this._authservice.currentUser;
+
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+        this._cdr.markForCheck();
+      });
+
   }
 
   ngOnInit() {
-    this.userdata = this._authservice.currentUserValue;
   }
 
   toggle() {
@@ -58,11 +69,9 @@ export class HeaderComponent implements OnInit {
   }
 
   editCenter() {
-    this._router.navigate([`/home/center/edit`, this.center_id]);
+    this._router.navigate([`/home/center/edit`, this.userdata.center_id]);
   }
 
-  openBackOrder() {
-    this._router.navigateByUrl('/home/enquiry/back-order');
-  }
+
 
 }

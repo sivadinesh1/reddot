@@ -1,135 +1,143 @@
 <!-- @format -->
 
-<ion-content>
-	<div class="search-wrap">
-		<div><h3>Sales Management</h3></div>
-		<form [formGroup]="submitForm">
-			<div class="form-wrap">
-				<div class="customers">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Customers</mat-label>
-						<mat-select formControlName="customerid" value="{selectedCust}" (selectionChange)="selectedCustomer($event)">
-							<mat-option value="all">
-								All
-							</mat-option>
-							<mat-option *ngFor="let item of (customer$ | async)" [value]="item.id">
-								{{item.name}}
-							</mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div>
-				<div>
-					<ion-item class="input-item" lines="none">
-						<mat-form-field class="mat-input-wrapper">
-							<input
-								matInput
-								readonly
-								[max]="maxDate"
-								[matDatepicker]="fromdate"
-								formControlName="fromdate"
-								placeholder="From date"
-								(focus)="fromdate.open()"
-								(dateChange)="fromDateSelected($event)"
-							/>
-							<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
-							<mat-datepicker #fromdate></mat-datepicker>
-						</mat-form-field>
-					</ion-item>
-				</div>
-				<div>
-					<ion-item class="input-item" lines="none">
-						<mat-form-field class="mat-input-wrapper">
-							<input
-								matInput
-								readonly
-								[matDatepicker]="todate"
-								[max]="maxDate"
-								formControlName="todate"
-								placeholder="To date"
-								(focus)="todate.open()"
-								required
-								(dateChange)="toDateSelected($event)"
-							/>
-							<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
-							<mat-datepicker #todate></mat-datepicker>
-						</mat-form-field>
-					</ion-item>
-				</div>
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Status</mat-label>
-						<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
-							<mat-option *ngFor="let item of statusList" [value]="item.id">
-								{{item.value}}
-							</mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div>
-				<div class="search-btn">
-					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem;" (click)="search()">
-						Search
-					</button>
-				</div>
-			</div>
-		</form>
-
-		<div style="display: flex; justify-content: space-between; padding-top: 30px;">
-			<div>
-				Recent Sales Report
-			</div>
-			<div style="font-size: 12px; color: #797979;">
-				{{(sales$| async)?.length }} Records
-			</div>
-		</div>
-		<div class="header header-style">
-			<div>
-				Invoice #
-			</div>
-			<div>
-				Invoice Date
-			</div>
-			<div>
-				Customer Name
-			</div>
-			<div>
-				# of Items
-			</div>
-			<div>
-				Total Value
-			</div>
-			<div>
-				Status
-			</div>
-			<div>
-				&nbsp;
-			</div>
-			<div>
-				<span>Revision</span>
-			</div>
-		</div>
-
-		<div *ngFor="let item of (sales$ | async) " class="listItem">
-			<div class="item">{{item.invoice_no}}</div>
-			<div class="item">{{item.invoice_date}}</div>
-			<div class="item">{{item.customer_name}}</div>
-			<div class="item">{{item.no_of_items}}</div>
-			<div class="item">{{item.total_value}}</div>
-			<div class="item">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
-			<div class="item cursor">
-				<img src="/assets/images/svg/edit.svg" width="18px" height="18px" (click)="goSalesEditScreen(item)" />
-			</div>
-			<div class="item cursor" *ngIf="item.status === 'D'">
-				<img src="/assets/images/svg/trash.svg" width="18px" height="18px" (click)="presentAlertConfirm(item)" />
-			</div>
-			<div>
-				<span *ngIf="item.status === 'C'">{{item.revision}}</span>
-			</div>
-		</div>
-
-		<ion-fab vertical="bottom" horizontal="end" slot="fixed">
-			<ion-fab-button (click)="goSalesAddScreen()">
-				<ion-icon name="add"></ion-icon>
-			</ion-fab-button>
-		</ion-fab>
+<div class="search-wrap">
+	<div class="title-row">
+		<span>Sales Management</span>
+		<button mat-raised-button color="primary" (click)="goSalesAddScreen()" style="font-size: 0.8rem; border-radius: 50px;" (click)="search()">
+			+ New Sales Order
+		</button>
 	</div>
-</ion-content>
+	<form [formGroup]="submitForm">
+		<div class="form-wrap">
+			<div class="customers">
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Customers</mat-label>
+					<mat-select formControlName="customerid" value="{selectedCust}" (selectionChange)="selectedCustomer($event)">
+						<mat-option value="all">
+							All
+						</mat-option>
+						<mat-option *ngFor="let item of (customer$ | async)" [value]="item.id">
+							{{item.name}}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+			</div>
+			<div>
+				<ion-item class="input-item" lines="none">
+					<mat-form-field class="mat-input-wrapper">
+						<input
+							matInput
+							readonly
+							[max]="maxDate"
+							[matDatepicker]="fromdate"
+							formControlName="fromdate"
+							placeholder="From date"
+							(focus)="fromdate.open()"
+							(dateChange)="fromDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
+						<mat-datepicker #fromdate></mat-datepicker>
+					</mat-form-field>
+				</ion-item>
+			</div>
+			<div>
+				<ion-item class="input-item" lines="none">
+					<mat-form-field class="mat-input-wrapper">
+						<input
+							matInput
+							readonly
+							[matDatepicker]="todate"
+							[max]="maxDate"
+							formControlName="todate"
+							placeholder="To date"
+							(focus)="todate.open()"
+							required
+							(dateChange)="toDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
+						<mat-datepicker #todate></mat-datepicker>
+					</mat-form-field>
+				</ion-item>
+			</div>
+		</div>
+	</form>
+
+	<mat-tab-group color="primary" backgroundColor="primary" (selectedTabChange)="tabClick($event)">
+		<mat-tab label="All Orders ({{(sales$| async)?.length }})">
+			<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+			<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+		</mat-tab>
+
+		<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
+			<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+			<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+		</mat-tab>
+
+		<mat-tab label="Fullfilled  ({{(fullfilledSales$| async)?.length }})">
+			<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+			<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+		</mat-tab>
+	</mat-tab-group>
+
+	<div style="display: flex; justify-content: space-between; padding-top: 30px;">
+		<div>
+			Recent Sales Report
+		</div>
+		<div style="font-size: 12px; color: #797979;">
+			{{(sales$| async)?.length }} Records
+		</div>
+
+		<div style="font-size: 12px; color: #797979;">
+			AA {{(draftSales$| async)?.length }} Records trs
+		</div>
+	</div>
+</div>
+
+<ng-template #MsgRef>
+	<div class="header header-style">
+		<div>
+			Invoice #
+		</div>
+		<div>
+			Invoice Date
+		</div>
+		<div>
+			Customer Name
+		</div>
+		<div>
+			# of Items
+		</div>
+		<div>
+			Total Value
+		</div>
+		<div>
+			Status
+		</div>
+		<div>
+			&nbsp;
+		</div>
+		<div>
+			<span>Revision</span>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #MsgRef1>
+	<div *ngFor="let item of filteredValues  " class="listItem">
+		<div class="item">{{item.invoice_no}}</div>
+		<div class="item">{{item.invoice_date}}</div>
+		<div class="item">{{item.customer_name}}</div>
+		<div class="item">{{item.no_of_items}}</div>
+		<div class="item">{{item.total_value}}</div>
+		<div class="item">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
+		<div class="item cursor">
+			<img src="/assets/images/svg/edit.svg" width="18px" height="18px" (click)="goSalesEditScreen(item)" />
+		</div>
+		<div class="item cursor" *ngIf="item.status === 'D'">
+			<img src="/assets/images/svg/trash.svg" width="18px" height="18px" (click)="presentAlertConfirm(item)" />
+		</div>
+		<div>
+			<span *ngIf="item.status === 'C'">{{item.revision}}</span>
+		</div>
+	</div>
+</ng-template>

@@ -130,6 +130,7 @@ const matcomponents = [
     ReactiveFormsModule,
     IonicModule,
     ...matcomponents,
+
   ],
   exports: [
     ...matcomponents, ...components, IonicModule
