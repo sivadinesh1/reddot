@@ -6,12 +6,14 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import * as FileSaver from 'file-saver';
-import { Purchase } from '../models/Purchase';
+
+
 import { Sales } from '../models/Sales';
 import { Customer } from '../models/Customer';
 import { Vendor } from '../models/Vendor';
 import { EnquiryDetail } from '../models/EnquiryDetail';
 import { Enquiry } from '../models/Enquiry';
+import { Purchase } from '../models/Purchase';
 
 @Injectable({
   providedIn: 'root'
