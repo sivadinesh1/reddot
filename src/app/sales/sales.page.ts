@@ -563,6 +563,7 @@ export class SalesPage implements OnInit {
     this.checkIsSingleRow();
     this.calc();
 
+
     // this._commonApiService.deleteSalesDetails({
     //   id: this.listArr[idx].sale_det_id, salesid: this.listArr[idx].sales_id,
     //   autidneeded: this.editCompletedSales
