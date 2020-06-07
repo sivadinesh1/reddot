@@ -13,7 +13,8 @@ import { Customer } from '../models/Customer';
 import { Vendor } from '../models/Vendor';
 import { EnquiryDetail } from '../models/EnquiryDetail';
 import { Enquiry } from '../models/Enquiry';
-import { Purchase } from '../models/Purchase';
+
+import { Purchase } from 'src/app/models/Purchase';
 
 @Injectable({
   providedIn: 'root'
