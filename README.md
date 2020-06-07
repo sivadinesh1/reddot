@@ -1,1 +1,2 @@
-# reddot
+# reddot 
+CI / CD Automation
