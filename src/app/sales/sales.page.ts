@@ -79,6 +79,23 @@ export class SalesPage implements OnInit {
   id: string;
   fromEnquiry: any;
 
+  GST_18_sub_total: any;
+  GST_18_total_value: any;
+  GST_18_disc: any;
+  GST_18_cgst: any;
+  GST_18_sgst: any;
+  GST_18_igst: any;
+  GST_18_gst: any;
+
+  GST_28_sub_total: any;
+  GST_28_total_value: any;
+  GST_28_disc: any;
+  GST_28_cgst: any;
+  GST_28_sgst: any;
+  GST_28_igst: any;
+  GST_28_gst: any;
+
+  testTotal: any;
 
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
@@ -335,12 +352,19 @@ export class SalesPage implements OnInit {
   }
 
   async showAddProductComp() {
+    let invdt = "";
+    if (this.submitForm.value.invoicedate === null) {
+      invdt = moment().format('DD-MM-YYYY');
+    } else {
+      invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+    }
+
+
 
     const modal = await this._modalcontroller.create({
       component: AddProductComponent,
-      componentProps: { center_id: this.center_id, customer_id: 0 },
+      componentProps: { center_id: this.center_id, customer_id: this.customerdata.id, order_date: invdt },
       cssClass: 'select-modal'
-
     });
 
     modal.onDidDismiss().then((result) => {
@@ -359,7 +383,17 @@ export class SalesPage implements OnInit {
   processItems(temp) {
 
     this.setTaxSegment(temp.taxrate);
+    let subtotal = 0;
+    let taxableval = 0;
+    let totalval = 0;
+    let discval = 0;
 
+    let qty = 0;
+    if (this.mode === 'enquiry') {
+      qty = temp.packetsize;
+    } else {
+      qty = temp.qty
+    }
 
     let sid = '';
     if (this.rawSalesData !== null) {
@@ -375,6 +409,28 @@ export class SalesPage implements OnInit {
       oldval = temp.qty;
     }
 
+    let disc_info = temp.disc_info;
+    this.cust_discount_type = disc_info.substring(disc_info.indexOf("~") + 1);
+    this.cust_discount_prcnt = disc_info.substring(0, disc_info.indexOf("~"));
+
+
+
+
+    if (this.cust_discount_type === 'NET') {
+
+      subtotal = (qty * temp.mrp);
+      taxableval = ((qty * temp.mrp) * (100 - this.cust_discount_prcnt)) / (100 + temp.taxrate);
+      discval = ((qty * temp.mrp) * (this.cust_discount_prcnt)) / (100 + temp.taxrate);
+      totalval = (qty * temp.mrp) * (100 - this.cust_discount_prcnt) / 100;
+
+    } else if (this.cust_discount_type === 'GROSS') {
+
+
+      subtotal = (qty * temp.mrp);
+      taxableval = ((qty * temp.mrp) * (100 - this.cust_discount_prcnt)) / 100;
+      discval = ((qty * temp.mrp) * (this.cust_discount_prcnt)) / 100;
+      totalval = ((qty * temp.mrp) * (100 - this.cust_discount_prcnt) / 100) * (1 + (temp.taxrate / 100));
+    }
 
     // from product tbl
     this.listArr.push(
@@ -392,10 +448,18 @@ export class SalesPage implements OnInit {
         "mrp_change_flag": 'N',
         "taxrate": temp.taxrate,
 
-        "tax_value": ((temp.unit_price * temp.qty) * ((temp.taxrate) / 100)).toFixed(2),
 
-        "taxable_value": (temp.unit_price * temp.qty),
-        "total_value": ((temp.unit_price * temp.qty) + (temp.unit_price * (temp.qty) * temp.taxrate) / 100).toFixed(2),
+        "sub_total": (subtotal).toFixed(2),
+        "taxable_value": (taxableval).toFixed(2),
+        "disc_value": (discval).toFixed(2),
+        "disc_percent": this.cust_discount_prcnt,
+        "total_value": (totalval).toFixed(2),
+        "tax_value": (totalval - taxableval).toFixed(2),
+
+        //     "tax_value": ((temp.unit_price * temp.qty) * ((temp.taxrate) / 100)).toFixed(2),
+
+        //     "taxable_value": (temp.unit_price * temp.qty),
+        //     "total_value": ((temp.unit_price * temp.qty) + (temp.unit_price * (temp.qty) * temp.taxrate) / 100).toFixed(2),
 
 
 
@@ -445,7 +509,7 @@ export class SalesPage implements OnInit {
       this.igstTotal = this.listArr.map(item => {
         console.log('igst....' + item.unit_price);
 
-        return item.unit_price * item.qty * parseFloat(item.taxrate) / 100;
+        return item.tax_value;
       })
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
@@ -460,13 +524,13 @@ export class SalesPage implements OnInit {
 
       this.cgstTotal = this.listArr.map(item => {
 
-        return item.unit_price * item.qty * (parseFloat(this.cgst) / 100);
+        return item.tax_value / 2;
       })
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
       this.sgstTotal = this.listArr.map(item => {
 
-        return item.unit_price * item.qty * parseFloat(this.sgst) / 100;
+        return item.tax_value / 2;
       })
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
@@ -781,11 +845,78 @@ export class SalesPage implements OnInit {
   }
 
 
+  openRowNumberPad(idx, field) {
+
+    const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap((val) => {
+
+          this.listArr[idx].disc_percent = val;
+          this.qtyChange(idx);
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe();
+
+    // dialogRef.afterClosed().subscribe(
+    //   data => {
+    //     if (data != undefined && data.length > 0 && data != 0) {
+
+    //       if (field === 'discount') {
+
+    //         this.listArr[idx].disc_percent = data;
+    //         this.qtyChange(idx);
+    //       }
+
+
+    //     }
+
+    //     this._cdr.markForCheck();
+    //   }
+    // );
+  }
+
+
   qtyChange(idx) {
 
-    this.listArr[idx].total_value = ((this.listArr[idx].unit_price * this.listArr[idx].qty) + (this.listArr[idx].unit_price * (this.listArr[idx].qty) * this.listArr[idx].taxrate) / 100).toFixed(2)
-    this.listArr[idx].taxable_value = ((this.listArr[idx].qty) * (this.listArr[idx].unit_price)).toFixed(2);
-    this.listArr[idx].tax_value = ((this.listArr[idx].taxable_value) * ((this.listArr[idx].taxrate) / 100)).toFixed(2);
+    if (this.cust_discount_type === 'NET') {
+      this.listArr[idx].sub_total = (this.listArr[idx].qty * this.listArr[idx].mrp).toFixed(2);
+
+      console.log('object' + this.listArr[idx].qty);
+      console.log('object' + this.listArr[idx].mrp);
+      console.log('object' + this.listArr[idx].disc_percent);
+
+      console.log('object' + (this.listArr[idx].qty * this.listArr[idx].mrp));
+      console.log('object' + (100 - this.listArr[idx].disc_percent));
+
+      console.log('object' + (100 - this.listArr[idx].disc_percent) / 100);
+
+      // debugger;
+
+
+      this.listArr[idx].total_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent) / 100).toFixed(2);
+      this.listArr[idx].disc_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (this.listArr[idx].disc_percent) / 100).toFixed(2);
+      this.listArr[idx].taxable_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent)) / (100 + this.listArr[idx].taxrate)).toFixed(2);
+      this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
+
+    } else {
+      this.listArr[idx].sub_total = (this.listArr[idx].qty * this.listArr[idx].mrp).toFixed(2);
+      this.listArr[idx].total_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent) / 100) * (1 + (this.listArr[idx].taxrate) / 100)).toFixed(2);
+      this.listArr[idx].disc_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (this.listArr[idx].disc_percent) / 100) * (1 + (this.listArr[idx].taxrate) / 100)).toFixed(2);
+      this.listArr[idx].taxable_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent)) / 100).toFixed(2);
+      this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
+
+    }
+    // this.listArr[idx].igst_value = ((this.listArr[idx].taxable_value * this.igst) / 100).toFixed(2);
+    // this.listArr[idx].cgst_value = ((this.listArr[idx].taxable_value * this.cgst) / 100).toFixed(2);
+    // this.listArr[idx].sgst_value = ((this.listArr[idx].taxable_value * this.sgst) / 100).toFixed(2);
+
+    // this.listArr[idx].total_value = ((this.listArr[idx].unit_price * this.listArr[idx].qty) + (this.listArr[idx].unit_price * (this.listArr[idx].qty) * this.listArr[idx].taxrate) / 100).toFixed(2)
+    // this.listArr[idx].taxable_value = ((this.listArr[idx].qty) * (this.listArr[idx].unit_price)).toFixed(2);
+    // this.listArr[idx].tax_value = ((this.listArr[idx].taxable_value) * ((this.listArr[idx].taxrate) / 100)).toFixed(2);
 
     this.calc();
 
@@ -799,18 +930,15 @@ export class SalesPage implements OnInit {
     }
     );
 
-
-
-    // this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-    // console.log("TCL: PurchasePage -> calc -> this.total", this.total)
-
     const tempArrCostPrice = this.listArr.map(arr => {
       return parseFloat(arr.unit_price) * parseFloat(arr.qty);
     })
 
-    this.total = "" + tempArr;
+    this.testTotal = tempArr;
 
-    // this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+    // this.total = "" + tempArr;
+
+    this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
     this.taxable_value = tempArrCostPrice.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 

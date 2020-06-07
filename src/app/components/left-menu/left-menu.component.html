@@ -11,7 +11,7 @@
 						alt=""
 					/> -->
 					<img src="/assets/svg/manager.svg" width="22px" height="22px" />
-					<span [@animateText]="linkText ? 'show' : 'hide'">dddinesh 1 </span>
+					<span [@animateText]="linkText ? 'show' : 'hide'">&nbsp; </span>
 				</a>
 			</mat-nav-list>
 			<mat-divider></mat-divider>
@@ -22,7 +22,9 @@
 				<a mat-list-item *ngFor="let page of pages" (click)="routeTo(page.name, page.link)" [ngClass]="{ red: clickedItem === page?.name }">
 					<img src="{{ page?.icon }}" width="22px" height="22px" />
 
-					<span [@animateText]="linkText ? 'show' : 'hide'">{{ page?.name }} </span>
+					<span [@animateText]="linkText ? 'show' : 'hide'"
+						>&nbsp; <span class="side-menu-lbl">{{ page?.name }}</span>
+					</span>
 				</a>
 			</mat-nav-list>
 		</div>

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectorRef, ChangeDetectionStrategy, HostListener } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -6,7 +6,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { NetworkService } from './services/network.service';
 import { AuthenticationService } from './services/authentication.service';
-import { Router } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
+import { LoadingService } from './services/loading.service';
+import { filter } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-root',
@@ -27,13 +30,21 @@ export class AppComponent {
       icon: './assets/sample-icons/side-menu/tutorial.svg'
     }
   ];
+  isBackUrl: boolean;
 
   constructor(
     private platform: Platform, private _cdr: ChangeDetectorRef,
     private splashScreen: SplashScreen, private _authservice: AuthenticationService,
-    private statusBar: StatusBar,
+    private statusBar: StatusBar, private _loadingservice: LoadingService,
     private networkService: NetworkService, private _router: Router,
   ) {
+    this._router.events
+      .pipe(filter((event) => event instanceof NavigationStart))
+      .subscribe((event: NavigationStart) => {
+        if (event.restoredState) {
+          this.isBackUrl = true;
+        }
+      });
     this.initializeApp();
   }
 
@@ -58,6 +69,25 @@ export class AppComponent {
 
 
     });
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHander($event) {
+    $event.returnValue = 'Your changes will not be saved';
+
+    return true;
+
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState($event) {
+    console.log('Back button pressed');
+    //Here you can handle your modal
+    // issue: Modal cancel button does not stop navigation back.
+    // let feedback = this._loadingservice.confirm("Your Data will be lost.");
+    // console.log('feedback ' + feedback);
+
+    $event.returnValue = true;
   }
 
 }

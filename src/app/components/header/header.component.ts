@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { User } from '../../models/User';
 import { filter, map, defaultIfEmpty } from 'rxjs/operators';
+import { ModalController } from '@ionic/angular';
+import { AddProductComponent } from '../add-product/add-product.component';
 
 @Component({
   selector: 'app-header',
@@ -15,14 +17,17 @@ import { filter, map, defaultIfEmpty } from 'rxjs/operators';
 export class HeaderComponent implements OnInit {
 
   userdata: any;
-
+  center_id: any;
 
   userdata$: Observable<User>;
 
   @Input() sidenav: MatSidenav
 
-  constructor(private _authservice: AuthenticationService, private _cdr: ChangeDetectorRef,
+  constructor(private _authservice: AuthenticationService, private _modalcontroller: ModalController,
+    private _cdr: ChangeDetectorRef,
     private _router: Router) {
+
+
 
     this.userdata$ = this._authservice.currentUser;
 
@@ -70,6 +75,29 @@ export class HeaderComponent implements OnInit {
 
   editCenter() {
     this._router.navigate([`/home/center/edit`, this.userdata.center_id]);
+  }
+
+
+  async showAddProductComp() {
+
+
+    const modal = await this._modalcontroller.create({
+      component: AddProductComponent,
+      componentProps: { center_id: this.userdata.center_id, customer_id: 0, },
+      cssClass: 'select-modal'
+
+    });
+
+    modal.onDidDismiss().then((result) => {
+      console.log('The result:', result);
+
+
+
+      this._cdr.markForCheck();
+    });
+
+    await modal.present();
+
   }
 
 

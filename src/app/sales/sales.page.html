@@ -64,6 +64,7 @@
 					<div class="item2 headstyl-left">Item Information</div>
 					<div class="item3 headstyl-right">MRP</div>
 					<div class="item3 headstyl-right">Qty</div>
+					<div class="item3 headstyl-center">Discount %</div>
 					<div class="item3 headstyl-right">Rate Item</div>
 
 					<div class="item4 headstyl-right">Total Value</div>
@@ -116,6 +117,18 @@
 									<input matInput type="number" value="{{item.qty}}" class="cursor" readonly />
 									<mat-icon matSuffix>view_comfy</mat-icon>
 								</mat-form-field>
+							</div>
+
+							<div class="item4 txt-right-align num-format-cell-style">
+								<input
+									matInput
+									value="{{item.disc_percent | number:'1.2-2'}}"
+									type="text"
+									class="styl-txt-box-small txt-pad"
+									(click)="openRowNumberPad(idx,'discount')"
+									appPreventCutCopyPaste
+									readonly
+								/>
 							</div>
 
 							<div class="item4 txt-right-align num-format-cell-style">{{item.unit_price}}</div>

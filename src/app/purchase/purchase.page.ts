@@ -201,6 +201,9 @@ export class PurchasePage implements OnInit {
   }
 
 
+
+
+
   async showAllVendorsComp() {
 
     const modal = await this._modalcontroller.create({

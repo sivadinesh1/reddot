@@ -9,6 +9,7 @@ import { Sales } from '../../models/Sales';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
 import { filter, map, startWith } from 'rxjs/operators';
+import { User } from 'src/app/models/User';
 
 
 @Component({
@@ -28,12 +29,10 @@ export class SearchSalesPage implements OnInit {
   filteredSales$: Observable<Sales[]>;
 
   filteredValues: any;
-  fullfilledOrder: any;
-  draftOrder: any;
+  tabIndex = 0;
 
   resultList: any;
-  customerList: any;
-  center_id: any;
+  //center_id: any;
 
   statusFlag = 'D';
   selectedCust = 'all';
@@ -50,20 +49,49 @@ export class SearchSalesPage implements OnInit {
   filteredCustomer: Observable<any[]>;
   customer_lis: Customer[];
 
+  userdata: any;
+
+
+  userdata$: Observable<User>;
+
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
     public alertController: AlertController,
     private _authservice: AuthenticationService) {
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
+
+    this.submitForm = this._fb.group({
+      customerid: ['all'],
+      customerctrl: ['All Customers'],
+      todate: [this.todate, Validators.required],
+      fromdate: [this.fromdate, Validators.required],
+      status: new FormControl('D'),
+    })
+
+    // const currentUser = this._authservice.currentUserValue;
+    // this.center_id = currentUser.center_id;
+
+    this.userdata$ = this._authservice.currentUser;
+
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+        this.init();
+        this._cdr.markForCheck();
+      });
 
     const dateOffset = (24 * 60 * 60 * 1000) * 3;
     this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 
     this._route.params.subscribe(params => {
-      this.init();
+      if (this.userdata !== undefined) {
+        this.init();
+      }
     });
+
+
 
 
 
@@ -81,25 +109,17 @@ export class SearchSalesPage implements OnInit {
         customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
     }
 
-
   }
 
   ngOnInit() {
-
 
   }
 
   async init() {
 
-    this.submitForm = this._fb.group({
-      customerid: ['all'],
-      customerctrl: ['All Customers'],
-      todate: [this.todate, Validators.required],
-      fromdate: [this.fromdate, Validators.required],
-      status: new FormControl('D'),
-    })
 
-    this.customer$ = this._commonApiService.getAllActiveCustomers(this.center_id);
+
+    this.customer$ = this._commonApiService.getAllActiveCustomers(this.userdata.center_id);
 
     this.customer_lis = await this.customer$.toPromise();
 
@@ -129,6 +149,8 @@ export class SearchSalesPage implements OnInit {
       customerid: event.option.value.id,
       customerctrl: event.option.value.name
     });
+
+    this.tabIndex = 0;
     this._cdr.markForCheck();
 
     this.search();
@@ -137,7 +159,7 @@ export class SearchSalesPage implements OnInit {
 
   async search() {
     this.sales$ = this._commonApiService
-      .searchSales(this.center_id, this.submitForm.value.customerid,
+      .searchSales(this.userdata.center_id, this.submitForm.value.customerid,
         this.submitForm.value.status,
         this.submitForm.value.fromdate,
         this.submitForm.value.todate,
@@ -170,19 +192,19 @@ export class SearchSalesPage implements OnInit {
     this.statusChange = $event.source.value;
   }
 
-  // selectedCustomer($event) {
-  //   this.selectedCust = $event.source.value;
-  //   this.search();
-  // }
 
   toDateSelected($event) {
     this.todate = $event.target.value;
+    this.tabIndex = 0;
     this.search();
+    this._cdr.markForCheck();
   }
 
   fromDateSelected($event) {
     this.fromdate = $event.target.value;
+    this.tabIndex = 0;
     this.search();
+    this._cdr.markForCheck();
   }
 
   delete(item) {

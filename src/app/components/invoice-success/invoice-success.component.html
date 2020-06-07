@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <div class="content">
 	<div class="header">
 		<div>
@@ -20,7 +18,20 @@
 			<div>01/01/2001</div>
 		</div>
 
-		<div>Close</div>
-		<div>Print</div>
+		<div><button mat-stroked-button color="primary">Close</button></div>
+		<div>
+			<button *ngIf="!isPrint" (click)="printActn()" mat-stroked-button color="primary">Print Needed?</button>
+			<button *ngIf="isPrint" mat-raised-button color="primary">Print Needed?</button>
+		</div>
+
+		<div>
+			<label id="example-radio-group-label">Pick your favorite season</label>
+			<mat-radio-group class="example-radio-group">
+				<mat-radio-button class="example-radio-button" *ngFor="let season of seasons" [value]="season">
+					{{ season }}
+				</mat-radio-button>
+			</mat-radio-group>
+			<div>Your favorite season is: {{ favoriteSeason }}</div>
+		</div>
 	</div>
 </div>

@@ -39,6 +39,7 @@ import { InvoiceSuccessComponent } from './components/invoice-success/invoice-su
 import { SideMnuComponent } from './components/side-mnu/side-mnu.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LeftMenuComponent } from './components/left-menu/left-menu.component';
+import { ArrowDivDirective } from './directive/arrow-div.directive';
 
 const components = [
 
@@ -75,6 +76,7 @@ const components = [
   MenuHeaderComponent,
   HeaderComponent,
   LeftMenuComponent,
+  InvoiceSuccessComponent,
 
   WindowComponent,
   LoadingComponent,
@@ -124,7 +126,7 @@ const matcomponents = [
 
 
 @NgModule({
-  declarations: [...components, PreventCutCopyPasteDirective],
+  declarations: [...components, PreventCutCopyPasteDirective, ArrowDivDirective],
   imports: [
     CommonModule,
     ReactiveFormsModule,

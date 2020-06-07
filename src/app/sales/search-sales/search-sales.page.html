@@ -1,9 +1,7 @@
-<!-- @format -->
-
 <div class="search-wrap">
 	<div class="title-row">
 		<span>Sales Management</span>
-		<button mat-raised-button color="primary" (click)="goSalesAddScreen()" style="font-size: 0.8rem; border-radius: 50px;" (click)="search()">
+		<button mat-raised-button color="primary" (click)="goSalesAddScreen()" style="font-size: 0.8rem; border-radius: 50px;">
 			+ New Sales Order
 		</button>
 	</div>
@@ -69,7 +67,7 @@
 		</div>
 	</form>
 
-	<mat-tab-group color="primary" backgroundColor="primary" (selectedTabChange)="tabClick($event)">
+	<mat-tab-group color="primary" backgroundColor="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
 		<mat-tab label="All Orders ({{(sales$| async)?.length }})">
 			<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 			<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
@@ -85,47 +83,18 @@
 			<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 		</mat-tab>
 	</mat-tab-group>
-
-	<div style="display: flex; justify-content: space-between; padding-top: 30px;">
-		<div>
-			Recent Sales Report
-		</div>
-		<div style="font-size: 12px; color: #797979;">
-			{{(sales$| async)?.length }} Records
-		</div>
-
-		<div style="font-size: 12px; color: #797979;">
-			AA {{(draftSales$| async)?.length }} Records trs
-		</div>
-	</div>
 </div>
 
 <ng-template #MsgRef>
 	<div class="header header-style">
-		<div>
-			Invoice #
-		</div>
-		<div>
-			Invoice Date
-		</div>
-		<div>
-			Customer Name
-		</div>
-		<div>
-			# of Items
-		</div>
-		<div>
-			Total Value
-		</div>
-		<div>
-			Status
-		</div>
-		<div>
-			&nbsp;
-		</div>
-		<div>
-			<span>Revision</span>
-		</div>
+		<div>Invoice #</div>
+		<div>Invoice Date</div>
+		<div>Customer Name</div>
+		<div># of Items</div>
+		<div>Total Value</div>
+		<div>Status</div>
+		<div>&nbsp;</div>
+		<div><span>Revision</span></div>
 	</div>
 </ng-template>
 

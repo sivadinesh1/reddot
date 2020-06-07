@@ -7,6 +7,11 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
   styleUrls: ['./invoice-success.component.scss'],
 })
 export class InvoiceSuccessComponent implements OnInit {
+  paletteColour: any;
+  isPrint = false;
+
+  favoriteSeason: string;
+  seasons: string[] = ['Winter', 'Spring', 'Summer', 'Autumn'];
 
   constructor(private dialogRef: MatDialogRef<InvoiceSuccessComponent>, ) { }
 
@@ -16,7 +21,9 @@ export class InvoiceSuccessComponent implements OnInit {
     this.dialogRef.close();
   }
 
-
+  printActn() {
+    this.isPrint = true;
+  }
 
 
 }

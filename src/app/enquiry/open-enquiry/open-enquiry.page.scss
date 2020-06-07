@@ -1,11 +1,8 @@
-/** @format */
-
 .content {
 	display: grid;
-	grid-template-columns: 1fr;
 	width: 94%;
 	margin: 0 auto;
-	padding: 16px;
+	padding-top: 16px;
 }
 
 .header {
@@ -15,11 +12,15 @@
 }
 
 .header,
-.list-item {
+.listItem {
 	display: grid;
 	grid-template-columns: 60px 100px 1fr 1fr 1fr 1fr 1fr;
-	height: 40px;
-	align-items: center;
+	padding: 5px;
+}
+
+.header-style {
+	background-color: #757575;
+	color: #ffffff;
 }
 
 .o-enq-details {
@@ -77,4 +78,7 @@
 .title-row {
 	display: flex;
 	justify-content: space-between;
+}
+.width {
+	width: 280px !important;
 }

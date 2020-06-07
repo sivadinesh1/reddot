@@ -8,6 +8,12 @@
 	<span style="align-self: center;">{{ userdata?.center_name }}</span>
 	<span class="spacer"></span>
 	<span style="align-self: center;">
+		<!-- <img src="../../assets/svg/account.svg" width="28px" height="28px" class="img cursor" /> -->
+		<button appPreventDoubleClick [throttleTime]="2000" (throttledClick)="showAddProductComp()" mat-raised-button color="primary">
+			<img src="../../assets/svg/search.svg" width="16px" height="16px" class="img cursor" />&nbsp;&nbsp;Search Items
+		</button> </span
+	>&nbsp;&nbsp;
+	<span style="align-self: center;">
 		<ng-container *ngIf="userdata">
 			<div class="fname">{{ userdata?.firstname }}</div>
 			<div class="role">{{ userdata?.role }}</div>

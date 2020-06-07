@@ -88,9 +88,11 @@ export class LoadingService {
     toast.present();
   }
 
-  confirm(message?: string): Observable<boolean> {
+  confirm(message?: string) {
     const confirmation = window.confirm(message || 'Are you sure?');
-    return of(confirmation);
+    console.log('confirm ' + confirmation);
+    return (confirmation) ? true : false;
+
   }
 
   async showAlert() {

@@ -7,6 +7,7 @@ import { Customer } from 'src/app/models/Customer';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Enquiry } from 'src/app/models/Enquiry';
+import { filter, map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-open-enquiry',
@@ -16,7 +17,9 @@ import { Enquiry } from 'src/app/models/Enquiry';
 })
 export class OpenEnquiryPage implements OnInit {
 
+
   openenq: any;
+  tabIndex = 0;
 
   readyforsale: any;
   center_name: string;
@@ -33,6 +36,8 @@ export class OpenEnquiryPage implements OnInit {
   fromdate = new Date();
   todate = new Date();
 
+  filteredValues: any;
+
   statusList = [{ "id": "O", "value": "Enquiry-New" }, { "id": "D", "value": "Enquiry-Cart" },
   { "id": "P", "value": "Enquiry-Ready for Invoice" },
   { "id": "E", "value": "Enquiry-Closed" }
@@ -42,7 +47,18 @@ export class OpenEnquiryPage implements OnInit {
   customer$: Observable<Customer[]>;
   enquiries$: Observable<Enquiry[]>;
 
+  draftEnquiries$: Observable<Enquiry[]>;
+  newEnquiries$: Observable<Enquiry[]>;
+
+  invoiceReadyEnquiries$: Observable<Enquiry[]>;
+  fullfilledEnquiries$: Observable<Enquiry[]>;
+
+  filteredEnquiries$: Observable<Enquiry[]>;
+
   test: any;
+
+  filteredCustomer: Observable<any[]>;
+  customer_lis: Customer[];
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
@@ -63,29 +79,70 @@ export class OpenEnquiryPage implements OnInit {
 
   }
 
-  ngOnInit() {
+  filtercustomer(value: any) {
 
-    //   this.init();
-
+    if (typeof (value) == "object") {
+      return this.customer_lis.filter(customer =>
+        customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
+    } else if (typeof (value) == "string") {
+      return this.customer_lis.filter(customer =>
+        customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
+    }
 
   }
 
-  init() {
-    this.customer$ = this._commonApiService.getAllActiveCustomers(this.center_id);
+  ngOnInit() {
+
+  }
+
+  async init() {
 
     this.submitForm = this._fb.group({
-      customerid: new FormControl('all'),
+      customerid: ['all'],
+      customerctrl: ['All Customers'],
       todate: [this.todate, Validators.required],
       fromdate: [this.fromdate, Validators.required],
       status: new FormControl('O'),
     })
+
+    this.customer$ = this._commonApiService.getAllActiveCustomers(this.center_id);
+
+    this.customer_lis = await this.customer$.toPromise();
+
+
+    this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
+      .pipe(
+        startWith(''),
+        map(customer => customer ? this.filtercustomer(customer) : this.customer_lis.slice())
+      );
 
     this.search();
     this._cdr.markForCheck();
 
   }
 
-  search() {
+  clearInput() {
+    this.submitForm.patchValue({
+      customerid: 'all',
+      customerctrl: ''
+    });
+    this._cdr.markForCheck();
+    this.search();
+  }
+
+  getPosts(event) {
+    this.submitForm.patchValue({
+      customerid: event.option.value.id,
+      customerctrl: event.option.value.name
+    });
+    this.tabIndex = 0;
+    this._cdr.markForCheck();
+
+    this.search();
+  }
+
+
+  async search() {
     this.enquiries$ = this._commonApiService
       .searchEnquiries(this.center_id, this.submitForm.value.customerid,
         this.submitForm.value.status,
@@ -94,11 +151,30 @@ export class OpenEnquiryPage implements OnInit {
 
       );
 
+    this.filteredEnquiries$ = this.enquiries$;
+
+    // for initial load of first tab (ALL)
+    this.filteredValues = await this.filteredEnquiries$.toPromise();
+
+    // to calculate the count on each status    
+    this.newEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'O')));
+    this.draftEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'D')));
+    this.invoiceReadyEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'P')));
+    this.fullfilledEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'E')));
+
     this._cdr.markForCheck();
   }
 
   fromDateSelected($event) {
     this.fromdate = $event.target.value;
+    this.tabIndex = 0;
+    this.search();
+  }
+
+  toDateSelected($event) {
+    this.todate = $event.target.value;
+    this.tabIndex = 0;
+    this.search();
   }
 
   initialise() {
@@ -150,5 +226,24 @@ export class OpenEnquiryPage implements OnInit {
     this.selectedCust = $event.source.value;
   }
 
+  async tabClick($event) {
+    let value = await this.filteredEnquiries$.toPromise();
+
+    if ($event.index === 0) {
+      this.filteredValues = value.filter((data: any) =>
+        (data.estatus === 'O' || data.estatus === 'D') || (data.estatus === 'P' || data.estatus === 'E'));
+    } else if ($event.index === 1) {
+      this.filteredValues = value.filter((data: any) => data.estatus === 'O');
+    } else if ($event.index === 2) {
+      this.filteredValues = value.filter((data: any) => data.estatus === 'D');
+    } else if ($event.index === 3) {
+      this.filteredValues = value.filter((data: any) => data.estatus === 'P');
+    } else if ($event.index === 4) {
+      this.filteredValues = value.filter((data: any) => data.estatus === 'E');
+    }
+
+    this._cdr.markForCheck();
+
+  }
 
 }
