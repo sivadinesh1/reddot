@@ -18,17 +18,6 @@
 	<form [formGroup]="submitForm">
 		<div class="form-wrap">
 			<div class="customers">
-				<!-- <mat-form-field class="mat-width-ext">
-						<mat-label>Customers</mat-label>
-						<mat-select formControlName="customerid" value="{selectedCust}" (selectionChange)="selectedCustomer($event)">
-							<mat-option value="all">
-								All
-							</mat-option>
-							<mat-option *ngFor="let item of (customer$ | async)" [value]="item.id">
-								{{item.name}}
-							</mat-option>
-						</mat-select>
-					</mat-form-field> -->
 				<mat-form-field class="width">
 					<input
 						matInput
@@ -85,6 +74,23 @@
 					</mat-form-field>
 				</ion-item>
 			</div>
+
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Status</mat-label>
+					<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
+						<mat-option *ngFor="let item of statusList" [value]="item.id">
+							{{item.value}}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+			</div>
+			<div class="search-btn">
+				<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem;" (click)="search()">
+					Search
+				</button>
+			</div>
+
 			<!-- <div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Status</mat-label>
@@ -117,7 +123,7 @@
 			<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 		</mat-tab>
 
-		<mat-tab label="In Process ({{(draftEnquiries$| async)?.length }})">
+		<mat-tab label="In Progress ({{(draftEnquiries$| async)?.length }})">
 			<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 			<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 		</mat-tab>
@@ -173,19 +179,19 @@
 				color="primary"
 				*ngIf="item.estatus === 'O' "
 				(click)="processEnquiry(item)"
-				style="font-size: 0.8rem; border-radius: 50px;"
+				style="font-size: 0.8rem; border-radius: 50px; line-height: 32px; width: 155px;"
 			>
-				Next: Order Process
+				Step 1: Order Process
 			</button>
 
 			<button
-				mat-raised-button
+				mat-stroked-button
 				color="primary"
 				*ngIf="item.estatus === 'D' "
 				(click)="processEnquiry(item)"
-				style="font-size: 0.8rem; border-radius: 50px;"
+				style="font-size: 0.8rem; border-radius: 50px; line-height: 32px; width: 155px;"
 			>
-				In Process
+				Step 2: In Progress
 			</button>
 
 			<button
@@ -193,9 +199,9 @@
 				color="primary"
 				*ngIf="item.estatus === 'P' "
 				(click)="moveToSale(item)"
-				style="font-size: 0.8rem; border-radius: 50px;"
+				style="font-size: 0.8rem; border-radius: 50px; line-height: 32px; width: 155px;"
 			>
-				Invoice Ready
+				Step 3: Invoice Ready
 			</button>
 
 			<button
@@ -203,15 +209,10 @@
 				color="primary"
 				*ngIf="item.estatus === 'E' "
 				(click)="processEnquiry(item)"
-				style="font-size: 0.8rem; border-radius: 50px;"
+				style="font-size: 0.8rem; border-radius: 50px; line-height: 32px; width: 155px;"
 			>
 				View
 			</button>
-
-			<!-- <ion-button *ngIf="item.estatus === 'O' " type="button" fill="outline" (click)="processEnquiry(item)"> Inquiry-to-Order</ion-button> -->
-			<!-- <ion-button *ngIf="item.estatus === 'D' " type="button" fill="outline" (click)="processEnquiry(item)"> Order-Process</ion-button>
-			<ion-button *ngIf="item.estatus === 'P' " type="button" fill="outline" (click)="moveToSale(item)">Order-to-Sale</ion-button>
-			<ion-button *ngIf="item.estatus === 'E' " type="button" fill="outline" (click)="processEnquiry(item)">View</ion-button> -->
 		</div>
 	</div>
 </ng-template>

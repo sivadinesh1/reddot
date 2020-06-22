@@ -77,6 +77,9 @@ export class HeaderComponent implements OnInit {
     this._router.navigate([`/home/center/edit`, this.userdata.center_id]);
   }
 
+  showNewEnquiry() {
+    this._router.navigate([`/home/enquiry`]);
+  }
 
   async showAddProductComp() {
 

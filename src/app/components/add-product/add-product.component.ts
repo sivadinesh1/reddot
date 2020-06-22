@@ -42,7 +42,6 @@ export class AddProductComponent implements OnInit {
           data => {
             this.resultList = data.body;
 
-            // console.log('ABCD >> ' + JSON.stringify(this.resultList));
             if (this.resultList.length === 0) {
 
               this.noMatch = 'No Matching Records';
@@ -61,7 +60,7 @@ export class AddProductComponent implements OnInit {
         this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customer_id, "orderdate": this.order_date, "searchstr": searchstring }).subscribe(
           data => {
             this.resultList = data.body;
-            // console.log('ABCD >> ' + JSON.stringify(this.resultList));
+
             if (this.resultList.length === 0) {
 
               this.noMatch = 'No Matching Records';

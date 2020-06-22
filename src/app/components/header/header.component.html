@@ -1,3 +1,4 @@
+<!-- Top Header component + Logo {left} + Buttons - enquiry + search + right dropdown menu -->
 <div fxFlex="row" fxLayoutGap="10px" class="header">
 	<button mat-icon-button (click)="toggle()">
 		<mat-icon>menu</mat-icon>
@@ -6,11 +7,22 @@
 	<span style="align-self: center;">{{ userdata?.center_name }}</span>
 	<span class="spacer"></span>
 	<span style="align-self: center;">
-		<!-- <img src="../../assets/svg/account.svg" width="28px" height="28px" class="img cursor" /> -->
-		<button appPreventDoubleClick [throttleTime]="2000" (throttledClick)="showAddProductComp()" mat-raised-button color="primary">
-			<img src="../../assets/svg/search.svg" width="16px" height="16px" class="img cursor" />&nbsp;&nbsp;Search Items
-		</button> </span
-	>&nbsp;&nbsp;
+		<a mat-stroked-button routerLink="/home/sales/edit/0">
+			<img src="../../assets/svg/sales-white.svg" width="20px" height="20px" class="img cursor" />
+		</a>
+	</span>
+	<span style="align-self: center;">
+		<a mat-stroked-button routerLink="/home/enquiry">
+			<img src="../../assets/svg/enquiry-white.svg" width="20px" height="20px" class="img cursor" />
+		</a>
+	</span>
+	&nbsp;&nbsp;
+	<span style="align-self: center;">
+		<a mat-stroked-button [routerLink]="" (click)="showAddProductComp()">
+			<img src="../../assets/svg/search.svg" width="20px" height="20px" class="img cursor" />
+		</a>
+	</span>
+	&nbsp;&nbsp;
 	<span style="align-self: center;">
 		<ng-container *ngIf="userdata">
 			<div class="fname">{{ userdata?.firstname }}</div>

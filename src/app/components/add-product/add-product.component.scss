@@ -14,11 +14,12 @@
 			display: grid;
 			justify-content: center;
 			align-self: center;
+			cursor: pointer;
 		}
 	}
 	.header-row {
 		display: grid;
-		grid-template-columns: 40px 1fr 100px 100px 50px;
+		grid-template-columns: 40px 1fr 100px 100px 100px 50px;
 		border-bottom: 1px solid #0a0a0a;
 		width: 90%;
 		padding: 16px 10px 10px 10px;
@@ -33,27 +34,12 @@
 		overflow-x: hidden;
 		align-content: flex-start;
 
-		// max-height: 500px;
-
-		// .header-row {
-		// 	display: grid;
-		// 	grid-template-columns: 40px 1fr 100px 100px 50px;
-		// 	border-bottom: 1px solid #0a0a0a;
-		// 	width: 90%;
-		// 	padding: 16px 10px 10px 10px;
-		// 	max-height: 44px;
-		// 	justify-self: center;
-		// 	align-items: center;
-		// }
-
 		.list-item {
 			display: grid;
-			grid-template-columns: 40px 1fr 100px 100px 50px;
+			grid-template-columns: 40px 1fr 100px 100px 100px 50px;
 			align-self: center;
-			padding: 10px;
-			// border-bottom: 1px solid rgb(179, 179, 179);
-			// border-radius: 5px;
-			// margin: 12px 0px;
+			padding: 16px 10px 10px 10px;
+
 			width: 90%;
 			justify-self: center;
 			align-items: center;

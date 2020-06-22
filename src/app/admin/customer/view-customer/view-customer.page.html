@@ -1,32 +1,37 @@
-<!-- @format -->
-
-<div class="content">
-	<div class="header">
-		<div>
+<ion-content>
+	<div class="content">
+		<div class="header">
 			<div>
-				List of Customers
+				<div>
+					List of Customers
+				</div>
+				<div style="font-size: 12px; color: #797979;">
+					{{(customer$| async)?.length }} Records
+				</div>
 			</div>
-			<div style="font-size: 12px; color: #797979;">
-				{{(customer$| async)?.length }} Records
+			<div>
+				<button appPreventDoubleClick (throttledClick)="addCustomer()" [throttleTime]="500" mat-raised-button color="primary">
+					+ Add Customers
+				</button>
 			</div>
 		</div>
-		<div>
-			<button appPreventDoubleClick (throttledClick)="addCustomer()" [throttleTime]="500" mat-raised-button color="primary">
-				+ Add Customers
-			</button>
-		</div>
-	</div>
 
-	<ng-container *ngFor="let item of (customer$ | async); let idx = index;">
-		<div class="list-item row-color" (click)="editCustomer(item)">
-			<div class="item1">{{ idx + 1 }}</div>
-			<div class="item2">
-				<div class="item21">{{ item.name }}</div>
+		<ng-container *ngFor="let item of (customer$ | async); let idx = index;">
+			<div class="list-item">
+				<div class="item1">{{ idx + 1 }}</div>
+				<div class="item2">
+					<div>
+						<div class="item21">{{ item.name }}</div>
+						<div class="item31">{{ item.address1 }}</div>
+						<div class="item31">{{ item.address2 || 'N/A' }}</div>
+					</div>
+				</div>
+				<div class="item3">
+					<button appPreventDoubleClick (throttledClick)="setupDiscount(item)" [throttleTime]="500" mat-stroked-button color="primary">
+						View Discount Settings
+					</button>
+				</div>
 			</div>
-			<div class="item3">
-				<div class="item31">{{ item.address1 }}</div>
-				<div class="item31">{{ item.address2 || 'N/A' }}</div>
-			</div>
-		</div>
-	</ng-container>
-</div>
+		</ng-container>
+	</div>
+</ion-content>

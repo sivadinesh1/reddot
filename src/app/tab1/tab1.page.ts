@@ -30,7 +30,7 @@ export class Tab1Page implements OnInit {
 
 
   goBillingPage(item) {
-    console.log('object' + item.id);
+
 
     const myurl = `billing/${item.id}`;
     this._router.navigateByUrl(myurl).then(e => {

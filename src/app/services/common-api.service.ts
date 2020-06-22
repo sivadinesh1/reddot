@@ -88,6 +88,10 @@ export class CommonApiService {
     return this.httpClient.post<any>(this.restApiUrl + '/api/enquiry/insert-enquiry-details/', enqObj, { observe: 'response' });
   }
 
+  addMoreEnquiry(enqObj) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/enquiry/add-more-enquiry-details/', enqObj, { observe: 'response' });
+  }
+
 
   updateEnquiryDetails(enqDetailObj) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/enquiry/update-enquiry-details/', enqDetailObj, { observe: 'response' });
@@ -174,6 +178,16 @@ export class CommonApiService {
 
   }
 
+  printInvoice(id) {
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', 'application/pdf');
+
+    return this.httpClient
+      .get(`${this.restApiUrl}/api/print/invoice-pdf/${id}`, { headers: headers, responseType: 'blob' as 'json' });
+
+  }
+
   addProduct(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/admin/add-product', submitForm, { observe: 'response' });
   }
@@ -207,6 +221,12 @@ export class CommonApiService {
   updateCustomer(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-customer', submitForm, { observe: 'response' });
   }
+
+
+  updateCustomerDiscount(objectForm) {
+    return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-customer-discount`, objectForm, { observe: 'response' });
+  }
+
 
   addCustomer(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/admin/add-customer', submitForm, { observe: 'response' });
@@ -331,5 +351,12 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-accounts-receivable/${centerid}`);
   }
 
+  getCustomerDiscount(center_id, customer_id) {
+
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/customer-discount/${center_id}/${customer_id}`);
+  }
+
+
 }
+
 

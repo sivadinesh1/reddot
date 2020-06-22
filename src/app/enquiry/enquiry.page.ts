@@ -36,6 +36,15 @@ export class EnquiryPage implements OnInit {
   ) {
 
     const currentUser = this._authservice.currentUserValue;
+    this.submitForm = this._fb.group({
+      customer: [null, Validators.required],
+      centerid: [this.centerid, Validators.required],
+      remarks: [''],
+
+      productarr: this._fb.array([])
+
+    });
+
 
     this._route.params.subscribe(params => {
       this.centerid = currentUser.center_id;
@@ -61,14 +70,7 @@ export class EnquiryPage implements OnInit {
 
   init() {
 
-    this.submitForm = this._fb.group({
-      customer: [null, Validators.required],
-      centerid: [this.centerid, Validators.required],
-      remarks: [''],
 
-      productarr: this._fb.array([])
-
-    });
 
     this.customerData = "";
     this.customerAdded = false;

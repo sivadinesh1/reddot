@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, ChangeDetectionStrategy, HostListener } from '@angular/core';
+import { Component, ChangeDetectorRef, ChangeDetectionStrategy, HostListener, OnInit, ViewChild } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -6,9 +6,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { NetworkService } from './services/network.service';
 import { AuthenticationService } from './services/authentication.service';
-import { Router, NavigationStart } from '@angular/router';
+
 import { LoadingService } from './services/loading.service';
 import { filter } from 'rxjs/operators';
+import { RouterOutlet, Router, ActivationStart, NavigationStart } from '@angular/router';
 
 
 @Component({
@@ -17,7 +18,8 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  @ViewChild(RouterOutlet, { static: true }) outlet: RouterOutlet;
 
   isConnected; any;
 
@@ -71,13 +73,18 @@ export class AppComponent {
     });
   }
 
-  @HostListener('window:beforeunload', ['$event'])
-  beforeUnloadHander($event) {
-    $event.returnValue = 'Your changes will not be saved';
-
-    return true;
+  ngOnInit(): void {
 
   }
+
+
+  // @HostListener('window:beforeunload', ['$event'])
+  // beforeUnloadHander($event) {
+  //   $event.returnValue = 'Your changes will not be saved';
+
+  //   return true;
+
+  // }
 
   @HostListener('window:popstate', ['$event'])
   onPopState($event) {

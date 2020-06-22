@@ -21,7 +21,7 @@
 		<div><button mat-stroked-button color="primary">Close</button></div>
 		<div>
 			<button *ngIf="!isPrint" (click)="printActn()" mat-stroked-button color="primary">Print Needed?</button>
-			<button *ngIf="isPrint" mat-raised-button color="primary">Print Needed?</button>
+			<button *ngIf="isPrint" (click)="printActn()" mat-raised-button color="primary">Print Needed?</button>
 		</div>
 
 		<div>

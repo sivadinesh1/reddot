@@ -6,8 +6,9 @@ import { IonSearchbar } from '@ionic/angular';
 import { Observable, throwError } from 'rxjs';
 import { Customer } from 'src/app/models/Customer';
 import { MessagesService } from 'src/app/components/messages/messages.service';
-import { catchError } from 'rxjs/operators';
+import { catchError, filter } from 'rxjs/operators';
 import { LoadingService } from 'src/app/components/loading/loading.service';
+import { User } from 'src/app/models/User';
 
 @Component({
   selector: 'app-view-customer',
@@ -20,7 +21,12 @@ export class ViewCustomerPage implements OnInit {
   center_id: any;
   resultList: any;
 
+
   customer$: Observable<Customer[]>;
+  userdata$: Observable<User>;
+  userdata: any;
+
+  ready = 0;
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
@@ -30,14 +36,31 @@ export class ViewCustomerPage implements OnInit {
     private _commonApiService: CommonApiService, private _route: ActivatedRoute,
     private _messagesService: MessagesService, private loadingService: LoadingService,
     private _router: Router, ) {
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
+
+    this.userdata$ = this._authservice.currentUser;
+
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.center_id = data.center_id;
+        this.ready = 1;
+        this.reloadCustomers();
+        this._cdr.markForCheck();
+      });
 
     this._route.params.subscribe(params => {
-      this.reloadCustomers();
+
+
+      this.init();
+
     });
 
 
+  }
+
+  init() {
+    if (this.ready === 1) this.reloadCustomers();
   }
 
 
@@ -73,4 +96,9 @@ export class ViewCustomerPage implements OnInit {
     this._router.navigate([`/home/customer/edit`, this.center_id, item.id]);
   }
 
+  setupDiscount(item) {
+    this._router.navigate([`/home/customer/save-discount/${item.id}`]);
+  }
+
 }
+

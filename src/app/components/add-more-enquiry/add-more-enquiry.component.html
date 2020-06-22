@@ -1,0 +1,61 @@
+<ion-content>
+	<div class="screen-header">
+		<div>
+			Additional Items Inquiry
+		</div>
+		<div>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+		</div>
+	</div>
+
+	<div class="content">
+		<form (ngSubmit)="onSubmit()" [formGroup]="submitForm" #myForm="ngForm">
+			<div class="enq-form">
+				<div class="actn-row">
+					<div style="padding-left: 7px; cursor: pointer;">
+						<img src="/assets/images/svg/trash.svg" width="18px" height="18px" *ngIf="showDelIcon" (click)="onRemoveRows()" />
+						<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()">&nbsp;Delete</span>
+					</div>
+					<div class="itms-lbl">{{ productarr.controls.length || 0 }} Items</div>
+				</div>
+
+				<div formArrayName="productarr" class="list-block">
+					<div class="item-details" *ngFor="let product of productarr.controls; let idx = index">
+						<ng-container [formGroupName]="idx">
+							<div class="id">
+								<!-- {{ idx+1}}) -->
+								<mat-checkbox (click)="checkedRow(idx)" formControlName="checkbox"></mat-checkbox>
+							</div>
+
+							<div>
+								<mat-form-field class="example-full-width">
+									<mat-label>Item Code</mat-label>
+									<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="product_code" />
+								</mat-form-field>
+							</div>
+							<div>
+								<mat-form-field class="example-full-width">
+									<input matInput type="text" formControlName="notes" placeholder="Item description" />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="example-full-width">
+									<mat-label>Qty(max 1000)</mat-label>
+									<input matInput type="number" formControlName="quantity" />
+									<mat-icon matSuffix style="cursor: pointer;" (click)="openCurrencyPad(idx)">view_comfy</mat-icon>
+								</mat-form-field>
+							</div>
+						</ng-container>
+					</div>
+				</div>
+
+				<div class="submit">
+					<button mat-raised-button color="primary" type="submit" name="action" class="cursor" [disabled]="!submitForm.valid">
+						Add Items
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</ion-content>

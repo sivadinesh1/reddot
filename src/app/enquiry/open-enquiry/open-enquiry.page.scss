@@ -16,6 +16,7 @@
 	display: grid;
 	grid-template-columns: 60px 100px 1fr 1fr 1fr 1fr 1fr;
 	padding: 5px;
+	align-items: center;
 }
 
 .header-style {
@@ -73,6 +74,7 @@
 .listItem {
 	background-color: #fff;
 	border-bottom: 1px solid #f2f2f2;
+	align-items: center;
 }
 
 .title-row {

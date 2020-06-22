@@ -38,9 +38,9 @@ export class OpenEnquiryPage implements OnInit {
 
   filteredValues: any;
 
-  statusList = [{ "id": "O", "value": "Enquiry-New" }, { "id": "D", "value": "Enquiry-Cart" },
-  { "id": "P", "value": "Enquiry-Ready for Invoice" },
-  { "id": "E", "value": "Enquiry-Closed" }
+  statusList = [{ "id": "all", "value": "All" }, { "id": "O", "value": "New" }, { "id": "D", "value": "In Progress" },
+  { "id": "P", "value": "Invoice Ready" },
+  { "id": "E", "value": "Executed" }
   ]
 
   navigationSubscription: any;
@@ -102,7 +102,7 @@ export class OpenEnquiryPage implements OnInit {
       customerctrl: ['All Customers'],
       todate: [this.todate, Validators.required],
       fromdate: [this.fromdate, Validators.required],
-      status: new FormControl('O'),
+      status: new FormControl('all'),
     })
 
     this.customer$ = this._commonApiService.getAllActiveCustomers(this.center_id);
@@ -138,11 +138,12 @@ export class OpenEnquiryPage implements OnInit {
     this.tabIndex = 0;
     this._cdr.markForCheck();
 
-    this.search();
+
   }
 
 
   async search() {
+
     this.enquiries$ = this._commonApiService
       .searchEnquiries(this.center_id, this.submitForm.value.customerid,
         this.submitForm.value.status,
@@ -168,13 +169,13 @@ export class OpenEnquiryPage implements OnInit {
   fromDateSelected($event) {
     this.fromdate = $event.target.value;
     this.tabIndex = 0;
-    this.search();
+
   }
 
   toDateSelected($event) {
     this.todate = $event.target.value;
     this.tabIndex = 0;
-    this.search();
+
   }
 
   initialise() {

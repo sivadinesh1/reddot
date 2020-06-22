@@ -4,6 +4,7 @@
 
 		<div class="table-header">
 			<div class="th1">Enquiry Date</div>
+			<div class="th1">Customer Name</div>
 			<div class="th1">Product Info</div>
 			<div class="th1">Avl Qty</div>
 			<div class="th2">Notes</div>
@@ -15,6 +16,7 @@
 		<div *ngFor="let item of back_order_lst;let idx = index; let isOdd = odd; let isEven = even;">
 			<div class="tbl-detail" [class.odd]="isOdd" [class.even]="isEven">
 				<div class="tc1">{{item.order_date}}</div>
+				<div class="tc1">{{item.customer_name}}</div>
 				<div class="tc2" style="cursor: pointer;" (click)="productInfo(item)">
 					<div class="pcode">
 						{{item.product_code}}

@@ -40,6 +40,8 @@ import { SideMnuComponent } from './components/side-mnu/side-mnu.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LeftMenuComponent } from './components/left-menu/left-menu.component';
 import { ArrowDivDirective } from './directive/arrow-div.directive';
+import { RouterModule } from '@angular/router';
+import { AddMoreEnquiryComponent } from './components/add-more-enquiry/add-more-enquiry.component';
 
 const components = [
 
@@ -62,6 +64,7 @@ const components = [
   VendorDialogComponent,
   CurrencyPadComponent,
   InvoiceSuccessComponent,
+  AddMoreEnquiryComponent,
   ShowVendorsComponent,
   ShowCustomersComponent,
   ChangeTaxComponent,
@@ -76,7 +79,7 @@ const components = [
   MenuHeaderComponent,
   HeaderComponent,
   LeftMenuComponent,
-  InvoiceSuccessComponent,
+
 
   WindowComponent,
   LoadingComponent,
@@ -131,6 +134,7 @@ const matcomponents = [
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
+    RouterModule,
     ...matcomponents,
 
   ],
@@ -139,7 +143,7 @@ const matcomponents = [
   ],
   entryComponents: [
     AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
-    ChangeTaxComponent, ChangeMrpComponent, VendorDialogComponent, InvoiceSuccessComponent
+    ChangeTaxComponent, ChangeMrpComponent, VendorDialogComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
   ]
 })
 export class SharedModule { }

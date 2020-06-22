@@ -51,8 +51,9 @@ export class SearchSalesPage implements OnInit {
 
   userdata: any;
 
-
   userdata$: Observable<User>;
+
+  statusList = [{ "id": "all", "value": "All" }, { "id": "D", "value": "Draft" }, { "id": "C", "value": "Completed" }]
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
@@ -64,7 +65,7 @@ export class SearchSalesPage implements OnInit {
       customerctrl: ['All Customers'],
       todate: [this.todate, Validators.required],
       fromdate: [this.fromdate, Validators.required],
-      status: new FormControl('D'),
+      status: new FormControl('all'),
     })
 
     // const currentUser = this._authservice.currentUserValue;

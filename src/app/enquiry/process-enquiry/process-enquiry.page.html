@@ -3,7 +3,8 @@
 <ion-content>
 	<div class="screen-header">
 		<div>
-			<b>Enquiry #{{enqid}} > Order Processing</b>
+			<span style="color: #310ac0; cursor: pointer;" (click)="openEnquiry()">Inquiry Dashboard</span> /
+			<span style="color: #797979;">Order Processing #{{enqid}}</span>
 		</div>
 		<div>
 			&nbsp;
@@ -24,15 +25,25 @@
 			<div>
 				<div class="cust-lbl">Remarks</div>
 				<div>{{enqDetailsOrig[0].remarks}}</div>
+			</div>
+			<div>
 				<div *ngIf="status === 'E'">
-					<span STYLE="color: #797979; font-size: 13px;">STATUS:</span>&nbsp;<span style="color: red;">Executed</span>
+					<div class="cust-lbl">Status:</div>
+					<div style="color: red;">Executed</div>
 				</div>
 				<div *ngIf="status === 'D'">
-					<span STYLE="color: #797979; font-size: 13px;">STATUS:</span>&nbsp;<span style="color: red;">Draft</span>
+					<div class="cust-lbl">Status:</div>
+					<div style="color: red;">Draft</div>
 				</div>
 				<div *ngIf="status === 'O'">
-					<span STYLE="color: #797979; font-size: 13px;">STATUS:</span>&nbsp;<span style="color: red;">New</span>
+					<div class="cust-lbl">Status:</div>
+					<div style="color: red;">New</div>
 				</div>
+			</div>
+			<div style="text-align: right; align-items: center;">
+				<button appPreventDoubleClick (throttledClick)="openAddItem()" [throttleTime]="500" mat-raised-button color="primary">
+					+ Add Item
+				</button>
 			</div>
 		</div>
 		<div class="process-enq-wrap">
@@ -98,11 +109,7 @@
 							</div>
 						</div>
 						<div style="justify-self: center; align-self: center;">
-							<mat-checkbox
-								*ngIf="status !== 'E'"
-								[checked]="item.processed === 'YS'? true : false"
-								(click)="checkedRow(idx)"
-							></mat-checkbox>
+							<mat-checkbox *ngIf="status !== 'E'" [checked]="item.processed === 'YS'? true : false" (click)="checkedRow(idx)"></mat-checkbox>
 						</div>
 					</div>
 				</div>

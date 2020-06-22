@@ -21,6 +21,15 @@
 .list-item {
 	display: grid;
 	grid-template-columns: 60px 1fr 1fr;
+	background: rgb(241, 241, 241);
+}
+
+.list-item:nth-of-type(even) {
+	background: rgb(226, 226, 226);
+}
+
+.list-item:hover {
+	background: rgb(195, 194, 194);
 }
 
 .item1,

@@ -109,6 +109,13 @@
 							<input type="number" matInput formControlName="whatsapp" placeholder="Whatsapp" />
 						</mat-form-field>
 					</div>
+
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Email</mat-label>
+							<input type="text" matInput formControlName="email" placeholder="Email" />
+						</mat-form-field>
+					</div>
 				</div>
 				<div>
 					<button mat-button matStepperPrevious>Back</button>
@@ -118,11 +125,46 @@
 
 			<mat-step formGroupName="2" [stepControl]="formArray?.get([2])">
 				<ng-template matStepLabel>Addl Info</ng-template>
-				<div class="customer-info2">
+				<div class="customer-info1">
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Email</mat-label>
-							<input type="text" matInput formControlName="email" placeholder="Email" />
+							<mat-label>Discount Type</mat-label>
+							<mat-select formControlName="disctype" required>
+								<mat-option *ngFor="let item of discountType" [value]="item">
+									{{item}}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>GST Slab(0%)</mat-label>
+							<input type="text" matInput formControlName="gstzero" />
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>GST Slab(5%)</mat-label>
+							<input type="text" matInput formControlName="gstfive" />
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>GST Slab(12%)</mat-label>
+							<input type="text" matInput formControlName="gsttwelve" />
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>GST Slab(18%)</mat-label>
+							<input type="text" matInput formControlName="gsteighteen" />
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>GST Slab(28%)</mat-label>
+							<input type="text" matInput formControlName="gsttwentyeight" />
 						</mat-form-field>
 					</div>
 				</div>
@@ -133,16 +175,6 @@
 					<button mat-raised-button color="primary" (click)="submit()">+ Add Customer</button>
 				</div>
 			</mat-step>
-
-			<!-- <mat-step>
-				<ng-template matStepLabel>Done</ng-template>
-				<p>Vendor Informationg Ready for Saving.</p>
-				<div>
-					<button mat-button matStepperPrevious>Back</button>
-					<button mat-button (click)="stepper.reset()">Clear</button>
-					<button mat-button (click)="submit()">Add Customer</button>
-				</div>
-			</mat-step> -->
 		</mat-horizontal-stepper>
 	</form>
 </div>

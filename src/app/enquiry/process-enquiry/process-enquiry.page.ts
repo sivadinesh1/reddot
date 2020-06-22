@@ -2,12 +2,14 @@ import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { ModalController, AlertController } from '@ionic/angular';
 import { AddProductComponent } from 'src/app/components/add-product/add-product.component';
 import * as moment from 'moment';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-
+import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
+import { AddMoreEnquiryComponent } from 'src/app/components/add-more-enquiry/add-more-enquiry.component';
+import { filter, tap, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-process-enquiry',
@@ -45,37 +47,42 @@ export class ProcessEnquiryPage implements OnInit {
 
       this.status = this.enqDetailsOrig[0].estatus;
 
-      this.enqDetailsOrig.forEach(element => {
-        let tmpGiveqty = 0;
-        if (element.status === 'D') {
-          tmpGiveqty = element.giveqty || 1;
-        } else {
-          tmpGiveqty = element.askqty;
-        }
-
-        this.productArr.push({
-          "id": element.id, "enquiry_id": element.enquiry_id, "notes": element.notes,
-          "askqty": element.askqty, "giveqty": tmpGiveqty,
-          "status": "P", "invoiceno": element.invoiceno, "center_id": this.center_id,
-          "product_id": element.product_id,
-          "product_code": element.pcode,
-          "product_desc": element.pdesc,
-          "rackno": element.rackno,
-          "qty": element.packetsize,
-          "packetsize": element.packetsize,
-          "unit_price": element.unit_price,
-          "mrp": element.mrp,
-          "available_stock": element.available_stock,
-          "stockid": element.stock_pk,
-          "processed": element.processed
-        });
-      });
+      this.init(this.enqDetailsOrig);
 
 
       this._cdr.markForCheck();
     });
   }
 
+
+  init(enqList) {
+    enqList.forEach(element => {
+      let tmpGiveqty = 0;
+      if (element.status === 'D') {
+        tmpGiveqty = element.giveqty || 1;
+      } else {
+        tmpGiveqty = element.askqty;
+      }
+
+      this.productArr.push({
+        "id": element.id, "enquiry_id": element.enquiry_id, "notes": element.notes,
+        "askqty": element.askqty, "giveqty": tmpGiveqty,
+        "status": "P", "invoiceno": element.invoiceno, "center_id": this.center_id,
+        "customer_id": element.customer_id,
+        "product_id": element.product_id,
+        "product_code": element.pcode,
+        "product_desc": element.pdesc,
+        "rackno": element.rackno,
+        "qty": element.packetsize,
+        "packetsize": element.packetsize,
+        "unit_price": element.unit_price,
+        "mrp": element.mrp,
+        "available_stock": element.available_stock,
+        "stockid": element.stock_pk,
+        "processed": element.processed
+      });
+    });
+  }
 
   openCurrencyPad(idx) {
 
@@ -106,7 +113,6 @@ export class ProcessEnquiryPage implements OnInit {
     });
 
     modal.onDidDismiss().then((result) => {
-      console.log('The result:', result);
 
       if (result.data !== undefined) {
         let temp = result.data;
@@ -136,12 +142,9 @@ export class ProcessEnquiryPage implements OnInit {
   save() {
 
     this._commonApiService.draftEnquiry(this.productArr).subscribe((data: any) => {
-      console.log('object.. ' + JSON.stringify(data));
 
       if (data.body.result === 'success') {
 
-
-        console.log('object...SUCCESS..')
         this._router.navigate([`/home/enquiry/open-enquiry`]);
 
       } else {
@@ -179,19 +182,9 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   moveToSale() {
-
-    console.log('object.......' + this.productArr);
-
-
     this._commonApiService.moveToSale(this.productArr).subscribe((data: any) => {
-      console.log('object.. ' + JSON.stringify(data));
-
       if (data.body.result === 'success') {
-
-
-        console.log('object...SUCCESS..')
         this._router.navigate([`/home/enquiry/open-enquiry`]);
-
       } else {
 
       }
@@ -235,6 +228,34 @@ export class ProcessEnquiryPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+
+  openAddItem() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+    dialogConfig.data = { enquiry_id: this.enqid, center_id: this.center_id, customer_id: this.enqDetailsOrig[0].customer_id };
+
+    const dialogRef = this.dialog.open(AddMoreEnquiryComponent, dialogConfig);
+
+
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap((val) => {
+
+          this.init(val);
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe();
+
+
   }
 
 }

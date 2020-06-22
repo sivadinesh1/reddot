@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildr
 import { ModalController, PickerController, AlertController } from '@ionic/angular';
 import { AddProductComponent } from '../components/add-product/add-product.component';
 import { CommonApiService } from '../services/common-api.service';
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { PickerOptions } from '@ionic/core';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 
@@ -17,7 +17,7 @@ import * as moment from 'moment';
 
 import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
 import { SaleApiService } from '../services/sale-api.service';
-import { async } from 'rxjs/internal/scheduler/async';
+
 import { InvoiceSuccessComponent } from '../components/invoice-success/invoice-success.component';
 
 @Component({
@@ -96,6 +96,8 @@ export class SalesPage implements OnInit {
   GST_28_gst: any;
 
   testTotal: any;
+  invoiceid: any;
+  invoicedate = new Date();
 
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
@@ -146,7 +148,7 @@ export class SalesPage implements OnInit {
       this._commonApiService.getCustomerData(this.id).subscribe((custData: any) => {
 
         this.customerdata = custData[0];
-        this.customer_state_code = custData[0].code;
+
 
         this.submitForm.patchValue({
           customer: custData[0],
@@ -155,19 +157,14 @@ export class SalesPage implements OnInit {
         this.customername = custData[0].name;
         this.customerselected = true;
 
-        // this.cust_discount_prcnt = custData[0].discount;
-        // this.cust_discount_type = custData[0].discount_type;
-
-
-        this.setTaxLabel();
-        this.setTaxSegment(custData.taxrate);
+        this.setTaxLabel(custData[0].code);
+        //   this.setTaxSegment(custData.taxrate);
 
         let invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
 
         // prod details
         this._commonApiService.getEnquiredProductData(this.center_id, this.customerdata.id, this.id, invdt).subscribe((prodData: any) => {
           let proddata = prodData;
-
 
           this.submitForm.patchValue({
             orderdate: (proddata[0].enquiry_date !== '' || proddata[0].enquiry_date !== undefined) ? proddata[0].enquiry_date : ''
@@ -236,7 +233,7 @@ export class SalesPage implements OnInit {
         this._commonApiService.getCustomerDetails(this.center_id, this.rawSalesData[0].customer_id).subscribe((custData: any) => {
 
           this.customerdata = custData[0];
-          this.customer_state_code = custData[0].code;
+
 
           this.submitForm.patchValue({
             customer: custData[0],
@@ -245,13 +242,7 @@ export class SalesPage implements OnInit {
           this.customername = custData[0].name;
           this.customerselected = true;
 
-
-
-
-          //this.vendorstate = custData[0].state;
-
-          this.setTaxLabel();
-          this.setTaxSegment(custData[0].taxrate);
+          this.setTaxLabel(custData[0].code);
 
           this._cdr.markForCheck();
         });
@@ -270,14 +261,14 @@ export class SalesPage implements OnInit {
 
       }
     }
-    if (this.id === '0') {
-      this._saleApiService.getNxtSaleInvoiceNo(this.center_id).subscribe((data: any) => {
+    // if (this.id === '0') {
+    this._saleApiService.getNxtSaleInvoiceNo(this.center_id).subscribe((data: any) => {
 
-        this.submitForm.patchValue({
-          invoiceno: data[0].NxtInvNo,
-        });
+      this.submitForm.patchValue({
+        invoiceno: data[0].NxtInvNo,
       });
-    }
+    });
+    // }
 
   }
 
@@ -287,7 +278,7 @@ export class SalesPage implements OnInit {
       salesid: new FormControl('', Validators.required),
       customer: [null, Validators.required],
       invoiceno: [null],
-      invoicedate: new FormControl(null, Validators.required),
+      invoicedate: new FormControl(this.invoicedate, Validators.required),
       orderno: new FormControl(''),
       orderdate: new FormControl(''),
       lrno: new FormControl(''),
@@ -329,9 +320,9 @@ export class SalesPage implements OnInit {
     modal.onDidDismiss().then((result) => {
       let custData = result.data;
 
-      this.customer_state_code = custData.code;
-      this.cust_discount_prcnt = custData.discount;
-      this.cust_discount_type = custData.discount_type;
+      // this.customer_state_code = custData.code;
+      // this.cust_discount_prcnt = custData.discount;
+      // this.cust_discount_type = custData.discount_type;
 
 
       this.submitForm.patchValue({
@@ -341,8 +332,9 @@ export class SalesPage implements OnInit {
       this.customerdata = custData;
       this.customername = custData.name;
       this.customerselected = true;
-      this.setTaxLabel();
-      this.setTaxSegment(custData.taxrate);
+
+      this.setTaxLabel(custData.code);
+      // this.setTaxSegment(custData.taxrate);
 
       this._cdr.markForCheck();
 
@@ -358,8 +350,6 @@ export class SalesPage implements OnInit {
     } else {
       invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
     }
-
-
 
     const modal = await this._modalcontroller.create({
       component: AddProductComponent,
@@ -388,12 +378,10 @@ export class SalesPage implements OnInit {
     let totalval = 0;
     let discval = 0;
 
-    let qty = 0;
-    if (this.mode === 'enquiry') {
-      qty = temp.packetsize;
-    } else {
-      qty = temp.qty
-    }
+    // let qty = 0;
+
+
+    // qty = temp.qty
 
     let sid = '';
     if (this.rawSalesData !== null) {
@@ -409,27 +397,33 @@ export class SalesPage implements OnInit {
       oldval = temp.qty;
     }
 
-    let disc_info = temp.disc_info;
-    this.cust_discount_type = disc_info.substring(disc_info.indexOf("~") + 1);
-    this.cust_discount_prcnt = disc_info.substring(0, disc_info.indexOf("~"));
+    if (temp.disc_info !== undefined) {
+      let disc_info = temp.disc_info;
+      this.cust_discount_type = disc_info.substring(disc_info.indexOf("~") + 1);
+      this.cust_discount_prcnt = disc_info.substring(0, disc_info.indexOf("~"));
+    } else {
+      this.cust_discount_type = temp.disc_type;
+      this.cust_discount_prcnt = temp.disc_percent;
+    }
+
 
 
 
 
     if (this.cust_discount_type === 'NET') {
 
-      subtotal = (qty * temp.mrp);
-      taxableval = ((qty * temp.mrp) * (100 - this.cust_discount_prcnt)) / (100 + temp.taxrate);
-      discval = ((qty * temp.mrp) * (this.cust_discount_prcnt)) / (100 + temp.taxrate);
-      totalval = (qty * temp.mrp) * (100 - this.cust_discount_prcnt) / 100;
+      subtotal = (temp.qty * temp.mrp);
+      taxableval = ((temp.qty * temp.mrp) * (100 - this.cust_discount_prcnt)) / (100 + temp.taxrate);
+      discval = ((temp.qty * temp.mrp) * (this.cust_discount_prcnt)) / (100 + temp.taxrate);
+      totalval = (temp.qty * temp.mrp) * (100 - this.cust_discount_prcnt) / 100;
 
     } else if (this.cust_discount_type === 'GROSS') {
 
 
-      subtotal = (qty * temp.mrp);
-      taxableval = ((qty * temp.mrp) * (100 - this.cust_discount_prcnt)) / 100;
-      discval = ((qty * temp.mrp) * (this.cust_discount_prcnt)) / 100;
-      totalval = ((qty * temp.mrp) * (100 - this.cust_discount_prcnt) / 100) * (1 + (temp.taxrate / 100));
+      subtotal = (temp.qty * temp.mrp);
+      taxableval = ((temp.qty * temp.mrp) * (100 - this.cust_discount_prcnt)) / 100;
+      discval = ((temp.qty * temp.mrp) * (this.cust_discount_prcnt)) / 100;
+      totalval = ((temp.qty * temp.mrp) * (100 - this.cust_discount_prcnt) / 100) * (1 + (temp.taxrate / 100));
     }
 
     // from product tbl
@@ -453,15 +447,9 @@ export class SalesPage implements OnInit {
         "taxable_value": (taxableval).toFixed(2),
         "disc_value": (discval).toFixed(2),
         "disc_percent": this.cust_discount_prcnt,
+        "disc_type": this.cust_discount_type,
         "total_value": (totalval).toFixed(2),
         "tax_value": (totalval - taxableval).toFixed(2),
-
-        //     "tax_value": ((temp.unit_price * temp.qty) * ((temp.taxrate) / 100)).toFixed(2),
-
-        //     "taxable_value": (temp.unit_price * temp.qty),
-        //     "total_value": ((temp.unit_price * temp.qty) + (temp.unit_price * (temp.qty) * temp.taxrate) / 100).toFixed(2),
-
-
 
         "igst": this.igst,
         "cgst": this.cgst,
@@ -505,14 +493,10 @@ export class SalesPage implements OnInit {
 
     if (this.i_gst) {
 
-
-      this.igstTotal = this.listArr.map(item => {
-        console.log('igst....' + item.unit_price);
-
-        return item.tax_value;
-      })
-        .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-
+      this.igstTotal = this.listArr
+        .map(item => { return item.tax_value; })
+        .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+      console.log('dines' + this.igstTotal);
       this.submitForm.patchValue({
         igst: this.igstTotal,
         cgst: 0,
@@ -533,7 +517,8 @@ export class SalesPage implements OnInit {
         return item.tax_value / 2;
       })
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-
+      console.log('cgstTotal' + this.cgstTotal);
+      console.log('sgstTotal' + this.sgstTotal);
 
       this.submitForm.patchValue({
         cgst: this.cgstTotal,
@@ -542,6 +527,7 @@ export class SalesPage implements OnInit {
       });
 
     }
+    this._cdr.markForCheck();
 
   }
 
@@ -563,39 +549,6 @@ export class SalesPage implements OnInit {
     this.checkIsSingleRow();
     this.calc();
 
-    // this._commonApiService.deleteSalesDetails({
-    //   id: this.listArr[idx].sale_det_id, salesid: this.listArr[idx].sales_id,
-    //   autidneeded: this.editCompletedSales
-    // }).subscribe((data: any) => {
-
-
-    //   if (data.body.result === 'success') {
-    //     this.listArr.splice(idx, 1);
-    //     this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
-
-    //     this.delIconStatus();
-    //     this.checkIsSingleRow();
-    //     this.calc();
-
-
-
-    //   } else {
-    //     this.presentAlert('Error: Something went wrong Contact Admin!');
-    //   }
-
-    //   this._cdr.markForCheck();
-    // });
-    // } else {
-    //   this.listArr.splice(idx, 1);
-    //   this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
-
-    //   this.delIconStatus();
-    //   this.checkIsSingleRow();
-    //   this.calc();
-    // }
-
-
-
     this._cdr.markForCheck();
   }
 
@@ -610,7 +563,7 @@ export class SalesPage implements OnInit {
 
   setTaxSegment(taxrate: number) {
 
-    if (this.customer_state_code !== this.center_state_code) {
+    if (this.i_gst) {
       this.i_gst = true;
       this.igst = taxrate;
       this.cgst = 0;
@@ -623,8 +576,9 @@ export class SalesPage implements OnInit {
     }
   }
 
-  setTaxLabel() {
-    if (this.customer_state_code !== this.center_state_code) {
+  setTaxLabel(customer_state_code) {
+
+    if (customer_state_code !== this.center_state_code) {
       this.i_gst = true;
 
     } else {
@@ -634,22 +588,6 @@ export class SalesPage implements OnInit {
     }
 
   }
-
-  // // draft - status
-  // onSave(action) {
-  //   this.submitForm.patchValue({
-  //     status: 'D',
-  //   });
-  //   this.onSubmit(action);
-  // }
-
-  // // final c completed - status
-  // onSavenSubmit(action) {
-  //   this.submitForm.patchValue({
-  //     status: 'C',
-  //   });
-  //   this.onSubmit(action);
-  // }
 
 
   validateForms() {
@@ -748,9 +686,6 @@ export class SalesPage implements OnInit {
 
       }
 
-
-
-
     }
 
 
@@ -770,36 +705,26 @@ export class SalesPage implements OnInit {
   selectCustomer() {
 
     let customervalue = this.submitForm.value.customer;
-    console.log('print list ' + JSON.stringify(customervalue));
-    this.customer_state_code = customervalue.code;
+
     this.customerselected = true;
-    this.setTaxLabel();
+    this.setTaxLabel(customervalue.code);
 
     this._cdr.markForCheck();
   }
 
-
-
-
-  invoiceSuccess() {
+  invoiceSuccess(invoice_id) {
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = "400px";
     dialogConfig.height = "80%";
-    // dialogConfig.data = vendor;
+    dialogConfig.data = this.invoiceid;
 
     const dialogRef = this.dialog.open(InvoiceSuccessComponent, dialogConfig);
 
     dialogRef.afterClosed();
-
-
-
   }
-
-
-
 
   openCurrencyPad(idx) {
 
@@ -839,7 +764,6 @@ export class SalesPage implements OnInit {
         )
       ).subscribe();
 
-
   }
 
 
@@ -859,22 +783,7 @@ export class SalesPage implements OnInit {
         )
       ).subscribe();
 
-    // dialogRef.afterClosed().subscribe(
-    //   data => {
-    //     if (data != undefined && data.length > 0 && data != 0) {
 
-    //       if (field === 'discount') {
-
-    //         this.listArr[idx].disc_percent = data;
-    //         this.qtyChange(idx);
-    //       }
-
-
-    //     }
-
-    //     this._cdr.markForCheck();
-    //   }
-    // );
   }
 
 
@@ -892,8 +801,6 @@ export class SalesPage implements OnInit {
 
       console.log('object' + (100 - this.listArr[idx].disc_percent) / 100);
 
-      // debugger;
-
 
       this.listArr[idx].total_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent) / 100).toFixed(2);
       this.listArr[idx].disc_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (this.listArr[idx].disc_percent) / 100).toFixed(2);
@@ -908,13 +815,6 @@ export class SalesPage implements OnInit {
       this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
 
     }
-    // this.listArr[idx].igst_value = ((this.listArr[idx].taxable_value * this.igst) / 100).toFixed(2);
-    // this.listArr[idx].cgst_value = ((this.listArr[idx].taxable_value * this.cgst) / 100).toFixed(2);
-    // this.listArr[idx].sgst_value = ((this.listArr[idx].taxable_value * this.sgst) / 100).toFixed(2);
-
-    // this.listArr[idx].total_value = ((this.listArr[idx].unit_price * this.listArr[idx].qty) + (this.listArr[idx].unit_price * (this.listArr[idx].qty) * this.listArr[idx].taxrate) / 100).toFixed(2)
-    // this.listArr[idx].taxable_value = ((this.listArr[idx].qty) * (this.listArr[idx].unit_price)).toFixed(2);
-    // this.listArr[idx].tax_value = ((this.listArr[idx].taxable_value) * ((this.listArr[idx].taxrate) / 100)).toFixed(2);
 
     this.calc();
 
@@ -933,8 +833,6 @@ export class SalesPage implements OnInit {
     })
 
     this.testTotal = tempArr;
-
-    // this.total = "" + tempArr;
 
     this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
@@ -997,6 +895,7 @@ export class SalesPage implements OnInit {
               console.log('saveSaleOrder ' + JSON.stringify(data));
 
               if (data.body.result === 'success') {
+                this.invoiceid = data.body.id;
                 this.submitForm.reset();
                 this.init();
                 this.customerdata = null;
@@ -1013,7 +912,6 @@ export class SalesPage implements OnInit {
                 this.cgstTotal = "0.00";
                 this.sgstTotal = "0.00";
 
-
                 this._saleApiService.getNxtSaleInvoiceNo(this.center_id).subscribe((data: any) => {
 
                   this.submitForm.patchValue({
@@ -1023,8 +921,7 @@ export class SalesPage implements OnInit {
 
                 this._cdr.markForCheck();
                 if (action === 'add') {
-                  //this.presentAlert('Invoice Completed!');
-                  this.invoiceSuccess();
+                  this.invoiceSuccess(this.invoiceid);
                   // invoice add dialog
                 } else {
                   this.presentAlert('Saved to Draft!');
@@ -1043,11 +940,6 @@ export class SalesPage implements OnInit {
 
     await alert.present();
   }
-
-
-
-
-
 
 
   checkedRow(idx: number) {
@@ -1084,10 +976,6 @@ export class SalesPage implements OnInit {
   }
 
   executeDeletes() {
-
-
-
-
     this.deletedRowArr.sort().reverse();
     this.deletedRowArr.forEach((e) => {
       this.executeDeleteProduct(e);
@@ -1098,18 +986,13 @@ export class SalesPage implements OnInit {
 
   executeDeleteProduct(elem) {
 
-
     this._commonApiService.deleteSalesDetails({
       id: elem.sale_det_id, salesid: elem.sales_id,
       autidneeded: this.editCompletedSales
     }).subscribe((data: any) => {
 
-
       if (data.body.result === 'success') {
         console.log('object >>> execute delete product ...')
-
-
-
       } else {
         this.presentAlert('Error: Something went wrong Contact Admin!');
       }
@@ -1117,16 +1000,12 @@ export class SalesPage implements OnInit {
       this._cdr.markForCheck();
     });
 
-
-
-
     this._cdr.markForCheck();
   }
 
 
 
   async editTax() {
-    // this.presentTaxValueChangeConfirm();
 
     const modalTax = await this._modalcontroller.create({
       component: ChangeTaxComponent,
@@ -1163,11 +1042,7 @@ export class SalesPage implements OnInit {
 
   }
 
-
-
-
   async editMrp() {
-    // this.presentTaxValueChangeConfirm();
 
     const modalTax = await this._modalcontroller.create({
       component: ChangeMrpComponent,
@@ -1203,8 +1078,6 @@ export class SalesPage implements OnInit {
     await modalTax.present();
 
   }
-
-
 
   async presentDeleteConfirm() {
     const alert = await this.alertController.create({

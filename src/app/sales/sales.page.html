@@ -89,12 +89,7 @@
 					</ng-template>
 					<ng-template #showproductsection>
 						<div *ngIf="listArr.length === 0" class="empty-add">
-							<span
-								class="cursor"
-								appPreventDoubleClick
-								[throttleTime]="2000"
-								(throttledClick)="customerselected && showAddProductComp()"
-							>
+							<span class="cursor" appPreventDoubleClick [throttleTime]="2000" (throttledClick)="customerselected && showAddProductComp()">
 								+ Add Item
 							</span>
 						</div>
@@ -134,7 +129,7 @@
 							<div class="item4 txt-right-align num-format-cell-style">{{item.unit_price}}</div>
 
 							<div class="item4 txt-right-align num-format-cell-style">
-								{{item.taxable_value | number:'1.2-2'}}
+								{{item.taxable_value }}
 							</div>
 
 							<div class="item4 txt-right-align num-format-cell-style">
@@ -143,7 +138,7 @@
 
 							<div class="txt-align">
 								<ng-container *ngIf="i_gst">
-									{{(item.tax_value) | number:'1.2-2'}}
+									{{(item.tax_value) }}
 								</ng-container>
 								<ng-container *ngIf="!i_gst">
 									{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) | number:'1.2-2'}}
@@ -202,6 +197,8 @@
 								<mat-form-field class="mat-input-wrapper">
 									<input
 										matInput
+										readonly
+										required
 										formControlName="invoicedate"
 										[matDatepicker]="picker1"
 										type="text"
