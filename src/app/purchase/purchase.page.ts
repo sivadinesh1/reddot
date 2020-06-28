@@ -733,6 +733,9 @@ export class PurchasePage implements OnInit {
                 status: 'D',
               });
             }
+
+
+            debugger;
             this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('savePurchaseOrder ' + JSON.stringify(data));
 

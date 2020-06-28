@@ -127,6 +127,7 @@ export class ProcessEnquiryPage implements OnInit {
         this.productArr[idx].status = 'P';
         this.productArr[idx].stockid = temp.stock_pk;
         this.productArr[idx].available_stock = temp.available_stock;
+        this.productArr[idx].rackno = temp.rackno;
       }
 
       this._cdr.markForCheck();

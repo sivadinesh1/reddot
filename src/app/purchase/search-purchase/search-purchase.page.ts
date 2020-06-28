@@ -9,6 +9,9 @@ import { Purchase } from '../../models/Purchase';
 import { Vendor } from 'src/app/models/Vendor';
 import { AlertController } from '@ionic/angular';
 
+import { filter, map, startWith } from 'rxjs/operators';
+import { User } from 'src/app/models/User';
+
 
 @Component({
   selector: 'app-search-purchase',
@@ -23,7 +26,7 @@ export class SearchPurchasePage implements OnInit {
 
   resultList: any;
   vendorList: any;
-  center_id: any;
+  // center_id: any;
 
   statusFlag = 'D';
   selectedVend = 'all';
@@ -38,20 +41,56 @@ export class SearchPurchasePage implements OnInit {
   fromdate = new Date();
   todate = new Date();
 
+  sumTotalValue = 0.00;
+  sumNumItems = 0;
+  uniqCustCount = 0;
+
+  purchase$: Observable<Purchase[]>;
+
+  draftPurchase$: Observable<Purchase[]>;
+  fullfilledPurchase$: Observable<Purchase[]>;
+
+  filteredPurchase$: Observable<Purchase[]>;
+  userdata$: Observable<User>;
+  userdata: any;
+
+  filteredValues: any;
+  tabIndex = 0;
+
+  filteredVendor: Observable<any[]>;
+  vendor_lis: Vendor[];
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
     public alertController: AlertController,
     private _authservice: AuthenticationService) {
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
 
     const dateOffset = (24 * 60 * 60 * 1000) * 3;
     this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
+    this.submitForm = this._fb.group({
+      vendorid: ['all'],
+      vendorctrl: ['All Vendors'],
+      todate: [this.todate, Validators.required],
+      fromdate: [this.fromdate, Validators.required],
+      status: new FormControl('all'),
+    })
+
+    this.userdata$ = this._authservice.currentUser;
+
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+        this.init();
+        this._cdr.markForCheck();
+      });
 
     this._route.params.subscribe(params => {
-      this.init();
+      if (this.userdata !== undefined) {
+        this.init();
+      }
     });
 
   }
@@ -61,15 +100,16 @@ export class SearchPurchasePage implements OnInit {
 
   }
 
-  init() {
-    this.vendor$ = this._commonApiService.getAllActiveVendors(this.center_id);
+  async init() {
+    this.vendor$ = this._commonApiService.getAllActiveVendors(this.userdata.center_id);
 
-    this.submitForm = this._fb.group({
-      vendorid: new FormControl('all'),
-      todate: [this.todate, Validators.required],
-      fromdate: [this.fromdate, Validators.required],
-      status: new FormControl('D'),
-    })
+    this.vendor_lis = await this.vendor$.toPromise();
+
+    this.filteredVendor = this.submitForm.controls['vendorctrl'].valueChanges
+      .pipe(
+        startWith(''),
+        map(vendor => vendor ? this.filtervendor(vendor) : this.vendor_lis.slice())
+      );
 
     this.search();
     this._cdr.markForCheck();
@@ -77,15 +117,63 @@ export class SearchPurchasePage implements OnInit {
   }
 
 
-  search() {
+  filtervendor(value: any) {
+
+    if (typeof (value) == "object") {
+      return this.vendor_lis.filter(vendor =>
+        vendor.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
+    } else if (typeof (value) == "string") {
+      return this.vendor_lis.filter(vendor =>
+        vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
+    }
+
+  }
+
+  getPosts(event) {
+    this.submitForm.patchValue({
+      vendorid: event.option.value.id,
+      vendorctrl: event.option.value.name
+    });
+
+    this.tabIndex = 0;
+    this._cdr.markForCheck();
+
+    this.search();
+  }
+
+
+  clearInput() {
+    this.submitForm.patchValue({
+      vendorid: 'all',
+      vendorctrl: ''
+    });
+    this._cdr.markForCheck();
+    this.search();
+  }
+
+  async search() {
     this.purchases$ = this._commonApiService
-      .searchPurchases(this.center_id, this.submitForm.value.vendorid,
+      .searchPurchases(this.userdata.center_id, this.submitForm.value.vendorid,
         this.submitForm.value.status,
         this.submitForm.value.fromdate,
         this.submitForm.value.todate,
 
       );
+
+    this.filteredPurchase$ = this.purchases$;
+
+    // for initial load of first tab (ALL)
+    this.filteredValues = await this.filteredPurchase$.toPromise();
+
+
+    // to calculate the count on each status    
+    this.draftPurchase$ = this.purchases$.pipe(map((arr: any) => arr.filter(f => f.status === 'D')));
+    this.fullfilledPurchase$ = this.purchases$.pipe(map((arr: any) => arr.filter(f => f.status === 'C')));
+    this.calculateSumTotals();
+    this.tabIndex = 0;
     this._cdr.markForCheck();
+
+
   }
 
   goPurchaseEditScreen(item) {
@@ -143,6 +231,46 @@ export class SearchPurchasePage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async tabClick($event) {
+    let value = await this.filteredPurchase$.toPromise();
+
+    if ($event.index === 0) {
+      this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
+    } else if ($event.index === 1) {
+      this.filteredValues = value.filter((data: any) => data.status === 'D');
+    } else if ($event.index === 2) {
+      this.filteredValues = value.filter((data: any) => data.status === 'C');
+    }
+
+    this.calculateSumTotals();
+    this._cdr.markForCheck();
+
+  }
+
+
+  calculateSumTotals() {
+    this.sumTotalValue = 0.00;
+    this.sumNumItems = 0;
+
+    this.sumTotalValue = this.filteredValues.map(item => {
+      return item.total_value;
+    })
+      .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+
+
+    this.sumNumItems = this.filteredValues.map(item => {
+      return item.no_of_items;
+    })
+      .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+    this.uniqCustCount = this.filteredValues.map(item => {
+      return item.vendor_name;
+    }).filter(function (val, i, arr) {
+      return arr.indexOf(val) === i;
+    }).length;
+
   }
 
 }

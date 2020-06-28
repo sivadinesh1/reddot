@@ -42,6 +42,7 @@ export class DiscountCustomerPage implements OnInit {
   objForm = [];
   @ViewChild('myForm', { static: true }) myForm: NgForm;
   initialValues: any;
+  customerName: string;
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
     private _fb: FormBuilder, private loadingService: LoadingService, private _messagesService: MessagesService,
@@ -57,7 +58,7 @@ export class DiscountCustomerPage implements OnInit {
       .subscribe((data: any) => {
         this.ready = 1;
         this.center_id = data.center_id;
-        this.reloadCustomerDiscounts();
+
         this._cdr.markForCheck();
       });
 
@@ -78,6 +79,7 @@ export class DiscountCustomerPage implements OnInit {
     this._route.params.subscribe(params => {
 
       this.customer_id = this._route.snapshot.params['customer_id'];
+
       this.init();
 
     });
@@ -108,6 +110,7 @@ export class DiscountCustomerPage implements OnInit {
         // populate disctype & effdiscstartdate to display in UI
         this.selectedDiscType = temp[0].type;
         this.selectedEffDiscStDate = temp[0].startdate;
+        this.customerName = temp[0].customer_name;
 
         // loops the array & populate individual tax value to set in form object
         let Tax0 = temp.find((o) => o.gst_slab === 0).value;

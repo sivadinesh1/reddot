@@ -1,7 +1,6 @@
-<!-- @format -->
-
 <ion-content>
 	<div class="top-header"><h4>Sales Add/Edit</h4></div>
+
 	<div class="screen-header">
 		<div>
 			<div *ngIf="customerselected" style="color: #797979; font-size: 12px;">Customer Name</div>
@@ -68,6 +67,7 @@
 					<div class="item3 headstyl-right">Rate Item</div>
 
 					<div class="item4 headstyl-right">Total Value</div>
+
 					<div class="item4 headstyl-right">Tax %</div>
 
 					<div class="item4 headstyl txt-center-align tax-style">
@@ -76,6 +76,7 @@
 							<div *ngIf="!i_gst" class="headstyl-center" style="font-size: 14px;">CGST / SGST</div>
 						</ng-container>
 					</div>
+					<div class="item4 headstyl-right">Net Value</div>
 				</div>
 				<div class="row2">
 					<ng-container *ngIf="customerselected; then showproductsection; else beginsetup"> </ng-container>
@@ -118,7 +119,10 @@
 								<input
 									matInput
 									value="{{item.disc_percent | number:'1.2-2'}}"
-									type="text"
+									type="number"
+									maxlength="3"
+									min="0"
+									max="100"
 									class="styl-txt-box-small txt-pad"
 									(click)="openRowNumberPad(idx,'discount')"
 									appPreventCutCopyPaste
@@ -143,6 +147,12 @@
 								<ng-container *ngIf="!i_gst">
 									{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) | number:'1.2-2'}}
 								</ng-container>
+							</div>
+
+							<div class="item4 txt-right-align num-format-cell-style">
+								<span [ngClass]="marginCheck(item.margin)">
+									{{item.total_value }}
+								</span>
 							</div>
 						</div>
 					</ng-template>

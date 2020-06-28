@@ -55,6 +55,10 @@ export class SearchSalesPage implements OnInit {
 
   statusList = [{ "id": "all", "value": "All" }, { "id": "D", "value": "Draft" }, { "id": "C", "value": "Completed" }]
 
+  sumTotalValue = 0.00;
+  sumNumItems = 0;
+  uniqCustCount = 0;
+
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
     public alertController: AlertController,
@@ -67,9 +71,6 @@ export class SearchSalesPage implements OnInit {
       fromdate: [this.fromdate, Validators.required],
       status: new FormControl('all'),
     })
-
-    // const currentUser = this._authservice.currentUserValue;
-    // this.center_id = currentUser.center_id;
 
     this.userdata$ = this._authservice.currentUser;
 
@@ -159,6 +160,7 @@ export class SearchSalesPage implements OnInit {
 
 
   async search() {
+
     this.sales$ = this._commonApiService
       .searchSales(this.userdata.center_id, this.submitForm.value.customerid,
         this.submitForm.value.status,
@@ -172,11 +174,15 @@ export class SearchSalesPage implements OnInit {
     // for initial load of first tab (ALL)
     this.filteredValues = await this.filteredSales$.toPromise();
 
+
+
+
+
     // to calculate the count on each status    
     this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'D')));
     this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'C')));
-
-
+    this.calculateSumTotals();
+    this.tabIndex = 0;
     this._cdr.markForCheck();
 
   }
@@ -252,8 +258,33 @@ export class SearchSalesPage implements OnInit {
       this.filteredValues = value.filter((data: any) => data.status === 'C');
     }
 
+    this.calculateSumTotals();
     this._cdr.markForCheck();
 
   }
+
+  calculateSumTotals() {
+    this.sumTotalValue = 0.00;
+    this.sumNumItems = 0;
+
+    this.sumTotalValue = this.filteredValues.map(item => {
+      return item.total_value;
+    })
+      .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+
+
+    this.sumNumItems = this.filteredValues.map(item => {
+      return item.no_of_items;
+    })
+      .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+    this.uniqCustCount = this.filteredValues.map(item => {
+      return item.customer_name;
+    }).filter(function (val, i, arr) {
+      return arr.indexOf(val) === i;
+    }).length;
+
+  }
+
 
 }

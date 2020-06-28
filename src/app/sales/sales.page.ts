@@ -456,7 +456,8 @@ export class SalesPage implements OnInit {
         "sgst": this.sgst,
         "old_val": oldval,
         "stock_pk": temp.stock_pk,
-        "del_flag": 'N'
+        "del_flag": 'N',
+        "margin": ((totalval / temp.qty) - temp.unit_price) < 0 ? "marginNeg" : ""
       });
 
     const tempArr = this.listArr.map(arrItem => {
@@ -776,8 +777,12 @@ export class SalesPage implements OnInit {
         filter(val => !!val),
         tap((val) => {
 
-          this.listArr[idx].disc_percent = val;
-          this.qtyChange(idx);
+          if (val <= 100) {
+            this.listArr[idx].disc_percent = val;
+            this.qtyChange(idx);
+          } else {
+            return false;
+          }
           this._cdr.markForCheck();
         }
         )
@@ -786,26 +791,18 @@ export class SalesPage implements OnInit {
 
   }
 
+  // ((totalval/temp.qty) - temp.unit_price) < 0 ? "marginNeg": ""
 
   qtyChange(idx) {
 
     if (this.cust_discount_type === 'NET') {
       this.listArr[idx].sub_total = (this.listArr[idx].qty * this.listArr[idx].mrp).toFixed(2);
 
-      console.log('object' + this.listArr[idx].qty);
-      console.log('object' + this.listArr[idx].mrp);
-      console.log('object' + this.listArr[idx].disc_percent);
-
-      console.log('object' + (this.listArr[idx].qty * this.listArr[idx].mrp));
-      console.log('object' + (100 - this.listArr[idx].disc_percent));
-
-      console.log('object' + (100 - this.listArr[idx].disc_percent) / 100);
-
-
       this.listArr[idx].total_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent) / 100).toFixed(2);
       this.listArr[idx].disc_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (this.listArr[idx].disc_percent) / 100).toFixed(2);
       this.listArr[idx].taxable_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent)) / (100 + this.listArr[idx].taxrate)).toFixed(2);
       this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
+
 
     } else {
       this.listArr[idx].sub_total = (this.listArr[idx].qty * this.listArr[idx].mrp).toFixed(2);
@@ -815,6 +812,8 @@ export class SalesPage implements OnInit {
       this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
 
     }
+
+    this.listArr[idx].margin = ((this.listArr[idx].total_value / this.listArr[idx].qty) - this.listArr[idx].unit_price) < 0 ? "marginNeg" : "";
 
     this.calc();
 
@@ -851,6 +850,17 @@ export class SalesPage implements OnInit {
     this._cdr.markForCheck();
 
   }
+
+
+  marginCheck(margin) {
+
+    if (margin === 'marginNeg') {
+      return "marginneg";
+    }
+
+  }
+
+
 
   clearAll() {
     this.listArr = [];

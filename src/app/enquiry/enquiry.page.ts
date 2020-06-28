@@ -7,6 +7,10 @@ import { ShowCustomersComponent } from '../components/show-customers/show-custom
 import { CommonApiService } from '../services/common-api.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
+import { filter } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+
+import { User } from "../models/User";
 
 @Component({
   selector: 'app-enquiry',
@@ -14,7 +18,7 @@ import { AuthenticationService } from '../services/authentication.service';
   styleUrls: ['./enquiry.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EnquiryPage implements OnInit {
+export class EnquiryPage {
 
   submitForm: FormGroup;
 
@@ -23,9 +27,10 @@ export class EnquiryPage implements OnInit {
 
   removeRowArr = [];
   showDelIcon = false;
-  centerid: any;
-  userid: any;
+  center_id: any;
 
+  userdata$: Observable<User>;
+  userdata: any;
 
   @ViewChild('myForm', { static: true }) myForm: NgForm;
 
@@ -35,22 +40,35 @@ export class EnquiryPage implements OnInit {
     private _authservice: AuthenticationService,
   ) {
 
-    const currentUser = this._authservice.currentUserValue;
+    this.userdata$ = this._authservice.currentUser;
+
     this.submitForm = this._fb.group({
       customer: [null, Validators.required],
-      centerid: [this.centerid, Validators.required],
+      center_id: [null, Validators.required],
       remarks: [''],
 
       productarr: this._fb.array([])
 
     });
 
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+        this.center_id = this.userdata.center_id;
+
+        this.submitForm.patchValue({
+          center_id: this.userdata.center_id,
+        });
+
+
+        this.init();
+        this._cdr.markForCheck();
+      });
+
 
     this._route.params.subscribe(params => {
-      this.centerid = currentUser.center_id;
-      this.userid = currentUser.userid;
-
-      this.init();
       this._cdr.markForCheck();
     });
 
@@ -60,36 +78,17 @@ export class EnquiryPage implements OnInit {
     return this.submitForm.get('productarr') as FormGroup;
   }
 
-  onFocus() {
-    console.log('onFocus');
-
-  }
-
-  ngOnInit() {
-  }
 
   init() {
-
-
 
     this.customerData = "";
     this.customerAdded = false;
 
-
     this.addProduct();
     this.addProduct();
     this.addProduct();
     this.addProduct();
     this.addProduct();
-
-
-
-
-    this.submitForm.patchValue({
-      centerid: this.centerid,
-    });
-
-
 
     this._cdr.markForCheck();
   }
@@ -105,14 +104,11 @@ export class EnquiryPage implements OnInit {
   }
 
 
-
-
   addProduct() {
     const control = <FormArray>this.submitForm.controls['productarr'];
     control.push(this.initProduct());
     this._cdr.markForCheck();
   }
-
 
 
   onRemoveRows() {
@@ -130,13 +126,14 @@ export class EnquiryPage implements OnInit {
   }
 
 
-  checkedRow(idx: number) {
+  checkedRow(idx: number, $event) {
 
     const faControl =
       (<FormArray>this.submitForm.controls['productarr']).at(idx);
     faControl['controls'].checkbox;
 
-    if (!faControl.value.checkbox) {
+
+    if (faControl.value.checkbox) {
       this.removeRowArr.push(idx);
     } else {
       this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
@@ -155,29 +152,6 @@ export class EnquiryPage implements OnInit {
     }
   }
 
-
-  ionViewDidEnter() {
-    // this.firstenquiry.nativeElement.focus();
-  }
-
-
-  // onAddProduct() {
-
-  //   this.currentcount = this.currentcount++;
-
-  //   const control = new FormGroup({
-  //     'notes': new FormControl(null, Validators.required),
-  //     'quantity': new FormControl(1, Validators.required),
-  //   });
-
-  //   (<FormArray>this.submitForm.get('productarr')).push(control);
-
-  //   this._cdr.markForCheck();
-
-  // }
-
-
-
   openCurrencyPad(idx) {
 
     const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
@@ -186,18 +160,9 @@ export class EnquiryPage implements OnInit {
       data => {
         if (data != undefined && data.length > 0 && data != 0) {
 
-
-          // const faControl = 
-          // (<FormArray>this.pmForm.controls['bundleDetails']).at(index);
-          // faControl['controls'].bsku.setValue(sku);
-
-
           const faControl =
             (<FormArray>this.submitForm.controls['productarr']).at(idx);
           faControl['controls'].quantity.setValue(data);
-
-
-
 
         }
 
@@ -208,9 +173,11 @@ export class EnquiryPage implements OnInit {
 
   onSubmit() {
 
-    console.log('did this submitte?');
-
     console.log('object...' + this.submitForm.value);
+
+    if (!this.submitForm.valid) {
+      return false;
+    }
 
     this._commonApiService.saveEnquiry(this.submitForm.value).subscribe((data: any) => {
       console.log('object.SAVE ENQ. ' + JSON.stringify(data));

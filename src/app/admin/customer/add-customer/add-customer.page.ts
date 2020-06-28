@@ -48,8 +48,6 @@ export class AddCustomerPage implements OnInit {
           district: [''],
           state_id: ['', Validators.required],
           pin: ['', [patternValidator(PINCODE_REGEX)]],
-        }),
-        this._formBuilder.group({
           gst: ['', [patternValidator(GSTN_REGEX)]],
           phone: ['', Validators.compose([
             Validators.required, PhoneValidator.invalidCountryPhone(country)

@@ -3,20 +3,27 @@
 		<div class="screen-header">
 			<div>
 				<span (click)="_navigationService.searchCustomers()">
-					<span style="font-size: 16px; color: #797979; cursor: pointer;">
+					<span style="font-size: 16px; color: #3f51b5; cursor: pointer;">
 						List of Customers
 					</span>
-					>
+					/
 				</span>
 			</div>
 			<div>
-				&nbsp;Set Customers Discount
+				<span style="font-size: 16px; color: #797979; cursor: pointer;">
+					&nbsp;Set Customers Discount
+				</span>
 			</div>
 		</div>
 		<div class="screen-header">
 			<h3>Setup Customer Specific Discounts</h3>
 		</div>
 		<form [formGroup]="submitForm" class="form-wrap" #myForm="ngForm">
+			<div>
+				<div style="color: #797979; font-size: 14px;">Customer Name</div>
+				<div>{{this.customerName}}</div>
+			</div>
+
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Discount Type</mat-label>
@@ -49,7 +56,7 @@
 					</mat-form-field>
 				</ion-item>
 			</div>
-			<div>&nbsp;</div>
+
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 

@@ -27,7 +27,7 @@
 
 		.row1 {
 			display: grid;
-			grid-template-columns: 40px minmax(350px, 600px) 120px 120px 120px 120px 120px 140px;
+			grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px 110px 140px 110px;
 			// align-self: center;
 			align-items: center;
 			// padding-bottom: 10px;
@@ -41,7 +41,7 @@
 			max-height: 500px;
 			.list-item {
 				display: grid;
-				grid-template-columns: 40px minmax(350px, 600px) 120px 120px 120px 120px 120px 140px;
+				grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px 110px 140px 110px;
 				align-self: center;
 				border-bottom: 1px solid grey;
 				font-size: 14px;

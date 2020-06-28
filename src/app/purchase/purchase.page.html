@@ -75,6 +75,7 @@
 							<div *ngIf="!i_gst" class="headstyl-center" style="font-size: 14px;">CGST / SGST</div>
 						</ng-container>
 					</div>
+					<div class="item4 headstyl-right">Net Value</div>
 				</div>
 				<div class="row2">
 					<ng-container *ngIf="vendorselected; then showproductsection; else beginsetup"> </ng-container>
@@ -88,12 +89,7 @@
 					</ng-template>
 					<ng-template #showproductsection>
 						<div *ngIf="listArr.length === 0" class="empty-add">
-							<span
-								class="cursor"
-								appPreventDoubleClick
-								[throttleTime]="2000"
-								(throttledClick)="vendorselected && showAddProductComp()"
-							>
+							<span class="cursor" appPreventDoubleClick [throttleTime]="2000" (throttledClick)="vendorselected && showAddProductComp()">
 								+ Add Item
 							</span>
 						</div>
@@ -135,6 +131,9 @@
 								<ng-container *ngIf="!i_gst">
 									{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) | number:'1.2-2'}}
 								</ng-container>
+							</div>
+							<div class="item4 txt-right-align num-format-cell-style">
+								{{item.total_value | number:'1.2-2'}}
 							</div>
 						</div>
 					</ng-template>

@@ -15,7 +15,7 @@
 
 .purchase-wrap {
 	display: grid;
-	width: 94%;
+	width: 96%;
 	margin: 0 auto;
 	height: auto;
 	min-height: calc(100vh - 91px);
@@ -29,7 +29,7 @@
 
 		.row1 {
 			display: grid;
-			grid-template-columns: 40px minmax(350px, 600px) 120px 120px 120px 120px 120px 120px 140px;
+			grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px 110px 110px 140px 110px;
 			// align-self: center;
 			align-items: center;
 			// padding-bottom: 10px;
@@ -43,7 +43,7 @@
 			max-height: 500px;
 			.list-item {
 				display: grid;
-				grid-template-columns: 40px minmax(350px, 600px) 120px 120px 120px 120px 120px 120px 140px;
+				grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px 110px 110px 140px 110px;
 				align-self: center;
 				border-bottom: 1px solid grey;
 				font-size: 14px;
@@ -90,7 +90,7 @@
 }
 
 .styl-txt-box-small {
-	width: 70px !important;
+	width: 75px !important;
 	border: 1px solid #d1d1d1;
 	padding: 4px;
 	border-radius: 5px;
@@ -208,4 +208,9 @@
 
 .acton-btns {
 	padding: 4px 10px;
+}
+
+.marginneg {
+	border-bottom: 2px solid red;
+	padding-top: 5px;
 }
