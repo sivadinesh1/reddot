@@ -51,9 +51,6 @@ export class EditProductPage implements OnInit {
 
     this._cdr.markForCheck();
 
-
-
-
     this._commonApiService.viewProductInfo(_route.snapshot.params.centerid, _route.snapshot.params.productid).subscribe((data) => {
       this.productinfo = data[0];
 
@@ -64,43 +61,37 @@ export class EditProductPage implements OnInit {
     });
 
     this.submitForm = this._formBuilder.group({
-      formArray: this._formBuilder.array([
-        this._formBuilder.group({
-          product_id: _route.snapshot.params.productid,
-          center_id: _route.snapshot.params.centerid,
-          product_code: [null, Validators.required],
-          description: [null, Validators.required],
-          vendorid: [null, Validators.required],
 
-        }),
-        this._formBuilder.group({
-          unit: [null, Validators.required],
-          packetsize: [null, Validators.required],
-          hsncode: ['', [patternValidator(HSNCODE_REGEX)]],
-          taxrate: [null, Validators.required],
-          minqty: [null, Validators.required],
-        }),
-
-        this._formBuilder.group({
-          unit_price: [null, Validators.required],
-          mrp: [null, Validators.required],
-          purchaseprice: [null, Validators.required],
-          salesprice: [null, Validators.required],
-          maxdiscount: ['', [patternValidator(DISC_REGEX)]],
-
-          currentstock: [null],
-          rackno: [null],
-          location: [null],
-          alternatecode: [null],
-          reorderqty: [null],
-          avgpurprice: [null],
-          avgsaleprice: [null],
-          itemdiscount: [null],
-          margin: [null],
-        }),
+      product_id: _route.snapshot.params.productid,
+      center_id: _route.snapshot.params.centerid,
+      product_code: [null, Validators.required],
+      description: [null, Validators.required],
+      vendorid: [null, Validators.required],
 
 
-      ])
+      unit: [null, Validators.required],
+      packetsize: [null, Validators.required],
+      hsncode: ['', [patternValidator(HSNCODE_REGEX)]],
+      taxrate: [null, Validators.required],
+      minqty: [null, Validators.required],
+
+      unit_price: [null, Validators.required],
+      mrp: [null, Validators.required],
+      purchaseprice: [null, Validators.required],
+      salesprice: [null, Validators.required],
+      maxdiscount: ['', [patternValidator(DISC_REGEX)]],
+
+      currentstock: [null],
+      rackno: [null],
+      location: [null],
+      alternatecode: [null],
+      reorderqty: [null],
+      avgpurprice: [null],
+      avgsaleprice: [null],
+      itemdiscount: [null],
+      margin: [null],
+
+
     });
 
   }
@@ -112,39 +103,34 @@ export class EditProductPage implements OnInit {
 
 
   setFormValues() {
-    (this.submitForm.get('formArray')).get([0]).patchValue({ 'product_code': this.productinfo.product_code });
-    (this.submitForm.get('formArray')).get([0]).patchValue({ 'description': this.productinfo.description });
-    (this.submitForm.get('formArray')).get([0]).patchValue({ 'vendorid': this.productinfo.vendor_id });
+    this.submitForm.patchValue({ 'product_code': this.productinfo.product_code });
+    this.submitForm.patchValue({ 'description': this.productinfo.description });
+    this.submitForm.patchValue({ 'vendorid': this.productinfo.vendor_id });
 
-    (this.submitForm.get('formArray')).get([1]).patchValue({ 'unit': this.productinfo.unit });
-    (this.submitForm.get('formArray')).get([1]).patchValue({ 'packetsize': this.productinfo.packetsize });
-    (this.submitForm.get('formArray')).get([1]).patchValue({ 'hsncode': this.productinfo.hsncode });
-    (this.submitForm.get('formArray')).get([1]).patchValue({ 'taxrate': this.productinfo.taxrate });
-    (this.submitForm.get('formArray')).get([1]).patchValue({ 'minqty': this.productinfo.minqty });
+    this.submitForm.patchValue({ 'unit': this.productinfo.unit });
+    this.submitForm.patchValue({ 'packetsize': this.productinfo.packetsize });
+    this.submitForm.patchValue({ 'hsncode': this.productinfo.hsncode });
+    this.submitForm.patchValue({ 'taxrate': this.productinfo.taxrate });
+    this.submitForm.patchValue({ 'minqty': this.productinfo.minqty });
 
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'unit_price': this.productinfo.unit_price });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'mrp': this.productinfo.mrp });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'purchaseprice': this.productinfo.purchaseprice });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'salesprice': this.productinfo.salesprice });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'maxdiscount': this.productinfo.maxdiscount });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'currentstock': this.productinfo.currentstock });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'rackno': this.productinfo.rackno });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'location': this.productinfo.location });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'alternatecode': this.productinfo.alternatecode });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'reorderqty': this.productinfo.reorderqty });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'avgpurprice': this.productinfo.avgpurprice });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'avgsaleprice': this.productinfo.avgsaleprice });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'itemdiscount': this.productinfo.itemdiscount });
-    (this.submitForm.get('formArray')).get([2]).patchValue({ 'margin': this.productinfo.margin });
-
-
+    this.submitForm.patchValue({ 'unit_price': this.productinfo.unit_price });
+    this.submitForm.patchValue({ 'mrp': this.productinfo.mrp });
+    this.submitForm.patchValue({ 'purchaseprice': this.productinfo.purchaseprice });
+    this.submitForm.patchValue({ 'salesprice': this.productinfo.salesprice });
+    this.submitForm.patchValue({ 'maxdiscount': this.productinfo.maxdiscount });
+    this.submitForm.patchValue({ 'currentstock': this.productinfo.currentstock });
+    this.submitForm.patchValue({ 'rackno': this.productinfo.rackno });
+    this.submitForm.patchValue({ 'location': this.productinfo.location });
+    this.submitForm.patchValue({ 'alternatecode': this.productinfo.alternatecode });
+    this.submitForm.patchValue({ 'reorderqty': this.productinfo.reorderqty });
+    this.submitForm.patchValue({ 'avgpurprice': this.productinfo.avgpurprice });
+    this.submitForm.patchValue({ 'avgsaleprice': this.productinfo.avgsaleprice });
+    this.submitForm.patchValue({ 'itemdiscount': this.productinfo.itemdiscount });
+    this.submitForm.patchValue({ 'margin': this.productinfo.margin });
 
     this._cdr.markForCheck();
   }
 
-
-  /** Returns a FormArray with the name 'formArray'. */
-  get formArray(): AbstractControl | null { return this.submitForm.get('formArray'); }
 
   submit() {
 

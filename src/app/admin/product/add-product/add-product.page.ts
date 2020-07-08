@@ -1,12 +1,15 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { User } from "../../../models/User";
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { AuthenticationService } from '../../../services/authentication.service';
-import { CommonApiService } from 'src/app/services/common-api.service';
 import { Router } from '@angular/router';
-import { MessagesService } from '../../../components/messages/messages.service';
-import { throwError } from 'rxjs';
-import { patternValidator } from 'src/app/util/validators/pattern-validator';
+import { throwError, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { CommonApiService } from 'src/app/services/common-api.service';
 import { HSNCODE_REGEX, DISC_REGEX } from 'src/app/util/helper/patterns';
+import { patternValidator } from 'src/app/util/validators/pattern-validator';
+
+import { MessagesService } from '../../../components/messages/messages.service';
+import { AuthenticationService } from '../../../services/authentication.service';
 
 @Component({
   selector: 'app-add-product',
@@ -25,6 +28,8 @@ export class AddProductPage implements OnInit {
   prod_code: any;
 
   temppcode: any;
+  userdata$: Observable<User>;
+  userdata: any;
 
   uom = [
     { key: 'Nos', viewValue: 'Nos' },
@@ -36,13 +41,60 @@ export class AddProductPage implements OnInit {
     private _cdr: ChangeDetectorRef,
     private _router: Router, private _messagesService: MessagesService,
     private _authservice: AuthenticationService) {
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
+
+    this.submitForm = this._formBuilder.group({
+
+      center_id: [],
+      product_code: ['', Validators.required],
+      description: ['', Validators.required],
+      vendorid: ['', Validators.required],
+
+      unit: ['', Validators.required],
+      packetsize: ['', Validators.required],
+      hsncode: [''],
+
+      taxrate: ['', Validators.required],
+      minqty: ['', Validators.required],
+
+      unit_price: ['', Validators.required],
+      mrp: ['', Validators.required],
+      purchaseprice: ['', Validators.required],
+      maxdiscount: ['', [patternValidator(DISC_REGEX)]],
+      salesprice: ['',],
+
+      currentstock: [0],
+      rackno: [''],
+      location: [''],
+      alternatecode: [''],
+      reorderqty: [0],
+      avgpurprice: [0],
+      avgsaleprice: [0],
+      itemdiscount: [0],
+      margin: [0],
 
 
-    _commonApiService.getAllActiveVendors(this.center_id).subscribe((data) => {
-      this.vendors = data;
     });
+
+    this.userdata$ = this._authservice.currentUser;
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+        this.center_id = this.userdata.center_id;
+        this.submitForm.patchValue({
+          center_id: this.userdata.center_id,
+        });
+
+        this._commonApiService.getAllActiveVendors(this.userdata.center_id).subscribe((data) => {
+          this.vendors = data;
+        });
+
+        this.init();
+        this._cdr.markForCheck();
+      });
+
+
 
 
   }
@@ -52,61 +104,28 @@ export class AddProductPage implements OnInit {
 
   ngOnInit() {
 
-    this.submitForm = this._formBuilder.group({
-      formArray: this._formBuilder.array([
-        this._formBuilder.group({
-          center_id: [this.center_id],
-          product_code: ['', Validators.required],
-          description: ['', Validators.required],
-          vendorid: ['', Validators.required],
-
-        }),
-        this._formBuilder.group({
-          unit: ['', Validators.required],
-          packetsize: ['', Validators.required],
-          hsncode: ['', [patternValidator(HSNCODE_REGEX)]],
-
-          taxrate: ['', Validators.required],
-          minqty: ['', Validators.required],
-        }),
-
-        this._formBuilder.group({
-          unit_price: ['', Validators.required],
-          mrp: ['', Validators.required],
-          purchaseprice: ['', Validators.required],
-          maxdiscount: ['', [patternValidator(DISC_REGEX)]],
-          salesprice: ['',],
-
-          currentstock: [0],
-          rackno: [''],
-          location: [''],
-          alternatecode: [''],
-          reorderqty: [0],
-          avgpurprice: [0],
-          avgsaleprice: [0],
-          itemdiscount: [0],
-          margin: [0],
-        }),
 
 
-      ])
-    });
+  }
+
+
+  init() {
+
+
+
   }
 
 
 
-  /** Returns a FormArray with the name 'formArray'. */
-  get formArray(): AbstractControl | null { return this.submitForm.get('formArray'); }
-
-
   isProdExists() {
-    this.prod_code = (this.submitForm.get('formArray')).get([0]).value.product_code;
 
-    this._commonApiService.isProdExists(this.prod_code).subscribe((data: any) => {
+    this._commonApiService.isProdExists(this.submitForm.value.product_code).subscribe((data: any) => {
 
-      if (data.result[0].id > 0) {
-        this.pexists = true;
-        this.temppcode = data.result[0];
+      if (data.result.length > 0) {
+        if (data.result[0].id > 0) {
+          this.pexists = true;
+          this.temppcode = data.result[0];
+        }
       }
 
       this._cdr.markForCheck();
@@ -116,6 +135,11 @@ export class AddProductPage implements OnInit {
 
 
   submit() {
+
+    if (!this.submitForm.valid) {
+      this._cdr.markForCheck();
+      return false;
+    }
 
     this._commonApiService.addProduct(this.submitForm.value).subscribe((data: any) => {
       console.log('successfullly inserted product >>>')
@@ -144,11 +168,3 @@ export class AddProductPage implements OnInit {
   }
 
 }
-
-
-
-
-
-
-
-  // fetch vendor values from api

@@ -114,59 +114,6 @@
 				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 			</mat-tab>
 		</mat-tab-group>
-
-		<!-- <div style="display: flex; justify-content: space-between; padding-top: 30px;">
-		<div>
-			List of Purchaes
-		</div>
-		<div style="font-size: 12px; color: #797979;">
-			{{(purchases$| async)?.length }} Records
-		</div>
-	</div> -->
-		<!-- <div class="header header-style">
-		<div>
-			Invoice #
-		</div>
-		<div>
-			Invoice Date
-		</div>
-		<div>
-			Vendor Name
-		</div>
-		<div>
-			# of Items
-		</div>
-		<div>
-			Total Value
-		</div>
-		<div>
-			&nbsp;
-		</div>
-	</div> -->
-
-		<!-- transform(value: any, format?: string, timezone?: string, locale?: string): string | null; -->
-
-		<!-- <div *ngFor="let item of (purchases$ | async) " class="listItem">
-		<div class="item">{{item.invoice_no}}</div>
-		<div class="item">{{item.invoice_date }}</div>
-		<div class="item">{{item.vendor_name}}</div>
-		<div class="item">{{item.no_of_items}}</div>
-		<div class="item">{{item.total_value}}</div>
-		<div class="item">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
-
-		<div class="item cursor">
-			<img src="/assets/images/svg/edit.svg" width="18px" height="18px" (click)="goPurchaseEditScreen(item)" />
-		</div>
-		<div class="item cursor" *ngIf="item.status === 'D'">
-			<img src="/assets/images/svg/trash.svg" width="18px" height="18px" (click)="presentAlertConfirm(item)" />
-		</div>
-	</div> -->
-
-		<!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-		<ion-fab-button (click)="goPurchaseAddScreen()">
-			<ion-icon name="add"></ion-icon>
-		</ion-fab-button>
-	</ion-fab> -->
 	</div>
 
 	<ng-template #MsgRef>
@@ -183,7 +130,7 @@
 		<div class="headerRow" style="background-color: #efefef;">
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div style="font-size: 1.1rem; font-weight: 400;">{{this.uniqCustCount}} Unique vendors</div>
+			<div style="font-size: 1.1rem; font-weight: 400;">&nbsp;</div>
 			<div style="font-size: 1.1rem; font-weight: 400;">{{this.sumNumItems}}</div>
 			<div style="font-size: 1.1rem; font-weight: 400;">{{this.sumTotalValue}}</div>
 			<div>&nbsp;</div>

@@ -57,7 +57,7 @@ export class SearchSalesPage implements OnInit {
 
   sumTotalValue = 0.00;
   sumNumItems = 0;
-  uniqCustCount = 0;
+
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
@@ -188,7 +188,13 @@ export class SearchSalesPage implements OnInit {
   }
 
   goSalesEditScreen(item) {
-    this._router.navigateByUrl(`/home/sales/edit/${item.id}`);
+    if (item.status === 'C') {
+      this.editCompletedSalesConfirm(item);
+    } else {
+      this._router.navigateByUrl(`/home/sales/edit/${item.id}`);
+    }
+
+
   }
 
   goSalesAddScreen() {
@@ -277,13 +283,34 @@ export class SearchSalesPage implements OnInit {
       return item.no_of_items;
     })
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+  }
 
-    this.uniqCustCount = this.filteredValues.map(item => {
-      return item.customer_name;
-    }).filter(function (val, i, arr) {
-      return arr.indexOf(val) === i;
-    }).length;
 
+
+  async editCompletedSalesConfirm(item) {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'Editing completed sales, Are you sure?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Go to sales screen',
+          handler: () => {
+            console.log('Confirm Okay');
+            this._router.navigateByUrl(`/home/sales/edit/${item.id}`);
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
 

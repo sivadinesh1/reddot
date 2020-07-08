@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ShowCustomersComponent } from 'src/app/components/show-customers/show-customers.component';
-import { MatDialog } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';

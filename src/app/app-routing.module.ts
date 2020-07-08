@@ -45,7 +45,7 @@ const routes: Routes = [
       },
 
       {
-        path: 'view-products',
+        path: 'view-products', pathMatch: 'full',
         loadChildren: () => import('./admin/product/view-products/view-products.module').then(m => m.ViewProductsPageModule)
       },
 
@@ -72,7 +72,7 @@ const routes: Routes = [
 
 
       {
-        path: 'sales/:mode/:id',
+        path: 'sales/:mode/:id', pathMatch: 'full',
         loadChildren: () => import('./sales/sales.module').then(m => m.SalesPageModule)
       },
       {

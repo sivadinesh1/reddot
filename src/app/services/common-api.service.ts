@@ -352,7 +352,6 @@ export class CommonApiService {
   }
 
   getCustomerDiscount(center_id, customer_id) {
-    debugger;
     return this.httpClient.get(`${this.restApiUrl}/api/admin/customer-discount/${center_id}/${customer_id}`);
   }
 

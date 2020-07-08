@@ -114,6 +114,7 @@ export class SalesPage implements OnInit {
     this.center_id = currentUser.center_id;
 
     this._route.data.subscribe(data => {
+      this.listArr = [];
       this.rawSalesData = data['rawsalesdata'];
 
       this.id = this._route.snapshot.params['id'];
@@ -223,7 +224,7 @@ export class SalesPage implements OnInit {
 
         });
 
-        if (this.rawSalesData[0].status === 'C') {
+        if (this.rawSalesData[0].status === 'C' || this.rawSalesData[0].status === 'D') {
           this.editCompletedSales = true;
         }
 
@@ -393,7 +394,7 @@ export class SalesPage implements OnInit {
 
     let oldval = 0;
 
-    if (new NullToQuotePipe().transform(temp.id) !== '' && this.editCompletedSales) {
+    if (new NullToQuotePipe().transform(temp.id) !== '') {
       oldval = temp.qty;
     }
 

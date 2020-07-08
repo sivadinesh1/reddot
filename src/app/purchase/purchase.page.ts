@@ -63,8 +63,6 @@ export class PurchasePage implements OnInit {
   maxDate = new Date();
   maxOrderDate = new Date();
 
-  editCompletedPurchase: any;
-
   @ViewChild('invno', { static: false }) inputEl: ElementRef;
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
@@ -77,7 +75,10 @@ export class PurchasePage implements OnInit {
     private _cdr: ChangeDetectorRef) {
 
     this._route.data.subscribe(data => {
+
+      this.listArr = [];
       this.rawPurchaseData = data['rawpurchasedata'];
+
       const currentUser = this._authservice.currentUserValue;
       this.center_state_code = currentUser.code;
       this.center_id = currentUser.center_id;
@@ -129,12 +130,7 @@ export class PurchasePage implements OnInit {
 
       });
 
-      if (this.rawPurchaseData[0].status === 'C') {
-        this.editCompletedPurchase = true;
-      }
-
       this._cdr.markForCheck();
-
 
       this._commonApiService.getVendorDetails(this.center_id, this.rawPurchaseData[0].vendor_id).subscribe((vendData: any) => {
 
@@ -156,6 +152,7 @@ export class PurchasePage implements OnInit {
 
       this._commonApiService.purchaseDetails(this.rawPurchaseData[0].id).subscribe((purchaseData: any) => {
         let pData = purchaseData;
+
 
         pData.forEach(element => {
           this.processItems(element);
@@ -271,7 +268,7 @@ export class PurchasePage implements OnInit {
 
     let oldval = 0;
 
-    if (new NullToQuotePipe().transform(temp.id) !== '' && this.editCompletedPurchase) {
+    if (new NullToQuotePipe().transform(temp.id) !== '') {
       oldval = temp.qty;
     }
 
@@ -735,7 +732,7 @@ export class PurchasePage implements OnInit {
             }
 
 
-            debugger;
+
             this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('savePurchaseOrder ' + JSON.stringify(data));
 
@@ -748,7 +745,7 @@ export class PurchasePage implements OnInit {
                 });
                 this.vendorname = "";
                 this.vendorselected = false;
-                this.editCompletedPurchase = false;
+
                 this.listArr = [];
 
                 this.total = "0.00";
@@ -835,7 +832,7 @@ export class PurchasePage implements OnInit {
 
     this._commonApiService.deletePurchaseDetails({
       id: elem.pur_det_id, purchaseid: elem.purchase_id,
-      autidneeded: this.editCompletedPurchase
+      autidneeded: true
     }).subscribe((data: any) => {
 
 

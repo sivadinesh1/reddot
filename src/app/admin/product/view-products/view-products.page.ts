@@ -4,7 +4,10 @@ import { CommonApiService } from 'src/app/services/common-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonSearchbar } from '@ionic/angular';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { filter } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
+import { User } from "../../../models/User";
 
 @Component({
   selector: 'app-view-products',
@@ -27,6 +30,9 @@ export class ViewProductsPage implements OnInit {
 
   order_date;
 
+  userdata$: Observable<User>;
+  userdata: any;
+
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
 
@@ -35,8 +41,20 @@ export class ViewProductsPage implements OnInit {
     private _route: ActivatedRoute, private _router: Router, private _authservice: AuthenticationService
   ) {
 
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
+    this.userdata$ = this._authservice.currentUser;
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+        this.center_id = this.userdata.center_id;
+
+        this._cdr.markForCheck();
+      });
+
+
+
+
   }
 
   ngOnInit() {

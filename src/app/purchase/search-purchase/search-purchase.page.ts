@@ -43,7 +43,7 @@ export class SearchPurchasePage implements OnInit {
 
   sumTotalValue = 0.00;
   sumNumItems = 0;
-  uniqCustCount = 0;
+  // uniqCustCount = 0;
 
   purchase$: Observable<Purchase[]>;
 
@@ -177,7 +177,12 @@ export class SearchPurchasePage implements OnInit {
   }
 
   goPurchaseEditScreen(item) {
-    this._router.navigateByUrl(`/home/purchase/edit/${item.id}`);
+    if (item.status === 'C') {
+      this.editCompletedPurchaseConfirm(item);
+    } else {
+      this._router.navigateByUrl(`/home/purchase/edit/${item.id}`);
+    }
+
   }
 
   goPurchaseAddScreen() {
@@ -265,12 +270,41 @@ export class SearchPurchasePage implements OnInit {
     })
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-    this.uniqCustCount = this.filteredValues.map(item => {
-      return item.vendor_name;
-    }).filter(function (val, i, arr) {
-      return arr.indexOf(val) === i;
-    }).length;
+    // DnD - How to count string result set (count of unique vendor names)
+    // this.uniqCustCount = this.filteredValues.map(item => {
+    //   return item.vendor_name;
+    // }).filter(function (val, i, arr) {
+    //   return arr.indexOf(val) === i;
+    // }).length;
 
   }
+
+
+  async editCompletedPurchaseConfirm(item) {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'Editing completed purchase, Are you sure?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Go to purchase screen',
+          handler: () => {
+            console.log('Confirm Okay');
+            this._router.navigateByUrl(`/home/purchase/edit/${item.id}`);
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
 
 }
