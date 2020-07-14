@@ -93,7 +93,7 @@ export class CustomerAddDialogComponent implements OnInit {
 
     this._commonApiService.addCustomer(this.submitForm.value).subscribe((data: any) => {
       console.log('object.. customer updated ..');
-      debugger;
+
       if (data.body.result === 'success') {
         this.dialogRef.close(data);
       }

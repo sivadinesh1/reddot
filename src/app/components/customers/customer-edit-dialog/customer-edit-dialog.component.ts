@@ -78,7 +78,7 @@ export class CustomerEditDialogComponent implements OnInit {
   ngOnInit() {
     this._commonApiService.getCustomerDetails(this.center_id, this.customer_id).subscribe((data: any) => {
       this.resultList = data[0];
-      debugger;
+
       this.setFormValues();
 
       this._cdr.markForCheck();

@@ -134,6 +134,7 @@ export class OpenEnquiryPage implements OnInit {
   }
 
   getPosts(event) {
+
     this.submitForm.patchValue({
       customerid: event.option.value.id,
       customerctrl: event.option.value.name

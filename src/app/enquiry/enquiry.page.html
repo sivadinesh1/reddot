@@ -1,6 +1,6 @@
 <ion-content>
 	<div class="content">
-		<div style="padding-top: 10px; padding-bottom: 10px;">
+		<div>
 			<h3>Add Enquiry</h3>
 		</div>
 		<div>
@@ -9,7 +9,41 @@
 			</button>
 		</div>
 	</div>
+
 	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm" #myForm="ngForm">
+		<div class="customer">
+			<div>
+				<mat-form-field class="example-full-width">
+					<input
+						matInput
+						autofocus
+						[matAutocomplete]="auto"
+						formControlName="customerctrl"
+						required
+						matTooltip="Type to filter the Customer list"
+						matTooltipPosition="after"
+					/>
+					<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+						<mat-icon>close</mat-icon>
+					</button>
+					<!-- <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)"> -->
+					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+						<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
+							<span>{{ customer.name }} </span>
+						</mat-option>
+					</mat-autocomplete>
+					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')">
+						Please enter a value
+					</mat-error>
+					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
+						Please select a valid project
+					</mat-error>
+				</mat-form-field>
+			</div>
+			<div>
+				&nbsp;
+			</div>
+		</div>
 		<div class="enq-form">
 			<div class="actn-row">
 				<div style="padding-left: 7px; cursor: pointer;">
@@ -32,7 +66,7 @@
 						<div>
 							<mat-form-field class="example-full-width">
 								<mat-label>Item Code</mat-label>
-								<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="product_code" />
+								<input matInput type="text" formControlName="product_code" />
 							</mat-form-field>
 						</div>
 						<div>
@@ -54,12 +88,31 @@
 
 			<div class="add-item">
 				<div *ngIf="!customerAdded; else elseBlock" style="align-self: left;">
-					<mat-form-field class="example-full-width">
+					<!-- <mat-form-field class="example-full-width">
 						<mat-label>Search Customer</mat-label>
 
 						<input matInput type="text" readonly formControlName="customer" />
 						<mat-icon matSuffix (click)="showAllCustomersComp()" style="cursor: pointer;">search</mat-icon>
-					</mat-form-field>
+					</mat-form-field> -->
+
+					<!-- <mat-form-field class="example-full-width">
+						<input
+							matInput
+							[matAutocomplete]="auto"
+							formControlName="customerctrl"
+							required
+							matTooltip="Type to filter the Customer list"
+							matTooltipPosition="after"
+						/>
+						<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+							<mat-icon>close</mat-icon>
+						</button>
+						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
+							<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
+								<span>{{ customer.name }} </span>
+							</mat-option>
+						</mat-autocomplete>
+					</mat-form-field> -->
 				</div>
 
 				<div>

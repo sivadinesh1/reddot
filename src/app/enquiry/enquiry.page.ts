@@ -7,10 +7,15 @@ import { ShowCustomersComponent } from '../components/show-customers/show-custom
 import { CommonApiService } from '../services/common-api.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
-import { filter } from 'rxjs/operators';
+
 import { Observable } from 'rxjs';
+import { filter, map, startWith } from 'rxjs/operators';
 
 import { User } from "../models/User";
+import { Customer } from 'src/app/models/Customer';
+
+import { RequireMatch as RequireMatch } from '../util/directives/requireMatch';
+
 
 @Component({
   selector: 'app-enquiry',
@@ -28,11 +33,16 @@ export class EnquiryPage {
   removeRowArr = [];
   showDelIcon = false;
   center_id: any;
+  tabIndex = 0;
 
   userdata$: Observable<User>;
   userdata: any;
 
   @ViewChild('myForm', { static: true }) myForm: NgForm;
+  filteredCustomer: Observable<any[]>;
+  customer_lis: Customer[];
+
+  selectedCustomerName: any;
 
   constructor(private _fb: FormBuilder, public dialog: MatDialog,
     private _modalcontroller: ModalController, private _router: Router, private _route: ActivatedRoute,
@@ -43,7 +53,9 @@ export class EnquiryPage {
     this.userdata$ = this._authservice.currentUser;
 
     this.submitForm = this._fb.group({
-      customer: [null, Validators.required],
+      customerid: [],
+      customerctrl: [null, [Validators.required, RequireMatch]],
+
       center_id: [null, Validators.required],
       remarks: [''],
 
@@ -79,7 +91,7 @@ export class EnquiryPage {
   }
 
 
-  init() {
+  async init() {
 
     this.customerData = "";
     this.customerAdded = false;
@@ -89,6 +101,19 @@ export class EnquiryPage {
     this.addProduct();
     this.addProduct();
     this.addProduct();
+
+    this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
+      this.customer_lis = data;
+
+      this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
+        .pipe(
+          startWith(''),
+          map(customer => customer ? this.filtercustomer(customer) : this.customer_lis.slice())
+        );
+
+    });
+
+
 
     this._cdr.markForCheck();
   }
@@ -104,12 +129,32 @@ export class EnquiryPage {
   }
 
 
+  filtercustomer(value: any) {
+
+    if (typeof (value) == "object") {
+      return this.customer_lis.filter(customer =>
+        customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
+    } else if (typeof (value) == "string") {
+      return this.customer_lis.filter(customer =>
+        customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
+    }
+
+  }
+
   addProduct() {
     const control = <FormArray>this.submitForm.controls['productarr'];
     control.push(this.initProduct());
     this._cdr.markForCheck();
   }
 
+  clearInput() {
+    this.submitForm.patchValue({
+      customer: 'all',
+      customerctrl: ''
+    });
+    this._cdr.markForCheck();
+
+  }
 
   onRemoveRows() {
     this.removeRowArr.sort().reverse();
@@ -241,4 +286,42 @@ export class EnquiryPage {
     this._router.navigateByUrl('/home/enquiry/back-order');
   }
 
+  displayWith(obj?: any): string | undefined {
+    return obj ? obj.name : undefined;
+  }
+
+  // displayFn(user: User): string {
+  //   return user && user.name ? user.name : '';
+  // }
+
+  displayFn(obj: any): string | undefined {
+    return obj && obj.name ? obj.name : undefined;
+
+  }
+
+  // getPosts(event) {
+
+  //   this.submitForm.patchValue({
+  //     customerid: event.option.value.id,
+  //     customerctrl: event.option.value.name
+  //   });
+  //   this.customerData = event.option.value;
+  //   this.selectedCustomerName = event.option.value.name;
+
+  //   this.tabIndex = 0;
+  //   this._cdr.markForCheck();
+
+
+  // }
+
+  // checkCustomer() {
+
+  //   if (this.selectedCustomerName !== this.submitForm.controls['customerctrl'].value) {
+  //     this.submitForm.controls['customerctrl'].setValue(null);
+  //     // this.selectedCountry = '';
+  //   }
+  // }
+
 }
+
+
