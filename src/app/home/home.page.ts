@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { LoadingService } from '../components/loading/loading.service';
 import { MessagesService } from '../components/messages/messages.service';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
 import { SidenavService } from '../services/sidenav.service';

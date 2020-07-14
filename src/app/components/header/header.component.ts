@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -21,7 +21,8 @@ export class HeaderComponent implements OnInit {
 
   userdata$: Observable<User>;
 
-  @Input() sidenav: MatSidenav
+  @Input() sidenav: MatSidenav;
+  public today = Date.now();
 
   constructor(private _authservice: AuthenticationService, private _modalcontroller: ModalController,
     private _cdr: ChangeDetectorRef,
@@ -42,7 +43,12 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
+
+
+
+
 
   toggle() {
     this.sidenav.toggle();

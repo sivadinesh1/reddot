@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { VendorDialogComponent } from './vendor-dialog.component';
+import { CustomerAddDialogComponent } from './customer-add-dialog.component';
 
-describe('VendorDialogComponent', () => {
-  let component: VendorDialogComponent;
-  let fixture: ComponentFixture<VendorDialogComponent>;
+describe('CustomerAddDialogComponent', () => {
+  let component: CustomerAddDialogComponent;
+  let fixture: ComponentFixture<CustomerAddDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ VendorDialogComponent ],
+      declarations: [ CustomerAddDialogComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(VendorDialogComponent);
+    fixture = TestBed.createComponent(CustomerAddDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

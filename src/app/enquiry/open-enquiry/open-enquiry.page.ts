@@ -105,9 +105,12 @@ export class OpenEnquiryPage implements OnInit {
       status: new FormControl('all'),
     })
 
-    this.customer$ = this._commonApiService.getAllActiveCustomers(this.center_id);
+    this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
+      this.customer_lis = data;
 
-    this.customer_lis = await this.customer$.toPromise();
+    });
+
+
 
 
     this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges

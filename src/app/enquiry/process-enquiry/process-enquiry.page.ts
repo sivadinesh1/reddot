@@ -2,7 +2,9 @@ import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+
 import { ModalController, AlertController } from '@ionic/angular';
 import { AddProductComponent } from 'src/app/components/add-product/add-product.component';
 import * as moment from 'moment';

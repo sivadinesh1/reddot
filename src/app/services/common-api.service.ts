@@ -71,8 +71,8 @@ export class CommonApiService {
 
   }
 
-  getAllActiveCustomers(centerid): Observable<Customer[]> {
-    return this.httpClient.get<Customer[]>(this.restApiUrl + '/api/all-active-customers/' + centerid);
+  getAllActiveCustomers(centerid) {
+    return this.httpClient.get(this.restApiUrl + '/api/all-active-customers/' + centerid);
   }
 
 

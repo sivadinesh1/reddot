@@ -6,32 +6,95 @@
 					List of Customers
 				</div>
 				<div style="font-size: 12px; color: #797979;">
-					{{(customer$| async)?.length }} Records
+					showing {{pageLength }} Records
 				</div>
 			</div>
 			<div>
-				<button appPreventDoubleClick (throttledClick)="addCustomer()" [throttleTime]="500" mat-raised-button color="primary">
+				<button appPreventDoubleClick (throttledClick)="add()" [throttleTime]="500" mat-raised-button color="primary">
 					+ Add Customers
 				</button>
 			</div>
 		</div>
 
-		<ng-container *ngFor="let item of (customer$ | async); let idx = index;">
-			<div class="list-item">
-				<div class="item1">{{ idx + 1 }}</div>
-				<div class="item2">
-					<div>
-						<div class="item21">{{ item.name }}</div>
-						<div class="item31">{{ item.address1 }}</div>
-						<div class="item31">{{ item.address2 || 'N/A' }}</div>
+		<div class="row1">
+			<div class="search_box">
+				<ion-searchbar
+					autofocus
+					debounce="700"
+					placeholder="Search from {{pageLength }} customers, by name / address"
+					#mySearchbar
+					show-cancel-button="focus"
+					(ionClear)="reset()"
+					(ionInput)="applyFilter($event.target.value)"
+				></ion-searchbar>
+			</div>
+			<div class="actions">
+				<img src="/assets/images/svg/download-excel.svg" width="32px" height="32px" (click)="exportToExcel()" />
+			</div>
+		</div>
+
+		<ng-container>
+			<div class="example-container mat-elevation-z8">
+				<div class="example-table-container" #epltable>
+					<table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+						<ng-container matColumnDef="name">
+							<th mat-header-cell *matHeaderCellDef>Name</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.name}}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="address1">
+							<th mat-header-cell *matHeaderCellDef>Additional Info</th>
+							<td mat-cell *matCellDef="let element" class="m-card-sub-title" data-label="Form type">
+								<div style="padding: 3px;">{{element.name}}</div>
+								<div style="padding: 3px;">{{element.address1}}</div>
+								<div style="padding: 3px;">{{element.address2 | nullna}}</div>
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="actions">
+							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+							<td mat-cell *matCellDef="let element">
+								<button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{element: element}">
+									<mat-icon>more_vert</mat-icon>
+								</button>
+							</td>
+						</ng-container>
+
+						<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+					</table>
+					<div [hidden]="isTableHasData" class="center-message">
+						No Data available.
 					</div>
 				</div>
-				<div class="item3">
-					<button appPreventDoubleClick (throttledClick)="setupDiscount(item)" [throttleTime]="500" mat-stroked-button color="primary">
-						View Discount Settings
-					</button>
-				</div>
+				<mat-paginator [pageSizeOptions]="[50, 100]" showFirstLastButtons></mat-paginator>
 			</div>
+			<mat-menu #menu="matMenu">
+				<ng-template matMenuContent let-element="element">
+					<button mat-menu-item (click)="edit(element)">
+						<mat-icon>edit </mat-icon>
+						<span>Edit</span>
+					</button>
+
+					<button mat-menu-item disabled>
+						<mat-icon>delete</mat-icon>
+						<span>Delete </span>
+					</button>
+				</ng-template>
+			</mat-menu>
 		</ng-container>
+
+		<!-- <ng-container *ngIf="pageLength == 0 && !responseMsg">
+			<ion-item
+				*ngFor="let fake of [{i: 250, j: 85}, {i:200, j:125},{i:200, j:125},{i:200, j:125},{i:200, j:125},{i:200, j:125},{i:200, j:125},{i:200, j:125},{i:200, j:125},{i:200, j:125}]"
+			>
+				<ion-label text-wrap>
+					<ion-skeleton-text animated style="width: 120px;"></ion-skeleton-text>
+					<ion-skeleton-text animated style="width: 150px;"></ion-skeleton-text>
+					<ion-skeleton-text animated style="width: 100px;"></ion-skeleton-text>
+				</ion-label>
+			</ion-item>
+		</ng-container> -->
 	</div>
 </ion-content>

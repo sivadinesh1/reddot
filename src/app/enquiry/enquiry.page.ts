@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators, FormGroup, FormArray, NgForm } from '@angular/forms';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ModalController } from '@ionic/angular';
 import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
 import { CommonApiService } from '../services/common-api.service';

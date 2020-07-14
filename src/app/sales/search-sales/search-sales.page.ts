@@ -21,7 +21,7 @@ import { User } from 'src/app/models/User';
 export class SearchSalesPage implements OnInit {
 
   sales$: Observable<Sales[]>;
-  customer$: Observable<Customer[]>;
+
 
   draftSales$: Observable<Sales[]>;
   fullfilledSales$: Observable<Sales[]>;
@@ -32,7 +32,6 @@ export class SearchSalesPage implements OnInit {
   tabIndex = 0;
 
   resultList: any;
-  //center_id: any;
 
   statusFlag = 'D';
   selectedCust = 'all';
@@ -121,10 +120,9 @@ export class SearchSalesPage implements OnInit {
 
 
 
-    this.customer$ = this._commonApiService.getAllActiveCustomers(this.userdata.center_id);
-
-    this.customer_lis = await this.customer$.toPromise();
-
+    this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
+      this.customer_lis = data;
+    });
 
     this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
       .pipe(

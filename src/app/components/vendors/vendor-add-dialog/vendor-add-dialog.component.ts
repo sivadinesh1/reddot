@@ -8,15 +8,15 @@ import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import { GSTN_REGEX, PINCODE_REGEX, EMAIL_REGEX } from "../../../util/helper/patterns";
 import { country } from "../../../util/helper/patterns";
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
-
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-add-vendor',
-  templateUrl: './add-vendor.page.html',
-  styleUrls: ['./add-vendor.page.scss'],
+  selector: 'app-vendor-add-dialog',
+  templateUrl: './vendor-add-dialog.component.html',
+  styleUrls: ['./vendor-add-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddVendorPage implements OnInit {
+export class VendorAddDialogComponent implements OnInit {
 
 
   center_id: any;
@@ -30,7 +30,7 @@ export class AddVendorPage implements OnInit {
 
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<VendorAddDialogComponent>,
     private _route: ActivatedRoute, private _authservice: AuthenticationService,
     private _commonApiService: CommonApiService) {
     const currentUser = this._authservice.currentUserValue;
@@ -38,38 +38,32 @@ export class AddVendorPage implements OnInit {
 
 
     this.submitForm = this._formBuilder.group({
-      formArray: this._formBuilder.array([
-        this._formBuilder.group({
+      center_id: [this.center_id],
+      name: [null, Validators.required],
+      address1: [''],
+      address2: [''],
+      address3: [''],
 
-          center_id: [this.center_id],
-          name: [null, Validators.required],
-          address1: [''],
-          address2: [''],
-          address3: [''],
-
-          district: [''],
-          state_id: ['', Validators.required],
-          pin: ['', [patternValidator(PINCODE_REGEX)]],
-        }),
-        this._formBuilder.group({
-          gst: ['', [patternValidator(GSTN_REGEX)]],
-          phone: ['', Validators.compose([
-            Validators.required, PhoneValidator.invalidCountryPhone(country)
-          ])],
-          mobile: ['', Validators.compose([
-            Validators.required, PhoneValidator.invalidCountryPhone(country)
-          ])],
-          mobile2: ['', Validators.compose([
-            Validators.required, PhoneValidator.invalidCountryPhone(country)
-          ])],
-          whatsapp: ['', Validators.compose([
-            Validators.required, PhoneValidator.invalidCountryPhone(country)
-          ])],
-          email: ['', [patternValidator(EMAIL_REGEX)]],
-        }),
+      district: [''],
+      state_id: ['', Validators.required],
+      pin: ['', [patternValidator(PINCODE_REGEX)]],
 
 
-      ])
+      gst: ['', [patternValidator(GSTN_REGEX)]],
+      phone: ['', Validators.compose([
+        Validators.required, PhoneValidator.invalidCountryPhone(country)
+      ])],
+      mobile: ['', Validators.compose([
+        Validators.required, PhoneValidator.invalidCountryPhone(country)
+      ])],
+      mobile2: ['', Validators.compose([
+        Validators.required, PhoneValidator.invalidCountryPhone(country)
+      ])],
+      whatsapp: ['', Validators.compose([
+        Validators.required, PhoneValidator.invalidCountryPhone(country)
+      ])],
+      email: ['', [patternValidator(EMAIL_REGEX)]],
+
     });
 
 
@@ -85,14 +79,11 @@ export class AddVendorPage implements OnInit {
   }
 
 
+  onSubmit() {
 
-
-
-  /** Returns a FormArray with the name 'formArray'. */
-  get formArray(): AbstractControl | null { return this.submitForm.get('formArray'); }
-
-
-  submit() {
+    if (!this.submitForm.valid) {
+      return false;
+    }
 
     this._commonApiService.addVendor(this.submitForm.value).subscribe((data: any) => {
 
@@ -110,6 +101,14 @@ export class AddVendorPage implements OnInit {
 
   addVendor() {
     this._router.navigate([`/home/vendor/add`]);
+  }
+
+  reset() {
+
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 
 }

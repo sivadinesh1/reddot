@@ -4,7 +4,14 @@
 		<mat-icon>menu</mat-icon>
 	</button>
 
-	<span style="align-self: center;">{{ userdata?.center_name }}</span>
+	<span style="align-self: center;">
+		<div>
+			{{ userdata?.center_name }}
+		</div>
+		<div>
+			<span style="font-size: 0.8rem;">{{ today | date: "dd LLLL yyyy" }} </span>
+		</div>
+	</span>
 	<span class="spacer"></span>
 	<span style="align-self: center;">
 		<a mat-stroked-button routerLink="/home/sales/edit/0">

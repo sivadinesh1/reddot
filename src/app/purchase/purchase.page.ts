@@ -4,7 +4,8 @@ import { AddProductComponent } from '../components/add-product/add-product.compo
 import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { PickerOptions } from '@ionic/core';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 import { ShowVendorsComponent } from '../components/show-vendors/show-vendors.component';
 import { AuthenticationService } from '../services/authentication.service';

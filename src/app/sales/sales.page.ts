@@ -4,7 +4,7 @@ import { AddProductComponent } from '../components/add-product/add-product.compo
 import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 
 import { AuthenticationService } from '../services/authentication.service';

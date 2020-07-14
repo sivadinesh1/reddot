@@ -1,14 +1,22 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, ElementRef } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { IonSearchbar } from '@ionic/angular';
-import { Observable, throwError } from 'rxjs';
+
 import { Customer } from 'src/app/models/Customer';
-import { MessagesService } from 'src/app/components/messages/messages.service';
-import { catchError, filter } from 'rxjs/operators';
-import { LoadingService } from 'src/app/components/loading/loading.service';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
+
 import { User } from 'src/app/models/User';
+import { filter, tap, catchError } from 'rxjs/operators';
+
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { Observable } from 'rxjs';
+import * as xlsx from 'xlsx';
+import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
+import { CustomerEditDialogComponent } from 'src/app/components/customers/customer-edit-dialog/customer-edit-dialog.component';
 
 @Component({
   selector: 'app-view-customer',
@@ -19,23 +27,35 @@ import { User } from 'src/app/models/User';
 export class ViewCustomerPage implements OnInit {
 
   center_id: any;
-  resultList: any;
-
-
   customer$: Observable<Customer[]>;
   userdata$: Observable<User>;
   userdata: any;
+  isTableHasData = true;
 
   ready = 0;
+  pcount: any;
+  noMatch: any;
+  responseMsg: string;
+  pageLength: any;
+
+  resultsize = 0;
+  customerslist: any;
+  customersOriglist: any;
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
+
+  displayedColumns: string[] = ['name', 'address1', 'actions'];
+  dataSource = new MatTableDataSource<Customer>();
 
   constructor(private _authservice: AuthenticationService, private _cdr: ChangeDetectorRef,
+    private _dialog: MatDialog,
     private _commonApiService: CommonApiService, private _route: ActivatedRoute,
-    private _messagesService: MessagesService, private loadingService: LoadingService,
-    private _router: Router, ) {
+    private _router: Router,) {
 
     this.userdata$ = this._authservice.currentUser;
 
@@ -50,55 +70,122 @@ export class ViewCustomerPage implements OnInit {
       });
 
     this._route.params.subscribe(params => {
-
-
       this.init();
-
     });
 
 
   }
 
   init() {
-    if (this.ready === 1) this.reloadCustomers();
+    if (this.ready === 1) { this.reloadCustomers(); }
   }
-
 
   reloadCustomers() {
 
-    const tempVendors$ = this._commonApiService.getAllActiveCustomers(this.center_id)
-      .pipe(
-        catchError(err => {
-          console.log('could not load customers !!');
-          const message = "could not load vendors";
-          this._messagesService.showErrors(message);
-          return throwError(err);
+    this._commonApiService.getAllActiveCustomers(this.center_id).subscribe(
+      (data: any) => {
+        // DnD - code to add a "key/Value" in every object of array
+        this.dataSource.data = data.map(el => {
+          var o = Object.assign({}, el);
+          o.isExpanded = false;
+          return o;
         })
-      );
 
-    this.customer$ = this.loadingService.showLoaderUntilCompleted(tempVendors$);
-    this._cdr.markForCheck();
+        this.dataSource.sort = this.sort;
+        this.pageLength = data.length;
+
+      });
   }
 
   ngOnInit() {
+    this.dataSource.paginator = this.paginator;
 
-    // this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
-    //   this.resultList = data;
-    //   this._cdr.markForCheck();
-    // });
   }
 
-  addCustomer() {
-    this._router.navigate([`/home/customer/add`]);
+
+
+  add() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+
+    const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          this.reloadCustomers();
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe();
+
+
   }
 
-  editCustomer(item) {
-    this._router.navigate([`/home/customer/edit`, this.center_id, item.id]);
+
+  edit(customer: Customer) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+    dialogConfig.data = customer;
+
+
+    const dialogRef = this._dialog.open(CustomerEditDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          this.reloadCustomers();
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe();
+
+
   }
+
+
 
   setupDiscount(item) {
     this._router.navigate([`/home/customer/save-discount/${item.id}`]);
   }
+
+  reset() {
+    this.searchbar.value = '';
+    this.resultsize = 0;
+    this.customerslist = null;
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.filteredData.length > 0) {
+      this.isTableHasData = true;
+    } else {
+      this.isTableHasData = false;
+    }
+
+  }
+
+  exportToExcel() {
+    const ws: xlsx.WorkSheet =
+      xlsx.utils.table_to_sheet(this.epltable.nativeElement);
+    const wb: xlsx.WorkBook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(wb, 'epltable.xlsx');
+  }
+
 
 }
 

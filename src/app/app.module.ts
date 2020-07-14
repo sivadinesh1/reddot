@@ -11,7 +11,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpClientModule } from '@angular/common/http';
-import { MAT_DATE_LOCALE } from '@angular/material';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { OpenNativeSettings } from '@ionic-native/open-native-settings/ngx';

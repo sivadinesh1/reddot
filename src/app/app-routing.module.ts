@@ -106,10 +106,6 @@ const routes: Routes = [
 
 
 
-      {
-        path: 'vendor/add',
-        loadChildren: () => import('./admin/vendor/add-vendor/add-vendor.module').then(m => m.AddVendorPageModule)
-      },
 
       // customers
       {
