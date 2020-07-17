@@ -74,12 +74,12 @@
 				<ng-template matMenuContent let-element="element">
 					<button mat-menu-item (click)="edit(element)">
 						<mat-icon>edit </mat-icon>
-						<span>Edit</span>
+						<span> Details</span>
 					</button>
 
-					<button mat-menu-item disabled>
-						<mat-icon>delete</mat-icon>
-						<span>Delete </span>
+					<button mat-menu-item (click)="setupDiscount(element)">
+						<mat-icon>edit </mat-icon>
+						<span> Discount</span>
 					</button>
 				</ng-template>
 			</mat-menu>
@@ -98,3 +98,7 @@
 		</ng-container> -->
 	</div>
 </ion-content>
+
+<!-- <button appPreventDoubleClick (throttledClick)="setupDiscount(item)" [throttleTime]="500" mat-stroked-button color="primary">
+	View Discount Settings
+</button> -->

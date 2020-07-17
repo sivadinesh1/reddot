@@ -21,3 +21,4 @@ import { SharedModule } from '../shared.module';
   declarations: [SalesPage]
 })
 export class SalesPageModule { }
+

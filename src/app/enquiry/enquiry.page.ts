@@ -82,7 +82,7 @@ export class EnquiryPage {
 
       customerctrl: [null, [Validators.required, RequireMatch]],
 
-      productctrl: [null, [Validators.required, RequireMatch]],
+      productctrl: [null, [RequireMatch]],
 
       center_id: [null, Validators.required],
       remarks: [''],
@@ -90,7 +90,8 @@ export class EnquiryPage {
       productarr: this._fb.array([]),
 
       tempdesc: [''],
-      tempqty: ['1', [Validators.max(1000), Validators.min(0)]]
+
+      tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
     });
 
@@ -264,12 +265,13 @@ export class EnquiryPage {
 
 
     const control = <FormArray>this.submitForm.controls['productarr'];
-
+    // insert adds new row in starting of the array {idx : 0}
     control.insert(0, this._fb.group({
       checkbox: [false],
-      product_code: [this.submitForm.value.productctrl.product_code],
-      notes: [this.submitForm.value.tempdesc],
-      quantity: [this.submitForm.value.tempqty],
+      product_code: [this.submitForm.value.productctrl === null ? "" : this.submitForm.value.productctrl.product_code],
+
+      notes: [this.submitForm.value.tempdesc, Validators.required],
+      quantity: [this.submitForm.value.tempqty, [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
     }));
 

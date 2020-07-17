@@ -12,7 +12,7 @@
 .enq-form {
 	display: grid;
 	align-content: flex-start;
-	width: 80%;
+	width: 90%;
 	margin: 0 auto;
 	// min-height: 90vh;
 }
@@ -52,7 +52,7 @@
 
 .item-details {
 	display: grid;
-	grid-template-columns: 30px 120px 1fr minmax(120px, 150px);
+	grid-template-columns: 40px 40px 120px 1fr minmax(120px, 150px);
 	align-items: center;
 	grid-gap: 10px;
 	padding-left: 12px;
@@ -122,8 +122,9 @@
 
 .list-block {
 	display: grid;
-	max-height: 70vh;
+
 	overflow-y: auto;
+	border: 0px solid red;
 }
 
 .elseblock {
@@ -136,16 +137,15 @@
 	display: flex;
 	justify-content: space-between;
 
-	width: 80%;
+	width: 90%;
 	margin: 0 auto;
 }
 
 .customer {
 	display: grid;
 	grid-template-columns: 1.5fr 1fr 1fr 1fr;
-	padding: 10px;
-	width: 80%;
-	margin: 0 auto;
+	padding: 1px 0px 10px 0px;
+	width: 100%;
 }
 
 .cust-info {
@@ -162,7 +162,7 @@
 	padding: 5px;
 	border-top: 0px solid #dfdfdf;
 	border-bottom: 0px solid #dfdfdf;
-	margin-bottom: 10px;
+	margin-bottom: 1px;
 	margin-top: 5px;
 }
 
@@ -181,8 +181,6 @@
 	grid-template-columns: 200px 1fr minmax(80px, 100px) 150px;
 	align-items: center;
 	grid-gap: 10px;
-	padding-left: 12px;
-	padding-right: 12px;
 }
 
 .small-icon-button {
@@ -204,10 +202,10 @@
 	display: flex;
 	position: fixed;
 	justify-content: space-around;
-	bottom: 20px;
+	bottom: 0px;
 
 	width: 100%;
 	height: auto;
-
+	background-color: #ffffff;
 	border-top: 1px solid #f1f1f1;
 }
