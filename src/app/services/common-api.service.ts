@@ -52,8 +52,8 @@ export class CommonApiService {
 
 
 
-  getCustomerInfo(center_id: string, searchstr: string) {
-    return this.httpClient.get(`${this.restApiUrl}/api/search-customer/${center_id}/${searchstr}`);
+  getCustomerInfo(submitForm) {
+    return this.httpClient.post(`${this.restApiUrl}/api/search-customer`, submitForm, { observe: 'response' });
   }
 
 
@@ -245,21 +245,21 @@ export class CommonApiService {
     return this.httpClient.post<any>(this.restApiUrl + '/api/update-taxrate', submitForm, { observe: 'response' });
   }
 
-  // purchase
-  // searchPurchases(centerid, vendorid, status, fromdate, todate) {
-  //   return this.httpClient.get(`${this.restApiUrl}/api/stock/search-purchase/${centerid}/${vendorid}/${status}/${fromdate}/${todate}`);
-  // }
 
   searchPurchases(centerid, vendorid, status, fromdate, todate): Observable<Purchase[]> {
-    return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-purchase/${centerid}/${vendorid}/${status}/${fromdate}/${todate}`);
+    return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-purchase/${centerid}/${vendorid}/${status}/${fromdate}/${todate}`)
+      .pipe(shareReplay());
   }
 
   searchSales(centerid, customerid, status, fromdate, todate): Observable<Sales[]> {
-    return this.httpClient.get<Sales[]>(`${this.restApiUrl}/api/stock/search-sales/${centerid}/${customerid}/${status}/${fromdate}/${todate}`);
+    return this.httpClient.get<Sales[]>(`${this.restApiUrl}/api/stock/search-sales/${centerid}/${customerid}/${status}/${fromdate}/${todate}`)
+      .pipe(shareReplay());
   }
 
+  // Using share replay prevents, multiple backend calls because of observables | async
   searchEnquiries(centerid, customerid, status, fromdate, todate): Observable<Enquiry[]> {
-    return this.httpClient.get<Enquiry[]>(`${this.restApiUrl}/api/enquiry/search-enquiries/${centerid}/${customerid}/${status}/${fromdate}/${todate}`);
+    return this.httpClient.get<Enquiry[]>(`${this.restApiUrl}/api/enquiry/search-enquiries/${centerid}/${customerid}/${status}/${fromdate}/${todate}`)
+      .pipe(shareReplay());
   }
 
 

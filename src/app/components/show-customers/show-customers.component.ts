@@ -49,10 +49,11 @@ export class ShowCustomersComponent implements OnInit {
 
     if (searchstring.length > 2) {
 
+      // bugfix
 
-      this._commonApiService.getCustomerInfo('1', searchstring).subscribe(
+      this._commonApiService.getCustomerInfo({ "centerid": 1, "searchstr": searchstring }).subscribe(
         data => {
-          this.resultList = data;
+          this.resultList = data.body;
 
           if (this.resultList.length === 0) {
 

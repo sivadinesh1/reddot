@@ -41,7 +41,7 @@
 				</div>
 			</div>
 			<div style="text-align: right; align-items: center;">
-				<button appPreventDoubleClick (throttledClick)="openAddItem()" [throttleTime]="500" mat-raised-button color="primary">
+				<button appPreventDoubleClick (throttledClick)="openAddItem()" *ngIf="status !== 'E'" [throttleTime]="500" mat-raised-button color="primary">
 					+ Add Item
 				</button>
 			</div>

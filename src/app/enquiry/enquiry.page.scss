@@ -14,7 +14,7 @@
 	align-content: flex-start;
 	width: 80%;
 	margin: 0 auto;
-	min-height: 90vh;
+	// min-height: 90vh;
 }
 
 .e-form {
@@ -39,8 +39,8 @@
 }
 
 .submit {
-	display: flex;
 	justify-content: center;
+	align-self: center;
 }
 
 .list-item {
@@ -135,17 +135,25 @@
 .content {
 	display: flex;
 	justify-content: space-between;
-	padding: 20px 10px 10px 10px;
+
 	width: 80%;
 	margin: 0 auto;
 }
 
 .customer {
-	display: flex;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: 1.5fr 1fr 1fr 1fr;
 	padding: 10px;
 	width: 80%;
 	margin: 0 auto;
+}
+
+.cust-info {
+	display: grid;
+	align-self: center;
+	font-size: 12px;
+	justify-content: left;
+	padding-left: 10px;
 }
 
 .actn-row {
@@ -153,7 +161,7 @@
 	justify-content: space-between;
 	padding: 5px;
 	border-top: 0px solid #dfdfdf;
-	border-bottom: 1px solid #dfdfdf;
+	border-bottom: 0px solid #dfdfdf;
 	margin-bottom: 10px;
 	margin-top: 5px;
 }
@@ -165,4 +173,41 @@
 .itms-lbl {
 	color: #797979;
 	font-size: 14px;
+}
+
+//@extend
+.main-add {
+	display: grid;
+	grid-template-columns: 200px 1fr minmax(80px, 100px) 150px;
+	align-items: center;
+	grid-gap: 10px;
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.small-icon-button {
+	width: 42px !important;
+	height: 42px !important;
+	line-height: 42px !important;
+
+	.mat-icon {
+		width: 32px !important;
+		height: 32px !important;
+		line-height: 28px !important;
+	}
+	.material-icons {
+		font-size: 32px !important;
+	}
+}
+
+.footer {
+	display: flex;
+	position: fixed;
+	justify-content: space-around;
+	bottom: 20px;
+
+	width: 100%;
+	height: auto;
+
+	border-top: 1px solid #f1f1f1;
 }

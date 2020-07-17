@@ -1,36 +1,33 @@
 <ion-content>
 	<div class="content">
 		<div>
-			<h3>Add Enquiry</h3>
+			<h4>Add Enquiry</h4>
 		</div>
 		<div>
-			<button appPreventDoubleClick (throttledClick)="addProduct()" [throttleTime]="500" mat-raised-button color="primary">
+			&nbsp;
+			<!-- <button appPreventDoubleClick (throttledClick)="addProduct()" [throttleTime]="500" mat-raised-button color="primary">
 				+ Add Item
-			</button>
+			</button> -->
 		</div>
 	</div>
 
-	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm" #myForm="ngForm">
+	<form [formGroup]="submitForm" #myForm="ngForm">
 		<div class="customer">
 			<div>
 				<mat-form-field class="example-full-width">
-					<input
-						matInput
-						autofocus
-						[matAutocomplete]="auto"
-						formControlName="customerctrl"
-						required
-						matTooltip="Type to filter the Customer list"
-						matTooltipPosition="after"
-					/>
+					<input matInput [matAutocomplete]="auto" formControlName="customerctrl" #typehead1 autofocus required matTooltipPosition="after" />
+					<mat-placeholder class="placeholder">Select Customer</mat-placeholder>
 					<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
 						<mat-icon>close</mat-icon>
 					</button>
-					<!-- <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)"> -->
-					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-						<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
-							<span>{{ customer.name }} </span>
-						</mat-option>
+
+					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
+						<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+						<ng-container *ngIf="!isCLoading">
+							<mat-option *ngFor="let customer of customer_lis" [value]="customer">
+								<span>{{ customer.name }} </span>
+							</mat-option>
+						</ng-container>
 					</mat-autocomplete>
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')">
 						Please enter a value
@@ -40,95 +37,153 @@
 					</mat-error>
 				</mat-form-field>
 			</div>
-			<div>
-				&nbsp;
+			<div class="cust-info">
+				<div *ngIf="iscustomerselected">
+					<div>
+						<span>District:&nbsp;</span>
+						<span>{{district | nullna}}</span>
+					</div>
+					<div>
+						<span>GST:&nbsp;</span>
+						<span>{{gst | nullna}}</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="cust-info">
+				<div *ngIf="iscustomerselected">
+					<div>
+						<span>Phone:&nbsp;</span>
+						<span>{{phone | nullna}}</span>
+					</div>
+					<div>
+						<span>Whatsapp:&nbsp;</span>
+						<span>{{gst | nullna}}</span>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="enq-form">
-			<div class="actn-row">
-				<div style="padding-left: 7px; cursor: pointer;">
-					<img src="/assets/images/svg/trash.svg" width="18px" height="18px" *ngIf="showDelIcon" (click)="onRemoveRows()" />
-					<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()">&nbsp;Delete</span>
+			<mat-card>
+				<div class="main-add">
+					<div>
+						<mat-form-field class="example-full-width">
+							<input matInput [matAutocomplete]="auto1" formControlName="productctrl" #typehead #plist matTooltipPosition="after" />
+							<mat-placeholder class="placeholder">Select Item Code</mat-placeholder>
+							<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearProdInput()">
+								<mat-icon>close</mat-icon>
+							</button>
+
+							<mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayProdFn" (optionSelected)="setItemDesc($event, 'click')">
+								<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+								<ng-container *ngIf="!isLoading">
+									<mat-option *ngFor="let product of product_lis" [value]="product">
+										<span>{{ product.product_code }} </span>
+									</mat-option>
+								</ng-container>
+							</mat-autocomplete>
+
+							<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')">
+								Invalid product code
+							</mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="example-full-width">
+							<input matInput type="text" formControlName="tempdesc" required />
+							<mat-placeholder class="placeholder">Item description</mat-placeholder>
+							<mat-error *ngIf="submitForm.controls['tempdesc'].hasError('required')">
+								Please enter a value
+							</mat-error>
+						</mat-form-field>
+					</div>
+
+					<div>
+						<mat-form-field class="example-full-width">
+							<mat-label>Qty</mat-label>
+							<input matInput type="number" min="1" max="1000" formControlName="tempqty" required />
+							<mat-hint matTooltip="Info about the action">Hint: Max 1000</mat-hint>
+						</mat-form-field>
+					</div>
+					<div>
+						<button mat-stroked-button color="primary" (click)="add()">+ Add</button>
+					</div>
 				</div>
-				<div class="itms-lbl">
-					{{productarr.controls.length || 0}} Items
-				</div>
-			</div>
+			</mat-card>
 
-			<div formArrayName="productarr" class="list-block">
-				<div class="item-details" *ngFor="let product of productarr.controls; let idx = index">
-					<ng-container [formGroupName]="idx">
-						<div class="id">
-							<!-- {{ idx+1}}) -->
-							<mat-checkbox (change)="checkedRow(idx, $event)" formControlName="checkbox"></mat-checkbox>
-						</div>
-
-						<div>
-							<mat-form-field class="example-full-width">
-								<mat-label>Item Code</mat-label>
-								<input matInput type="text" formControlName="product_code" />
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field class="example-full-width">
-								<input matInput type="text" formControlName="notes" placeholder="Item description" />
-							</mat-form-field>
-						</div>
-
-						<div>
-							<mat-form-field class="example-full-width">
-								<mat-label>Qty(max 1000)</mat-label>
-								<input matInput type="number" formControlName="quantity" />
-								<mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon>
-							</mat-form-field>
-						</div>
-					</ng-container>
-				</div>
-			</div>
-
-			<div class="add-item">
-				<div *ngIf="!customerAdded; else elseBlock" style="align-self: left;">
-					<!-- <mat-form-field class="example-full-width">
-						<mat-label>Search Customer</mat-label>
-
-						<input matInput type="text" readonly formControlName="customer" />
-						<mat-icon matSuffix (click)="showAllCustomersComp()" style="cursor: pointer;">search</mat-icon>
-					</mat-form-field> -->
-
-					<!-- <mat-form-field class="example-full-width">
-						<input
-							matInput
-							[matAutocomplete]="auto"
-							formControlName="customerctrl"
-							required
-							matTooltip="Type to filter the Customer list"
-							matTooltipPosition="after"
-						/>
-						<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
-							<mat-icon>close</mat-icon>
-						</button>
-						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
-							<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
-								<span>{{ customer.name }} </span>
-							</mat-option>
-						</mat-autocomplete>
-					</mat-form-field> -->
+			<ng-container *ngIf="getLength() !== 0">
+				<div class="actn-row">
+					<div style="padding-left: 7px; cursor: pointer;">
+						<img src="/assets/images/svg/trash.svg" width="18px" height="18px" *ngIf="showDelIcon" (click)="onRemoveRows()" />
+						<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()">&nbsp;Delete</span>
+					</div>
+					<div class="itms-lbl">
+						{{productarr.controls.length || 0}} Items
+					</div>
 				</div>
 
+				<mat-card>
+					<div formArrayName="productarr" class="list-block">
+						<div class="item-details" *ngFor="let product of productarr.controls; let idx = index">
+							<ng-container [formGroupName]="idx">
+								<div class="id">
+									<!-- {{ idx+1}}) -->
+									<mat-checkbox (change)="checkedRow(idx, $event)" formControlName="checkbox"></mat-checkbox>
+								</div>
+
+								<div>
+									<mat-form-field class="example-full-width">
+										<mat-label>Item Code</mat-label>
+										<input matInput type="text" formControlName="product_code" />
+									</mat-form-field>
+								</div>
+								<div>
+									<mat-form-field class="example-full-width">
+										<input matInput type="text" formControlName="notes" placeholder="Item description" />
+									</mat-form-field>
+								</div>
+
+								<div>
+									<mat-form-field class="example-full-width">
+										<mat-label>Qty(max 1000)</mat-label>
+										<input matInput type="number" formControlName="quantity" />
+									</mat-form-field>
+								</div>
+							</ng-container>
+						</div>
+					</div>
+				</mat-card>
+
+				<div class="add-item">
+					<div *ngIf="!customerAdded; else elseBlock" style="align-self: left;"></div>
+				</div>
+			</ng-container>
+		</div>
+		<ng-container *ngIf="getLength() !== 0">
+			<div class="footer">
 				<div>
-					<mat-form-field class="example-full-width">
+					<mat-form-field style="width: 320px;">
 						<mat-label>Remarks (Optional)</mat-label>
 						<input matInput type="text" formControlName="remarks" />
 					</mat-form-field>
 				</div>
+				<div class="submit">
+					<button
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="presentAlertConfirm()"
+						[throttleTime]="500"
+						mat-stroked-button
+						color="primary"
+					>
+						Clear All</button
+					>&nbsp;
+					<button appPreventDoubleClick class="cursor" (throttledClick)="onSubmit()" [throttleTime]="500" mat-raised-button color="primary">
+						Add Enquiry
+					</button>
+				</div>
 			</div>
-
-			<div class="submit">
-				<button mat-raised-button color="primary" type="submit" name="action" class="cursor">
-					Add Enquiry
-				</button>
-			</div>
-		</div>
+		</ng-container>
 	</form>
 
 	<ng-template #elseBlock>
