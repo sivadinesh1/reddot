@@ -7,6 +7,7 @@ export class Customer {
     address3: string;
     district: string;
     state_id: number;
+    code: number;
     pin: number;
     gst: string;
     phone: string;

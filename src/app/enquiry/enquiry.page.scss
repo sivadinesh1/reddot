@@ -1,53 +1,42 @@
 .screen-header {
 	display: flex;
-	margin-left: 80px;
-	padding: 8px;
-	font-size: 16px;
-	font-weight: 500;
-	color: #222222;
-	background-color: rgb(250, 250, 250);
-	justify-content: space-between;
+	font-weight: 400;
+	padding: 10px;
+	width: 100%;
+	font-size: 14px;
 }
 
+// Notes: How to center absolute div horizontally using CSS?
 .enq-form {
 	display: grid;
 	align-content: flex-start;
 	width: 90%;
-	margin: 0 auto;
-	// min-height: 90vh;
+
+	left: 0;
+	right: 0;
+
+	margin-left: auto;
+	margin-right: auto;
+	max-height: 420px;
+
+	border: 0px solid red;
+	overflow-y: auto;
+	overscroll-behavior-y: auto;
+
+	// snap helps to keep the lastest added row visible
+	scroll-snap-type: y proximity;
+	position: absolute;
+	padding-bottom: 8px;
 }
 
-.e-form {
-	display: grid;
-	width: 80%;
-	margin: 0 auto;
-}
-
-.save-enquiry {
-	display: flex;
-	height: 80px;
-	justify-content: space-evenly;
-	align-items: center;
-}
-
-.actn-btn-sec {
-	display: grid;
-	margin-top: auto;
-	// display: flex;
-	// justify-content: space-between;
-	border-top: 1px solid rgb(230, 230, 230);
+// snap helps to keep the lastest added row visible
+.enq-form > div > div:last-child {
+	scroll-snap-align: end;
 }
 
 .submit {
 	justify-content: center;
 	align-self: center;
-}
-
-.list-item {
-	display: grid;
-	max-height: 70vh;
-	min-height: 70vh;
-	overflow-y: auto;
 }
 
 .item-details {
@@ -57,13 +46,6 @@
 	grid-gap: 10px;
 	padding-left: 12px;
 	padding-right: 12px;
-}
-
-.styl-txt-box-small {
-	width: 100px !important;
-	border: 1px solid #d1d1d1;
-	padding: 8px;
-	// border-radius: 5px;
 }
 
 .example-full-width {
@@ -78,31 +60,8 @@
 	width: 400px;
 }
 
-.add-items-lbl,
-.add-cust-lbl {
-	align-self: center;
-	font-size: 18px;
-}
-
 .id {
 	font-size: 14px;
-}
-
-#theItem:focus {
-	border-bottom-color: red;
-}
-
-.o-form {
-	display: flex;
-	text-align: left;
-	font-size: 20px;
-	color: #222222;
-	padding: 10px;
-}
-
-.o-form {
-	display: flex;
-	justify-content: space-between;
 }
 
 .add-item {
@@ -114,10 +73,6 @@
 	grid-gap: 30px;
 	color: darkblue;
 	font-size: 18px;
-}
-
-.mat-form-field-suffix {
-	top: 8px !important;
 }
 
 .list-block {
@@ -137,14 +92,14 @@
 	display: flex;
 	justify-content: space-between;
 
-	width: 90%;
+	width: 100%;
 	margin: 0 auto;
 }
 
 .customer {
 	display: grid;
 	grid-template-columns: 1.5fr 1fr 1fr 1fr;
-	padding: 1px 0px 10px 0px;
+	padding-bottom: 10px;
 	width: 100%;
 }
 
@@ -157,9 +112,15 @@
 }
 
 .actn-row {
-	display: flex;
-	justify-content: space-between;
-	padding: 5px;
+	display: grid;
+	grid-template-columns: 40px 40px 120px 1fr minmax(120px, 150px);
+	align-items: center;
+	grid-gap: 10px;
+	padding-left: 12px;
+	padding-right: 12px;
+
+	width: 90%;
+	margin: 0 auto;
 	border-top: 0px solid #dfdfdf;
 	border-bottom: 0px solid #dfdfdf;
 	margin-bottom: 1px;
@@ -208,4 +169,16 @@
 	height: auto;
 	background-color: #ffffff;
 	border-top: 1px solid #f1f1f1;
+}
+
+.enq-bottom {
+	display: grid;
+	position: fixed;
+
+	bottom: 56px;
+
+	width: 100%;
+	padding: 0px 5%;
+	height: auto;
+	background-color: #ffffff;
 }

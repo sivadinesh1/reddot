@@ -278,7 +278,7 @@ export class EnquiryPage {
     this.submitForm.patchValue({
       productctrl: "",
       tempdesc: "",
-      tempQty: 1,
+      tempqty: 1,
     });
 
     this.submitForm.controls['tempdesc'].setErrors(null);

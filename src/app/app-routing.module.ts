@@ -86,13 +86,6 @@ const routes: Routes = [
         loadChildren: () => import('./enquiry/process-enquiry/process-enquiry.module').then(m => m.ProcessEnquiryPageModule)
       },
 
-      // {
-      //   path: 'enquiry/back-order',
-      //   loadChildren: () => import('../enquiry/back-order/back-order.module').then(m => m.BackOrderPageModule)
-      // },
-
-
-
       {
         path: 'product/edit/:centerid/:productid',
         loadChildren: () => import('./admin/product/edit-product/edit-product.module').then(m => m.EditProductPageModule)
@@ -105,23 +98,12 @@ const routes: Routes = [
       },
 
 
-
-
       // customers
       {
         path: 'view-customers',
         loadChildren: () => import('./admin/customer/view-customer/view-customer.module').then(m => m.ViewCustomerPageModule)
       },
 
-      {
-        path: 'customer/edit/:center_id/:customer_id',
-        loadChildren: () => import('./admin/customer/edit-customer/edit-customer.module').then(m => m.EditCustomerPageModule)
-      },
-
-      {
-        path: 'customer/add',
-        loadChildren: () => import('./admin/customer/add-customer/add-customer.module').then(m => m.AddCustomerPageModule)
-      },
 
       {
         path: 'customer/save-discount/:customer_id',

@@ -218,8 +218,12 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/admin/get-customer-details/${center_id}/${customer_id}`);
   }
 
-  updateCustomer(submitForm) {
-    return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-customer', submitForm, { observe: 'response' });
+  // updateCustomer(submitForm) {
+  //   return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-customer', submitForm, { observe: 'response' });
+  // }
+
+  updateCustomer(id: number, changes: Partial<Vendor>): Observable<any> {
+    return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-customer/${id}`, changes);
   }
 
 
