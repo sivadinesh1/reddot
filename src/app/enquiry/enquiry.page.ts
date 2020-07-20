@@ -31,7 +31,7 @@ export class EnquiryPage {
 
   submitForm: FormGroup;
 
-  customerAdded = false;
+  //customerAdded = false;
   customerData: any;
 
   removeRowArr = [];
@@ -126,7 +126,7 @@ export class EnquiryPage {
   async init() {
 
     this.customerData = "";
-    this.customerAdded = false;
+    // this.customerAdded = false;
 
 
     // this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
@@ -476,38 +476,38 @@ export class EnquiryPage {
   }
 
 
-  async showAllCustomersComp() {
+  // async showAllCustomersComp() {
 
-    const modal = await this._modalcontroller.create({
-      component: ShowCustomersComponent,
-      componentProps: {},
-      cssClass: 'customer-comp-styl'
+  //   const modal = await this._modalcontroller.create({
+  //     component: ShowCustomersComponent,
+  //     componentProps: {},
+  //     cssClass: 'customer-comp-styl'
 
-    });
-
-
-    modal.onDidDismiss().then((result) => {
-      let custData = result.data;
-
-      if (custData !== undefined) {
-        this.customerAdded = true;
+  //   });
 
 
-        this.submitForm.patchValue({
-          customer: custData,
-        });
+  //   modal.onDidDismiss().then((result) => {
+  //     let custData = result.data;
 
-        this.customerData = custData;
-      }
-
+  //     if (custData !== undefined) {
+  //       this.customerAdded = true;
 
 
-      this._cdr.markForCheck();
+  //       this.submitForm.patchValue({
+  //         customer: custData,
+  //       });
 
-    })
+  //       this.customerData = custData;
+  //     }
 
-    await modal.present();
-  }
+
+
+  //     this._cdr.markForCheck();
+
+  //   })
+
+  //   await modal.present();
+  // }
 
   openEnquiry() {
     this._router.navigateByUrl('/home/enquiry/open-enquiry');

@@ -25,13 +25,20 @@
 
 	// snap helps to keep the lastest added row visible
 	scroll-snap-type: y proximity;
+	scroll-snap-points-y: repeat(420px);
 	position: absolute;
 	// padding-bottom: 8px;
 }
 
 // snap helps to keep the lastest added row visible
-.enq-form > div > div:last-child {
+// .enq-form > div > div:last-child {
+// 	scroll-snap-align: end;
+// 	// scroll-padding: 0 0 50px 0;
+// }
+
+.enq-form > div:last-child {
 	scroll-snap-align: end;
+	// scroll-padding: 0 0 50px 0;
 }
 
 .submit {
@@ -116,8 +123,9 @@
 	grid-template-columns: 40px 40px 120px 1fr minmax(120px, 150px);
 	align-items: center;
 	grid-gap: 10px;
-	padding-left: 12px;
-	padding-right: 12px;
+
+	background-color: lightgrey;
+	padding: 3px;
 
 	width: 90%;
 	margin: 0 auto;

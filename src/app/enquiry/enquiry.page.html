@@ -13,7 +13,7 @@
 		<ng-container *ngIf="getLength() !== 0">
 			<div class="actn-row">
 				<div>&nbsp;</div>
-				<div style="cursor: pointer;">
+				<div style="cursor: pointer; text-align: center;">
 					<img src="/assets/images/svg/trash.svg" width="18px" height="18px" *ngIf="showDelIcon" (click)="onRemoveRows()" />
 					<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()"></span>
 				</div>
@@ -23,6 +23,13 @@
 				<div class="itms-lbl">
 					Qty
 				</div>
+			</div>
+		</ng-container>
+
+		<ng-container *ngIf="getLength() === 0">
+			<div style="display: grid; place-items: center; padding-top: 2rem;">
+				<div style="color: #333333;"><h4>Inquiry cart</h4></div>
+				<div style="color: #666666;">There are no items in your Inquiry cart</div>
 			</div>
 		</ng-container>
 
@@ -62,10 +69,6 @@
 							</div>
 						</ng-container>
 					</div>
-				</div>
-
-				<div class="add-item">
-					<div *ngIf="!customerAdded; else elseBlock" style="align-self: left;"></div>
 				</div>
 			</ng-container>
 		</div>
@@ -210,12 +213,12 @@
 		</ng-container>
 	</form>
 
-	<ng-template #elseBlock>
+	<!-- <ng-template #elseBlock>
 		<div class="elseblock">
 			<div style="font-size: 12px; color: #797979;">
 				Customer Name &nbsp;&nbsp;<span style="font-size: 12px; color: rgb(13, 13, 190);" (click)="showAllCustomersComp()">[Change]</span>
 			</div>
 			{{customerData.name}}
 		</div>
-	</ng-template>
+	</ng-template> -->
 </ion-content>
