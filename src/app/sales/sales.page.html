@@ -532,15 +532,7 @@
 			<div class="footer">
 				<div class="submit">
 					<!-- <span class="itms-lbl">Showing {{productarr.controls.length || 0}} Items</span>&nbsp; -->
-					<button
-						appPreventDoubleClick
-						class="cursor"
-						(throttledClick)="presentAlertConfirm()"
-						[throttleTime]="500"
-						mat-stroked-button
-						color="primary"
-						type="button"
-					>
+					<button appPreventDoubleClick class="cursor" [throttleTime]="500" mat-stroked-button color="primary" type="button">
 						Clear All</button
 					>&nbsp;
 					<button
