@@ -553,6 +553,7 @@ export class SalesPage implements OnInit {
 
 
 
+
     this.sumTotalTax();
 
     this._cdr.markForCheck();
