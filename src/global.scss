@@ -151,3 +151,9 @@ button {
 	padding: 0.4em 0;
 	border-top: 0.1em solid transparent;
 }
+
+// horizontal scroll bar for select box with lengthy values
+.mat-option-text {
+	overflow: auto;
+	text-overflow: unset;
+}

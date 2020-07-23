@@ -1,14 +1,9 @@
-.top-header,
 .screen-header {
 	display: flex;
-	width: 94%;
-	margin: 0 auto;
-	padding: 8px;
-	font-size: 16px;
-	font-weight: 500;
-	color: #222222;
-	background-color: #ffffff;
-	justify-content: space-between;
+	font-weight: 400;
+	padding: 10px;
+	width: 100%;
+	font-size: 14px;
 }
 
 .purchase-wrap {
@@ -213,14 +208,6 @@
 	padding-top: 5px;
 }
 
-.customer {
-	display: grid;
-	grid-template-columns: 1.5fr 1fr 1fr 1fr;
-	padding: 10px;
-	width: 90%;
-	margin: 0 auto;
-}
-
 .cust-info {
 	display: grid;
 	align-self: center;
@@ -239,4 +226,46 @@
 	width: 80%;
 	margin: 0 auto;
 	// min-height: 90vh;
+}
+
+.footer {
+	display: flex;
+	position: fixed;
+	justify-content: space-around;
+	bottom: 0px;
+
+	width: 100%;
+	height: auto;
+	background-color: #ffffff;
+	border-top: 1px solid #f1f1f1;
+}
+
+.enq-bottom {
+	display: grid;
+	position: fixed;
+
+	bottom: 56px;
+
+	width: 100%;
+	padding: 0px 5%;
+	height: auto;
+	background-color: #ffffff;
+}
+
+.customer {
+	display: grid;
+	grid-template-columns: 1.5fr 1fr 1fr 1fr;
+	padding-bottom: 10px;
+	width: 100%;
+}
+
+.main-add {
+	display: grid;
+	grid-template-columns: 320px 1fr minmax(80px, 100px) 150px;
+	align-items: center;
+	grid-gap: 10px;
+}
+
+.mat-option {
+	height: 3.3em !important;
 }

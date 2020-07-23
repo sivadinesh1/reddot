@@ -80,7 +80,7 @@
 						<mat-form-field class="example-full-width" style="padding-right: 10px;">
 							<input matInput [matAutocomplete]="auto" formControlName="customerctrl" #typehead1 autofocus required matTooltipPosition="after" />
 							<mat-placeholder class="placeholder">Select Customer</mat-placeholder>
-							<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+							<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
 								<mat-icon>close</mat-icon>
 							</button>
 
@@ -143,7 +143,7 @@
 						<mat-form-field class="example-full-width">
 							<input matInput [matAutocomplete]="auto1" formControlName="productctrl" #typehead #plist matTooltipPosition="after" />
 							<mat-placeholder class="placeholder">Select Item Code</mat-placeholder>
-							<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearProdInput()">
+							<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput()">
 								<mat-icon>close</mat-icon>
 							</button>
 
@@ -179,7 +179,7 @@
 						</mat-form-field>
 					</div>
 					<div>
-						<button mat-stroked-button color="primary" (click)="add()">+ New Row</button>
+						<button mat-stroked-button color="primary" type="button" (click)="add()">+ New Row</button>
 					</div>
 				</div>
 			</mat-card>
@@ -202,10 +202,20 @@
 						[throttleTime]="500"
 						mat-stroked-button
 						color="primary"
+						type="button"
 					>
 						Clear All</button
 					>&nbsp;
-					<button appPreventDoubleClick class="cursor" (throttledClick)="onSubmit()" [throttleTime]="500" mat-raised-button color="primary">
+					<button
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="onSubmit()"
+						type="button"
+						[throttleTime]="500"
+						mat-raised-button
+						type="button"
+						color="primary"
+					>
 						Add Inquiry
 					</button>
 				</div>

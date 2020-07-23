@@ -265,8 +265,11 @@ export class EnquiryPage {
 
 
     const control = <FormArray>this.submitForm.controls['productarr'];
-    // insert adds new row in starting of the array {idx : 0}
-    control.insert(0, this._fb.group({
+
+    // DnD insert adds new row in starting of the array {idx : 0}
+    // control.insert(0, this._fb.group({
+
+    control.push(this._fb.group({
       checkbox: [false],
       product_code: [this.submitForm.value.productctrl === null ? "" : this.submitForm.value.productctrl.product_code],
 
@@ -302,13 +305,6 @@ export class EnquiryPage {
 
   }
 
-
-
-  // addProduct() {
-  //   const control = <FormArray>this.submitForm.controls['productarr'];
-  //   control.push(this.initProduct());
-  //   this._cdr.markForCheck();
-  // }
 
   clearInput() {
     this.submitForm.patchValue({
@@ -384,29 +380,9 @@ export class EnquiryPage {
     }
   }
 
-  // openCurrencyPad(idx) {
-
-  //   const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
-
-  //   dialogRef.afterClosed().subscribe(
-  //     data => {
-  //       if (data != undefined && data.length > 0 && data != 0) {
-
-  //         const faControl =
-  //           (<FormArray>this.submitForm.controls['productarr']).at(idx);
-  //         faControl['controls'].quantity.setValue(data);
-
-  //       }
-
-  //       this._cdr.markForCheck();
-  //     }
-  //   );
-  // }
 
   onSubmit() {
 
-    console.log('object...' + this.submitForm.value);
-    console.log('object..valid.' + this.submitForm.valid);
 
     if (!this.submitForm.valid) {
       return false;
@@ -475,39 +451,6 @@ export class EnquiryPage {
     await alert.present();
   }
 
-
-  // async showAllCustomersComp() {
-
-  //   const modal = await this._modalcontroller.create({
-  //     component: ShowCustomersComponent,
-  //     componentProps: {},
-  //     cssClass: 'customer-comp-styl'
-
-  //   });
-
-
-  //   modal.onDidDismiss().then((result) => {
-  //     let custData = result.data;
-
-  //     if (custData !== undefined) {
-  //       this.customerAdded = true;
-
-
-  //       this.submitForm.patchValue({
-  //         customer: custData,
-  //       });
-
-  //       this.customerData = custData;
-  //     }
-
-
-
-  //     this._cdr.markForCheck();
-
-  //   })
-
-  //   await modal.present();
-  // }
 
   openEnquiry() {
     this._router.navigateByUrl('/home/enquiry/open-enquiry');

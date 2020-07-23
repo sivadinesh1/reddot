@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildr
 import { ModalController, PickerController, AlertController } from '@ionic/angular';
 import { AddProductComponent } from '../components/add-product/add-product.component';
 import { CommonApiService } from '../services/common-api.service';
-import { FormBuilder, FormControl, Validators, FormGroup, FormArray, NgForm } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
@@ -10,9 +10,9 @@ import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.co
 import { AuthenticationService } from '../services/authentication.service';
 import { ChangeTaxComponent } from '../components/change-tax/change-tax.component';
 import { ChangeMrpComponent } from '../components/change-mrp/change-mrp.component';
-import { Route, ActivatedRoute } from '@angular/router';
+import { Route, ActivatedRoute, Router } from '@angular/router';
 import { NullToQuotePipe } from '../util/pipes/null-quote.pipe';
-
+import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 
 import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
@@ -20,14 +20,12 @@ import { SaleApiService } from '../services/sale-api.service';
 
 import { InvoiceSuccessComponent } from '../components/invoice-success/invoice-success.component';
 
-import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
-
-import { Observable } from 'rxjs';
-import { filter, map, startWith, debounceTime, switchMap, tap, finalize } from 'rxjs/operators';
+import { User } from "../models/User";
 import { Customer } from 'src/app/models/Customer';
-import { RequireMatch as RequireMatch } from '../util/directives/requireMatch';
 import { Product } from '../models/Product';
-import { empty, of } from "rxjs";
+import { empty } from 'rxjs';
+import { RequireMatch } from '../util/directives/requireMatch';
+import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-sales',
@@ -108,9 +106,6 @@ export class SalesPage implements OnInit {
   invoiceid: any;
   invoicedate = new Date();
 
-  @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
-  @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
-
 
   isLoading = false;
   isCLoading = false;
@@ -121,11 +116,10 @@ export class SalesPage implements OnInit {
   gst: any;
   phone: any;
   whatsapp: any;
-
   iscustomerselected = false;
 
-  @ViewChild('myForm', { static: true }) myForm: NgForm;
-  filteredCustomers: Observable<any[]>;
+  @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
+  @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
 
   // TAB navigation for product list
   @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
@@ -138,10 +132,8 @@ export class SalesPage implements OnInit {
   customer_lis: Customer[];
   product_lis: Product[];
 
-  selectedCustomerName: any;
-
   constructor(private _modalcontroller: ModalController, private _pickerctrl: PickerController,
-    public dialog: MatDialog, public alertController: AlertController,
+    public dialog: MatDialog, public alertController: AlertController, private _router: Router,
     private _route: ActivatedRoute,
     private _authservice: AuthenticationService, private _saleApiService: SaleApiService,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
@@ -340,19 +332,49 @@ export class SalesPage implements OnInit {
       enqref: [0],
       revision: [0],
 
-      productarr: new FormControl(null, Validators.required),
-
       customerctrl: [null, [Validators.required, RequireMatch]],
-
-      productctrl: [null, [Validators.required, RequireMatch]],
-
-
+      productctrl: [null, [RequireMatch]],
       tempdesc: [''],
-      tempqty: ['1', [Validators.max(1000), Validators.min(0)]]
+
+      tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
+
+      productarr: new FormControl(null, Validators.required)
 
     });
 
     this.searchCustomers();
+    this.searchProducts();
+    this._cdr.markForCheck();
+
+  }
+
+
+
+
+  searchCustomers() {
+    let search = "";
+    this.submitForm.controls['customerctrl'].valueChanges.pipe(
+      debounceTime(500),
+      tap(() => this.isCLoading = true),
+      switchMap(id => {
+        console.log(id);
+        search = id;
+        if (id != null && id.length >= 3) {
+          return this._commonApiService.getCustomerInfo({ "centerid": this.center_id, "searchstr": id });
+        } else {
+          return empty();
+        }
+
+      })
+
+    )
+
+      .subscribe((data: any) => {
+
+        this.isCLoading = false;
+        this.customer_lis = data.body;
+        this._cdr.markForCheck();
+      });
   }
 
 
@@ -581,6 +603,32 @@ export class SalesPage implements OnInit {
 
   }
 
+
+  ngAfterViewInit() {
+    this.autoTrigger.panelClosingActions.subscribe(x => {
+      if (this.autoTrigger.activeOption) {
+
+        this.submitForm.patchValue({
+          productctrl: this.autoTrigger.activeOption.value
+        });
+        this.setItemDesc(this.autoTrigger.activeOption.value, "tab");
+
+      }
+    })
+
+    this.autoTrigger1.panelClosingActions.subscribe(x => {
+      if (this.autoTrigger1.activeOption) {
+
+        this.submitForm.patchValue({
+          customerctrl: this.autoTrigger1.activeOption.value
+        });
+        this.setCustomerInfo(this.autoTrigger1.activeOption.value, "tab");
+      }
+    })
+
+
+
+  }
 
 
   deleteProduct(idx) {
@@ -1216,14 +1264,6 @@ export class SalesPage implements OnInit {
   }
 
 
-  displayFn(obj: any): string | undefined {
-    return obj && obj.name ? obj.name : undefined;
-  }
-
-  displayProdFn(obj: any): string | undefined {
-    return obj && obj.product_code ? obj.product_code : undefined;
-
-  }
 
   clearInput() {
     this.submitForm.patchValue({
@@ -1255,6 +1295,158 @@ export class SalesPage implements OnInit {
 
   }
 
+  setItemDesc(event, from) {
+
+    if (from === 'tab') {
+      this.submitForm.patchValue({
+        tempdesc: event.description,
+      });
+    } else {
+      this.submitForm.patchValue({
+        tempdesc: event.option.value.description,
+      });
+    }
+
+
+    this._cdr.markForCheck();
+
+
+  }
+
+
+  displayFn(obj: any): string | undefined {
+    return obj && obj.name ? obj.name : undefined;
+  }
+
+  displayProdFn(obj: any): string | undefined {
+    return obj && obj.product_code ? obj.product_code : undefined;
+
+  }
+
+  getLength() {
+    const control = <FormArray>this.submitForm.controls['productarr'];
+    debugger;
+    return control.length;
+  }
+
+  searchProducts() {
+    //   let search = "";
+    this.submitForm.controls['productctrl'].valueChanges.pipe(
+      debounceTime(500),
+      tap(() => this.isLoading = true),
+      switchMap(id => {
+        console.log(id);
+        //   search = id;
+        if (id != null && id.length >= 3) {
+          return this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": id });
+        } else {
+          return empty();
+        }
+
+      })
+
+    )
+
+      .subscribe((data: any) => {
+        this.isLoading = false;
+        this.product_lis = data.body;
+        this._cdr.markForCheck();
+      });
+  }
+
+  // Navigation 
+  salesDashboard() {
+    this._router.navigateByUrl('/home/search-sales');
+  }
+
+
+  add() {
+    let invdt = "";
+    if (this.submitForm.value.invoicedate === null) {
+      invdt = moment().format('DD-MM-YYYY');
+    } else {
+      invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+    }
+
+
+    if (this.submitForm.value.tempdesc === '' || this.submitForm.value.tempdesc === null) {
+      this.submitForm.controls['tempdesc'].setErrors({ 'required': true });
+      this.submitForm.controls['tempdesc'].markAsTouched();
+
+      return false;
+    }
+
+    if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null) {
+      this.submitForm.controls['tempqty'].setErrors({ 'required': true });
+      this.submitForm.controls['tempqty'].markAsTouched();
+
+      return false;
+    }
+
+    if (this.submitForm.value.customerctrl === '' || this.submitForm.value.customerctrl === null) {
+      this.submitForm.controls['customerctrl'].setErrors({ 'required': true });
+      this.submitForm.controls['customerctrl'].markAsTouched();
+
+      return false;
+    }
+
+
+    // this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customer_id, "orderdate": order_date, "searchstr": searchstring }).subscribe(
+    //   data => {
+    //     this.resultList = data.body;
+
+    //     if (this.resultList.length === 0) {
+
+    //       this.noMatch = 'No Matching Records';
+    //       this._cdr.markForCheck();
+
+    //     } else if (this.resultList.length > 0) {
+    //       this.noMatch = '';
+    //       this._cdr.markForCheck();
+    //     }
+
+    //   });
+
+
+    // this.listArr.push(this._fb.group({
+    //   checkbox: [false],
+    //   product_code: [this.submitForm.value.productctrl === null ? "" : this.submitForm.value.productctrl.product_code],
+
+    //   notes: [this.submitForm.value.tempdesc, Validators.required],
+    //   quantity: [this.submitForm.value.tempqty, [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
+
+    // }));
+
+    this.submitForm.patchValue({
+      productctrl: "",
+      tempdesc: "",
+      tempqty: 1,
+    });
+
+    this.submitForm.controls['tempdesc'].setErrors(null);
+    this.submitForm.controls['tempqty'].setErrors(null);
+    this.submitForm.controls['productctrl'].setErrors(null);
+    this.plist.nativeElement.focus();
+    this._cdr.markForCheck();
+
+  }
+
+
+
+  // const modal = await this._modalcontroller.create({
+  //   component: AddProductComponent,
+  //   componentProps: { center_id: this.center_id, customer_id: this.customerdata.id, order_date: invdt },
+  //   cssClass: 'select-modal'
+  // });
+
+  // modal.onDidDismiss().then((result) => {
+  //   console.log('The result:', result);
+  //   let temp = result.data;
+
+  //   this.processItems(temp);
+
+  // });
+
 
   setCustomerInfo(event, from) {
 
@@ -1280,61 +1472,6 @@ export class SalesPage implements OnInit {
     this._cdr.markForCheck();
 
   }
-
-
-  searchCustomers() {
-    let search = "";
-    this.submitForm.controls['customerctrl'].valueChanges.pipe(
-      debounceTime(500),
-      tap(() => this.isCLoading = true),
-      switchMap(id => {
-        console.log(id);
-        search = id;
-        if (id != null && id.length >= 3) {
-          return this._commonApiService.getCustomerInfo({ "centerid": this.center_id, "searchstr": id });
-        } else {
-          return empty();
-        }
-
-      })
-
-    )
-
-      .subscribe((data: any) => {
-
-        this.isCLoading = false;
-        this.customer_lis = data.body;
-        this._cdr.markForCheck();
-      });
-  }
-
-  getLength() {
-    const control = <FormArray>this.submitForm.controls['productarr'];
-    return control.length;
-  }
-
-  add() {
-
-  }
-
-  setItemDesc(event, from) {
-
-    if (from === 'tab') {
-      this.submitForm.patchValue({
-        tempdesc: event.description,
-      });
-    } else {
-      this.submitForm.patchValue({
-        tempdesc: event.option.value.description,
-      });
-    }
-
-
-    this._cdr.markForCheck();
-
-
-  }
-
 
 }
 
