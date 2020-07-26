@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content [scrollEvents]="true">
 	<div class="screen-header">
 		<div>
 			<span style="color: #310ac0; cursor: pointer;" (click)="salesDashboard()">Sales Dashboard</span> /
@@ -43,6 +43,76 @@
 	</div> -->
 
 	<form [formGroup]="submitForm">
+		<mat-card>
+			<div class="customer">
+				<div>
+					<mat-form-field class="example-full-width" style="padding-right: 10px;">
+						<input matInput [matAutocomplete]="auto" formControlName="customerctrl" #typehead1 autofocus required matTooltipPosition="after" />
+						<mat-placeholder class="placeholder">Select or Add Customer</mat-placeholder>
+
+						<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
+							<mat-icon>close</mat-icon>
+						</button>
+
+						<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
+							<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+							<ng-container *ngIf="!isCLoading">
+								<mat-option *ngFor="let customer of customer_lis" [value]="customer">
+									<span>{{ customer.name }} </span>
+								</mat-option>
+								<mat-option style="background-color: #f2f2f2;" value="new">+ New Customer</mat-option>
+							</ng-container>
+						</mat-autocomplete>
+						<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')">
+							Please enter a value
+						</mat-error>
+						<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
+							Please select a valid project
+						</mat-error>
+					</mat-form-field>
+					<div class="add-contact-btn" fxFlex="10" *ngIf="iscustomerselected">
+						<button mat-raised-button (click)="openDialog($event)">View Customer Info</button>
+					</div>
+				</div>
+				<div class="cust-info">
+					<div *ngIf="iscustomerselected">
+						<div>
+							<span>Address1:&nbsp;</span>
+							<span>{{address1 | nullna}}</span>
+						</div>
+						<div>
+							<span>Address2:&nbsp;</span>
+							<span>{{address2 | nullna}}</span>
+						</div>
+					</div>
+				</div>
+				<div class="cust-info" style="justify-content: center;">
+					<div *ngIf="iscustomerselected">
+						<div>
+							<span>District:&nbsp;</span>
+							<span>{{district | nullna}}</span>
+						</div>
+						<div>
+							<span>GST:&nbsp;</span>
+							<span>{{gst | nullna}}</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="cust-info">
+					<div *ngIf="iscustomerselected">
+						<div>
+							<span>Phone:&nbsp;</span>
+							<span>{{phone | nullna}}</span>
+						</div>
+						<div>
+							<span>Whatsapp:&nbsp;</span>
+							<span>{{gst | nullna}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</mat-card>
 		<div class="purchase-wrap">
 			<div class="wrap">
 				<div class="acton-btns">
@@ -95,74 +165,74 @@
 							</span>
 						</div>
 					</ng-template> -->
-					<ng-template *ngIf="getLength() !== 0">
-						<!-- <div *ngIf="listArr.length === 0" class="empty-add">
+					<!-- <ng-template *ngIf="listArr.length !== 0"> -->
+					<!-- <div *ngIf="listArr.length === 0" class="empty-add">
 							<span class="cursor" appPreventDoubleClick [throttleTime]="2000" (throttledClick)="customerselected && showAddProductComp()">
 								+ Add Item
 							</span>
 						</div> -->
-						<div *ngFor="let item of listArr ? listArr : []; let idx = index" class="list-item">
-							<div class="txt-align">
-								<!-- {{idx + 1}} -->
-								<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
-							</div>
-							<div class="item2">
-								{{item.product_code}}
-								<div class="desc">
-									{{item.product_desc}}
-								</div>
-							</div>
-
-							<div class="item4 txt-right-align num-format-cell-style">{{item.mrp | number:'1.2-2'}}</div>
-
-							<div class="item4 txt-right-align num-format-cell-style">
-								<mat-form-field class="example-full-width cursor" (click)="openCurrencyPad(idx)">
-									<input matInput type="number" value="{{item.qty}}" class="cursor" readonly />
-									<mat-icon matSuffix>view_comfy</mat-icon>
-								</mat-form-field>
-							</div>
-
-							<div class="item4 txt-right-align num-format-cell-style">
-								<input
-									matInput
-									value="{{item.disc_percent | number:'1.2-2'}}"
-									type="number"
-									maxlength="3"
-									min="0"
-									max="100"
-									class="styl-txt-box-small txt-pad"
-									(click)="openRowNumberPad(idx,'discount')"
-									appPreventCutCopyPaste
-									readonly
-								/>
-							</div>
-
-							<div class="item4 txt-right-align num-format-cell-style">{{item.unit_price}}</div>
-
-							<div class="item4 txt-right-align num-format-cell-style">
-								{{item.taxable_value }}
-							</div>
-
-							<div class="item4 txt-right-align num-format-cell-style">
-								{{item.taxrate}}
-							</div>
-
-							<div class="txt-align">
-								<ng-container *ngIf="i_gst">
-									{{(item.tax_value) }}
-								</ng-container>
-								<ng-container *ngIf="!i_gst">
-									{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) | number:'1.2-2'}}
-								</ng-container>
-							</div>
-
-							<div class="item4 txt-right-align num-format-cell-style">
-								<span [ngClass]="marginCheck(item.margin)">
-									{{item.total_value }}
-								</span>
+					<div *ngFor="let item of listArr ? listArr : []; let idx = index" class="list-item">
+						<div class="txt-align">
+							<!-- {{idx + 1}} -->
+							<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
+						</div>
+						<div class="item2">
+							{{item.product_code}}
+							<div class="desc">
+								{{item.product_desc}}
 							</div>
 						</div>
-					</ng-template>
+
+						<div class="item4 txt-right-align num-format-cell-style">{{item.mrp | number:'1.2-2'}}</div>
+
+						<div class="item4 txt-right-align num-format-cell-style">
+							<mat-form-field class="example-full-width cursor" (click)="openCurrencyPad(idx)">
+								<input matInput type="number" value="{{item.qty}}" class="cursor" readonly />
+								<mat-icon matSuffix>view_comfy</mat-icon>
+							</mat-form-field>
+						</div>
+
+						<div class="item4 txt-right-align num-format-cell-style">
+							<input
+								matInput
+								value="{{item.disc_percent | number:'1.2-2'}}"
+								type="number"
+								maxlength="3"
+								min="0"
+								max="100"
+								class="styl-txt-box-small txt-pad"
+								(click)="openRowNumberPad(idx,'discount')"
+								appPreventCutCopyPaste
+								readonly
+							/>
+						</div>
+
+						<div class="item4 txt-right-align num-format-cell-style">{{item.unit_price}}</div>
+
+						<div class="item4 txt-right-align num-format-cell-style">
+							{{item.taxable_value }}
+						</div>
+
+						<div class="item4 txt-right-align num-format-cell-style">
+							{{item.taxrate}}
+						</div>
+
+						<div class="txt-align">
+							<ng-container *ngIf="i_gst">
+								{{(item.tax_value) }}
+							</ng-container>
+							<ng-container *ngIf="!i_gst">
+								{{(item.tax_value / 2) | number:'1.2-2'}} / {{(item.tax_value / 2) | number:'1.2-2'}}
+							</ng-container>
+						</div>
+
+						<div class="item4 txt-right-align num-format-cell-style">
+							<span [ngClass]="marginCheck(item.margin)">
+								{{item.total_value }}
+							</span>
+						</div>
+					</div>
+					<!-- </ng-template> -->
 				</div>
 
 				<div class="row4">
@@ -190,7 +260,7 @@
 					</div>
 				</div>
 			</div>
-
+			<div #stickyHeaderStart>Test !!</div>
 			<div class="purchase-wrap1">
 				<div class="row1">
 					<fieldset>
@@ -416,7 +486,7 @@
 
 		<div class="enq-bottom">
 			<mat-card style="background-color: #eee;">
-				<div class="customer">
+				<!-- <div class="customer">
 					<div>
 						<mat-form-field class="example-full-width" style="padding-right: 10px;">
 							<input matInput [matAutocomplete]="auto" formControlName="customerctrl" #typehead1 autofocus required matTooltipPosition="after" />
@@ -478,7 +548,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 				<div class="main-add">
 					<div>
 						<mat-form-field class="example-full-width">
@@ -491,7 +561,11 @@
 							<mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayProdFn" (optionSelected)="setItemDesc($event, 'click')">
 								<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 								<ng-container *ngIf="!isLoading">
-									<mat-option *ngFor="let product of product_lis" [value]="product" style="padding-top: 16px; padding-bottom: 16px;">
+									<mat-option
+										*ngFor="let product of product_lis"
+										[value]="product"
+										style="padding-top: 16px; height: 3.3em !important; padding-bottom: 16px;"
+									>
 										<div style="font-size: 16px; line-height: 1em;">{{ product.product_code }}</div>
 										<div style="font-size: 14px; line-height: 1em;">{{ product.description }}</div>
 										<div style="font-size: 14px; line-height: 1em;">{{ product.mrp }}</div>

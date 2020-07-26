@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList, Inject, HostListener } from '@angular/core';
 import { ModalController, PickerController, AlertController } from '@ionic/angular';
 import { AddProductComponent } from '../components/add-product/add-product.component';
 import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 
 import { AuthenticationService } from '../services/authentication.service';
@@ -26,6 +26,10 @@ import { Product } from '../models/Product';
 import { empty } from 'rxjs';
 import { RequireMatch } from '../util/directives/requireMatch';
 import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
+import { IonContent } from '@ionic/angular';
+import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
+
+
 
 @Component({
   selector: 'app-sales',
@@ -41,7 +45,7 @@ export class SalesPage implements OnInit {
 
   test1: any;
   customer_state_code: any;
-  center_state_code: any
+  center_state_code: any;
   i_gst: any;
   customerdata: any;
   customerselected: boolean = false;
@@ -118,6 +122,8 @@ export class SalesPage implements OnInit {
   whatsapp: any;
   iscustomerselected = false;
 
+  lineItemData: any;
+
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
 
@@ -132,9 +138,15 @@ export class SalesPage implements OnInit {
   customer_lis: Customer[];
   product_lis: Product[];
 
+  @ViewChild('stickyHeaderStart', { static: true }) stickyHeaderStart: ElementRef<HTMLElement>;
+
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+
+  question = '+ Add Customer"';
+
   constructor(private _modalcontroller: ModalController, private _pickerctrl: PickerController,
     public dialog: MatDialog, public alertController: AlertController, private _router: Router,
-    private _route: ActivatedRoute,
+    private _route: ActivatedRoute, private _dialog: MatDialog,
     private _authservice: AuthenticationService, private _saleApiService: SaleApiService,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
@@ -157,6 +169,7 @@ export class SalesPage implements OnInit {
   }
   ngOnInit() {
   }
+
 
   initialize() {
 
@@ -373,6 +386,7 @@ export class SalesPage implements OnInit {
 
         this.isCLoading = false;
         this.customer_lis = data.body;
+
         this._cdr.markForCheck();
       });
   }
@@ -497,6 +511,7 @@ export class SalesPage implements OnInit {
       totalval = ((temp.qty * temp.mrp) * (100 - this.cust_discount_prcnt) / 100) * (1 + (temp.taxrate / 100));
     }
 
+
     // from product tbl
     this.listArr.push(
       {
@@ -556,6 +571,11 @@ export class SalesPage implements OnInit {
 
     this.sumTotalTax();
 
+    let v1 = document.documentElement.clientHeight + 70;
+
+    this.ScrollToPoint(0, v1);
+
+
     this._cdr.markForCheck();
 
   }
@@ -605,6 +625,8 @@ export class SalesPage implements OnInit {
   }
 
 
+
+
   ngAfterViewInit() {
     this.autoTrigger.panelClosingActions.subscribe(x => {
       if (this.autoTrigger.activeOption) {
@@ -629,8 +651,65 @@ export class SalesPage implements OnInit {
 
 
 
+
+    const stickyHeaderOptions = {
+      rootMargin: "0px 0px -20px 0px"
+    };
+
+    const appearOptions = {
+      threshold: 0,
+      rootMargin: "0px 0px -200px 0px"
+    };
+
+    // const stickyHeaderObserver = new IntersectionObserver(entries => {
+    //   entries.forEach(entry => {
+    //     if (!entry.isIntersecting) {
+    //       console.log('object rem' + document.documentElement.clientHeight);
+    //       // this.renderer.removeClass(this.apptopnav.header.nativeElement, 'sticky');
+
+    //       let v1 = document.documentElement.clientHeight + 70;
+
+    //       this.ScrollToPoint(0, v1);
+
+
+    //       // window.scrollTo({
+    //       //   top: document.documentElement.clientHeight - test1,
+    //       //   left: 0,
+    //       //   behavior: 'smooth'
+    //       // });
+
+    //       // this.stickyHeaderStart.nativeElement.scrollTo(0, 0);
+
+    //       // $(window).scrollTop($(document).height() - ScrollFromBottom);
+
+
+
+    //     } else {
+    //       console.log('object add ' + document.documentElement.clientHeight);
+
+    //       // this.renderer.addClass(this.apptopnav.header.nativeElement, 'sticky');
+
+    //       let v2 = document.documentElement.clientHeight;
+
+    //       //  this.ScrollToPoint(0, v2);
+
+    //     }
+    //   });
+    // },
+    //   stickyHeaderOptions);
+
+    // stickyHeaderObserver.observe(this.stickyHeaderStart.nativeElement);
+
   }
 
+
+
+  // var ScrollFromBottom = $(document).height() - $(window).scrollTop();
+
+  // //ajax - add messages -- geenrate html code then add to dom
+
+  // //set scroll position
+  // $(window).scrollTop($(document).height() - ScrollFromBottom);
 
   deleteProduct(idx) {
     let test = this.listArr[idx];
@@ -1302,10 +1381,12 @@ export class SalesPage implements OnInit {
       this.submitForm.patchValue({
         tempdesc: event.description,
       });
+      this.lineItemData = event;
     } else {
       this.submitForm.patchValue({
         tempdesc: event.option.value.description,
       });
+      this.lineItemData = event.option.value;
     }
 
 
@@ -1326,11 +1407,18 @@ export class SalesPage implements OnInit {
 
   getLength() {
     const control = <FormArray>this.submitForm.controls['productarr'];
-    debugger;
     return control.length;
   }
 
   searchProducts() {
+
+    let invdt = "";
+    if (this.submitForm.value.invoicedate === null) {
+      invdt = moment().format('DD-MM-YYYY');
+    } else {
+      invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+    }
+
     //   let search = "";
     this.submitForm.controls['productctrl'].valueChanges.pipe(
       debounceTime(500),
@@ -1339,7 +1427,7 @@ export class SalesPage implements OnInit {
         console.log(id);
         //   search = id;
         if (id != null && id.length >= 3) {
-          return this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": id });
+          return this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customerdata.id, "orderdate": invdt, "searchstr": id });
         } else {
           return empty();
         }
@@ -1391,8 +1479,9 @@ export class SalesPage implements OnInit {
       return false;
     }
 
+    this.processItems(this.lineItemData);
 
-    // this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customer_id, "orderdate": order_date, "searchstr": searchstring }).subscribe(
+    // this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customerdata.id, "orderdate": order_date, "searchstr": searchstring }).subscribe(
     //   data => {
     //     this.resultList = data.body;
 
@@ -1428,6 +1517,8 @@ export class SalesPage implements OnInit {
     this.submitForm.controls['tempqty'].setErrors(null);
     this.submitForm.controls['productctrl'].setErrors(null);
     this.plist.nativeElement.focus();
+
+
     this._cdr.markForCheck();
 
   }
@@ -1448,8 +1539,19 @@ export class SalesPage implements OnInit {
 
   // });
 
+  // this.customer_state_code = custData.code;
+  // this.cust_discount_prcnt = custData.discount;
+  // this.cust_discount_type = custData.discount_type;
 
   setCustomerInfo(event, from) {
+
+
+
+
+    if (from === 'click' && event.option.value === 'new') {
+      this.addCustomer();
+    }
+
 
     if (from === 'tab') {
       this.address1 = event.address1;
@@ -1458,7 +1560,17 @@ export class SalesPage implements OnInit {
       this.gst = event.gst;
       this.phone = event.mobile;
       this.whatsapp = event.whatsapp;
+
+      this.customer_state_code = event.code;
+      this.cust_discount_prcnt = event.discount;
+      this.cust_discount_type = event.discount_type;
+
+
+
+      this.customerdata = event;
       this.iscustomerselected = true;
+
+
     } else {
       this.address1 = event.option.value.address1;
       this.address2 = event.option.value.address2;
@@ -1466,6 +1578,14 @@ export class SalesPage implements OnInit {
       this.gst = event.option.value.gst;
       this.phone = event.mobile;
       this.whatsapp = event.whatsapp;
+
+      this.customer_state_code = event.option.value.code;
+      this.cust_discount_prcnt = event.option.value.discount;
+      this.cust_discount_type = event.option.value.discount_type;
+      this.customerdata = event.option.value;
+
+
+
       this.iscustomerselected = true;
     }
 
@@ -1474,5 +1594,113 @@ export class SalesPage implements OnInit {
 
   }
 
+
+  ScrollToBottom() {
+    this.content.scrollToBottom(1500);
+  }
+
+  ScrollToTop() {
+    this.content.scrollToTop(1500);
+  }
+
+  ScrollToPoint(X, Y) {
+    this.content.scrollToPoint(X, Y, 300);
+  }
+
+  openDialog(event): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "400px";
+    dialogConfig.height = "100%";
+    dialogConfig.data = this.customerdata;
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
+
+
+
+
+    // const dialogRef = this.dialog.open(CustomerViewDialogComponent, {
+    //   width: '250px',
+    //   position: { top: '0', right: '0' }
+    // });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+  addCustomer() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+
+    const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          // this.reloadCustomers();
+          // implement
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe((data: any) => {
+
+        this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
+
+          this.customerdata = custData[0];
+
+
+          this.submitForm.patchValue({
+            customer: custData[0],
+          });
+
+          this.customername = custData[0].name;
+          this.customerselected = true;
+
+          this.setTaxLabel(custData[0].code);
+
+          this.setCustomerInfo(custData[0], "tab");
+
+          this.submitForm.patchValue({
+            customerctrl: custData[0]
+          });
+
+          this.isCLoading = false;
+          this.autoTrigger1.closePanel();
+
+          this._cdr.markForCheck();
+        });
+
+
+
+        this._cdr.markForCheck();
+      });
+
+
+  }
+
 }
 
+// result: "success",
+// 				obj: jsonObj,
+//         id: data.id,
+
+
+//         this.customerdata = custData[0];
+
+
+//         this.submitForm.patchValue({
+//           customer: custData[0],
+//         });
+
+//         this.customername = custData[0].name;
+//         this.customerselected = true;
+
+//         this.setTaxLabel(custData[0].code);

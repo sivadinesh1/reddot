@@ -11,13 +11,13 @@
 	width: 96%;
 	margin: 0 auto;
 	height: auto;
-	min-height: calc(100vh - 91px);
+	// min-height: calc(100vh - 91px);
 
 	.left {
 		display: grid;
 		grid-template-rows: 50px 1fr 70px 90px;
 		padding: 10px;
-		min-height: 80vh;
+		// min-height: 80vh;
 		//	background-color: palevioletred;
 
 		.row1 {
@@ -266,6 +266,6 @@
 	grid-gap: 10px;
 }
 
-.mat-option {
-	height: 3.3em !important;
-}
+// .mat-option {
+// 	height: 3.3em !important;
+// }

@@ -73,6 +73,7 @@ import { VendorAddDialogComponent } from './components/vendors/vendor-add-dialog
 
 import { CustomerEditDialogComponent } from './components/customers/customer-edit-dialog/customer-edit-dialog.component';
 import { CustomerAddDialogComponent } from './components/customers/customer-add-dialog/customer-add-dialog.component';
+import { CustomerViewDialogComponent } from './components/customers/customer-view-dialog/customer-view-dialog.component';
 import { CustomerDiscountDialogComponent } from './components/customers/customer-discount-dialog/customer-discount-dialog.component';
 
 import { LoadingComponent } from './components/loading/loading.component';
@@ -107,6 +108,7 @@ const components = [
   VendorAddDialogComponent,
   CustomerAddDialogComponent,
   CustomerEditDialogComponent,
+  CustomerViewDialogComponent,
   CustomerDiscountDialogComponent,
   CurrencyPadComponent,
   InvoiceSuccessComponent,
@@ -190,7 +192,7 @@ const matcomponents = [
   entryComponents: [
     AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
     ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent, CustomerAddDialogComponent, CustomerDiscountDialogComponent,
-    CustomerEditDialogComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
+    CustomerEditDialogComponent, CustomerViewDialogComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
   ]
 })
 export class SharedModule { }
