@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList, Inject, HostListener } from '@angular/core';
 import { ModalController, PickerController, AlertController } from '@ionic/angular';
-import { AddProductComponent } from '../components/add-product/add-product.component';
+
 import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 
@@ -15,12 +15,11 @@ import { NullToQuotePipe } from '../util/pipes/null-quote.pipe';
 import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 
-import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
+
 import { SaleApiService } from '../services/sale-api.service';
 
 import { InvoiceSuccessComponent } from '../components/invoice-success/invoice-success.component';
 
-import { User } from "../models/User";
 import { Customer } from 'src/app/models/Customer';
 import { Product } from '../models/Product';
 import { empty } from 'rxjs';
@@ -30,14 +29,13 @@ import { IonContent } from '@ionic/angular';
 import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
 
 
-
 @Component({
   selector: 'app-sales',
   templateUrl: './sales.page.html',
   styleUrls: ['./sales.page.scss'],
 })
 export class SalesPage implements OnInit {
-
+  breadmenu = "New Sale";
 
   listArr = [];
 
@@ -48,7 +46,7 @@ export class SalesPage implements OnInit {
   center_state_code: any;
   i_gst: any;
   customerdata: any;
-  customerselected: boolean = false;
+
   submitForm: FormGroup;
 
   customername: string = '';
@@ -114,15 +112,11 @@ export class SalesPage implements OnInit {
   isLoading = false;
   isCLoading = false;
 
-  address1: any;
-  address2: any;
-  district: any;
-  gst: any;
-  phone: any;
-  whatsapp: any;
   iscustomerselected = false;
 
   lineItemData: any;
+  selInvType: any;
+
 
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
@@ -131,9 +125,12 @@ export class SalesPage implements OnInit {
   @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
 
   @ViewChild('plist', { static: true }) plist: any;
+  @ViewChild('newrow', { static: true }) newrow: any;
 
   // TAB navigation for customer list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
+
+
 
   customer_lis: Customer[];
   product_lis: Product[];
@@ -156,28 +153,30 @@ export class SalesPage implements OnInit {
     this.center_id = currentUser.center_id;
 
     this._route.data.subscribe(data => {
+      this.selInvType = "gstinvoice";
       this.listArr = [];
+      this.cancel()
       this.rawSalesData = data['rawsalesdata'];
 
       this.id = this._route.snapshot.params['id'];
       this.mode = this._route.snapshot.params['mode'];
+
       this.initialize();
     });
 
 
 
   }
-  ngOnInit() {
-  }
 
+  ngOnInit() { }
 
   initialize() {
 
-
     this.init();
 
-
-    this.customerselected = false;
+    if (this.id === "0") {
+      this.getInvoiceSequence(this.center_id, "gstinvoice");
+    }
 
     if (this.mode === 'enquiry') {
 
@@ -199,10 +198,9 @@ export class SalesPage implements OnInit {
         });
 
         this.customername = custData[0].name;
-        this.customerselected = true;
+        this.iscustomerselected = true;
 
         this.setTaxLabel(custData[0].code);
-        //   this.setTaxSegment(custData.taxrate);
 
         let invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
 
@@ -233,10 +231,13 @@ export class SalesPage implements OnInit {
 
 
       if (this.rawSalesData[0] !== undefined && this.rawSalesData[0].id !== 0) {
+        this.breadmenu = "Edit Sale #" + this.rawSalesData[0].id;
+        this.selInvType = this.rawSalesData[0].sale_type;
 
         this.submitForm.patchValue({
           salesid: this.rawSalesData[0].id,
           invoiceno: this.rawSalesData[0].invoice_no,
+          invoicetype: this.rawSalesData[0].sale_type,
           invoicedate: new Date(new NullToQuotePipe().transform(this.rawSalesData[0].invoice_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 
           orderdate: this.rawSalesData[0].order_date === '' ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].order_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
@@ -280,11 +281,12 @@ export class SalesPage implements OnInit {
 
 
           this.submitForm.patchValue({
-            customer: custData[0],
+            customerctrl: custData[0],
           });
 
           this.customername = custData[0].name;
-          this.customerselected = true;
+
+          this.iscustomerselected = true;
 
           this.setTaxLabel(custData[0].code);
 
@@ -305,14 +307,7 @@ export class SalesPage implements OnInit {
 
       }
     }
-    // if (this.id === '0') {
-    this._saleApiService.getNxtSaleInvoiceNo(this.center_id).subscribe((data: any) => {
 
-      this.submitForm.patchValue({
-        invoiceno: data[0].NxtInvNo,
-      });
-    });
-    // }
 
   }
 
@@ -320,7 +315,7 @@ export class SalesPage implements OnInit {
     this.submitForm = this._fb.group({
       center_id: [this.center_id],
       salesid: new FormControl('', Validators.required),
-      customer: [null, Validators.required],
+
       invoiceno: [null],
       invoicedate: new FormControl(this.invoicedate, Validators.required),
       orderno: new FormControl(''),
@@ -344,6 +339,7 @@ export class SalesPage implements OnInit {
       status: new FormControl('D'),
       enqref: [0],
       revision: [0],
+      invoicetype: ["gstinvoice", [Validators.required]],
 
       customerctrl: [null, [Validators.required, RequireMatch]],
       productctrl: [null, [RequireMatch]],
@@ -357,12 +353,15 @@ export class SalesPage implements OnInit {
 
     this.searchCustomers();
     this.searchProducts();
+
     this._cdr.markForCheck();
 
   }
 
-
-
+  // calls when invoice type select changes
+  invoiceTypeChange(event) {
+    this.getInvoiceSequence(this.center_id, event.value);
+  }
 
   searchCustomers() {
     let search = "";
@@ -392,69 +391,6 @@ export class SalesPage implements OnInit {
   }
 
 
-
-  async showAllCustomersComp() {
-
-    const modal = await this._modalcontroller.create({
-      component: ShowCustomersComponent,
-      cssClass: 'customer-comp-styl'
-
-    });
-
-
-    modal.onDidDismiss().then((result) => {
-      let custData = result.data;
-
-      // this.customer_state_code = custData.code;
-      // this.cust_discount_prcnt = custData.discount;
-      // this.cust_discount_type = custData.discount_type;
-
-
-      this.submitForm.patchValue({
-        customer: custData,
-      });
-
-      this.customerdata = custData;
-      this.customername = custData.name;
-      this.customerselected = true;
-
-      this.setTaxLabel(custData.code);
-      // this.setTaxSegment(custData.taxrate);
-
-      this._cdr.markForCheck();
-
-    })
-
-    await modal.present();
-  }
-
-  async showAddProductComp() {
-    let invdt = "";
-    if (this.submitForm.value.invoicedate === null) {
-      invdt = moment().format('DD-MM-YYYY');
-    } else {
-      invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
-    }
-
-    const modal = await this._modalcontroller.create({
-      component: AddProductComponent,
-      componentProps: { center_id: this.center_id, customer_id: this.customerdata.id, order_date: invdt },
-      cssClass: 'select-modal'
-    });
-
-    modal.onDidDismiss().then((result) => {
-      console.log('The result:', result);
-      let temp = result.data;
-
-      this.processItems(temp);
-
-    });
-
-    await modal.present();
-
-  }
-
-
   processItems(temp) {
 
     this.setTaxSegment(temp.taxrate);
@@ -462,11 +398,6 @@ export class SalesPage implements OnInit {
     let taxableval = 0;
     let totalval = 0;
     let discval = 0;
-
-    // let qty = 0;
-
-
-    // qty = temp.qty
 
     let sid = '';
     if (this.rawSalesData !== null) {
@@ -490,9 +421,6 @@ export class SalesPage implements OnInit {
       this.cust_discount_type = temp.disc_type;
       this.cust_discount_prcnt = temp.disc_percent;
     }
-
-
-
 
 
     if (this.cust_discount_type === 'NET') {
@@ -566,9 +494,6 @@ export class SalesPage implements OnInit {
       taxable_value: this.taxable_value,
     });
 
-
-
-
     this.sumTotalTax();
 
     let v1 = document.documentElement.clientHeight + 70;
@@ -625,8 +550,6 @@ export class SalesPage implements OnInit {
   }
 
 
-
-
   ngAfterViewInit() {
     this.autoTrigger.panelClosingActions.subscribe(x => {
       if (this.autoTrigger.activeOption) {
@@ -650,8 +573,6 @@ export class SalesPage implements OnInit {
     })
 
 
-
-
     const stickyHeaderOptions = {
       rootMargin: "0px 0px -20px 0px"
     };
@@ -661,55 +582,9 @@ export class SalesPage implements OnInit {
       rootMargin: "0px 0px -200px 0px"
     };
 
-    // const stickyHeaderObserver = new IntersectionObserver(entries => {
-    //   entries.forEach(entry => {
-    //     if (!entry.isIntersecting) {
-    //       console.log('object rem' + document.documentElement.clientHeight);
-    //       // this.renderer.removeClass(this.apptopnav.header.nativeElement, 'sticky');
-
-    //       let v1 = document.documentElement.clientHeight + 70;
-
-    //       this.ScrollToPoint(0, v1);
-
-
-    //       // window.scrollTo({
-    //       //   top: document.documentElement.clientHeight - test1,
-    //       //   left: 0,
-    //       //   behavior: 'smooth'
-    //       // });
-
-    //       // this.stickyHeaderStart.nativeElement.scrollTo(0, 0);
-
-    //       // $(window).scrollTop($(document).height() - ScrollFromBottom);
-
-
-
-    //     } else {
-    //       console.log('object add ' + document.documentElement.clientHeight);
-
-    //       // this.renderer.addClass(this.apptopnav.header.nativeElement, 'sticky');
-
-    //       let v2 = document.documentElement.clientHeight;
-
-    //       //  this.ScrollToPoint(0, v2);
-
-    //     }
-    //   });
-    // },
-    //   stickyHeaderOptions);
-
-    // stickyHeaderObserver.observe(this.stickyHeaderStart.nativeElement);
-
   }
 
 
-
-  // var ScrollFromBottom = $(document).height() - $(window).scrollTop();
-
-  // //ajax - add messages -- geenrate html code then add to dom
-
-  // //set scroll position
-  // $(window).scrollTop($(document).height() - ScrollFromBottom);
 
   deleteProduct(idx) {
     let test = this.listArr[idx];
@@ -822,8 +697,9 @@ export class SalesPage implements OnInit {
 
         if (action === 'add') {
           this.presentAlertConfirm('add');
-
-        } else {
+        } else if (action === 'print') {
+          this.presentAlertConfirm('print');
+        } else if (action === 'draft') {
           this.presentAlertConfirm('draft');
 
         }
@@ -880,15 +756,7 @@ export class SalesPage implements OnInit {
     await alert.present();
   }
 
-  selectCustomer() {
 
-    let customervalue = this.submitForm.value.customer;
-
-    this.customerselected = true;
-    this.setTaxLabel(customervalue.code);
-
-    this._cdr.markForCheck();
-  }
 
   invoiceSuccess(invoice_id) {
 
@@ -968,8 +836,6 @@ export class SalesPage implements OnInit {
 
   }
 
-  // ((totalval/temp.qty) - temp.unit_price) < 0 ? "marginNeg": ""
-
   qtyChange(idx) {
 
     if (this.cust_discount_type === 'NET') {
@@ -1039,15 +905,6 @@ export class SalesPage implements OnInit {
 
 
 
-  clearAll() {
-    this.listArr = [];
-    this.total = "0.00";
-
-    this.igstTotal = "0.00";
-    this.cgstTotal = "0.00";
-    this.sgstTotal = "0.00";
-  }
-
   async presentAlertConfirm(action) {
     const alert = await this.alertController.create({
       header: 'Confirm!',
@@ -1067,7 +924,7 @@ export class SalesPage implements OnInit {
 
             this.executeDeletes();
 
-            if (action === 'add') {
+            if (action === 'add' || action === 'print') {
               this.submitForm.patchValue({
                 status: 'C',
               });
@@ -1083,28 +940,18 @@ export class SalesPage implements OnInit {
 
               if (data.body.result === 'success') {
                 this.invoiceid = data.body.id;
-                this.submitForm.reset();
-                this.init();
-                this.customerdata = null;
-                this.submitForm.patchValue({
-                  productarr: [],
-                });
-                this.customername = "";
-                this.customerselected = false;
-                this.editCompletedSales = false;
-                this.listArr = [];
 
-                this.total = "0.00";
-                this.igstTotal = "0.00";
-                this.cgstTotal = "0.00";
-                this.sgstTotal = "0.00";
+                this.cancel();
 
-                this._saleApiService.getNxtSaleInvoiceNo(this.center_id).subscribe((data: any) => {
+                // reinit after successful insert
+                this.getInvoiceSequence(this.center_id, "gstinvoice");
 
-                  this.submitForm.patchValue({
-                    invoiceno: data[0].NxtInvNo,
-                  });
-                });
+                // this._saleApiService.getNxtSaleInvoiceNo(this.center_id, "gstinvoice").subscribe((data: any) => {
+
+                //   this.submitForm.patchValue({
+                //     invoiceno: data[0].NxtInvNo,
+                //   });
+                // });
 
                 this._cdr.markForCheck();
                 if (action === 'add') {
@@ -1128,6 +975,127 @@ export class SalesPage implements OnInit {
     await alert.present();
   }
 
+
+  // Fn: to get & set invoiceno and invoice type
+  getInvoiceSequence(centerid, invoicetype) {
+
+    this._saleApiService.getNxtSaleInvoiceNo(centerid, invoicetype).subscribe((data: any) => {
+
+      this.submitForm.patchValue({
+        invoiceno: data[0].NxtInvNo,
+        invoicetype: invoicetype
+      });
+
+      this.selInvType = invoicetype;
+      this._cdr.markForCheck();
+    });
+
+  }
+
+
+  async presentCancelConfirm(action) {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'Are you sure to leave the page?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Okay',
+          handler: () => {
+            console.log('Confirm Okay');
+            // this.cancel();
+            this._router.navigateByUrl('/home/search-sales');
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+
+  async presentConvertSaleConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'This change cannot be rolled back. Are you sure?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Convert to sale',
+          handler: () => {
+            console.log('Confirm Okay');
+
+            this.convertToSale();
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  cancel() {
+    //  this.submitForm.reset();
+    //  this.init();
+    this.customerdata = null;
+    // this.submitForm.patchValue({
+    //   productarr: [],
+    // });
+    this.customername = "";
+    this.iscustomerselected = false;
+    this.editCompletedSales = false;
+    this.listArr = [];
+
+    this.total = "0.00";
+    this.igstTotal = "0.00";
+    this.cgstTotal = "0.00";
+    this.sgstTotal = "0.00";
+
+
+    this.customer_lis = null;
+
+
+
+  }
+
+
+  convertToSale() {
+    // pass sale id and call backend 
+    // refresh the page with latest values (invoice # and inv type)
+
+    this._commonApiService.convertToSale(this.center_id, this.id)
+      .subscribe((data: any) => {
+        console.log('object');
+
+        if (data.result === 'success') {
+
+          this.submitForm.patchValue({
+            invoiceno: data.invoiceNo,
+            invoicetype: "gstinvoice"
+          });
+          this.selInvType = "gstinvoice";
+
+          this.presentAlert('Converted to sale invoice!!');
+
+        }
+      });
+
+
+  }
 
   checkedRow(idx: number) {
 
@@ -1351,12 +1319,8 @@ export class SalesPage implements OnInit {
       customerctrl: null
     });
     this.customer_lis = null;
-    this.address1 = null;
-    this.address2 = null;
-    this.district = null;
-    this.gst = null;
-    this.phone = null;
-    this.whatsapp = null;
+    this.customerdata = null;
+
     this.iscustomerselected = false;
     this._cdr.markForCheck();
 
@@ -1419,13 +1383,11 @@ export class SalesPage implements OnInit {
       invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
     }
 
-    //   let search = "";
     this.submitForm.controls['productctrl'].valueChanges.pipe(
       debounceTime(500),
       tap(() => this.isLoading = true),
       switchMap(id => {
-        console.log(id);
-        //   search = id;
+
         if (id != null && id.length >= 3) {
           return this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customerdata.id, "orderdate": invdt, "searchstr": id });
         } else {
@@ -1439,6 +1401,7 @@ export class SalesPage implements OnInit {
       .subscribe((data: any) => {
         this.isLoading = false;
         this.product_lis = data.body;
+
         this._cdr.markForCheck();
       });
   }
@@ -1481,32 +1444,6 @@ export class SalesPage implements OnInit {
 
     this.processItems(this.lineItemData);
 
-    // this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customerdata.id, "orderdate": order_date, "searchstr": searchstring }).subscribe(
-    //   data => {
-    //     this.resultList = data.body;
-
-    //     if (this.resultList.length === 0) {
-
-    //       this.noMatch = 'No Matching Records';
-    //       this._cdr.markForCheck();
-
-    //     } else if (this.resultList.length > 0) {
-    //       this.noMatch = '';
-    //       this._cdr.markForCheck();
-    //     }
-
-    //   });
-
-
-    // this.listArr.push(this._fb.group({
-    //   checkbox: [false],
-    //   product_code: [this.submitForm.value.productctrl === null ? "" : this.submitForm.value.productctrl.product_code],
-
-    //   notes: [this.submitForm.value.tempdesc, Validators.required],
-    //   quantity: [this.submitForm.value.tempqty, [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
-
-    // }));
-
     this.submitForm.patchValue({
       productctrl: "",
       tempdesc: "",
@@ -1523,61 +1460,21 @@ export class SalesPage implements OnInit {
 
   }
 
-
-
-  // const modal = await this._modalcontroller.create({
-  //   component: AddProductComponent,
-  //   componentProps: { center_id: this.center_id, customer_id: this.customerdata.id, order_date: invdt },
-  //   cssClass: 'select-modal'
-  // });
-
-  // modal.onDidDismiss().then((result) => {
-  //   console.log('The result:', result);
-  //   let temp = result.data;
-
-  //   this.processItems(temp);
-
-  // });
-
-  // this.customer_state_code = custData.code;
-  // this.cust_discount_prcnt = custData.discount;
-  // this.cust_discount_type = custData.discount_type;
-
   setCustomerInfo(event, from) {
-
-
-
 
     if (from === 'click' && event.option.value === 'new') {
       this.addCustomer();
     }
 
-
     if (from === 'tab') {
-      this.address1 = event.address1;
-      this.address2 = event.address2;
-      this.district = event.district;
-      this.gst = event.gst;
-      this.phone = event.mobile;
-      this.whatsapp = event.whatsapp;
-
       this.customer_state_code = event.code;
       this.cust_discount_prcnt = event.discount;
       this.cust_discount_type = event.discount_type;
 
-
-
       this.customerdata = event;
       this.iscustomerselected = true;
 
-
     } else {
-      this.address1 = event.option.value.address1;
-      this.address2 = event.option.value.address2;
-      this.district = event.option.value.district;
-      this.gst = event.option.value.gst;
-      this.phone = event.mobile;
-      this.whatsapp = event.whatsapp;
 
       this.customer_state_code = event.option.value.code;
       this.cust_discount_prcnt = event.option.value.discount;
@@ -1618,14 +1515,6 @@ export class SalesPage implements OnInit {
 
     const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
 
-
-
-
-    // const dialogRef = this.dialog.open(CustomerViewDialogComponent, {
-    //   width: '250px',
-    //   position: { top: '0', right: '0' }
-    // });
-
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
@@ -1645,8 +1534,7 @@ export class SalesPage implements OnInit {
       .pipe(
         filter(val => !!val),
         tap(() => {
-          // this.reloadCustomers();
-          // implement
+          // do nothing check
           this._cdr.markForCheck();
         }
         )
@@ -1656,13 +1544,8 @@ export class SalesPage implements OnInit {
 
           this.customerdata = custData[0];
 
-
-          this.submitForm.patchValue({
-            customer: custData[0],
-          });
-
           this.customername = custData[0].name;
-          this.customerselected = true;
+          this.iscustomerselected = true;
 
           this.setTaxLabel(custData[0].code);
 
@@ -1686,21 +1569,18 @@ export class SalesPage implements OnInit {
 
   }
 
+
+  logScrolling(event) {
+    if (this.autoTrigger1.panelOpen) {
+      this.autoTrigger1.closePanel();
+    }
+
+    if (this.autoTrigger.panelOpen) {
+      this.autoTrigger.closePanel();
+    }
+
+  }
+
+
+
 }
-
-// result: "success",
-// 				obj: jsonObj,
-//         id: data.id,
-
-
-//         this.customerdata = custData[0];
-
-
-//         this.submitForm.patchValue({
-//           customer: custData[0],
-//         });
-
-//         this.customername = custData[0].name;
-//         this.customerselected = true;
-
-//         this.setTaxLabel(custData[0].code);

@@ -19,13 +19,7 @@
 					<div class="role">{{ userdata?.role }}</div>
 				</div>
 				<div>
-					<img
-						src="../../assets/svg/account.svg"
-						width="28px"
-						height="28px"
-						class="img cursor"
-						[matMenuTriggerFor]="menu"
-					/>
+					<img src="../../assets/svg/account.svg" width="28px" height="28px" class="img cursor" [matMenuTriggerFor]="menu" />
 				</div>
 			</div>
 		</ion-title>
@@ -64,8 +58,11 @@
 </mat-menu>
 
 <mat-menu #admin="matMenu">
-	<button mat-menu-item (click)="viewProduct()" style="padding-right: 16px; ">
+	<button mat-menu-item (click)="viewProduct()" style="padding-right: 16px;">
 		<span>Product</span>
+	</button>
+	<button mat-menu-item (click)="viewBrand()">
+		<span>Brand</span>
 	</button>
 	<button mat-menu-item (click)="viewVendor()">
 		<span>Vendor</span>

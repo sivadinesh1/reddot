@@ -47,6 +47,10 @@ export class MenuHeaderComponent implements OnInit {
     this._router.navigate([`/home/view-vendors`]);
   }
 
+  viewBrand() {
+    this._router.navigate([`/home/view-brands`]);
+  }
+
   viewCustomer() {
     this._router.navigate([`/home/view-customers`]);
   }

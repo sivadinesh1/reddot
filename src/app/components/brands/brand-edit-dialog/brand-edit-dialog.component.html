@@ -1,0 +1,30 @@
+<ion-content>
+	<app-loading></app-loading>
+	<div class="screen-header">
+		<div>
+			Edit Brand Details
+		</div>
+		<div>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+		</div>
+	</div>
+
+	<div class="content">
+		<form class="myForm" [formGroup]="submitForm" (ngSubmit)="onSubmit()">
+			<div class="brand-info">
+				<div class="name">
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Name</mat-label>
+						<input matInput placeholder="Name" readonly formControlName="name" required />
+						<mat-error>This field is required</mat-error>
+					</mat-form-field>
+				</div>
+			</div>
+
+			<div style="text-align: center;">
+				<button mat-stroked-button type="button">Clear</button>&nbsp;&nbsp;
+				<button mat-raised-button color="primary" [disabled]="!submitForm.valid" type="submit">Update Brand</button>
+			</div>
+		</form>
+	</div>
+</ion-content>

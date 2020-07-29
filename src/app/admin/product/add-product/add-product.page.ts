@@ -21,7 +21,7 @@ export class AddProductPage implements OnInit {
 
   isLinear = true;
   center_id: any;
-  vendors: any;
+  brands: any;
 
   submitForm: FormGroup;
   pexists = false;
@@ -47,7 +47,7 @@ export class AddProductPage implements OnInit {
       center_id: [],
       product_code: ['', Validators.required],
       description: ['', Validators.required],
-      vendorid: ['', Validators.required],
+      brand_id: ['', Validators.required],
 
       unit: ['', Validators.required],
       packetsize: ['', Validators.required],
@@ -86,8 +86,8 @@ export class AddProductPage implements OnInit {
           center_id: this.userdata.center_id,
         });
 
-        this._commonApiService.getAllActiveVendors(this.userdata.center_id).subscribe((data) => {
-          this.vendors = data;
+        this._commonApiService.getAllActiveBrands(this.userdata.center_id, 'A').subscribe((data) => {
+          this.brands = data;
         });
 
         this.init();

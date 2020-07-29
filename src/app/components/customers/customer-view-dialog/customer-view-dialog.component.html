@@ -1,24 +1,42 @@
 <ion-content>
 	<div class="screen-header">
-		<div>
+		<div style="padding: 10px 0px;">
 			Customer Details
 		</div>
-		<div>
+		<div style="align-items: center;">
 			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
 		</div>
 	</div>
 
 	<div class="customer-info">
-		<div class="name">{{ customer.name }}</div>
-		<div class="address1">
-			{{ customer.address1 }}
+		<div style="padding: 10px 0px; color: #222222; font-size: 14px;">{{ customer.name }}</div>
+		<div style="padding: 10px 0px; display: grid;">
+			<div style="color: #666666; font-size: 14px;">Outstanding Receivables</div>
+			<div style="color: #222222; font-size: 14px;">N/A</div>
 		</div>
-		<div>&nbsp;</div>
 	</div>
 
 	<mat-tab-group class="tab-group">
-		<mat-tab label="First" class="demo-tab-content"> ADDRESS </mat-tab>
-		<mat-tab label="Second" class="demo-tab-content"> CONTACT PERSONS </mat-tab>
-		<mat-tab label="Third" class="demo-tab-content"> LATEST </mat-tab>
+		<mat-tab label="Address" class="demo-tab-content">
+			<div style="padding: 10px 0px 0px 0px; color: #222222; font-size: 14px;">BILLING ADDRESS</div>
+			<div style="padding: 10px 0px 0px 0px; font-size: 12px; color: #666666;">
+				<div>{{ customer.address1 }}</div>
+				<div>{{ customer.address2 }}</div>
+				<div>{{ customer.address3 }}</div>
+				<div>{{ customer.district }}</div>
+				<div>{{ customer.pin }}</div>
+			</div>
+
+			<div style="padding: 10px 0px 0px 0px; color: #222222; font-size: 14px;">SHIPPING ADDRESS</div>
+			<div style="padding: 10px 0px 0px 0px; font-size: 12px; color: #666666;">
+				<div>{{ customer.csa_address1 }}</div>
+				<div>{{ customer.csa_address2 }}</div>
+				<div>{{ customer.csa_address3 }}</div>
+				<div>{{ customer.csa_district }}</div>
+				<div>{{ customer.csa_pin }}</div>
+			</div>
+		</mat-tab>
+		<mat-tab label="Contact Persons" class="demo-tab-content"> CONTACT PERSONS </mat-tab>
+		<mat-tab label="Latest" class="demo-tab-content"> LATEST </mat-tab>
 	</mat-tab-group>
 </ion-content>

@@ -77,15 +77,30 @@
 	<button mat-menu-item (click)="viewProduct()" style="padding-right: 16px;">
 		<span>Product</span>
 	</button>
+	<button mat-menu-item (click)="viewBrand()">
+		<span>Brand</span>
+	</button>
 	<button mat-menu-item (click)="viewVendor()">
 		<span>Vendor</span>
 	</button>
 
-	<button mat-menu-item (click)="viewCustomer()">
+	<!-- <button mat-menu-item (click)="viewCustomer()">
+		<span>Customers</span>
+	</button> -->
+	<button mat-menu-item [matMenuTriggerFor]="customeradmin">
 		<span>Customers</span>
 	</button>
 
 	<button mat-menu-item (click)="editCenter()">
 		<span>Centers</span>
+	</button>
+</mat-menu>
+
+<mat-menu #customeradmin="matMenu">
+	<button mat-menu-item (click)="viewCustomer()" style="padding-right: 16px;">
+		<span>Customer</span>
+	</button>
+	<button mat-menu-item (click)="viewDiscounts()">
+		<span>Discounts</span>
 	</button>
 </mat-menu>

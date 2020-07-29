@@ -17,4 +17,12 @@ export class Customer {
     email: string;
     createdon: string;
     isactive: string;
+
+    csa_address1: string;
+    csa_address2: string;
+    csa_address3: string;
+    csa_district: string;
+    csa_pin: number;
+    csa_code: number;
+
 }

@@ -74,7 +74,6 @@ import { VendorAddDialogComponent } from './components/vendors/vendor-add-dialog
 import { CustomerEditDialogComponent } from './components/customers/customer-edit-dialog/customer-edit-dialog.component';
 import { CustomerAddDialogComponent } from './components/customers/customer-add-dialog/customer-add-dialog.component';
 import { CustomerViewDialogComponent } from './components/customers/customer-view-dialog/customer-view-dialog.component';
-import { CustomerDiscountDialogComponent } from './components/customers/customer-discount-dialog/customer-discount-dialog.component';
 
 import { LoadingComponent } from './components/loading/loading.component';
 import { MessagesComponent } from './components/messages/messages.component';
@@ -85,6 +84,12 @@ import { LeftMenuComponent } from './components/left-menu/left-menu.component';
 import { ArrowDivDirective } from './directive/arrow-div.directive';
 import { RouterModule } from '@angular/router';
 import { AddMoreEnquiryComponent } from './components/add-more-enquiry/add-more-enquiry.component';
+import { ProductEditDialogComponent } from './components/products/product-edit-dialog/product-edit-dialog.component';
+import { ProductAddDialogComponent } from './components/products/product-add-dialog/product-add-dialog.component';
+import { BrandAddDialogComponent } from './components/brands/brand-add-dialog/brand-add-dialog.component';
+import { BrandEditDialogComponent } from './components/brands/brand-edit-dialog/brand-edit-dialog.component';
+import { DefaultDiscountsComponent } from './components/customers/discount/default-discounts/default-discounts.component';
+import { BrandDiscountsComponent } from './components/customers/discount/brand-discounts/brand-discounts.component';
 
 const components = [
 
@@ -106,10 +111,22 @@ const components = [
   AddProductComponent,
   VendorEditDialogComponent,
   VendorAddDialogComponent,
+
   CustomerAddDialogComponent,
   CustomerEditDialogComponent,
+
+  ProductAddDialogComponent,
+  ProductEditDialogComponent,
+
+  BrandAddDialogComponent,
+  BrandEditDialogComponent,
+
+  DefaultDiscountsComponent,
+  BrandDiscountsComponent,
+
+
   CustomerViewDialogComponent,
-  CustomerDiscountDialogComponent,
+
   CurrencyPadComponent,
   InvoiceSuccessComponent,
   AddMoreEnquiryComponent,
@@ -191,8 +208,13 @@ const matcomponents = [
   ],
   entryComponents: [
     AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
-    ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent, CustomerAddDialogComponent, CustomerDiscountDialogComponent,
-    CustomerEditDialogComponent, CustomerViewDialogComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
+    ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent,
+    BrandAddDialogComponent, BrandEditDialogComponent,
+    DefaultDiscountsComponent,
+    BrandDiscountsComponent,
+    CustomerAddDialogComponent, CustomerEditDialogComponent,
+
+    CustomerViewDialogComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
   ]
 })
 export class SharedModule { }

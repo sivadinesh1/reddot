@@ -1,18 +1,18 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'null-quote'
+  name: 'nullquote'
 })
 export class NullToQuotePipe implements PipeTransform {
 
   transform(value: string): string {
-    if (value == null ) {
-        return '';
+    if (value == null) {
+      return '';
     } else if (value === undefined) {
-        return '';
-      } else {
-        return value;
-      }
+      return '';
+    } else {
+      return value;
+    }
 
   }
 

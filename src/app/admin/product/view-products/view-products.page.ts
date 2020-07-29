@@ -1,13 +1,23 @@
 
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonSearchbar } from '@ionic/angular';
 import { AuthenticationService } from '../../../services/authentication.service';
-import { filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
 
 import { User } from "../../../models/User";
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
+
+import { ProductAddDialogComponent } from 'src/app/components/products/product-add-dialog/product-add-dialog.component';
+
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+
+import { MatSort } from '@angular/material/sort';
+import { Observable } from 'rxjs';
+import { Product } from 'src/app/models/Product';
+import { ProductEditDialogComponent } from 'src/app/components/products/product-edit-dialog/product-edit-dialog.component';
 
 @Component({
   selector: 'app-view-products',
@@ -21,6 +31,8 @@ export class ViewProductsPage implements OnInit {
   center_id: any;
 
   pcount: any;
+  pageLength: any;
+  isTableHasData = true;
 
 
   resultList: any;
@@ -35,10 +47,18 @@ export class ViewProductsPage implements OnInit {
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
+  @ViewChild('epltable', { static: false }) epltable: ElementRef;
+
+
+  displayedColumns: string[] = ['productcode', 'description', 'name', 'actions'];
+  dataSource = new MatTableDataSource<Product>();
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
-    private _route: ActivatedRoute, private _router: Router, private _authservice: AuthenticationService
+    private _route: ActivatedRoute, private _dialog: MatDialog,
+    private _router: Router, private _authservice: AuthenticationService
   ) {
 
     this.userdata$ = this._authservice.currentUser;
@@ -80,24 +100,42 @@ export class ViewProductsPage implements OnInit {
   }
 
 
+
+  // this._commonApiService.getAllActiveVendors(this.center_id)
+  // .subscribe((data: any) => {
+
+  //   // DnD - code to add a "key/Value" in every object of array
+  //   this.dataSource.data = data.map(el => {
+  //     var o = Object.assign({}, el);
+  //     o.isExpanded = false;
+  //     return o;
+  //   })
+
+  //   this.dataSource.sort = this.sort;
+  //   this.pageLength = data.length;
+
+  // });
+
   openDialog(searchstring): void {
 
 
-    if (searchstring.length > 2) {
+    if (searchstring.length >= 2) {
 
-      this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": searchstring }).subscribe(
-        data => {
-          this.resultList = data.body;
-          // console.log('ABCD >> ' + JSON.stringify(this.resultList));
-          if (this.resultList.length === 0) {
+      this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": searchstring })
+        .subscribe((data: any) => {
 
-            this.noMatch = 'No Matching Records';
-            this._cdr.markForCheck();
+          // DnD - code to add a "key/Value" in every object of array
+          this.dataSource.data = data.body.map(el => {
+            var o = Object.assign({}, el);
+            o.isExpanded = false;
+            return o;
+          })
 
-          } else if (this.resultList.length > 0) {
-            this.noMatch = '';
-            this._cdr.markForCheck();
-          }
+          this.dataSource.sort = this.sort;
+          this.pageLength = data.length;
+
+          this._cdr.markForCheck();
+
 
         });
 
@@ -108,6 +146,56 @@ export class ViewProductsPage implements OnInit {
     this.searchbar.value = '';
     this.noMatch = '';
     this.resultList = null;
+  }
+
+
+  add() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+
+    const dialogRef = this._dialog.open(ProductAddDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe();
+
+
+  }
+
+
+  edit(product: Product) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+    dialogConfig.data = product;
+
+
+    const dialogRef = this._dialog.open(ProductEditDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          // do nothing
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe();
+
+
   }
 
 

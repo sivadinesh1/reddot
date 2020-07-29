@@ -17,7 +17,7 @@ import { Observable } from 'rxjs';
 import * as xlsx from 'xlsx';
 import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
 import { CustomerEditDialogComponent } from 'src/app/components/customers/customer-edit-dialog/customer-edit-dialog.component';
-import { CustomerDiscountDialogComponent } from 'src/app/components/customers/customer-discount-dialog/customer-discount-dialog.component';
+
 
 @Component({
   selector: 'app-view-customer',
@@ -156,30 +156,7 @@ export class ViewCustomerPage implements OnInit {
 
 
 
-  setupDiscount(customer: Customer) {
 
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "80%";
-    dialogConfig.height = "80%";
-    dialogConfig.data = customer;
-
-
-    const dialogRef = this._dialog.open(CustomerDiscountDialogComponent, dialogConfig);
-
-    dialogRef.afterClosed()
-      .pipe(
-        filter(val => !!val),
-        tap(() => {
-          this.reloadCustomers();
-          this._cdr.markForCheck();
-        }
-        )
-      ).subscribe();
-
-
-  }
 
 
   // setupDiscount(item) {

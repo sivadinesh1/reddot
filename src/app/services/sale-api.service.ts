@@ -23,8 +23,8 @@ export class SaleApiService {
     constructor(private httpClient: HttpClient) { }
 
 
-    getNxtSaleInvoiceNo(centerid) {
-        return this.httpClient.get(`${this.restApiUrl}/api/sale/get-next-sale-invoice-no/${centerid}`);
+    getNxtSaleInvoiceNo(centerid, invoicetype) {
+        return this.httpClient.get(`${this.restApiUrl}/api/sale/get-next-sale-invoice-no/${centerid}/${invoicetype}`);
     }
 
 }

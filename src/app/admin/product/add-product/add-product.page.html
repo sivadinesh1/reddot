@@ -34,11 +34,11 @@
 						<mat-error>This field is required</mat-error>
 					</mat-form-field>
 				</div>
-				<div class="vendor">
+				<div>
 					<mat-form-field class="mat-width-ext">
-						<mat-label>Vendor</mat-label>
-						<mat-select formControlName="vendorid">
-							<mat-option *ngFor="let item of vendors" [value]="item.id">
+						<mat-label>Brands</mat-label>
+						<mat-select formControlName="brand_id">
+							<mat-option *ngFor="let item of brands" [value]="item.id">
 								{{item.name}}
 							</mat-option>
 						</mat-select>

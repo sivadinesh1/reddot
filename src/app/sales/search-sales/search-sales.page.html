@@ -105,7 +105,8 @@
 	<ng-template #MsgRef>
 		<div class="header header-style">
 			<div>Invoice #</div>
-			<div>Invoice Date</div>
+			<div>Inv Date</div>
+			<div>Inv Type</div>
 			<div>Customer Name</div>
 			<div># of Items</div>
 			<div>Total Value</div>
@@ -116,9 +117,10 @@
 		<div class="headerRow" style="background-color: #efefef;">
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div style="font-size: 1.1rem; font-weight: 400;">&nbsp;</div>
-			<div style="font-size: 1.1rem; font-weight: 400;">{{this.sumNumItems}}</div>
-			<div style="font-size: 1.1rem; font-weight: 400;">{{this.sumTotalValue}}</div>
+			<div>&nbsp;</div>
+			<div style="font-size: 1rem; font-weight: 400;">&nbsp;</div>
+			<div style="font-size: 1rem; font-weight: 400;">{{this.sumNumItems}}</div>
+			<div style="font-size: 1rem; font-weight: 400;">{{this.sumTotalValue}}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
@@ -129,6 +131,7 @@
 		<div *ngFor="let item of filteredValues  " class="listItem">
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>
+			<div class="item">{{item.sale_type === "gstinvoice" ? "GST Invoice" : "Stock Issue"}}</div>
 			<div class="item">{{item.customer_name}}</div>
 			<div class="item">{{item.no_of_items}}</div>
 			<div class="item">{{item.total_value}}</div>

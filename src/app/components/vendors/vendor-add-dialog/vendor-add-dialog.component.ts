@@ -88,16 +88,12 @@ export class VendorAddDialogComponent implements OnInit {
     this._commonApiService.addVendor(this.submitForm.value).subscribe((data: any) => {
 
       if (data.body.result === 'success') {
-        this.searchVendors();
+        this.dialogRef.close(data);
       }
     });
 
   }
 
-  searchVendors() {
-
-    this._router.navigate([`/home/view-vendors`]);
-  }
 
   addVendor() {
     this._router.navigate([`/home/vendor/add`]);

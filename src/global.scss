@@ -157,3 +157,13 @@ button {
 	overflow: auto;
 	text-overflow: unset;
 }
+
+.mat-drawer,
+.mat-sidenav {
+	&[cdk-scrollable],
+	&[cdkScrollable] {
+		.mat-drawer-inner-container {
+			overflow: visible;
+		}
+	}
+}

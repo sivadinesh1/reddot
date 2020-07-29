@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <ion-content>
 	<div class="content">
 		<div class="head">
@@ -7,44 +5,42 @@
 				<div class="heading">
 					Products List
 				</div>
-				<!-- <div class="found">
-					Found {{pcount | number:'2.'}}
-				</div> -->
 			</div>
 			<div class="add-btn">
-				<button appPreventDoubleClick (throttledClick)="addProduct()" [throttleTime]="500" mat-raised-button color="primary">
+				<button appPreventDoubleClick (throttledClick)="add()" [throttleTime]="500" mat-raised-button color="primary">
 					+ Add Product
 				</button>
 			</div>
 		</div>
 
-		<div class="add-prod-wrap">
-			<div class="row1">
-				<div class="search_box">
-					<ion-searchbar
-						autofocus
-						debounce="700"
-						placeholder="Search from {{pcount | number:'2.'}} products, by part number / description"
-						#mySearchbar
-						show-cancel-button="focus"
-						(ionClear)="reset()"
-						(ionInput)="openDialog($event.target.value)"
-					></ion-searchbar>
-				</div>
+		<div class="row1">
+			<div class="search_box">
+				<ion-searchbar
+					autofocus
+					debounce="700"
+					placeholder="Search by part number / description"
+					#mySearchbar
+					show-cancel-button="focus"
+					(ionClear)="reset()"
+					(ionInput)="openDialog($event.target.value)"
+				></ion-searchbar>
 			</div>
-			<div class="row-cnt">
-				<span *ngIf="resultList">
-					<span *ngIf="resultList.length >= 50" style="font-size: 14px; color: #797979;">
-						Matches: {{ resultList.length }} +
-					</span>
-					<span *ngIf="resultList.length < 50" style="font-size: 14px; color: #797979;">
-						Matches: {{ resultList.length }}
-					</span>
+		</div>
+		<div class="row-cnt">
+			<span *ngIf="resultList">
+				<span *ngIf="resultList.length >= 50" style="font-size: 14px; color: #797979;">
+					Matches: {{ resultList.length }} +
 				</span>
-			</div>
-			<div class="header-row">
+				<span *ngIf="resultList.length < 50" style="font-size: 14px; color: #797979;">
+					Matches: {{ resultList.length }}
+				</span>
+			</span>
+		</div>
+		<!-- <div class="header-row">
 				<div class="col">#</div>
 				<div class="col">Product Info</div>
+				<div class="col">Brand</div>
+
 				<div class="col txt-right-align">Available Qty</div>
 				<div class="col txt-right-align">MRP</div>
 				<div class="col">&nbsp;</div>
@@ -57,11 +53,66 @@
 							<div class="item21">{{ item.product_code }}</div>
 							<div class="item22 desc-styl">{{ item.description }}</div>
 						</div>
+						<div class="item3 txt-right-left">{{ item.name }}</div>
 						<div class="item3 txt-right-align">{{ item.available_stock }}</div>
 						<div class="item4 txt-right-align">{{ item.mrp }}</div>
 					</div>
 				</ng-container>
+			</div> -->
+
+		<ng-container>
+			<div class="example-container mat-elevation-z8">
+				<div class="example-table-container" #epltable>
+					<table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+						<ng-container matColumnDef="productcode">
+							<th mat-header-cell *matHeaderCellDef>Product Code</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.product_code}}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="description">
+							<th mat-header-cell *matHeaderCellDef>Description</th>
+							<td mat-cell *matCellDef="let element" class="m-card-sub-title" data-label="Form type">
+								{{element.description}}
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="name">
+							<th mat-header-cell *matHeaderCellDef>Brand</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.name}}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="actions">
+							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+							<td mat-cell *matCellDef="let element">
+								<button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{element: element}">
+									<mat-icon>more_vert</mat-icon>
+								</button>
+							</td>
+						</ng-container>
+
+						<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+					</table>
+					<div [hidden]="isTableHasData" class="center-message">
+						No Data available.
+					</div>
+				</div>
+				<mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
 			</div>
-		</div>
+			<mat-menu #menu="matMenu">
+				<ng-template matMenuContent let-element="element">
+					<button mat-menu-item (click)="edit(element)">
+						<mat-icon>edit </mat-icon>
+						<span>Edit</span>
+					</button>
+
+					<!-- <button mat-menu-item disabled>
+						<mat-icon>delete</mat-icon>
+						<span>Delete </span>
+					</button> -->
+				</ng-template>
+			</mat-menu>
+		</ng-container>
 	</div>
 </ion-content>

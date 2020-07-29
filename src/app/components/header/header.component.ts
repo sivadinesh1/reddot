@@ -75,6 +75,10 @@ export class HeaderComponent implements OnInit {
     this._router.navigate([`/home/view-vendors`]);
   }
 
+  viewBrand() {
+    this._router.navigate([`/home/view-brands`]);
+  }
+
   viewCustomer() {
     this._router.navigate([`/home/view-customers`]);
   }
@@ -85,6 +89,10 @@ export class HeaderComponent implements OnInit {
 
   showNewEnquiry() {
     this._router.navigate([`/home/enquiry`]);
+  }
+
+  viewDiscounts() {
+    this._router.navigate(['/home/view-discounts']);
   }
 
   async showAddProductComp() {

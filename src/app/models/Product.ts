@@ -8,6 +8,7 @@ export class Product {
     packetsize: string;
     hsncode: string;
     currentstock: string;
+    available_stock: string;
     unit_price: string;
     mrp: string;
     purchaseprice: string;
@@ -23,5 +24,9 @@ export class Product {
     avgpurprice: number;
     avgsaleprice: number;
     margin: number;
+    brand_id: string;
+    name: string;
+    uom: string;
+    product_id: string;
 
 }

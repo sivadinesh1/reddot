@@ -97,11 +97,23 @@ const routes: Routes = [
         loadChildren: () => import('./admin/vendor/view-vendors/view-vendors.module').then(m => m.ViewVendorsPageModule)
       },
 
+      // brands
+      {
+        path: 'view-brands',
+        loadChildren: () => import('./admin/brand/view-brands/view-brands.module').then(m => m.ViewBrandsPageModule)
+      },
+
 
       // customers
       {
         path: 'view-customers',
         loadChildren: () => import('./admin/customer/view-customer/view-customer.module').then(m => m.ViewCustomerPageModule)
+      },
+
+      // customers
+      {
+        path: 'view-discounts',
+        loadChildren: () => import('./admin/customer/discounts/view-discounts/view-discounts.module').then(m => m.ViewDiscountsPageModule)
       },
 
 
@@ -136,6 +148,10 @@ const routes: Routes = [
   {
     path: 'discount-customer',
     loadChildren: () => import('./admin/customer/discount-customer/discount-customer.module').then(m => m.DiscountCustomerPageModule)
+  },
+  {
+    path: 'view-discounts',
+    loadChildren: () => import('./admin/customer/discounts/view-discounts/view-discounts.module').then(m => m.ViewDiscountsPageModule)
   },
 
 ];

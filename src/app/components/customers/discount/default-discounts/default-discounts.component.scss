@@ -5,9 +5,13 @@
 	padding: 16px;
 }
 
-// .mat-width-ext {
-// 	width: 400px;
-// }
+.mat-width-ext {
+	width: 60px;
+}
+
+.mat-width-date {
+	width: 150px;
+}
 
 .gap {
 	padding: 0px 10px;
@@ -32,6 +36,6 @@
 
 .form-wrap {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 	grid-gap: 10px;
 }

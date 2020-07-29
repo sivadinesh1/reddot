@@ -12,6 +12,8 @@ import { Customer } from '../models/Customer';
 import { Vendor } from '../models/Vendor';
 import { EnquiryDetail } from '../models/EnquiryDetail';
 import { Enquiry } from '../models/Enquiry';
+import { Brand } from '../models/Brand';
+
 
 @Injectable({
   providedIn: 'root'
@@ -59,16 +61,16 @@ export class CommonApiService {
 
 
   getOpenEnquiries(centerid: number, status: string) {
-
     return this.httpClient.get(`${this.restApiUrl}/api/enquiry/open-enquiries/${centerid}/${status}`);
   }
 
 
-
   getAllActiveVendors(centerid): Observable<Vendor[]> {
     return this.httpClient.get<Vendor[]>(`${this.restApiUrl}/api/all-active-vendors/${centerid}`);
+  }
 
-
+  getAllActiveBrands(centerid, status): Observable<Brand[]> {
+    return this.httpClient.get<Brand[]>(`${this.restApiUrl}/api/all-active-brands/${centerid}/${status}`);
   }
 
   getAllActiveCustomers(centerid) {
@@ -212,15 +214,20 @@ export class CommonApiService {
   addVendor(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/admin/add-vendor', submitForm, { observe: 'response' });
   }
+  //brands
+  updateBrand(id: number, changes: Partial<Vendor>): Observable<any> {
+    return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-brand/${id}`, changes);
+  }
+
+  addBrand(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/admin/add-brand', submitForm, { observe: 'response' });
+  }
+
 
   // customers
   getCustomerDetails(center_id, customer_id) {
     return this.httpClient.get(`${this.restApiUrl}/api/admin/get-customer-details/${center_id}/${customer_id}`);
   }
-
-  // updateCustomer(submitForm) {
-  //   return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-customer', submitForm, { observe: 'response' });
-  // }
 
   updateCustomer(id: number, changes: Partial<Vendor>): Observable<any> {
     return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-customer/${id}`, changes);
@@ -231,6 +238,15 @@ export class CommonApiService {
     return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-customer-discount`, objectForm, { observe: 'response' });
   }
 
+  // update default 
+  updateDefaultCustomerDiscount(objectForm) {
+
+    return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-default-customer-discount`, objectForm, { observe: 'response' });
+  }
+
+  addDiscountsByBrand(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/admin/add-discounts-brand', submitForm, { observe: 'response' });
+  }
 
   addCustomer(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/admin/add-customer', submitForm, { observe: 'response' });
@@ -243,6 +259,11 @@ export class CommonApiService {
 
   updateCenter(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/admin/update-center', submitForm, { observe: 'response' });
+  }
+
+
+  convertToSale(center_id: string, id: string) {
+    return this.httpClient.get(`${this.restApiUrl}/api/sale/convert-sale/${center_id}/${id}`);
   }
 
   updateTax(submitForm) {
@@ -359,6 +380,23 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/admin/customer-discount/${center_id}/${customer_id}`);
   }
 
+  getAllCustomerDefaultDiscounts(center_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/all-customer-default-discounts/${center_id}`);
+  }
+
+  getDiscountsByCustomer(center_id, customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/discounts-customer/${center_id}/${customer_id}`);
+  }
+
+  getDiscountsByCustomerByBrand(center_id, customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/discounts-customer-brands/${center_id}/${customer_id}`);
+  }
+
+
+
+  getBrandsMissingDiscounts(center_id, status, customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/brands-missing-discounts/${center_id}/${status}/${customer_id}`);
+  }
 
 }
 
