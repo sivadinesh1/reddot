@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators, FormGroup, FormArray, NgForm } from '@angular/forms';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ModalController, AlertController } from '@ionic/angular';
 import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
 import { CommonApiService } from '../services/common-api.service';
@@ -18,7 +18,8 @@ import { RequireMatch as RequireMatch } from '../util/directives/requireMatch';
 import { Product } from '../models/Product';
 import { empty, of } from "rxjs";
 import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
-
+import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
+import { IonContent } from '@ionic/angular';
 
 
 @Component({
@@ -32,7 +33,7 @@ export class EnquiryPage {
   submitForm: FormGroup;
 
   //customerAdded = false;
-  customerData: any;
+  customerdata: any;
 
   removeRowArr = [];
   showDelIcon = false;
@@ -65,14 +66,17 @@ export class EnquiryPage {
   // TAB navigation for customer list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
 
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+
   customer_lis: Customer[];
   product_lis: Product[];
 
   selectedCustomerName: any;
 
+
   constructor(private _fb: FormBuilder, public dialog: MatDialog, public alertController: AlertController,
     private _modalcontroller: ModalController, private _router: Router, private _route: ActivatedRoute,
-    private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
+    private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService, private _dialog: MatDialog,
     private _authservice: AuthenticationService,
   ) {
 
@@ -125,20 +129,8 @@ export class EnquiryPage {
 
   async init() {
 
-    this.customerData = "";
-    // this.customerAdded = false;
 
 
-    // this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
-    //   this.customer_lis = data;
-
-    //   this.filteredCustomers = this.submitForm.controls['customerctrl'].valueChanges
-    //     .pipe(
-    //       startWith(''),
-    //       map(customer => customer ? this.filtercustomer(customer) : this.customer_lis.slice())
-    //     );
-
-    // });
 
     this.searchCustomers();
     this.searchProducts();
@@ -170,6 +162,93 @@ export class EnquiryPage {
         this._cdr.markForCheck();
       });
   }
+
+
+  ScrollToBottom() {
+    this.content.scrollToBottom(1500);
+  }
+
+  ScrollToTop() {
+    this.content.scrollToTop(1500);
+  }
+
+  ScrollToPoint(X, Y) {
+    this.content.scrollToPoint(X, Y, 300);
+  }
+
+  setCustomerInfo(event, from) {
+
+    if (from === 'click' && event.option.value === 'new') {
+      this.addCustomer();
+    }
+
+    if (from === 'tab') {
+
+      this.customerdata = event;
+      this.iscustomerselected = true;
+
+    } else {
+
+      this.customerdata = event.option.value;
+
+      this.iscustomerselected = true;
+    }
+
+
+    this._cdr.markForCheck();
+
+  }
+
+
+  addCustomer() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+
+    const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          // do nothing check
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe((data: any) => {
+
+        this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
+
+          this.customerdata = custData[0];
+
+          this.customername = custData[0].name;
+          this.iscustomerselected = true;
+
+
+
+          this.setCustomerInfo(custData[0], "tab");
+
+          this.submitForm.patchValue({
+            customerctrl: custData[0]
+          });
+
+          this.isCLoading = false;
+          this.autoTrigger1.closePanel();
+
+          this._cdr.markForCheck();
+        });
+
+
+
+        this._cdr.markForCheck();
+      });
+
+
+  }
+
 
   getLength() {
     const control = <FormArray>this.submitForm.controls['productarr'];
@@ -212,6 +291,7 @@ export class EnquiryPage {
     });
   }
 
+
   ngAfterViewInit() {
     this.autoTrigger.panelClosingActions.subscribe(x => {
       if (this.autoTrigger.activeOption) {
@@ -238,6 +318,23 @@ export class EnquiryPage {
 
   }
 
+  openDialog(event): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "400px";
+    dialogConfig.height = "100%";
+    dialogConfig.data = this.customerdata;
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+
   add() {
 
     if (this.submitForm.value.tempdesc === '' || this.submitForm.value.tempdesc === null) {
@@ -254,12 +351,12 @@ export class EnquiryPage {
       return false;
     }
 
-    if (this.submitForm.value.customerctrl === '' || this.submitForm.value.customerctrl === null) {
-      this.submitForm.controls['customerctrl'].setErrors({ 'required': true });
-      this.submitForm.controls['customerctrl'].markAsTouched();
+    // if (this.submitForm.value.customerctrl === '' || this.submitForm.value.customerctrl === null) {
+    //   this.submitForm.controls['customerctrl'].setErrors({ 'required': true });
+    //   this.submitForm.controls['customerctrl'].markAsTouched();
 
-      return false;
-    }
+    //   return false;
+    // }
 
 
 
@@ -288,6 +385,12 @@ export class EnquiryPage {
     this.submitForm.controls['tempqty'].setErrors(null);
     this.submitForm.controls['productctrl'].setErrors(null);
     this.plist.nativeElement.focus();
+    let v1 = (document.documentElement.clientHeight - 250) + 70;
+    console.log('clinet height ' + document.documentElement.clientHeight);
+    console.log('clinet height ' + v1);
+
+    this.ScrollToPoint(0, v1);
+
     this._cdr.markForCheck();
 
   }
@@ -470,30 +573,7 @@ export class EnquiryPage {
 
   }
 
-  setCustomerInfo(event, from) {
 
-    if (from === 'tab') {
-      this.address1 = event.address1;
-      this.address2 = event.address2;
-      this.district = event.district;
-      this.gst = event.gst;
-      this.phone = event.mobile;
-      this.whatsapp = event.whatsapp;
-      this.iscustomerselected = true;
-    } else {
-      this.address1 = event.option.value.address1;
-      this.address2 = event.option.value.address2;
-      this.district = event.option.value.district;
-      this.gst = event.option.value.gst;
-      this.phone = event.mobile;
-      this.whatsapp = event.whatsapp;
-      this.iscustomerselected = true;
-    }
-
-
-    this._cdr.markForCheck();
-
-  }
 
   setItemDesc(event, from) {
 
@@ -510,6 +590,17 @@ export class EnquiryPage {
 
     this._cdr.markForCheck();
 
+
+  }
+
+  logScrolling(event) {
+    if (this.autoTrigger1.panelOpen) {
+      this.autoTrigger1.closePanel();
+    }
+
+    if (this.autoTrigger.panelOpen) {
+      this.autoTrigger.closePanel();
+    }
 
   }
 

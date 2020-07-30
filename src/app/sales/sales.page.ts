@@ -135,7 +135,7 @@ export class SalesPage implements OnInit {
   customer_lis: Customer[];
   product_lis: Product[];
 
-  @ViewChild('stickyHeaderStart', { static: true }) stickyHeaderStart: ElementRef<HTMLElement>;
+  // @ViewChild('stickyHeaderStart', { static: true }) stickyHeaderStart: ElementRef<HTMLElement>;
 
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
@@ -573,14 +573,14 @@ export class SalesPage implements OnInit {
     })
 
 
-    const stickyHeaderOptions = {
-      rootMargin: "0px 0px -20px 0px"
-    };
+    // const stickyHeaderOptions = {
+    //   rootMargin: "0px 0px -20px 0px"
+    // };
 
-    const appearOptions = {
-      threshold: 0,
-      rootMargin: "0px 0px -200px 0px"
-    };
+    // const appearOptions = {
+    //   threshold: 0,
+    //   rootMargin: "0px 0px -200px 0px"
+    // };
 
   }
 
