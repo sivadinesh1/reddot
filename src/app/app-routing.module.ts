@@ -117,11 +117,6 @@ const routes: Routes = [
       },
 
 
-      {
-        path: 'customer/save-discount/:customer_id',
-        loadChildren: () => import('./admin/customer/discount-customer/discount-customer.module').then(m => m.DiscountCustomerPageModule)
-      },
-
       // centers
       {
         path: 'center/edit/:center_id',
@@ -145,10 +140,7 @@ const routes: Routes = [
     path: 'enquiry',
     loadChildren: () => import('./enquiry/enquiry.module').then(m => m.EnquiryPageModule),
   },
-  {
-    path: 'discount-customer',
-    loadChildren: () => import('./admin/customer/discount-customer/discount-customer.module').then(m => m.DiscountCustomerPageModule)
-  },
+
   {
     path: 'view-discounts',
     loadChildren: () => import('./admin/customer/discounts/view-discounts/view-discounts.module').then(m => m.ViewDiscountsPageModule)

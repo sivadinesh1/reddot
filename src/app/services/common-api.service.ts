@@ -58,6 +58,10 @@ export class CommonApiService {
     return this.httpClient.post(`${this.restApiUrl}/api/search-customer`, submitForm, { observe: 'response' });
   }
 
+  getVendorInfo(submitForm) {
+    return this.httpClient.post(`${this.restApiUrl}/api/search-vendor`, submitForm, { observe: 'response' });
+  }
+
 
 
   getOpenEnquiries(centerid: number, status: string) {
@@ -233,6 +237,13 @@ export class CommonApiService {
     return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-customer/${id}`, changes);
   }
 
+  updateCustomerShippingAddress(id: number, changes: Partial<Vendor>): Observable<any> {
+    return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-customer-shipping-address/${id}`, changes);
+  }
+
+  insertCustomerShippingAddress(objectForm): Observable<any> {
+    return this.httpClient.post<any>(`${this.restApiUrl}/api/admin/insert-customer-shipping-address`, objectForm, { observe: 'response' });
+  }
 
   updateCustomerDiscount(objectForm) {
     return this.httpClient.put<any>(`${this.restApiUrl}/api/admin/update-customer-discount`, objectForm, { observe: 'response' });
@@ -376,9 +387,9 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-accounts-receivable/${centerid}`);
   }
 
-  getCustomerDiscount(center_id, customer_id) {
-    return this.httpClient.get(`${this.restApiUrl}/api/admin/customer-discount/${center_id}/${customer_id}`);
-  }
+  // getCustomerDiscount(center_id, customer_id) {
+  //   return this.httpClient.get(`${this.restApiUrl}/api/admin/customer-discount/${center_id}/${customer_id}`);
+  // }
 
   getAllCustomerDefaultDiscounts(center_id) {
     return this.httpClient.get(`${this.restApiUrl}/api/admin/all-customer-default-discounts/${center_id}`);
@@ -397,6 +408,11 @@ export class CommonApiService {
   getBrandsMissingDiscounts(center_id, status, customer_id) {
     return this.httpClient.get(`${this.restApiUrl}/api/brands-missing-discounts/${center_id}/${status}/${customer_id}`);
   }
+
+  getShippingAddressByCustomer(customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/admin/get-shipping-address/${customer_id}`);
+  }
+
 
 }
 

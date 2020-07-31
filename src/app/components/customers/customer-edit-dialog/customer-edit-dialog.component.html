@@ -1,4 +1,4 @@
-<ion-content>
+<div class="content">
 	<div class="screen-header">
 		<div>
 			Edit Customer Details
@@ -8,39 +8,41 @@
 		</div>
 	</div>
 
-	<div class="content">
-		<form class="myForm" [formGroup]="submitForm">
-			<div class="customer-info">
-				<div class="name">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Name</mat-label>
-						<input matInput placeholder="Name" readonly formControlName="name" required />
-						<mat-error>This field is required</mat-error>
-					</mat-form-field>
-				</div>
+	<form class="myForm" [formGroup]="submitForm">
+		<div class="customer-info">
+			<div class="name">
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Name</mat-label>
+					<input matInput readonly formControlName="name" required />
+					<mat-error>This field is required</mat-error>
+				</mat-form-field>
+			</div>
+
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>GST</mat-label>
+					<input type="text" matInput formControlName="gst" />
+				</mat-form-field>
+			</div>
+			<div>
+				<div style="padding: 0px 0px 16px 0px;">BILLING & SHIPPING ADDRESS</div>
 				<div class="address1">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 1</mat-label>
-						<input matInput placeholder="Address Line 1" formControlName="address1" />
+						<input matInput formControlName="address1" />
 					</mat-form-field>
 				</div>
 				<div class="address2">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 2</mat-label>
-						<input matInput placeholder="Address Line 2" formControlName="address2" />
-					</mat-form-field>
-				</div>
-				<div class="address3">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Address Line 3</mat-label>
-						<input matInput placeholder="Address Line 3" formControlName="address3" />
+						<input matInput formControlName="address2" />
 					</mat-form-field>
 				</div>
 
 				<div class="district">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>District</mat-label>
-						<input matInput placeholder="District" formControlName="district" />
+						<input matInput formControlName="district" />
 					</mat-form-field>
 				</div>
 
@@ -58,53 +60,51 @@
 				<div class="pin">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Pin</mat-label>
-						<input matInput placeholder="State" formControlName="pin" />
+						<input matInput formControlName="pin" />
+					</mat-form-field>
+				</div>
+			</div>
+
+			<div>
+				<div style="padding: 0px 0px 16px 0px;">CONTACT INFO</div>
+
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Primary contact</mat-label>
+						<input type="number" matInput formControlName="mobile" required />
 					</mat-form-field>
 				</div>
 
 				<div>
 					<mat-form-field class="mat-width-ext">
-						<mat-label>GST</mat-label>
-						<input type="text" matInput formControlName="gst" placeholder="GST" />
-					</mat-form-field>
-				</div>
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Phone</mat-label>
-						<input type="number" matInput formControlName="phone" placeholder="Phone" />
-					</mat-form-field>
-				</div>
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Mobile 1</mat-label>
-						<input type="number" matInput formControlName="mobile" required placeholder="Mobile 1" />
-					</mat-form-field>
-				</div>
-
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Mobile 2</mat-label>
-						<input type="number" matInput formControlName="mobile2" placeholder="Mobile 2" />
+						<mat-label>Secondary contact</mat-label>
+						<input type="number" matInput formControlName="mobile2" />
 					</mat-form-field>
 				</div>
 
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Whatsapp</mat-label>
-						<input type="number" matInput formControlName="whatsapp" required placeholder="Whatsapp" />
+						<input type="number" matInput formControlName="whatsapp" required />
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Landline</mat-label>
+						<input type="number" matInput formControlName="phone" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Email</mat-label>
-						<input type="text" matInput formControlName="email" placeholder="Email" />
+						<input type="text" matInput formControlName="email" />
 					</mat-form-field>
 				</div>
 			</div>
-			<div style="text-align: center;">
-				<button mat-stroked-button type="button" (click)="reset()">Clear</button>&nbsp;&nbsp;
-				<button mat-raised-button color="primary" (click)="onSubmit()" type="button">Update Vendor</button>
-			</div>
-		</form>
-	</div>
-</ion-content>
+		</div>
+		<div style="text-align: center;">
+			<button mat-stroked-button type="button" (click)="reset()">Clear</button>&nbsp;&nbsp;
+			<button mat-raised-button color="primary" (click)="onSubmit()" type="button">Update Customer</button>
+		</div>
+	</form>
+</div>

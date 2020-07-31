@@ -8,99 +8,110 @@
 		</div>
 	</div>
 
-	<form class="myForm" [formGroup]="submitForm" (ngSubmit)="onSubmit()">
+	<form class="myForm" [formGroup]="submitForm">
 		<div class="customer-info">
 			<div class="name">
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Name</mat-label>
-					<input matInput placeholder="Name" formControlName="name" required />
+					<input matInput formControlName="name" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
-			<div class="address1">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Address Line 1</mat-label>
-					<input matInput placeholder="Address Line 1" formControlName="address1" />
-				</mat-form-field>
-			</div>
-			<div class="address2">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Address Line 2</mat-label>
-					<input matInput placeholder="Address Line 2" formControlName="address2" />
-				</mat-form-field>
-			</div>
-			<div class="address3">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Address Line 3</mat-label>
-					<input matInput placeholder="Address Line 3" formControlName="address3" />
-				</mat-form-field>
-			</div>
 
-			<div class="district">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>District</mat-label>
-					<input matInput placeholder="District" formControlName="district" />
-				</mat-form-field>
+			<div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>GST</mat-label>
+						<input type="text" matInput formControlName="gst" />
+					</mat-form-field>
+				</div>
 			</div>
+			<div>
+				<div style="padding: 0px 0px 16px 0px;">BILLING & SHIPPING ADDRESS</div>
+				<div style="font-size: 12px; color: royalblue;">Add multiple shipping address in customer address page</div>
+				<div class="address1">
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Address Line 1</mat-label>
+						<input matInput formControlName="address1" />
+					</mat-form-field>
+				</div>
+				<div class="address2">
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Address Line 2</mat-label>
+						<input matInput formControlName="address2" />
+					</mat-form-field>
+				</div>
 
-			<div class="state">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>State</mat-label>
-					<mat-select formControlName="state_id" required>
-						<mat-option *ngFor="let item of statesdata" [value]="item.id">
-							{{ item.description }}
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
-			</div>
+				<div class="district">
+					<mat-form-field class="mat-width-ext">
+						<mat-label>District</mat-label>
+						<input matInput formControlName="district" />
+					</mat-form-field>
+				</div>
 
-			<div class="pin">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Pin</mat-label>
-					<input matInput placeholder="State" formControlName="pin" />
-				</mat-form-field>
+				<div class="state">
+					<mat-form-field class="mat-width-ext">
+						<mat-label>State</mat-label>
+						<mat-select formControlName="state_id" required>
+							<mat-option *ngFor="let item of statesdata" [value]="item.id">
+								{{ item.description }}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+
+				<div class="pin">
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Pin</mat-label>
+						<input matInput formControlName="pin" />
+					</mat-form-field>
+				</div>
 			</div>
 
 			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>GST</mat-label>
-					<input type="text" matInput formControlName="gst" placeholder="GST" />
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Phone</mat-label>
-					<input type="number" matInput formControlName="phone" placeholder="Phone" />
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Mobile 1</mat-label>
-					<input type="number" matInput formControlName="mobile" required placeholder="Mobile 1" />
-				</mat-form-field>
-			</div>
+				<div style="padding: 0px 0px 16px 0px;">CONTACT INFO</div>
+				<div>&nbsp;</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Primary contact</mat-label>
+						<input type="number" matInput formControlName="mobile" required />
+					</mat-form-field>
+				</div>
 
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Mobile 2</mat-label>
-					<input type="number" matInput formControlName="mobile2" placeholder="Mobile 2" />
-				</mat-form-field>
-			</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Secondary contact</mat-label>
+						<input type="number" matInput formControlName="mobile2" />
+					</mat-form-field>
+				</div>
 
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Whatsapp</mat-label>
-					<input type="number" matInput formControlName="whatsapp" required placeholder="Whatsapp" />
-				</mat-form-field>
-			</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Whatsapp</mat-label>
+						<input type="number" matInput formControlName="whatsapp" required />
+					</mat-form-field>
+				</div>
 
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Email</mat-label>
-					<input type="text" matInput formControlName="email" placeholder="Email" />
-				</mat-form-field>
-			</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Landline</mat-label>
+						<input type="number" matInput formControlName="phone" />
+					</mat-form-field>
+				</div>
 
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Email</mat-label>
+						<input type="text" matInput formControlName="email" />
+					</mat-form-field>
+				</div>
+			</div>
+		</div>
+
+		<div style="padding: 1rem;">
+			Discount
+		</div>
+		<div style="display: grid; grid-gap: 16px; padding: 1rem; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;">
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Discount Type</mat-label>
@@ -113,36 +124,37 @@
 			</div>
 
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-disc">
 					<mat-label>GST Slab(0%)</mat-label>
 					<input type="text" matInput formControlName="gstzero" />
 				</mat-form-field>
 			</div>
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-disc">
 					<mat-label>GST Slab(5%)</mat-label>
 					<input type="text" matInput formControlName="gstfive" />
 				</mat-form-field>
 			</div>
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-disc">
 					<mat-label>GST Slab(12%)</mat-label>
 					<input type="text" matInput formControlName="gsttwelve" />
 				</mat-form-field>
 			</div>
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-disc">
 					<mat-label>GST Slab(18%)</mat-label>
 					<input type="text" matInput formControlName="gsteighteen" />
 				</mat-form-field>
 			</div>
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-disc">
 					<mat-label>GST Slab(28%)</mat-label>
 					<input type="text" matInput formControlName="gsttwentyeight" />
 				</mat-form-field>
 			</div>
 		</div>
+
 		<div style="text-align: center;">
 			<button mat-stroked-button type="button">Clear</button>&nbsp;&nbsp;
 			<button mat-raised-button color="primary" [disabled]="!submitForm.valid" type="submit">+ Add New Customer</button>

@@ -27,6 +27,7 @@ import { RequireMatch } from '../util/directives/requireMatch';
 import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
 import { IonContent } from '@ionic/angular';
 import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
+import { CustomerAddDialogComponent } from '../components/customers/customer-add-dialog/customer-add-dialog.component';
 
 
 @Component({
@@ -413,7 +414,8 @@ export class SalesPage implements OnInit {
       oldval = temp.qty;
     }
 
-    if (temp.disc_info !== undefined) {
+    // else part check seems weired, need to cross check
+    if (temp.disc_info !== undefined || temp.disc_info !== null) {
       let disc_info = temp.disc_info;
       this.cust_discount_type = disc_info.substring(disc_info.indexOf("~") + 1);
       this.cust_discount_prcnt = disc_info.substring(0, disc_info.indexOf("~"));
@@ -1344,11 +1346,13 @@ export class SalesPage implements OnInit {
     if (from === 'tab') {
       this.submitForm.patchValue({
         tempdesc: event.description,
+        tempqty: event.qty
       });
       this.lineItemData = event;
     } else {
       this.submitForm.patchValue({
         tempdesc: event.option.value.description,
+        tempqty: event.option.value.qty
       });
       this.lineItemData = event.option.value;
     }
@@ -1528,7 +1532,7 @@ export class SalesPage implements OnInit {
     dialogConfig.width = "80%";
     dialogConfig.height = "80%";
 
-    const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
+    const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
 
     dialogRef.afterClosed()
       .pipe(

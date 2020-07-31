@@ -106,7 +106,7 @@
 				<mat-label>Effective</mat-label>
 				<input matInput formControlName="effDiscStDate" [matDatepicker]="picker1" type="text" (focus)="picker1.open()" />
 				<mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-				<mat-datepicker touchUi="true" #picker1></mat-datepicker>
+				<mat-datepicker #picker1></mat-datepicker>
 
 				<mat-error
 					*ngIf="

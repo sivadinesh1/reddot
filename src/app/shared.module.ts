@@ -90,6 +90,7 @@ import { BrandAddDialogComponent } from './components/brands/brand-add-dialog/br
 import { BrandEditDialogComponent } from './components/brands/brand-edit-dialog/brand-edit-dialog.component';
 import { DefaultDiscountsComponent } from './components/customers/discount/default-discounts/default-discounts.component';
 import { BrandDiscountsComponent } from './components/customers/discount/brand-discounts/brand-discounts.component';
+import { CustomerEditShippingAddressComponent } from './components/customers/customer-edit-shipping-address/customer-edit-shipping-address.component';
 
 const components = [
 
@@ -126,6 +127,7 @@ const components = [
 
 
   CustomerViewDialogComponent,
+  CustomerEditShippingAddressComponent,
 
   CurrencyPadComponent,
   InvoiceSuccessComponent,
@@ -214,7 +216,7 @@ const matcomponents = [
     BrandDiscountsComponent,
     CustomerAddDialogComponent, CustomerEditDialogComponent,
 
-    CustomerViewDialogComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
+    CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
   ]
 })
 export class SharedModule { }

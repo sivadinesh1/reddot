@@ -74,7 +74,11 @@
 				<ng-template matMenuContent let-element="element">
 					<button mat-menu-item (click)="edit(element)">
 						<mat-icon>edit </mat-icon>
-						<span> Details</span>
+						<span> Billing & Contact</span>
+					</button>
+					<button mat-menu-item (click)="editShippingAddress(element)">
+						<mat-icon [ngStyle]="{'color':'#bf0d3e'}">edit </mat-icon>
+						<span> Shipping Address</span>
 					</button>
 				</ng-template>
 			</mat-menu>

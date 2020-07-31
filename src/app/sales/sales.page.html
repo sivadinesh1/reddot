@@ -119,7 +119,7 @@
 							(dateChange)="invoiceDateSelected($event)"
 						/>
 						<mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-						<mat-datepicker touchUi="true" #picker1></mat-datepicker>
+						<mat-datepicker #picker1></mat-datepicker>
 						<mat-placeholder>Invoice Date</mat-placeholder>
 						<mat-error
 							*ngIf="(submitForm.get('invoicedate').hasError('required') || submitForm.get('invoicedate').hasError('patternInvalid'))  && submitForm.get('invoicedate').touched"
@@ -416,17 +416,32 @@
 						Cancel</button
 					>&nbsp;
 					<button
+						*ngIf="(submitForm.get('status').value !== 'C' ) "
 						style="border-radius: 0px;"
 						appPreventDoubleClick
 						class="cursor"
 						(throttledClick)="onSubmit('draft')"
 						type="button"
 						[throttleTime]="500"
-						mat-raised-button
+						mat-stroked-button
 						type="button"
 						color="primary"
 					>
 						Save as Draft
+					</button>
+					&nbsp;
+					<button
+						style="border-radius: 0px;"
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="onSubmit('add')"
+						type="button"
+						[throttleTime]="500"
+						mat-raised-button
+						type="button"
+						color="primary"
+					>
+						Save & Confirm
 					</button>
 
 					<button
@@ -443,9 +458,6 @@
 		</ng-container>
 	</form>
 	<mat-menu #dd="matMenu" [overlapTrigger]="false">
-		<mat-option>
-			<button mat-button type="button" (click)="onSubmit('add')">Save & Confirm</button>
-		</mat-option>
 		<mat-option>
 			<button mat-button type="button" (click)="onSubmit('print')">Save & Print</button>
 		</mat-option>

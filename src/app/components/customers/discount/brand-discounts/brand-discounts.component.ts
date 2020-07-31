@@ -105,6 +105,7 @@ export class BrandDiscountsComponent implements OnInit {
 
 
   ngOnInit() {
+    this.dataSource.paginator = this.paginator;
     this.init();
   }
 

@@ -23,6 +23,19 @@
 .customer-info,
 .customer-info1 {
 	display: grid;
-	grid-template-columns: auto auto auto auto;
-	grid-gap: 10px;
+	grid-template-columns: auto auto;
+	grid-gap: 16px;
+	padding: 1rem;
+}
+
+.myForm {
+	padding: 1rem;
+}
+
+.mat-width-ext {
+	width: 90%;
+}
+
+.mat-width-disc {
+	width: 100px;
 }

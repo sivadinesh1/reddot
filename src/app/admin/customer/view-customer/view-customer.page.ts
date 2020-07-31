@@ -17,6 +17,7 @@ import { Observable } from 'rxjs';
 import * as xlsx from 'xlsx';
 import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
 import { CustomerEditDialogComponent } from 'src/app/components/customers/customer-edit-dialog/customer-edit-dialog.component';
+import { CustomerEditShippingAddressComponent } from 'src/app/components/customers/customer-edit-shipping-address/customer-edit-shipping-address.component';
 
 
 @Component({
@@ -155,6 +156,31 @@ export class ViewCustomerPage implements OnInit {
   }
 
 
+
+  editShippingAddress(customer: Customer) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+    dialogConfig.data = customer;
+
+
+    const dialogRef = this._dialog.open(CustomerEditShippingAddressComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          this.reloadCustomers();
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe();
+
+
+  }
 
 
 

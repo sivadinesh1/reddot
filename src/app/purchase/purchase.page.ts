@@ -11,9 +11,22 @@ import { ShowVendorsComponent } from '../components/show-vendors/show-vendors.co
 import { AuthenticationService } from '../services/authentication.service';
 import { ChangeTaxComponent } from '../components/change-tax/change-tax.component';
 import { ChangeMrpComponent } from '../components/change-mrp/change-mrp.component';
-import { Route, ActivatedRoute } from '@angular/router';
+import { Route, ActivatedRoute, Router } from '@angular/router';
 import { NullToQuotePipe } from '../util/pipes/null-quote.pipe';
-import { filter, tap } from 'rxjs/operators';
+import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
+
+
+import { Product } from '../models/Product';
+import { empty } from 'rxjs';
+import { RequireMatch } from '../util/directives/requireMatch';
+import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
+
+
+import { IonContent } from '@ionic/angular';
+import { VendorViewDialogComponent } from '../components/vendors/vendor-view-dialog/vendor-view-dialog.component';
+import { Vendor } from '../models/Vendor';
+import * as moment from 'moment';
+import { VendorAddDialogComponent } from '../components/vendors/vendor-add-dialog/vendor-add-dialog.component';
 
 @Component({
   selector: 'app-purchase',
@@ -21,7 +34,7 @@ import { filter, tap } from 'rxjs/operators';
   styleUrls: ['./purchase.page.scss'],
 })
 export class PurchasePage implements OnInit {
-
+  breadmenu = "New Sale";
   vendorname: string = '';
   vendorstate = '';
 
@@ -64,13 +77,32 @@ export class PurchasePage implements OnInit {
   maxDate = new Date();
   maxOrderDate = new Date();
 
+  isVLoading = false;
+  isLoading = false;
+
+  isvendorselected = false;
+  vendor_lis: Vendor[];
+  product_lis: Product[];
+  lineItemData: any;
+
   @ViewChild('invno', { static: false }) inputEl: ElementRef;
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
 
+  // TAB navigation for product list
+  @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
+
+  @ViewChild('plist', { static: true }) plist: any;
+  @ViewChild('newrow', { static: true }) newrow: any;
+
+  // TAB navigation for vendor list
+  @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
+
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+
   constructor(private _modalcontroller: ModalController, private _pickerctrl: PickerController,
     public dialog: MatDialog, public alertController: AlertController,
-    private _route: ActivatedRoute,
+    private _route: ActivatedRoute, private _router: Router, private _dialog: MatDialog,
     private _authservice: AuthenticationService,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
@@ -98,6 +130,7 @@ export class PurchasePage implements OnInit {
     this.vendorselected = false;
 
     if (this.rawPurchaseData[0] !== undefined && this.rawPurchaseData[0].id !== 0) {
+      this.breadmenu = "Edit Purchase #" + this.rawPurchaseData[0].id;
 
       this.submitForm.patchValue({
         purchaseid: this.rawPurchaseData[0].id,
@@ -193,13 +226,84 @@ export class PurchasePage implements OnInit {
       taxable_value: new FormControl(0),
       status: new FormControl('D'),
 
+      vendorctrl: [null, [Validators.required, RequireMatch]],
+      productctrl: [null, [RequireMatch]],
+      tempdesc: [''],
+
+      tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
+
       productarr: new FormControl(null, Validators.required)
 
     });
+
+    this.searchVendors();
+    this.searchProducts();
   }
 
 
 
+  ngAfterViewInit() {
+    this.autoTrigger.panelClosingActions.subscribe(x => {
+      if (this.autoTrigger.activeOption) {
+
+        this.submitForm.patchValue({
+          productctrl: this.autoTrigger.activeOption.value
+        });
+        this.setItemDesc(this.autoTrigger.activeOption.value, "tab");
+
+      }
+    })
+
+    this.autoTrigger1.panelClosingActions.subscribe(x => {
+      if (this.autoTrigger1.activeOption) {
+
+        this.submitForm.patchValue({
+          vendorctrl: this.autoTrigger1.activeOption.value
+        });
+        this.setVendorInfo(this.autoTrigger1.activeOption.value, "tab");
+      }
+    })
+
+
+    // const stickyHeaderOptions = {
+    //   rootMargin: "0px 0px -20px 0px"
+    // };
+
+    // const appearOptions = {
+    //   threshold: 0,
+    //   rootMargin: "0px 0px -200px 0px"
+    // };
+
+  }
+
+
+
+  searchVendors() {
+    let search = "";
+    this.submitForm.controls['vendorctrl'].valueChanges.pipe(
+      debounceTime(500),
+      tap(() => this.isVLoading = true),
+      switchMap(id => {
+        console.log(id);
+        search = id;
+        if (id != null && id.length >= 3) {
+          return this._commonApiService.getVendorInfo({ "centerid": this.center_id, "searchstr": id });
+        } else {
+          return empty();
+        }
+
+      })
+
+    )
+
+      .subscribe((data: any) => {
+
+        this.isVLoading = false;
+        this.vendor_lis = data.body;
+
+        this._cdr.markForCheck();
+      });
+  }
 
 
   async showAllVendorsComp() {
@@ -235,27 +339,85 @@ export class PurchasePage implements OnInit {
     await modal.present();
   }
 
-  async showAddProductComp() {
+  // async showAddProductComp() {
 
-    const modal = await this._modalcontroller.create({
-      component: AddProductComponent,
-      componentProps: { center_id: this.center_id, customer_id: 0 },
-      cssClass: 'select-modal'
+  //   const modal = await this._modalcontroller.create({
+  //     component: AddProductComponent,
+  //     componentProps: { center_id: this.center_id, customer_id: 0 },
+  //     cssClass: 'select-modal'
 
-    });
+  //   });
 
-    modal.onDidDismiss().then((result) => {
-      console.log('The result:', result);
-      let temp = result.data;
+  //   modal.onDidDismiss().then((result) => {
+  //     console.log('The result:', result);
+  //     let temp = result.data;
 
-      this.processItems(temp);
+  //     this.processItems(temp);
 
-    });
+  //   });
 
-    await modal.present();
+  //   await modal.present();
 
+  // }
+
+
+
+
+
+  searchProducts() {
+
+    let invdt = "";
+    if (this.submitForm.value.invoicedate === null) {
+      invdt = moment().format('DD-MM-YYYY');
+    } else {
+      invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+    }
+
+    this.submitForm.controls['productctrl'].valueChanges.pipe(
+      debounceTime(500),
+      tap(() => this.isLoading = true),
+      switchMap(id => {
+
+        if (id != null && id.length >= 3) {
+          return this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstr": id });
+        } else {
+          return empty();
+        }
+
+      })
+
+    )
+
+      .subscribe((data: any) => {
+        this.isLoading = false;
+        this.product_lis = data.body;
+
+        this._cdr.markForCheck();
+      });
   }
 
+
+  setItemDesc(event, from) {
+
+    if (from === 'tab') {
+      this.submitForm.patchValue({
+        tempdesc: event.description,
+        tempqty: event.qty
+      });
+      this.lineItemData = event;
+    } else {
+      this.submitForm.patchValue({
+        tempdesc: event.option.value.description,
+        tempqty: event.option.value.qty
+      });
+      this.lineItemData = event.option.value;
+    }
+
+
+    this._cdr.markForCheck();
+
+
+  }
 
   processItems(temp) {
 
@@ -330,6 +492,45 @@ export class PurchasePage implements OnInit {
 
   }
 
+  displayFn(obj: any): string | undefined {
+    return obj && obj.name ? obj.name : undefined;
+  }
+
+  displayProdFn(obj: any): string | undefined {
+    return obj && obj.product_code ? obj.product_code : undefined;
+
+  }
+
+  clearProdInput() {
+
+    this.submitForm.patchValue({
+      productctrl: null,
+
+      tempdesc: null,
+      tempqty: 1
+    });
+    this.product_lis = null;
+    this._cdr.markForCheck();
+
+  }
+
+  setVendorInfo(event, from) {
+
+    if (from === 'click' && event.option.value === 'new') {
+      this.addVendor();
+    }
+
+    if (from === 'tab') {
+      this.vendordata = event;
+      this.vendorselected = true;
+    } else {
+      this.vendordata = event.option.value;
+      this.vendorselected = true;
+    }
+
+    this._cdr.markForCheck();
+
+  }
 
   sumTotalTax() {
 
@@ -966,5 +1167,179 @@ export class PurchasePage implements OnInit {
   invoiceDateSelected($event) {
     this.maxOrderDate = $event.target.value;
   }
+
+  logScrolling(event) {
+    if (this.autoTrigger1.panelOpen) {
+      this.autoTrigger1.closePanel();
+    }
+
+    if (this.autoTrigger.panelOpen) {
+      this.autoTrigger.closePanel();
+    }
+
+  }
+
+  purchaseDashboard() {
+    this._router.navigateByUrl('/home/search-sales');
+  }
+
+
+  ScrollToBottom() {
+    this.content.scrollToBottom(1500);
+  }
+
+  ScrollToTop() {
+    this.content.scrollToTop(1500);
+  }
+
+  ScrollToPoint(X, Y) {
+    this.content.scrollToPoint(X, Y, 300);
+  }
+
+  openDialog(event): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "400px";
+    dialogConfig.height = "100%";
+    dialogConfig.data = this.vendordata;
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(VendorViewDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+
+
+  addVendor() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+
+    const dialogRef = this._dialog.open(VendorAddDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          // do nothing check
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe((data: any) => {
+
+        this._commonApiService.getVendorDetails(this.center_id, data.body.id).subscribe((vendData: any) => {
+
+          this.vendordata = vendData[0];
+
+          this.vendorname = vendData[0].name;
+          this.vendorselected = true;
+
+
+
+          this.setVendorInfo(vendData[0], "tab");
+
+          this.submitForm.patchValue({
+            vendorctrl: vendData[0]
+          });
+
+          this.isVLoading = false;
+          this.autoTrigger1.closePanel();
+
+          this._cdr.markForCheck();
+        });
+
+
+
+        this._cdr.markForCheck();
+      });
+
+
+  }
+
+
+
+  add() {
+    let invdt = "";
+    if (this.submitForm.value.invoicedate === null) {
+      invdt = moment().format('DD-MM-YYYY');
+    } else {
+      invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+    }
+
+
+    if (this.submitForm.value.tempdesc === '' || this.submitForm.value.tempdesc === null) {
+      this.submitForm.controls['tempdesc'].setErrors({ 'required': true });
+      this.submitForm.controls['tempdesc'].markAsTouched();
+
+      return false;
+    }
+
+    if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null) {
+      this.submitForm.controls['tempqty'].setErrors({ 'required': true });
+      this.submitForm.controls['tempqty'].markAsTouched();
+
+      return false;
+    }
+
+    if (this.submitForm.value.customerctrl === '' || this.submitForm.value.vendorctrl === null) {
+      this.submitForm.controls['vendorctrl'].setErrors({ 'required': true });
+      this.submitForm.controls['vendorctrl'].markAsTouched();
+
+      return false;
+    }
+
+    this.processItems(this.lineItemData);
+
+    this.submitForm.patchValue({
+      productctrl: "",
+      tempdesc: "",
+      tempqty: 1,
+    });
+
+    this.submitForm.controls['tempdesc'].setErrors(null);
+    this.submitForm.controls['tempqty'].setErrors(null);
+    this.submitForm.controls['productctrl'].setErrors(null);
+    this.plist.nativeElement.focus();
+
+
+    this._cdr.markForCheck();
+
+  }
+
+
+  async presentCancelConfirm(action) {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'Are you sure to leave the page?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Okay',
+          handler: () => {
+            console.log('Confirm Okay');
+            // this.cancel();
+            this._router.navigateByUrl('/home/search-purchase');
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
 
 }
