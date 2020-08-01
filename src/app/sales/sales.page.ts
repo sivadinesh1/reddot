@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildr
 import { ModalController, PickerController, AlertController } from '@ionic/angular';
 
 import { CommonApiService } from '../services/common-api.service';
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray, FormGroupDirective } from '@angular/forms';
 
 import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
@@ -130,7 +130,7 @@ export class SalesPage implements OnInit {
 
   // TAB navigation for customer list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
-
+  @ViewChild(FormGroupDirective) formRef: FormGroupDirective;
 
 
   customer_lis: Customer[];
@@ -297,7 +297,7 @@ export class SalesPage implements OnInit {
 
         this._commonApiService.saleDetails(this.rawSalesData[0].id).subscribe((saleData: any) => {
           let sData = saleData;
-
+          debugger;
           sData.forEach(element => {
             this.processItems(element);
           });
@@ -414,11 +414,13 @@ export class SalesPage implements OnInit {
       oldval = temp.qty;
     }
 
-    // else part check seems weired, need to cross check
-    if (temp.disc_info !== undefined || temp.disc_info !== null) {
+    // else part is when navigating via edit sale, 
+    // when disc_info present its fresh adding products, if not, take it from saledetail tbl
+    if (temp.disc_info !== undefined && temp.disc_info !== null) {
       let disc_info = temp.disc_info;
       this.cust_discount_type = disc_info.substring(disc_info.indexOf("~") + 1);
       this.cust_discount_prcnt = disc_info.substring(0, disc_info.indexOf("~"));
+
     } else {
       this.cust_discount_type = temp.disc_type;
       this.cust_discount_prcnt = temp.disc_percent;
@@ -944,16 +946,11 @@ export class SalesPage implements OnInit {
                 this.invoiceid = data.body.id;
 
                 this.cancel();
+                // this.submitForm.reset();
+                this.formRef.resetForm();
 
                 // reinit after successful insert
                 this.getInvoiceSequence(this.center_id, "gstinvoice");
-
-                // this._saleApiService.getNxtSaleInvoiceNo(this.center_id, "gstinvoice").subscribe((data: any) => {
-
-                //   this.submitForm.patchValue({
-                //     invoiceno: data[0].NxtInvNo,
-                //   });
-                // });
 
                 this._cdr.markForCheck();
                 if (action === 'add') {
