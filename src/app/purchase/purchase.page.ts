@@ -1314,7 +1314,7 @@ export class PurchasePage implements OnInit {
   }
 
 
-  async presentCancelConfirm(action) {
+  async presentCancelConfirm() {
     const alert = await this.alertController.create({
       header: 'Confirm!',
       message: 'Are you sure to leave the page?',

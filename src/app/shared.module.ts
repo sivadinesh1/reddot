@@ -91,6 +91,7 @@ import { BrandEditDialogComponent } from './components/brands/brand-edit-dialog/
 import { DefaultDiscountsComponent } from './components/customers/discount/default-discounts/default-discounts.component';
 import { BrandDiscountsComponent } from './components/customers/discount/brand-discounts/brand-discounts.component';
 import { CustomerEditShippingAddressComponent } from './components/customers/customer-edit-shipping-address/customer-edit-shipping-address.component';
+import { VendorViewDialogComponent } from './components/vendors/vendor-view-dialog/vendor-view-dialog.component';
 
 const components = [
 
@@ -125,6 +126,7 @@ const components = [
   DefaultDiscountsComponent,
   BrandDiscountsComponent,
 
+  VendorViewDialogComponent,
 
   CustomerViewDialogComponent,
   CustomerEditShippingAddressComponent,
@@ -210,7 +212,7 @@ const matcomponents = [
   ],
   entryComponents: [
     AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
-    ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent,
+    ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent, VendorViewDialogComponent,
     BrandAddDialogComponent, BrandEditDialogComponent,
     DefaultDiscountsComponent,
     BrandDiscountsComponent,
