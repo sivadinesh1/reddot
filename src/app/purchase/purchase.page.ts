@@ -281,7 +281,7 @@ export class PurchasePage implements OnInit {
   searchVendors() {
     let search = "";
     this.submitForm.controls['vendorctrl'].valueChanges.pipe(
-      debounceTime(500),
+      debounceTime(300),
       tap(() => this.isVLoading = true),
       switchMap(id => {
         console.log(id);
@@ -374,7 +374,7 @@ export class PurchasePage implements OnInit {
     }
 
     this.submitForm.controls['productctrl'].valueChanges.pipe(
-      debounceTime(500),
+      debounceTime(300),
       tap(() => this.isLoading = true),
       switchMap(id => {
 

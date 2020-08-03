@@ -140,7 +140,7 @@ export class EnquiryPage {
   searchCustomers() {
     let search = "";
     this.submitForm.controls['customerctrl'].valueChanges.pipe(
-      debounceTime(500),
+      debounceTime(300),
       tap(() => this.isCLoading = true),
       switchMap(id => {
         console.log(id);
@@ -258,7 +258,7 @@ export class EnquiryPage {
   searchProducts() {
     let search = "";
     this.submitForm.controls['productctrl'].valueChanges.pipe(
-      debounceTime(500),
+      debounceTime(300),
       tap(() => this.isLoading = true),
       switchMap(id => {
         console.log(id);
