@@ -213,7 +213,7 @@ export class ViewCustomerPage implements OnInit {
       xlsx.utils.table_to_sheet(this.epltable.nativeElement);
     const wb: xlsx.WorkBook = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'epltable.xlsx');
+    xlsx.writeFile(wb, 'customers.xlsx');
   }
 
 

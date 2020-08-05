@@ -42,7 +42,7 @@ export class SalesPage implements OnInit {
 
   total = "0.00";
 
-  test1: any;
+  // test1: any;
   customer_state_code: any;
   center_state_code: any;
   i_gst: any;
@@ -372,7 +372,7 @@ export class SalesPage implements OnInit {
       switchMap(id => {
         console.log(id);
         search = id;
-        if (id != null && id.length >= 3) {
+        if (id != null && id.length >= 2) {
           return this._commonApiService.getCustomerInfo({ "centerid": this.center_id, "searchstr": id });
         } else {
           return empty();
@@ -1389,7 +1389,7 @@ export class SalesPage implements OnInit {
       tap(() => this.isLoading = true),
       switchMap(id => {
 
-        if (id != null && id.length >= 3) {
+        if (id != null && id.length >= 2) {
           return this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customerdata.id, "orderdate": invdt, "searchstr": id });
         } else {
           return empty();
@@ -1540,27 +1540,35 @@ export class SalesPage implements OnInit {
         }
         )
       ).subscribe((data: any) => {
+        if (data !== 'close') {
 
-        this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
+          this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
 
-          this.customerdata = custData[0];
+            this.customerdata = custData[0];
 
-          this.customername = custData[0].name;
-          this.iscustomerselected = true;
+            this.customername = custData[0].name;
+            this.iscustomerselected = true;
 
-          this.setTaxLabel(custData[0].code);
+            this.setTaxLabel(custData[0].code);
 
-          this.setCustomerInfo(custData[0], "tab");
+            this.setCustomerInfo(custData[0], "tab");
 
-          this.submitForm.patchValue({
-            customerctrl: custData[0]
+            this.submitForm.patchValue({
+              customerctrl: custData[0]
+            });
+
+            this.isCLoading = false;
+            this.autoTrigger1.closePanel();
+
+            this._cdr.markForCheck();
           });
+        } else {
 
-          this.isCLoading = false;
+          this.iscustomerselected = false;
           this.autoTrigger1.closePanel();
 
           this._cdr.markForCheck();
-        });
+        }
 
 
 

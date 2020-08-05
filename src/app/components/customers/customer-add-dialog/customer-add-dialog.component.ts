@@ -63,7 +63,7 @@ export class CustomerAddDialogComponent implements OnInit {
       ])],
       email: ['', [patternValidator(EMAIL_REGEX)]],
 
-      disctype: ['', Validators.required],
+      disctype: ['NET', Validators.required],
       gstzero: [0],
       gstfive: [0],
       gsttwelve: [0],
@@ -103,7 +103,7 @@ export class CustomerAddDialogComponent implements OnInit {
   }
 
   close() {
-    this.dialogRef.close();
+    this.dialogRef.close('close');
   }
 
   searchCustomers() {
@@ -130,8 +130,19 @@ export class CustomerAddDialogComponent implements OnInit {
 
   }
 
-  reset() {
+  clear() {
+    this.submitForm.reset();
+    this.submitForm.patchValue({
+      disctype: 'NET',
+      gstzero: 0,
+      gstfive: 0,
+      gsttwelve: 0,
+      gsteighteen: 0,
+      gsttwentyeight: 0,
+
+    });
 
   }
 
 }
+

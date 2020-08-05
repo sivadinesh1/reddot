@@ -66,8 +66,8 @@ export class AddMoreEnquiryComponent implements OnInit {
     this.addProduct();
     this.addProduct();
     this.addProduct();
-    this.addProduct();
-    this.addProduct();
+    // this.addProduct();
+    // this.addProduct();
 
 
 

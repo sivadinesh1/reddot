@@ -42,7 +42,7 @@ export class PurchasePage implements OnInit {
 
   total = "0.00";
 
-  test1: any;
+  // test1: any;
   vendor_state_code: any;
   center_state_code: any
   i_gst: any;
@@ -286,7 +286,7 @@ export class PurchasePage implements OnInit {
       switchMap(id => {
         console.log(id);
         search = id;
-        if (id != null && id.length >= 3) {
+        if (id != null && id.length >= 2) {
           return this._commonApiService.getVendorInfo({ "centerid": this.center_id, "searchstr": id });
         } else {
           return empty();
@@ -378,7 +378,7 @@ export class PurchasePage implements OnInit {
       tap(() => this.isLoading = true),
       switchMap(id => {
 
-        if (id != null && id.length >= 3) {
+        if (id != null && id.length >= 2) {
           return this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstr": id });
         } else {
           return empty();
@@ -1233,29 +1233,36 @@ export class PurchasePage implements OnInit {
         }
         )
       ).subscribe((data: any) => {
+        debugger;
+        if (data !== 'close') {
+          this._commonApiService.getVendorDetails(this.center_id, data.body.id).subscribe((vendData: any) => {
 
-        this._commonApiService.getVendorDetails(this.center_id, data.body.id).subscribe((vendData: any) => {
-
-          this.vendordata = vendData[0];
-
-          this.vendorname = vendData[0].name;
-          this.vendorselected = true;
+            this.vendordata = vendData[0];
+            debugger;
+            this.vendorname = vendData[0].name;
+            this.vendorselected = true;
 
 
 
-          this.setVendorInfo(vendData[0], "tab");
+            this.setVendorInfo(vendData[0], "tab");
 
-          this.submitForm.patchValue({
-            vendorctrl: vendData[0]
+            this.submitForm.patchValue({
+              vendorctrl: vendData[0]
+            });
+
+            this.isVLoading = false;
+            this.autoTrigger1.closePanel();
+
+            this._cdr.markForCheck();
           });
 
-          this.isVLoading = false;
+        } else {
+          debugger;
+          this.vendorselected = false;
           this.autoTrigger1.closePanel();
 
           this._cdr.markForCheck();
-        });
-
-
+        }
 
         this._cdr.markForCheck();
       });

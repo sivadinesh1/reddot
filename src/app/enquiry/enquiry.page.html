@@ -22,7 +22,6 @@
 						autofocus
 						required
 						matTooltipPosition="after"
-						tabindex="1"
 					/>
 					<mat-placeholder class="placeholder">Select or Add Customer</mat-placeholder>
 
@@ -41,10 +40,10 @@
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
 						Please select a valid project
 					</mat-error>
+					<mat-hint *ngIf="iscustomerselected">
+						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer;">View Customer Details</span>
+					</mat-hint>
 				</mat-form-field>
-				<div *ngIf="iscustomerselected">
-					<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer;">View Customer Details</span>
-				</div>
 			</div>
 
 			<div *ngIf="iscustomerselected" style="font-size: 12px; color: #666666; padding: 0.5rem 0.5rem 0.5rem 0px;">
@@ -89,7 +88,7 @@
 				<div class="row2">
 					<ng-container *ngIf="getLength() === 0">
 						<div style="display: grid; place-items: center; padding: 2rem 2rem;">
-							<div style="color: #333333;"><h4>Sales cart</h4></div>
+							<div style="color: #333333;"><h4>Inquiry cart</h4></div>
 							<div style="color: #666666;">There are no items in your Inquiry cart</div>
 						</div>
 					</ng-container>
@@ -135,7 +134,7 @@
 				<div class="left">
 					<div>
 						<mat-form-field class="example-full-width">
-							<input matInput [matAutocomplete]="auto1" formControlName="productctrl" #typehead #plist matTooltipPosition="after" tabindex="3" />
+							<input matInput [matAutocomplete]="auto1" formControlName="productctrl" #typehead #plist matTooltipPosition="after" tabindex="1" />
 							<mat-hint matTooltip="Add product">Hint: Type product code</mat-hint>
 							<mat-placeholder class="placeholder">Select Item Code</mat-placeholder>
 							<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput()">
@@ -173,7 +172,7 @@
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
-							<input matInput type="text" formControlName="tempdesc" required />
+							<input matInput type="text" formControlName="tempdesc" required tabindex="2" />
 							<mat-placeholder class="placeholder">Item description</mat-placeholder>
 							<mat-error *ngIf="submitForm.controls['tempdesc'].hasError('required')">
 								Please enter a value
@@ -184,12 +183,12 @@
 					<div>
 						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>
-							<input matInput type="number" min="1" max="1000" formControlName="tempqty" required />
+							<input matInput type="number" min="1" max="1000" formControlName="tempqty" required tabindex="3" />
 							<mat-hint matTooltip="Info about the action">Max 1000</mat-hint>
 						</mat-form-field>
 					</div>
 					<div>
-						<button mat-stroked-button color="primary" type="button" (click)="add()">+ New Row</button>
+						<button mat-stroked-button color="primary" type="button" tabindex="4" (click)="add()">+ New Row</button>
 					</div>
 				</div>
 				<div class="right">
@@ -208,7 +207,7 @@
 					</mat-form-field>
 				</div>
 				<div class="submit">
-					<span class="itms-lbl">Showing {{productarr.controls.length || 0}} Items</span>&nbsp;
+					<!-- <span class="itms-lbl">Showing {{productarr.controls.length || 0}} Items</span>&nbsp; -->
 					<button
 						appPreventDoubleClick
 						class="cursor"

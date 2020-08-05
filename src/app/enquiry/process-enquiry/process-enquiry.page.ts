@@ -1,17 +1,26 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
-import { ModalController, AlertController } from '@ionic/angular';
+import { ModalController, AlertController, IonSearchbar } from '@ionic/angular';
 import { AddProductComponent } from 'src/app/components/add-product/add-product.component';
 import * as moment from 'moment';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { AddMoreEnquiryComponent } from 'src/app/components/add-more-enquiry/add-more-enquiry.component';
 import { filter, tap, catchError } from 'rxjs/operators';
+import * as xlsx from 'xlsx';
+
+
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+
+import { MatSort } from '@angular/material/sort';
+import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-process-enquiry',
@@ -22,8 +31,9 @@ import { filter, tap, catchError } from 'rxjs/operators';
 export class ProcessEnquiryPage implements OnInit {
 
   enqDetailsOrig: any;
-  // enqDetailsPrep: any;
   selectedEnq: any;
+
+  pageLength: any;
 
   productArr = [];
 
@@ -31,6 +41,18 @@ export class ProcessEnquiryPage implements OnInit {
   center_id: any;
 
   status: any;
+  isTableHasData = true;
+
+  @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
+
+  displayedColumns: string[] = ['edit', 'prodinfo', 'avlstock', 'rackno', 'alotqty', 'notes', 'reqqty'];
+  dataSource = new MatTableDataSource<any>();
+
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  @ViewChild('epltable', { static: false }) epltable: ElementRef;
+
 
   constructor(private _route: ActivatedRoute, private _router: Router,
     private dialog: MatDialog, private _modalcontroller: ModalController,
@@ -43,9 +65,19 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   ngOnInit() {
+    this.dataSource.paginator = this.paginator;
     this.enqid = this._route.snapshot.params['enqid'];
     this._commonApiService.getEnquiryDetails(this.enqid).subscribe((data: any) => {
       this.enqDetailsOrig = data;
+      debugger;
+      // this.dataSource.data = data.map(el => {
+      //   var o = Object.assign({}, el);
+      //   o.isExpanded = false;
+      //   return o;
+      // })
+
+      // this.dataSource.sort = this.sort;
+      // this.pageLength = data.length;
 
       this.status = this.enqDetailsOrig[0].estatus;
 
@@ -84,10 +116,21 @@ export class ProcessEnquiryPage implements OnInit {
         "processed": element.processed
       });
     });
+
+    this.dataSource.data = this.productArr.map(el => {
+      var o = Object.assign({}, el);
+      o.isExpanded = false;
+      return o;
+    })
+
+    this.dataSource.sort = this.sort;
+    this.pageLength = this.productArr.length;
+
+
   }
 
   openCurrencyPad(idx) {
-
+    debugger;
     const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
 
     dialogRef.afterClosed().subscribe(
@@ -95,8 +138,9 @@ export class ProcessEnquiryPage implements OnInit {
         if (data != undefined && data.length > 0) {
 
           this.productArr[idx].giveqty = +data;
+          this.dataSource.data = this.productArr;
 
-
+          // this._cdr.detectChanges();
         }
 
         this._cdr.markForCheck();
@@ -105,7 +149,8 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   async showAddProductComp(idx) {
-
+    debugger;
+    console.log('object ' + JSON.stringify(this.productArr));
 
     const modal = await this._modalcontroller.create({
       component: AddProductComponent,
@@ -131,7 +176,7 @@ export class ProcessEnquiryPage implements OnInit {
         this.productArr[idx].available_stock = temp.available_stock;
         this.productArr[idx].rackno = temp.rackno;
       }
-
+      this.dataSource.data = this.productArr;
       this._cdr.markForCheck();
     });
 
@@ -141,6 +186,18 @@ export class ProcessEnquiryPage implements OnInit {
 
 
 
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.filteredData.length > 0) {
+      this.isTableHasData = true;
+    } else {
+      this.isTableHasData = false;
+    }
+
+  }
 
   save() {
 
@@ -258,6 +315,23 @@ export class ProcessEnquiryPage implements OnInit {
         )
       ).subscribe();
 
+
+  }
+
+  exportToExcel() {
+    const ws: xlsx.WorkSheet =
+      xlsx.utils.table_to_sheet(this.epltable.nativeElement);
+    // delete (ws['O1'])
+
+    ws['!cols'] = [];
+    ws['!cols'][0] = { hidden: true };
+
+    const wb: xlsx.WorkBook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(wb, 'enquiry.xlsx');
+  }
+
+  reset() {
 
   }
 

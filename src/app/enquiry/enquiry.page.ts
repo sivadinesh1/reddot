@@ -20,6 +20,7 @@ import { empty, of } from "rxjs";
 import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
 import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
 import { IonContent } from '@ionic/angular';
+import { CustomerAddDialogComponent } from '../components/customers/customer-add-dialog/customer-add-dialog.component';
 
 
 @Component({
@@ -145,7 +146,7 @@ export class EnquiryPage {
       switchMap(id => {
         console.log(id);
         search = id;
-        if (id != null && id.length >= 3) {
+        if (id != null && id.length >= 2) {
           return this._commonApiService.getCustomerInfo({ "centerid": this.center_id, "searchstr": id });
         } else {
           return empty();
@@ -208,7 +209,7 @@ export class EnquiryPage {
     dialogConfig.width = "80%";
     dialogConfig.height = "80%";
 
-    const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
+    const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
 
     dialogRef.afterClosed()
       .pipe(
@@ -219,28 +220,34 @@ export class EnquiryPage {
         }
         )
       ).subscribe((data: any) => {
+        if (data !== 'close') {
+          this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
 
-        this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
+            this.customerdata = custData[0];
 
-          this.customerdata = custData[0];
-
-          this.customername = custData[0].name;
-          this.iscustomerselected = true;
+            this.customername = custData[0].name;
+            this.iscustomerselected = true;
 
 
 
-          this.setCustomerInfo(custData[0], "tab");
+            this.setCustomerInfo(custData[0], "tab");
 
-          this.submitForm.patchValue({
-            customerctrl: custData[0]
+            this.submitForm.patchValue({
+              customerctrl: custData[0]
+            });
+
+            this.isCLoading = false;
+            this.autoTrigger1.closePanel();
+
+            this._cdr.markForCheck();
           });
+        } else {
 
-          this.isCLoading = false;
+          this.iscustomerselected = false;
           this.autoTrigger1.closePanel();
 
           this._cdr.markForCheck();
-        });
-
+        }
 
 
         this._cdr.markForCheck();
@@ -263,7 +270,7 @@ export class EnquiryPage {
       switchMap(id => {
         console.log(id);
         search = id;
-        if (id != null && id.length >= 3) {
+        if (id != null && id.length >= 2) {
           return this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": id });
         } else {
           return empty();

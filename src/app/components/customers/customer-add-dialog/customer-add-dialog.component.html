@@ -75,6 +75,10 @@
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Primary contact</mat-label>
 						<input type="number" matInput formControlName="mobile" required />
+						<mat-error *ngIf="submitForm.get('mobile').hasError('required')"> This field is <strong>required</strong> </mat-error>
+						<mat-error *ngIf="submitForm.controls['mobile'].hasError('invalidCountryPhone')">
+							Invalid mobile number
+						</mat-error>
 					</mat-form-field>
 				</div>
 
@@ -89,6 +93,11 @@
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Whatsapp</mat-label>
 						<input type="number" matInput formControlName="whatsapp" required />
+
+						<mat-error *ngIf="submitForm.get('whatsapp').hasError('required')"> This field is <strong>required</strong> </mat-error>
+						<mat-error *ngIf="submitForm.controls['whatsapp'].hasError('invalidCountryPhone')">
+							Invalid mobile number
+						</mat-error>
 					</mat-form-field>
 				</div>
 
@@ -156,7 +165,7 @@
 		</div>
 
 		<div style="text-align: center;">
-			<button mat-stroked-button type="button">Clear</button>&nbsp;&nbsp;
+			<button mat-stroked-button type="button" (click)="clear()">Clear</button>&nbsp;&nbsp;
 			<button mat-raised-button color="primary" [disabled]="!submitForm.valid" type="submit">+ Add New Customer</button>
 		</div>
 	</form>
