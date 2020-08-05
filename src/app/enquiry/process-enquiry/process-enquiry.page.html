@@ -200,6 +200,13 @@
 							<td mat-cell *matCellDef="let element" class="m-card-title">{{element.askqty}}</td>
 						</ng-container>
 
+						<ng-container matColumnDef="processed">
+							<th mat-header-cell *matHeaderCellDef>R.Qty</th>
+							<td mat-cell *matCellDef="let element; let idx = dataIndex;" style="justify-self: center; align-self: center;">
+								<mat-checkbox *ngIf="status !== 'E'" [checked]="element.processed === 'YS'? true : false" (click)="checkedRow(idx)"></mat-checkbox>
+							</td>
+						</ng-container>
+
 						<!-- <ng-container matColumnDef="actions">
 							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
 							<td mat-cell *matCellDef="let element">
@@ -211,7 +218,12 @@
 
 						<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
-						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+						<tr
+							class="example-element-row"
+							[ngClass]="{'make-gold': row.processed === 'YS' }"
+							mat-row
+							*matRowDef="let row; columns: displayedColumns; "
+						></tr>
 					</table>
 					<div [hidden]="isTableHasData" class="center-message">
 						No Data available.
@@ -219,20 +231,39 @@
 				</div>
 				<mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
 			</div>
-			<!-- <mat-menu #menu="matMenu">
-				<ng-template matMenuContent let-element="element">
-					<button mat-menu-item>
-						<mat-icon>edit </mat-icon>
-						<span>Edit</span>
-					</button>
-				</ng-template>
-			</mat-menu> -->
 		</ng-container>
 	</div>
-
-	<!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-		<ion-fab-button (click)="goEnquiryScreen()">
-			<ion-icon name="add"></ion-icon>
-		</ion-fab-button>
-	</ion-fab> -->
+	<ng-container>
+		<div class="footer" *ngIf="status !== 'E'">
+			<div>
+				&nbsp;
+			</div>
+			<div class="submit">
+				<!-- <span class="itms-lbl">Showing {{productarr.controls.length || 0}} Items</span>&nbsp; -->
+				<button
+					appPreventDoubleClick
+					class="cursor"
+					(throttledClick)="presentAlertConfirm()"
+					[throttleTime]="500"
+					mat-stroked-button
+					color="primary"
+					type="button"
+				>
+					Ready for Invoice</button
+				>&nbsp;
+				<button
+					appPreventDoubleClick
+					class="cursor"
+					(throttledClick)="save()"
+					type="button"
+					[throttleTime]="500"
+					mat-raised-button
+					type="button"
+					color="primary"
+				>
+					Save Draft
+				</button>
+			</div>
+		</div>
+	</ng-container>
 </ion-content>

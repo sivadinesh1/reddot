@@ -25,6 +25,12 @@
 	width: 90%;
 	margin: 0 auto;
 	padding-bottom: 16px;
+
+	.cust-header {
+		display: grid;
+		padding: 10px 5px;
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
 }
 
 .container {
@@ -33,12 +39,6 @@
 	width: 90%;
 	margin: 0 auto;
 	//	min-height: calc(100vh - 120px);
-
-	.cust-header {
-		display: grid;
-		padding: 10px 5px;
-		grid-template-columns: 1fr 1fr 1fr 1fr;
-	}
 
 	.process-enq-wrap {
 		display: grid;
@@ -274,4 +274,21 @@ td.mat-column-actions {
 	.mat-paginator {
 		margin-top: 24px;
 	}
+}
+
+.make-gold {
+	background-color: gold;
+}
+
+.footer {
+	display: flex;
+	position: fixed;
+	justify-content: space-around;
+	bottom: 0px;
+
+	width: 100%;
+	height: auto;
+	background-color: #ffffff;
+	border-top: 1px solid #f1f1f1;
+	padding: 8px;
 }

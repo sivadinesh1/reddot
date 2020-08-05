@@ -45,7 +45,7 @@ export class ProcessEnquiryPage implements OnInit {
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
-  displayedColumns: string[] = ['edit', 'prodinfo', 'avlstock', 'rackno', 'alotqty', 'notes', 'reqqty'];
+  displayedColumns: string[] = ['edit', 'prodinfo', 'avlstock', 'rackno', 'alotqty', 'notes', 'reqqty', 'processed'];
   dataSource = new MatTableDataSource<any>();
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -236,6 +236,10 @@ export class ProcessEnquiryPage implements OnInit {
       } else if (this.productArr[idx].processed === 'NO') {
         this.productArr[idx].processed = 'YS';
       }
+
+      this.dataSource.data = this.productArr;
+      this._cdr.markForCheck();
+
       this._cdr.detectChanges();
     }, 10);
   }
