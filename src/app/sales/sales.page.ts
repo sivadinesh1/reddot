@@ -297,7 +297,7 @@ export class SalesPage implements OnInit {
 
         this._commonApiService.saleDetails(this.rawSalesData[0].id).subscribe((saleData: any) => {
           let sData = saleData;
-          debugger;
+
           sData.forEach(element => {
             this.processItems(element);
           });

@@ -100,7 +100,7 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 
     this._commonApiService.getShippingAddressByCustomer(this.customer.id).subscribe((data: any) => {
 
-      debugger;
+
       // this.resultList = data;
       // DnD - code to add a "key/Value" in every object of array
       this.dataSource.data = data.map(el => {

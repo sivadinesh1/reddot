@@ -1233,12 +1233,12 @@ export class PurchasePage implements OnInit {
         }
         )
       ).subscribe((data: any) => {
-        debugger;
+
         if (data !== 'close') {
           this._commonApiService.getVendorDetails(this.center_id, data.body.id).subscribe((vendData: any) => {
 
             this.vendordata = vendData[0];
-            debugger;
+
             this.vendorname = vendData[0].name;
             this.vendorselected = true;
 
@@ -1257,7 +1257,7 @@ export class PurchasePage implements OnInit {
           });
 
         } else {
-          debugger;
+
           this.vendorselected = false;
           this.autoTrigger1.closePanel();
 

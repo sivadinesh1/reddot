@@ -69,7 +69,7 @@ export class ProcessEnquiryPage implements OnInit {
     this.enqid = this._route.snapshot.params['enqid'];
     this._commonApiService.getEnquiryDetails(this.enqid).subscribe((data: any) => {
       this.enqDetailsOrig = data;
-      debugger;
+
       // this.dataSource.data = data.map(el => {
       //   var o = Object.assign({}, el);
       //   o.isExpanded = false;
@@ -130,7 +130,7 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   openCurrencyPad(idx) {
-    debugger;
+
     const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
 
     dialogRef.afterClosed().subscribe(
@@ -149,8 +149,8 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   async showAddProductComp(idx) {
-    debugger;
-    console.log('object ' + JSON.stringify(this.productArr));
+
+    // console.log('object ' + JSON.stringify(this.productArr));
 
     const modal = await this._modalcontroller.create({
       component: AddProductComponent,
