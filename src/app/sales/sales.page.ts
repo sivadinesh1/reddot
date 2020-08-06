@@ -28,6 +28,7 @@ import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
 import { IonContent } from '@ionic/angular';
 import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
 import { CustomerAddDialogComponent } from '../components/customers/customer-add-dialog/customer-add-dialog.component';
+import { ConvertToSaleDialogComponent } from '../components/convert-to-sale-dialog/convert-to-sale-dialog.component';
 
 
 @Component({
@@ -67,6 +68,7 @@ export class SalesPage implements OnInit {
   taxable_value: any;
   center_id: any;
 
+  stockissue = "";
 
   removeRowArr = [];
 
@@ -117,6 +119,9 @@ export class SalesPage implements OnInit {
 
   lineItemData: any;
   selInvType: any;
+
+  stock_issue_date_ref: any;
+  stock_issue_ref: any;
 
 
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
@@ -234,6 +239,8 @@ export class SalesPage implements OnInit {
       if (this.rawSalesData[0] !== undefined && this.rawSalesData[0].id !== 0) {
         this.breadmenu = "Edit Sale #" + this.rawSalesData[0].id;
         this.selInvType = this.rawSalesData[0].sale_type;
+        this.stock_issue_ref = this.rawSalesData[0].stock_issue_ref;
+        this.stock_issue_date_ref = this.rawSalesData[0].stock_issue_date_ref;
 
         this.submitForm.patchValue({
           salesid: this.rawSalesData[0].id,
@@ -337,7 +344,7 @@ export class SalesPage implements OnInit {
       misc_charges: new FormControl(0),
       net_total: new FormControl(0),
       taxable_value: new FormControl(0),
-      status: new FormControl('D'),
+      status: new FormControl(),
       enqref: [0],
       revision: [0],
       invoicetype: ["gstinvoice", [Validators.required]],
@@ -776,6 +783,24 @@ export class SalesPage implements OnInit {
     dialogRef.afterClosed();
   }
 
+
+  convertToInvoiceSuccess(invoice_id, invoice_date) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "400px";
+
+    dialogConfig.data = { "invoiceid": invoice_id, "invoicedate": invoice_date };
+
+    const dialogRef = this.dialog.open(ConvertToSaleDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(data => {
+      console.log('The dialog was closed');
+      this._router.navigateByUrl('/home/search-sales');
+    });
+  }
+
   openCurrencyPad(idx) {
 
     const dialogConfig = new MatDialogConfig();
@@ -1076,19 +1101,24 @@ export class SalesPage implements OnInit {
     // pass sale id and call backend 
     // refresh the page with latest values (invoice # and inv type)
 
-    this._commonApiService.convertToSale(this.center_id, this.id)
+    this._commonApiService.convertToSale({
+      "center_id": this.center_id, "sales_id": this.id,
+      "old_invoice_no": this.submitForm.value.invoiceno, "old_stock_issued_date": this.submitForm.value.invoicedate
+    })
       .subscribe((data: any) => {
         console.log('object');
 
-        if (data.result === 'success') {
+        if (data.body.result === 'success') {
 
-          this.submitForm.patchValue({
-            invoiceno: data.invoiceNo,
-            invoicetype: "gstinvoice"
-          });
-          this.selInvType = "gstinvoice";
+          // this.submitForm.patchValue({
+          //   invoiceno: data.invoiceNo,
+          //   invoicetype: "gstinvoice",
+          //   invoicedate: new Date(new NullToQuotePipe().transform(moment().format('DD-MM-YYYY')).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
+          // });
+          // this.selInvType = "gstinvoice";
 
-          this.presentAlert('Converted to sale invoice!!');
+          // this.presentAlert('Converted to sale invoice!!');
+          this.convertToInvoiceSuccess(data.body.invoiceNo, moment().format('DD-MM-YYYY'));
 
         }
       });
@@ -1141,7 +1171,8 @@ export class SalesPage implements OnInit {
   executeDeleteProduct(elem) {
 
     this._commonApiService.deleteSalesDetails({
-      id: elem.sale_det_id, salesid: elem.sales_id,
+      id: elem.sale_det_id, salesid: elem.sales_id, qty: elem.qty,
+      product_id: elem.product_id, stock_id: elem.stock_pk,
       autidneeded: this.editCompletedSales
     }).subscribe((data: any) => {
 
@@ -1354,9 +1385,7 @@ export class SalesPage implements OnInit {
       this.lineItemData = event.option.value;
     }
 
-
     this._cdr.markForCheck();
-
 
   }
 
@@ -1443,6 +1472,10 @@ export class SalesPage implements OnInit {
       return false;
     }
 
+    // this line over writes default qty vs entered qty
+    this.lineItemData.qty = this.submitForm.value.tempqty;
+
+    // lineitemdata is the input box row to add items
     this.processItems(this.lineItemData);
 
     this.submitForm.patchValue({

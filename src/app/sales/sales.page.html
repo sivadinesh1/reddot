@@ -39,7 +39,7 @@
 						Please enter a value
 					</mat-error>
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
-						Please select a valid project
+						Please select a valid customer
 					</mat-error>
 					<mat-hint *ngIf="iscustomerselected">
 						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer;">View Customer Details</span>
@@ -77,12 +77,12 @@
 							<mat-option value="stockissue">Stock Issue</mat-option>
 						</mat-select>
 
-						<mat-hint
-							*ngIf="selInvType === 'stockissue' "
-							style="color: blue; padding: 5px; border: 1px solid blue; border-radius: 20px;"
+						<!-- <mat-hint
+							*ngIf="((submitForm.get('status').value === 'D') && (selInvType === 'stockissue')) "
+							style="color: blue; padding: 5px; border: 1px solid blue; border-radius: 20px; cursor: pointer;"
 							(click)="presentConvertSaleConfirm()"
 							>convert to sale Invoice</mat-hint
-						>
+						> -->
 					</mat-form-field>
 				</div>
 			</div>
@@ -409,6 +409,28 @@
 
 		<ng-container>
 			<div class="footer">
+				<div class="stockissue" *ngIf="stock_issue_ref">
+					<div>
+						<div style="font-size: 12px; color: grey;">
+							Stock Issued Ref#
+						</div>
+						<div style="font-size: 14px; color: #444444;">
+							{{stock_issue_ref}}
+						</div>
+					</div>
+					<div>
+						<div style="font-size: 12px; color: grey;">
+							Stock Issued on
+						</div>
+						<div style="font-size: 14px; color: #444444;">
+							{{stock_issue_date_ref}}
+						</div>
+					</div>
+				</div>
+				<div *ngIf="!stock_issue_ref">
+					&nbsp;
+				</div>
+
 				<div class="submit">
 					<button
 						appPreventDoubleClick
@@ -422,7 +444,7 @@
 						Cancel</button
 					>&nbsp;
 					<button
-						*ngIf="(submitForm.get('status').value !== 'C' ) "
+						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
 						style="border-radius: 0px;"
 						appPreventDoubleClick
 						class="cursor"
@@ -435,8 +457,33 @@
 					>
 						Save as Draft
 					</button>
+					<button
+						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType === 'stockissue')) "
+						style="border-radius: 0px;"
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="onSubmit('draft')"
+						type="button"
+						[throttleTime]="500"
+						mat-stroked-button
+						type="button"
+						color="primary"
+					>
+						Save Estimate
+					</button>
+					<button
+						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType === 'stockissue')) "
+						mat-raised-button
+						color="primary"
+						#ddTrigger="matMenuTrigger"
+						[matMenuTriggerFor]="dd1"
+						style="border-radius: 0px; border-left: 1px solid grey; padding: 0px 8px;"
+					>
+						<mat-icon>arrow_drop_up</mat-icon>
+					</button>
 					&nbsp;
 					<button
+						*ngIf="selInvType !== 'stockissue'"
 						style="border-radius: 0px;"
 						appPreventDoubleClick
 						class="cursor"
@@ -451,6 +498,7 @@
 					</button>
 
 					<button
+						*ngIf="((submitForm.get('status').value === 'C') && (selInvType !== 'stockissue')) "
 						mat-raised-button
 						color="primary"
 						#ddTrigger="matMenuTrigger"
@@ -459,11 +507,40 @@
 					>
 						<mat-icon>arrow_drop_up</mat-icon>
 					</button>
+					&nbsp;
+
+					<button
+						*ngIf="((submitForm.get('status').value === 'D') && (selInvType === 'stockissue')) "
+						style="border-radius: 0px;"
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="presentConvertSaleConfirm()"
+						type="button"
+						[throttleTime]="500"
+						mat-raised-button
+						type="button"
+						color="primary"
+					>
+						Convert to Sale Invoice
+					</button>
+
+					<!-- <mat-hint
+					*ngIf="((submitForm.get('status').value === 'D') && (selInvType === 'stockissue')) "
+					style="color: blue; padding: 5px; border: 1px solid blue; border-radius: 20px; cursor: pointer;"
+					(click)="presentConvertSaleConfirm()"
+					>convert to sale Invoice</mat-hint
+				> -->
 				</div>
 			</div>
 		</ng-container>
 	</form>
 	<mat-menu #dd="matMenu" [overlapTrigger]="false">
+		<mat-option>
+			<button mat-button type="button" (click)="onSubmit('print')">Save & Print</button>
+		</mat-option>
+	</mat-menu>
+
+	<mat-menu #dd1="matMenu" [overlapTrigger]="false">
 		<mat-option>
 			<button mat-button type="button" (click)="onSubmit('print')">Save & Print</button>
 		</mat-option>

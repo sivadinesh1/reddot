@@ -36,6 +36,8 @@ export class SearchSalesPage implements OnInit {
   statusFlag = 'D';
   selectedCust = 'all';
 
+  saletypeFlag = 'all';
+
   today = new Date();
   submitForm: FormGroup;
   maxDate = new Date();
@@ -52,7 +54,12 @@ export class SearchSalesPage implements OnInit {
 
   userdata$: Observable<User>;
 
-  statusList = [{ "id": "all", "value": "All" }, { "id": "D", "value": "Draft" }, { "id": "C", "value": "Completed" }]
+  statusList = [{ "id": "all", "value": "All" }, { "id": "D", "value": "Draft" },
+  { "id": "C", "value": "Completed" }
+  ]
+
+  saletypeList = [{ "id": "all", "value": "All" }, { "id": "GI", "value": "Invoiced" },
+  { "id": "SI", "value": "Stock Issued" }]
 
   sumTotalValue = 0.00;
   sumNumItems = 0;
@@ -69,6 +76,7 @@ export class SearchSalesPage implements OnInit {
       todate: [this.todate, Validators.required],
       fromdate: [this.fromdate, Validators.required],
       status: new FormControl('all'),
+      saletype: new FormControl('all')
     })
 
     this.userdata$ = this._authservice.currentUser;
@@ -112,9 +120,7 @@ export class SearchSalesPage implements OnInit {
 
   }
 
-  ngOnInit() {
 
-  }
 
   async init() {
 
@@ -122,16 +128,23 @@ export class SearchSalesPage implements OnInit {
 
     this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
       this.customer_lis = data;
+
+      this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
+        .pipe(
+          startWith(''),
+          map(customer => customer ? this.filtercustomer(customer) : this.customer_lis.slice())
+        );
+
     });
 
-    this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
-      .pipe(
-        startWith(''),
-        map(customer => customer ? this.filtercustomer(customer) : this.customer_lis.slice())
-      );
+
 
     this.search();
     this._cdr.markForCheck();
+
+  }
+
+  ngOnInit() {
 
   }
 
@@ -164,7 +177,7 @@ export class SearchSalesPage implements OnInit {
         this.submitForm.value.status,
         this.submitForm.value.fromdate,
         this.submitForm.value.todate,
-
+        this.submitForm.value.saletype
       );
 
     this.filteredSales$ = this.sales$;
@@ -199,10 +212,13 @@ export class SearchSalesPage implements OnInit {
     this._router.navigateByUrl(`/home/sales/edit/0`);
   }
 
-  statusChange($event) {
-    this.statusChange = $event.source.value;
-  }
+  // statusChange($event) {
+  //   this.statusChange = $event.source.value;
+  // }
 
+  // saletypeChange($event) {
+  //   this.saletypeChange = $event.source.value;
+  // }
 
   toDateSelected($event) {
     this.todate = $event.target.value;
@@ -219,7 +235,7 @@ export class SearchSalesPage implements OnInit {
   }
 
   delete(item) {
-    this._commonApiService.deletePurchaseData(item.id).subscribe((data: any) => {
+    this._commonApiService.deleteSaleData(item.id).subscribe((data: any) => {
       this.init();
 
     })
@@ -242,6 +258,7 @@ export class SearchSalesPage implements OnInit {
           text: 'Okay',
           handler: () => {
             console.log('Confirm Okay');
+            debugger;
             this.delete(item);
           }
         }

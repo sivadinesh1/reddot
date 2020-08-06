@@ -6,7 +6,9 @@
 }
 
 .form-wrap {
-	display: flex;
+	display: grid;
+	grid-template-columns: 2fr 140px 140px 1fr 1fr 1fr;
+	grid-gap: 10px;
 }
 
 .search-btn {
@@ -36,11 +38,15 @@
 	justify-content: space-between;
 }
 
-.width {
-	width: 280px !important;
+.mat-auto-width {
+	width: 300px;
 }
 
 .item {
 	font-size: 13px;
 	color: #555555;
+}
+
+.mat-date-wrapper {
+	width: 120px;
 }

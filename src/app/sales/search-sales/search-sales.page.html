@@ -2,14 +2,11 @@
 	<div class="search-wrap">
 		<div class="title-row">
 			<span>Sales Management</span>
-			<button mat-raised-button color="primary" (click)="goSalesAddScreen()" style="font-size: 0.8rem; border-radius: 50px;">
-				+ New Sales Order
-			</button>
 		</div>
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
 				<div class="customers">
-					<mat-form-field class="width">
+					<mat-form-field class="mat-auto-width">
 						<input
 							matInput
 							[matAutocomplete]="auto"
@@ -29,53 +26,62 @@
 					</mat-form-field>
 				</div>
 				<div>
-					<ion-item class="input-item" lines="none">
-						<mat-form-field class="mat-input-wrapper">
-							<input
-								matInput
-								readonly
-								[max]="maxDate"
-								[matDatepicker]="fromdate"
-								formControlName="fromdate"
-								placeholder="From date"
-								(focus)="fromdate.open()"
-								(dateChange)="fromDateSelected($event)"
-							/>
-							<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
-							<mat-datepicker #fromdate></mat-datepicker>
-						</mat-form-field>
-					</ion-item>
+					<mat-form-field class="mat-date-wrapper">
+						<input
+							matInput
+							readonly
+							[max]="maxDate"
+							[matDatepicker]="fromdate"
+							formControlName="fromdate"
+							(focus)="fromdate.open()"
+							required
+							(dateChange)="fromDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
+						<mat-datepicker #fromdate></mat-datepicker>
+						<mat-label>From date</mat-label>
+					</mat-form-field>
 				</div>
 				<div>
-					<ion-item class="input-item" lines="none">
-						<mat-form-field class="mat-input-wrapper">
-							<input
-								matInput
-								readonly
-								[matDatepicker]="todate"
-								[max]="maxDate"
-								formControlName="todate"
-								placeholder="To date"
-								(focus)="todate.open()"
-								required
-								(dateChange)="toDateSelected($event)"
-							/>
-							<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
-							<mat-datepicker #todate></mat-datepicker>
-						</mat-form-field>
-					</ion-item>
+					<mat-form-field class="mat-date-wrapper">
+						<input
+							matInput
+							readonly
+							[matDatepicker]="todate"
+							[max]="maxDate"
+							formControlName="todate"
+							(focus)="todate.open()"
+							required
+							(dateChange)="toDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
+						<mat-datepicker #todate></mat-datepicker>
+						<mat-label>To date</mat-label>
+					</mat-form-field>
 				</div>
 
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Status</mat-label>
-						<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
+						<mat-select formControlName="status" required value="{statusFlag}">
 							<mat-option *ngFor="let item of statusList" [value]="item.id">
 								{{item.value}}
 							</mat-option>
 						</mat-select>
 					</mat-form-field>
 				</div>
+
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Sale Type</mat-label>
+						<mat-select formControlName="saletype" required value="{saletypeFlag}">
+							<mat-option *ngFor="let item of saletypeList" [value]="item.id">
+								{{item.value}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+
 				<div class="search-btn">
 					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem;" (click)="search()">
 						Search
@@ -106,7 +112,7 @@
 		<div class="header header-style">
 			<div>Invoice #</div>
 			<div>Inv Date</div>
-			<div>Inv Type</div>
+			<div>Sale Type</div>
 			<div>Customer Name</div>
 			<div># of Items</div>
 			<div>Total Value</div>
@@ -131,7 +137,7 @@
 		<div *ngFor="let item of filteredValues  " class="listItem">
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>
-			<div class="item">{{item.sale_type === "gstinvoice" ? "GST Invoice" : "Stock Issue"}}</div>
+			<div class="item">{{item.sale_type === "gstinvoice" ? "Invoiced" : "Stock Issued"}}</div>
 			<div class="item">{{item.customer_name}}</div>
 			<div class="item">{{item.no_of_items}}</div>
 			<div class="item">{{item.total_value}}</div>

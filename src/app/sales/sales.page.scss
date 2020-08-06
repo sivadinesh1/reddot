@@ -227,7 +227,7 @@
 .footer {
 	display: flex;
 	position: fixed;
-	justify-content: flex-end;
+	justify-content: space-between;
 	bottom: 0px;
 	padding: 1rem;
 	width: 100%;
@@ -292,4 +292,10 @@
 	.material-icons {
 		font-size: 32px !important;
 	}
+}
+.stockissue {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	max-width: 340px;
+	gap: 20px;
 }

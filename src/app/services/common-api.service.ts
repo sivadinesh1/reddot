@@ -273,8 +273,8 @@ export class CommonApiService {
   }
 
 
-  convertToSale(center_id: string, id: string) {
-    return this.httpClient.get(`${this.restApiUrl}/api/sale/convert-sale/${center_id}/${id}`);
+  convertToSale(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/sale/convert-sale', submitForm, { observe: 'response' });
   }
 
   updateTax(submitForm) {
@@ -287,8 +287,8 @@ export class CommonApiService {
       .pipe(shareReplay());
   }
 
-  searchSales(centerid, customerid, status, fromdate, todate): Observable<Sales[]> {
-    return this.httpClient.get<Sales[]>(`${this.restApiUrl}/api/stock/search-sales/${centerid}/${customerid}/${status}/${fromdate}/${todate}`)
+  searchSales(centerid, customerid, status, fromdate, todate, saletype): Observable<Sales[]> {
+    return this.httpClient.get<Sales[]>(`${this.restApiUrl}/api/stock/search-sales/${centerid}/${customerid}/${status}/${fromdate}/${todate}/${saletype}`)
       .pipe(shareReplay());
   }
 
@@ -338,14 +338,11 @@ export class CommonApiService {
     return this.httpClient.post<any>(this.restApiUrl + '/api/sale/delete-sales-details', submitForm, { observe: 'response' });
   }
 
-  // updatePurchaseMaster(submitForm) {
-  //   return this.httpClient.post<any>(this.restApiUrl + '/api/stock/update-purchase-master', submitForm, { observe: 'response' });
-  // }
-
   deletePurchaseData(id) {
 
     return this.httpClient.delete(`${this.restApiUrl}/api/stock/delete-purchase/${id}`);
   }
+
 
 
   // Sale Screen API's
@@ -367,9 +364,11 @@ export class CommonApiService {
     return this.httpClient.post<any>(this.restApiUrl + '/api/stock/delete-sale-details', submitForm, { observe: 'response' });
   }
 
-  // updateSaleMaster(submitForm) {
-  //   return this.httpClient.post<any>(this.restApiUrl + '/api/stock/update-sale-master', submitForm, { observe: 'response' });
-  // }
+
+  deleteSaleData(id) {
+
+    return this.httpClient.get(`${this.restApiUrl}/api/sale/delete-sale/${id}`);
+  }
 
   // end
   isProdExists(pCode) {

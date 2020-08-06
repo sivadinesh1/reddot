@@ -92,6 +92,7 @@ import { DefaultDiscountsComponent } from './components/customers/discount/defau
 import { BrandDiscountsComponent } from './components/customers/discount/brand-discounts/brand-discounts.component';
 import { CustomerEditShippingAddressComponent } from './components/customers/customer-edit-shipping-address/customer-edit-shipping-address.component';
 import { VendorViewDialogComponent } from './components/vendors/vendor-view-dialog/vendor-view-dialog.component';
+import { ConvertToSaleDialogComponent } from './components/convert-to-sale-dialog/convert-to-sale-dialog.component';
 
 const components = [
 
@@ -138,6 +139,9 @@ const components = [
   ShowCustomersComponent,
   ChangeTaxComponent,
   ChangeMrpComponent,
+
+  ConvertToSaleDialogComponent,
+
   AutoFocusDirective,
   FocusedDirective,
   PreventDoubleClickDirective,
@@ -213,7 +217,7 @@ const matcomponents = [
   entryComponents: [
     AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
     ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent, VendorViewDialogComponent,
-    BrandAddDialogComponent, BrandEditDialogComponent,
+    BrandAddDialogComponent, BrandEditDialogComponent, ConvertToSaleDialogComponent,
     DefaultDiscountsComponent,
     BrandDiscountsComponent,
     CustomerAddDialogComponent, CustomerEditDialogComponent,

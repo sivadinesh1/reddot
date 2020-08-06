@@ -108,16 +108,18 @@ export class OpenEnquiryPage implements OnInit {
     this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
       this.customer_lis = data;
 
+      this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
+        .pipe(
+          startWith(''),
+          map(customer => customer ? this.filtercustomer(customer) : this.customer_lis.slice())
+        );
+
     });
 
 
 
 
-    this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
-      .pipe(
-        startWith(''),
-        map(customer => customer ? this.filtercustomer(customer) : this.customer_lis.slice())
-      );
+
 
     this.search();
     this._cdr.markForCheck();
