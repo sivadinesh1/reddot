@@ -236,7 +236,13 @@ export class SearchSalesPage implements OnInit {
 
   delete(item) {
     this._commonApiService.deleteSaleData(item.id).subscribe((data: any) => {
-      this.init();
+
+      if (data.result === 'success') {
+        this._commonApiService.deleteSaleMaster(item.id).subscribe((data1: any) => {
+          this.init();
+        });
+      }
+
 
     })
   }
@@ -258,7 +264,6 @@ export class SearchSalesPage implements OnInit {
           text: 'Okay',
           handler: () => {
             console.log('Confirm Okay');
-            debugger;
             this.delete(item);
           }
         }

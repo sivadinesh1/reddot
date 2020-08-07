@@ -237,14 +237,14 @@
 								</mat-form-field>
 							</div>
 
-							<div class="item4 txt-right-align num-format-cell-style">{{item.mrp | number:'1.2-2'}}</div>
+							<div class="item4 txt-right-align num-format-cell-style">{{item.mrp}}</div>
 
 							<div class="item4 txt-right-align num-format-cell-style">
 								{{item.taxrate}}
 							</div>
 
 							<div class="item4 txt-right-align num-format-cell-style">
-								{{item.total_value | number:'1.2-2'}}
+								{{item.total_value}}
 							</div>
 						</div>
 					</div>
@@ -302,6 +302,16 @@
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
+							<mat-label>Price</mat-label>
+							<input matInput type="number" min="1" max="100000" formControlName="temppurchaseprice" required />
+							<mat-hint matTooltip="Info about the action">Hint: Max 1000</mat-hint>
+							<mat-error *ngIf="submitForm.controls['temppurchaseprice'].hasError('required')">
+								Required feild
+							</mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>
 							<input matInput type="number" min="1" max="1000" formControlName="tempqty" required />
 							<mat-hint matTooltip="Info about the action">Hint: Max 1000</mat-hint>
@@ -319,13 +329,13 @@
 						<div style="color: #666666; text-align: right; font-size: 14px;">{{listArr.length}}</div>
 
 						<div *ngIf="i_gst" style="color: #666666; text-align: right; font-size: 14px;">IGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="i_gst">{{igstTotal | number:'1.2-2'}}</div>
+						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="i_gst">{{igstTotal}}</div>
 
 						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px;">CGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="!i_gst">{{cgstTotal | number:'1.2-2'}}</div>
+						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="!i_gst">{{cgstTotal}}</div>
 
 						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px;">SGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="!i_gst">{{sgstTotal | number:'1.2-2'}}</div>
+						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="!i_gst">{{sgstTotal}}</div>
 					</div>
 					<div>
 						<div style="color: #666666; text-align: right; font-size: 14px;">Total</div>

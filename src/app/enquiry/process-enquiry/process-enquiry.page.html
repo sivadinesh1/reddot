@@ -11,8 +11,60 @@
 		</div>
 	</div>
 	<div class="topcontainer">
-		<div class="cust-header" *ngIf="enqDetailsOrig">
-			<div>
+		<div *ngIf="enqDetailsOrig">
+			<form [formGroup]="submitForm" #myForm="ngForm">
+				<div class="cust-header">
+					<div>
+						<mat-form-field class="example-full-width" style="padding-right: 10px;">
+							<input matInput [matAutocomplete]="auto" formControlName="customerctrl" #typehead1 autofocus required matTooltipPosition="after" />
+							<mat-placeholder class="placeholder">Select or Add Customer</mat-placeholder>
+
+							<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
+								<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+								<ng-container *ngIf="!isCLoading">
+									<mat-option *ngFor="let customer of customer_lis" [value]="customer">
+										<span>{{ customer.name }} </span>
+									</mat-option>
+									<mat-option style="background-color: #f2f2f2;" value="new">+ New Customer</mat-option>
+								</ng-container>
+							</mat-autocomplete>
+							<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')">
+								Please enter a value
+							</mat-error>
+							<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
+								Customer does not exist
+							</mat-error>
+							<mat-hint *ngIf="iscustomerselected">
+								<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer;">View Customer Details</span>
+							</mat-hint>
+						</mat-form-field>
+					</div>
+
+					<div *ngIf="iscustomerselected" style="font-size: 12px; color: #666666; padding: 0.5rem 0.5rem 0.5rem 0px;">
+						<div style="font-weight: 500; font-size: 14px;">BILLING ADDRESS</div>
+						<div>{{customerdata.address1 | nullquote}}</div>
+						<div>{{customerdata.address2 | nullquote}}</div>
+
+						<div>{{customerdata.state | nullquote}}</div>
+						<div>{{customerdata.pin | nullquote}}</div>
+					</div>
+
+					<div *ngIf="iscustomerselected" style="padding: 0.5rem 0.5rem 0.5rem 0px; font-size: 12px; color: #666666;">
+						<div style="font-weight: 500; font-size: 14px;">SHIPPING ADDRESS</div>
+						<div>{{customerdata.address1 | nullquote}}</div>
+						<div>{{customerdata.address2 | nullquote}}</div>
+
+						<div>{{customerdata.state | nullquote}}</div>
+						<div>{{customerdata.pin | nullquote}}</div>
+					</div>
+					<div *ngIf="iscustomerselected" style="padding: 0.5rem 0.5rem 0.5rem 0px; font-size: 12px; color: #666666;">
+						<div style="font-weight: 500; font-size: 14px;">Remarks</div>
+						<div>{{enqDetailsOrig[0].remarks}}</div>
+					</div>
+				</div>
+			</form>
+
+			<!-- <div>
 				<div class="cust-lbl">Customer:</div>
 				<div>
 					<div>{{enqDetailsOrig[0].name}}</div>
@@ -20,28 +72,8 @@
 					<div>{{enqDetailsOrig[0].address2}}</div>
 					<div>{{enqDetailsOrig[0].district}}</div>
 				</div>
-			</div>
-			<div>
-				<div class="cust-lbl">Remarks</div>
-				<div>{{enqDetailsOrig[0].remarks}}</div>
-			</div>
-			<div>
-				<div *ngIf="status === 'E'">
-					<div class="cust-lbl">Status:</div>
-					<div style="color: red;">Executed</div>
-				</div>
-				<div *ngIf="status === 'D'">
-					<div class="cust-lbl">Status:</div>
-					<div style="color: red;">Draft</div>
-				</div>
-				<div *ngIf="status === 'O'">
-					<div class="cust-lbl">Status:</div>
-					<div style="color: red;">New</div>
-				</div>
-			</div>
-			<!-- <div style="text-align: right; align-items: center;">
-				
 			</div> -->
+			<div></div>
 		</div>
 	</div>
 
@@ -68,73 +100,6 @@
 	</div>
 
 	<div class="container">
-		<!-- <div class="process-enq-wrap">
-			<div class="process-prep-enq-heading">
-				<div class="c-pad-mini">#</div>
-				<div class="c-pad-mini">Prod Info</div>
-				<div class="c-pad-mini">Rack#</div>
-				<div class="c-pad-mini">Alot. Qty</div>
-				<div class="c-pad-mini" style="padding-left: 10px;">Notes</div>
-				<div class="c-pad-mini">Req. Qty</div>
-				<div class="c-pad-mini">&nbsp;</div>
-			</div>
-			<div class="list-items">
-				<div *ngFor="let item of productArr; let idx = index;" (click)="onClick(item)" style="border-bottom: 1px solid dimgrey;">
-					<div class="process-enq-list">
-						<div>
-							<div class="c-pad">
-								{{idx+1}}
-							</div>
-						</div>
-						<div>
-							<div *ngIf="item.product_code" class="pdetails">
-								<div class="pcode">
-									{{item.product_code}}
-									<span class="avlstock">Stock: {{item.available_stock}}</span>&nbsp;&nbsp;&nbsp;
-									<span class="" *ngIf="item.product_code" (click)="showAddProductComp(idx)">
-										<span style="font-size: 12px; color: rgb(230, 61, 10);">Edit</span>
-									</span>
-								</div>
-								<div class="pdesc">{{item.product_desc}}</div>
-							</div>
-							<div *ngIf="!item.product_code" class="left-align c-pad">
-								<div class="" *ngIf="!item.product_code" (click)="showAddProductComp(idx)">
-									<div><img src="/assets/images/svg/more.svg" width="18px" height="18px" /> Item Code</div>
-								</div>
-							</div>
-						</div>
-						<div style="font-size: 14px;">{{item.rackno}}</div>
-
-						<div>
-							<mat-form-field class="example-full-width">
-								<input matInput type="number" value="{{item.giveqty}}" readonly />
-								<mat-icon *ngIf="status !== 'E'" matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon>
-							</mat-form-field>
-						</div>
-
-						<div style="background-color: #ffffee; margin-left: 10px;">
-							<div class="c-pad">
-								{{item.notes}}
-							</div>
-						</div>
-
-						<div>
-							<div class="c-pad">
-								{{item.askqty}}
-							</div>
-						</div>
-						<div style="justify-self: center; align-self: center;">
-							<mat-checkbox *ngIf="status !== 'E'" [checked]="item.processed === 'YS'? true : false" (click)="checkedRow(idx)"></mat-checkbox>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="save-sec" *ngIf="status !== 'E'">
-				<ion-button type="submit" fill="outline" (click)="presentAlertConfirm()">Ready for Invoice</ion-button>
-				<ion-button type="button" (click)="save()">Save Draft</ion-button>
-			</div>
-		</div> -->
-
 		<ng-container>
 			<div class="example-container mat-elevation-z8">
 				<div class="example-table-container" #epltable>
@@ -142,7 +107,12 @@
 						<ng-container matColumnDef="edit">
 							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
 							<td mat-cell *matCellDef="let element; let idx = dataIndex;" style="text-align: center;" class="m-card-title">
-								<mat-icon *ngIf="element.product_code" (click)="showAddProductComp(idx)" style="cursor: pointer;">edit </mat-icon>
+								<mat-icon
+									*ngIf="element.product_code"
+									(click)="showAddProductComp(idx + (paginator.pageIndex * paginator.pageSize))"
+									style="cursor: pointer;"
+									>edit
+								</mat-icon>
 							</td>
 						</ng-container>
 
@@ -154,14 +124,11 @@
 								<div *ngIf="element.product_code" class="pdetails">
 									<div class="pcode">
 										{{element.product_code}}
-										<span class="" *ngIf="element.product_code" (click)="showAddProductComp(idx)">
-											<span style="font-size: 12px; color: rgb(230, 61, 10);">Edit</span>
-										</span>
 									</div>
 									<div class="pdesc">{{element.product_desc}}</div>
 								</div>
 								<div *ngIf="!element.product_code" class="left-align c-pad" style="cursor: pointer;">
-									<div class="" *ngIf="!element.product_code" (click)="showAddProductComp(idx)">
+									<div class="" *ngIf="!element.product_code" (click)="showAddProductComp(idx + (paginator.pageIndex * paginator.pageSize))">
 										<div><img src="/assets/images/svg/more.svg" width="18px" height="18px" /> Item Code</div>
 									</div>
 								</div>
@@ -185,7 +152,13 @@
 
 								<mat-form-field class="example-full-width">
 									<input matInput type="number" value="{{element.giveqty}}" readonly />
-									<mat-icon *ngIf="status !== 'E'" matSuffix style="cursor: pointer;" (click)="openCurrencyPad(idx)">view_comfy</mat-icon>
+									<mat-icon
+										*ngIf="status !== 'E'"
+										matSuffix
+										style="cursor: pointer;"
+										(click)="openCurrencyPad(idx + (paginator.pageIndex * paginator.pageSize))"
+										>view_comfy</mat-icon
+									>
 								</mat-form-field>
 							</td>
 						</ng-container>
@@ -203,7 +176,11 @@
 						<ng-container matColumnDef="processed">
 							<th mat-header-cell *matHeaderCellDef>R.Qty</th>
 							<td mat-cell *matCellDef="let element; let idx = dataIndex;" style="justify-self: center; align-self: center;">
-								<mat-checkbox *ngIf="status !== 'E'" [checked]="element.processed === 'YS'? true : false" (click)="checkedRow(idx)"></mat-checkbox>
+								<mat-checkbox
+									*ngIf="status !== 'E'"
+									[checked]="element.processed === 'YS'? true : false"
+									(click)="checkedRow(idx + (paginator.pageIndex * paginator.pageSize))"
+								></mat-checkbox>
 							</td>
 						</ng-container>
 
@@ -229,14 +206,27 @@
 						No Data available.
 					</div>
 				</div>
-				<mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+				<mat-paginator [pageSizeOptions]="[50, 100]" showFirstLastButtons></mat-paginator>
 			</div>
 		</ng-container>
 	</div>
 	<ng-container>
 		<div class="footer" *ngIf="status !== 'E'">
 			<div>
-				&nbsp;
+				<div>
+					<div *ngIf="status === 'E'">
+						<div class="cust-lbl">Status:</div>
+						<div style="color: red;">Executed</div>
+					</div>
+					<div *ngIf="status === 'D'">
+						<div class="cust-lbl">Status:</div>
+						<div style="color: red;">Draft</div>
+					</div>
+					<div *ngIf="status === 'O'">
+						<div class="cust-lbl">Status:</div>
+						<div style="color: red;">New</div>
+					</div>
+				</div>
 			</div>
 			<div class="submit">
 				<!-- <span class="itms-lbl">Showing {{productarr.controls.length || 0}} Items</span>&nbsp; -->

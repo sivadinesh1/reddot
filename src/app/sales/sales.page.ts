@@ -120,8 +120,11 @@ export class SalesPage implements OnInit {
   lineItemData: any;
   selInvType: any;
 
+  orig_selInvType: any;
+
   stock_issue_date_ref: any;
   stock_issue_ref: any;
+
 
 
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
@@ -186,6 +189,8 @@ export class SalesPage implements OnInit {
 
     if (this.mode === 'enquiry') {
 
+      this.getInvoiceSequence(this.center_id, "gstinvoice");
+
       this.submitForm.patchValue({
         enqref: this.id,
         orderno: this.id,
@@ -200,7 +205,7 @@ export class SalesPage implements OnInit {
 
 
         this.submitForm.patchValue({
-          customer: custData[0],
+          customerctrl: custData[0],
         });
 
         this.customername = custData[0].name;
@@ -239,6 +244,7 @@ export class SalesPage implements OnInit {
       if (this.rawSalesData[0] !== undefined && this.rawSalesData[0].id !== 0) {
         this.breadmenu = "Edit Sale #" + this.rawSalesData[0].id;
         this.selInvType = this.rawSalesData[0].sale_type;
+        this.orig_selInvType = this.rawSalesData[0].sale_type;
         this.stock_issue_ref = this.rawSalesData[0].stock_issue_ref;
         this.stock_issue_date_ref = this.rawSalesData[0].stock_issue_date_ref;
 
@@ -368,7 +374,20 @@ export class SalesPage implements OnInit {
 
   // calls when invoice type select changes
   invoiceTypeChange(event) {
-    this.getInvoiceSequence(this.center_id, event.value);
+
+    if ((this.id !== "0") && (event.value === 'stockissue') && (this.mode !== 'enquiry') &&
+      this.orig_selInvType !== 'stockissue') {
+      this.presentAlert('Invoiced to Stock Issue Not allowed');
+
+      this.submitForm.patchValue({
+        invoicetype: "gstinvoice",
+      })
+      this._cdr.markForCheck();
+      return false;
+    } else {
+      this.getInvoiceSequence(this.center_id, event.value);
+    }
+
   }
 
   searchCustomers() {
@@ -903,7 +922,7 @@ export class SalesPage implements OnInit {
       return parseFloat(arr.unit_price) * parseFloat(arr.qty);
     })
 
-    this.testTotal = tempArr;
+    // this.testTotal = tempArr;
 
     this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 

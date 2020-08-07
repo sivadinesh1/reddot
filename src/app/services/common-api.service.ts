@@ -152,7 +152,9 @@ export class CommonApiService {
   }
 
 
-
+  updateCustomerDetailsinEnquiry(id: string, enqid: string) {
+    return this.httpClient.get(`${this.restApiUrl}/api/enquiry/update-customer/${id}/${enqid}`);
+  }
 
   getEnquiredProductData(center_id, customer_id, enqid, invdt) {
     return this.httpClient.get(`${this.restApiUrl}/api/enquiry/get-enquired-product-data/${center_id}/${customer_id}/${enqid}/${invdt}`);
@@ -329,6 +331,9 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/stock/purchase-master/${id}`);
   }
 
+  deletePurchaseData(id) {
+    return this.httpClient.delete(`${this.restApiUrl}/api/stock/delete-purchase/${id}`);
+  }
 
   deletePurchaseDetails(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/stock/delete-purchase-details', submitForm, { observe: 'response' });
@@ -338,10 +343,7 @@ export class CommonApiService {
     return this.httpClient.post<any>(this.restApiUrl + '/api/sale/delete-sales-details', submitForm, { observe: 'response' });
   }
 
-  deletePurchaseData(id) {
 
-    return this.httpClient.delete(`${this.restApiUrl}/api/stock/delete-purchase/${id}`);
-  }
 
 
 
@@ -360,15 +362,23 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/stock/sale-details/${id}`);
   }
 
+  deleteSaleMaster(id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/sale/delete-sale-master/${id}`);
+  }
+
   deleteSaleDetails(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/stock/delete-sale-details', submitForm, { observe: 'response' });
   }
 
-
   deleteSaleData(id) {
-
     return this.httpClient.get(`${this.restApiUrl}/api/sale/delete-sale/${id}`);
   }
+
+  deletePurchaseMaster(id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/stock/delete-purchase-master/${id}`);
+  }
+
+
 
   // end
   isProdExists(pCode) {

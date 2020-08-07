@@ -77,7 +77,7 @@ export class EditProductPage implements OnInit {
 
       unit_price: [null, Validators.required],
       mrp: [null, Validators.required],
-      purchaseprice: [null, Validators.required],
+      purchase_price: [null, Validators.required],
       salesprice: [null, Validators.required],
       maxdiscount: ['', [patternValidator(DISC_REGEX)]],
 
@@ -115,7 +115,7 @@ export class EditProductPage implements OnInit {
 
     this.submitForm.patchValue({ 'unit_price': this.productinfo.unit_price });
     this.submitForm.patchValue({ 'mrp': this.productinfo.mrp });
-    this.submitForm.patchValue({ 'purchaseprice': this.productinfo.purchaseprice });
+    this.submitForm.patchValue({ 'purchase_price': this.productinfo.purchase_price });
     this.submitForm.patchValue({ 'salesprice': this.productinfo.salesprice });
     this.submitForm.patchValue({ 'maxdiscount': this.productinfo.maxdiscount });
     this.submitForm.patchValue({ 'currentstock': this.productinfo.currentstock });

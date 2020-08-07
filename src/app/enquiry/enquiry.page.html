@@ -38,7 +38,7 @@
 						Please enter a value
 					</mat-error>
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
-						Please select a valid project
+						Customer does not exist
 					</mat-error>
 					<mat-hint *ngIf="iscustomerselected">
 						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer;">View Customer Details</span>

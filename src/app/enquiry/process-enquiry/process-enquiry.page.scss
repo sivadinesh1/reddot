@@ -277,13 +277,13 @@ td.mat-column-actions {
 }
 
 .make-gold {
-	background-color: gold;
+	background-color: rgb(251, 229, 101);
 }
 
 .footer {
 	display: flex;
 	position: fixed;
-	justify-content: space-around;
+	justify-content: space-between;
 	bottom: 0px;
 
 	width: 100%;
@@ -291,4 +291,15 @@ td.mat-column-actions {
 	background-color: #ffffff;
 	border-top: 1px solid #f1f1f1;
 	padding: 8px;
+}
+.customer {
+	display: grid;
+	grid-template-columns: 450px 1fr 1fr 1fr;
+	padding: 3rem 1rem;
+	width: 94%;
+	margin: 0 auto;
+}
+
+.example-full-width {
+	width: 100%;
 }

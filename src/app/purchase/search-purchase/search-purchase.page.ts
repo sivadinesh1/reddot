@@ -101,18 +101,19 @@ export class SearchPurchasePage implements OnInit {
   }
 
   async init() {
-    this.vendor$ = this._commonApiService.getAllActiveVendors(this.userdata.center_id);
+    this._commonApiService.getAllActiveVendors(this.userdata.center_id)
+      .subscribe((data: any) => {
+        this.vendor_lis = data;
 
-    this.vendor_lis = await this.vendor$.toPromise();
+        this.filteredVendor = this.submitForm.controls['vendorctrl'].valueChanges
+          .pipe(
+            startWith(''),
+            map(vendor => vendor ? this.filtervendor(vendor) : this.vendor_lis.slice())
+          );
 
-    this.filteredVendor = this.submitForm.controls['vendorctrl'].valueChanges
-      .pipe(
-        startWith(''),
-        map(vendor => vendor ? this.filtervendor(vendor) : this.vendor_lis.slice())
-      );
-
-    this.search();
-    this._cdr.markForCheck();
+        this.search();
+        this._cdr.markForCheck();
+      });
 
   }
 
@@ -205,9 +206,22 @@ export class SearchPurchasePage implements OnInit {
     this.fromdate = $event.target.value;
   }
 
+  // delete(item) {
+  //   this._commonApiService.deletePurchaseData(item.id).subscribe((data: any) => {
+  //     this.init();
+
+  //   })
+  // }
+
   delete(item) {
     this._commonApiService.deletePurchaseData(item.id).subscribe((data: any) => {
-      this.init();
+
+      if (data.result === 'success') {
+        this._commonApiService.deletePurchaseMaster(item.id).subscribe((data1: any) => {
+          this.init();
+        });
+      }
+
 
     })
   }

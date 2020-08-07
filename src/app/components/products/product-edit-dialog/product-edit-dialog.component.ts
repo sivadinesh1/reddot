@@ -71,7 +71,7 @@ export class ProductEditDialogComponent implements OnInit {
 
       unit_price: [this.product.unit_price, Validators.required],
       mrp: [this.product.mrp, Validators.required],
-      purchaseprice: [this.product.purchaseprice, Validators.required],
+      purchase_price: [this.product.purchase_price, Validators.required],
       salesprice: [this.product.salesprice, Validators.required],
       maxdiscount: ['', [patternValidator(DISC_REGEX)]],
 

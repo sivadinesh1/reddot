@@ -201,7 +201,7 @@
 
 	.left {
 		display: grid;
-		grid-template-columns: 1fr minmax(80px, 100px) 150px;
+		grid-template-columns: 1fr minmax(80px, 100px) 120px 150px;
 		align-items: center;
 		grid-gap: 10px;
 		background-color: #e8e8e8;

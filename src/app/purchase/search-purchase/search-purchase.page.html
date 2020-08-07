@@ -23,7 +23,7 @@
 							<mat-icon>close</mat-icon>
 						</button>
 						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
-							<mat-option *ngFor="let vendor of filteredVendor | async" [value]="vendor">
+							<mat-option *ngFor="let vendor of vendor_lis" [value]="vendor">
 								<span>{{ vendor.name }} </span>
 							</mat-option>
 						</mat-autocomplete>

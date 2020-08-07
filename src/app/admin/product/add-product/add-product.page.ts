@@ -58,7 +58,7 @@ export class AddProductPage implements OnInit {
 
       unit_price: ['', Validators.required],
       mrp: ['', Validators.required],
-      purchaseprice: ['', Validators.required],
+      purchase_price: ['', Validators.required],
       maxdiscount: ['', [patternValidator(DISC_REGEX)]],
       salesprice: ['',],
 

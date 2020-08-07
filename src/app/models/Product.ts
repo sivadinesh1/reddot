@@ -11,7 +11,7 @@ export class Product {
     available_stock: string;
     unit_price: string;
     mrp: string;
-    purchaseprice: string;
+    purchase_price: string;
     salesprice: string;
     rackno: string;
     location: string;

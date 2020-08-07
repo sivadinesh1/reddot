@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { AddMoreEnquiryComponent } from 'src/app/components/add-more-enquiry/add-more-enquiry.component';
-import { filter, tap, catchError } from 'rxjs/operators';
+import { filter, tap, catchError, debounceTime, switchMap } from 'rxjs/operators';
 import * as xlsx from 'xlsx';
 
 
@@ -19,8 +19,13 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { MatSort } from '@angular/material/sort';
-import { Observable } from 'rxjs';
-
+import { Observable, empty } from 'rxjs';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Customer } from 'src/app/models/Customer';
+import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
+import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
+import { CustomerViewDialogComponent } from 'src/app/components/customers/customer-view-dialog/customer-view-dialog.component';
+import { RequireMatch } from 'src/app/util/directives/requireMatch';
 
 @Component({
   selector: 'app-process-enquiry',
@@ -29,6 +34,7 @@ import { Observable } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProcessEnquiryPage implements OnInit {
+  submitForm: FormGroup;
 
   enqDetailsOrig: any;
   selectedEnq: any;
@@ -36,12 +42,20 @@ export class ProcessEnquiryPage implements OnInit {
   pageLength: any;
 
   productArr = [];
+  customer_lis: Customer[];
 
   enqid: any;
   center_id: any;
 
   status: any;
   isTableHasData = true;
+
+  isLoading = false;
+  isCLoading = false;
+  customername: any;
+  customerdata: any;
+
+  iscustomerselected = false;
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
@@ -53,14 +67,23 @@ export class ProcessEnquiryPage implements OnInit {
 
   @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
+  // TAB navigation for customer list
+  @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
+
 
   constructor(private _route: ActivatedRoute, private _router: Router,
     private dialog: MatDialog, private _modalcontroller: ModalController,
     private _authservice: AuthenticationService, public alertController: AlertController,
-    private _commonApiService: CommonApiService,
+    private _commonApiService: CommonApiService, private _dialog: MatDialog, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
     const currentUser = this._authservice.currentUserValue;
     this.center_id = currentUser.center_id;
+
+    this.submitForm = this._fb.group({
+
+      customerctrl: [null, [Validators.required, RequireMatch]],
+
+    });
 
   }
 
@@ -70,14 +93,18 @@ export class ProcessEnquiryPage implements OnInit {
     this._commonApiService.getEnquiryDetails(this.enqid).subscribe((data: any) => {
       this.enqDetailsOrig = data;
 
-      // this.dataSource.data = data.map(el => {
-      //   var o = Object.assign({}, el);
-      //   o.isExpanded = false;
-      //   return o;
-      // })
+      this._commonApiService.getCustomerDetails(this.center_id, this.enqDetailsOrig[0].customer_id).subscribe((custData: any) => {
+        this.customerdata = custData[0];
 
-      // this.dataSource.sort = this.sort;
-      // this.pageLength = data.length;
+
+        this.submitForm.patchValue({
+          customerctrl: custData[0],
+        });
+
+        this.customername = custData[0].name;
+        this.iscustomerselected = true;
+      });
+
 
       this.status = this.enqDetailsOrig[0].estatus;
 
@@ -126,6 +153,61 @@ export class ProcessEnquiryPage implements OnInit {
     this.dataSource.sort = this.sort;
     this.pageLength = this.productArr.length;
 
+    this.searchCustomers();
+  }
+
+
+  searchCustomers() {
+    let search = "";
+    this.submitForm.controls['customerctrl'].valueChanges.pipe(
+      debounceTime(300),
+      tap(() => this.isCLoading = true),
+      switchMap(id => {
+        console.log(id);
+        search = id;
+        if (id != null && id.length >= 2) {
+          return this._commonApiService.getCustomerInfo({ "centerid": this.center_id, "searchstr": id });
+        } else {
+          return empty();
+        }
+
+      })
+
+    )
+
+      .subscribe((data: any) => {
+
+        this.isCLoading = false;
+        this.customer_lis = data.body;
+        this._cdr.markForCheck();
+      });
+  }
+
+  displayFn(obj: any): string | undefined {
+    return obj && obj.name ? obj.name : undefined;
+  }
+
+
+  setCustomerInfo(event, from) {
+
+    if (from === 'click' && event.option.value === 'new') {
+      this.addCustomer();
+    }
+
+    if (from === 'tab') {
+
+      this.customerdata = event;
+      this.iscustomerselected = true;
+
+    } else {
+
+      this.customerdata = event.option.value;
+
+      this.iscustomerselected = true;
+    }
+
+
+    this._cdr.markForCheck();
 
   }
 
@@ -135,12 +217,12 @@ export class ProcessEnquiryPage implements OnInit {
 
     dialogRef.afterClosed().subscribe(
       data => {
+
         if (data != undefined && data.length > 0) {
 
           this.productArr[idx].giveqty = +data;
           this.dataSource.data = this.productArr;
 
-          // this._cdr.detectChanges();
         }
 
         this._cdr.markForCheck();
@@ -149,8 +231,6 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   async showAddProductComp(idx) {
-
-    // console.log('object ' + JSON.stringify(this.productArr));
 
     const modal = await this._modalcontroller.create({
       component: AddProductComponent,
@@ -201,6 +281,10 @@ export class ProcessEnquiryPage implements OnInit {
 
   save() {
 
+    if (this.enqDetailsOrig[0].customer_id !== this.customerdata.id) {
+      this.updateCustomerDetailsinEnquiry();
+    }
+
     this._commonApiService.draftEnquiry(this.productArr).subscribe((data: any) => {
 
       if (data.body.result === 'success') {
@@ -246,6 +330,12 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   moveToSale() {
+
+    if (this.enqDetailsOrig[0].customer_id !== this.customerdata.id) {
+      this.updateCustomerDetailsinEnquiry();
+    }
+
+
     this._commonApiService.moveToSale(this.productArr).subscribe((data: any) => {
       if (data.body.result === 'success') {
         this._router.navigate([`/home/enquiry/open-enquiry`]);
@@ -258,6 +348,17 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   }
+
+  updateCustomerDetailsinEnquiry() {
+
+    this._commonApiService.updateCustomerDetailsinEnquiry(this.customerdata.id, this.enqid).subscribe((data: any) => {
+      if (data.body.result === 'success') {
+        // do nothing
+      }
+    });
+
+  }
+
 
   openEnquiry() {
     this._router.navigateByUrl(`/home/enquiry/open-enquiry`);
@@ -334,6 +435,82 @@ export class ProcessEnquiryPage implements OnInit {
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(wb, 'enquiry.xlsx');
   }
+
+
+
+  addCustomer() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "80%";
+    dialogConfig.height = "80%";
+
+    const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          // do nothing check
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe((data: any) => {
+        if (data !== 'close') {
+          this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
+
+            this.customerdata = custData[0];
+
+            this.customername = custData[0].name;
+            this.iscustomerselected = true;
+
+
+
+            this.setCustomerInfo(custData[0], "tab");
+
+            this.submitForm.patchValue({
+              customerctrl: custData[0]
+            });
+
+            this.isCLoading = false;
+            this.autoTrigger1.closePanel();
+
+            this._cdr.markForCheck();
+          });
+        } else {
+
+          this.iscustomerselected = false;
+          this.autoTrigger1.closePanel();
+
+          this._cdr.markForCheck();
+        }
+
+
+        this._cdr.markForCheck();
+      });
+
+
+  }
+
+
+  openDialog(event): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "400px";
+    dialogConfig.height = "100%";
+    dialogConfig.data = this.customerdata;
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+
 
   reset() {
 
