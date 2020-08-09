@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';

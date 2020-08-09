@@ -117,6 +117,8 @@ export class HeaderComponent implements OnInit {
 
   }
 
-
+  openBackOrder() {
+    this._router.navigateByUrl('/home/enquiry/back-order');
+  }
 
 }

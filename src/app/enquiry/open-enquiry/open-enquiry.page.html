@@ -1,23 +1,13 @@
 <ion-content>
 	<div class="content">
-		<div class="title-row">
-			<span>Inquiry Management</span>
-
-			<span>
-				<button appPreventDoubleClick (throttledClick)="openBackOrder()" fill="outline" [throttleTime]="2000" mat-stroked-button color="primary">
-					Backorder
-				</button>
-				<span style="width: 16px; display: inline-block;">&nbsp;</span>
-				<button mat-raised-button color="primary" (click)="goEnquiryScreen()" style="font-size: 0.8rem; border-radius: 50px;">
-					+ New Inquiry
-				</button>
-			</span>
-		</div>
-
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="customers">
+				<div class="title" (click)="goEnquiryScreen()" style="cursor: pointer;">
+					<span style="font-size: 24px; color: #333;">INQUIRIES</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333;">+</span>
+				</div>
+				<div class="customers" style="padding-top: 20px; text-align: right;">
 					<mat-form-field class="width">
+						<mat-label>Search</mat-label>
 						<input
 							matInput
 							[matAutocomplete]="auto"
@@ -36,45 +26,42 @@
 						</mat-autocomplete>
 					</mat-form-field>
 				</div>
-				<div>
-					<ion-item class="input-item" lines="none">
-						<mat-form-field class="mat-input-wrapper">
-							<input
-								matInput
-								readonly
-								[max]="maxDate"
-								[matDatepicker]="fromdate"
-								formControlName="fromdate"
-								placeholder="From date"
-								(focus)="fromdate.open()"
-								(dateChange)="fromDateSelected($event)"
-							/>
-							<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
-							<mat-datepicker #fromdate></mat-datepicker>
-						</mat-form-field>
-					</ion-item>
+				<div style="padding-top: 20px;">
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label>From</mat-label>
+						<input
+							matInput
+							readonly
+							required
+							[max]="maxDate"
+							[matDatepicker]="fromdate"
+							formControlName="fromdate"
+							(focus)="fromdate.open()"
+							(dateChange)="fromDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
+						<mat-datepicker #fromdate></mat-datepicker>
+					</mat-form-field>
 				</div>
-				<div>
-					<ion-item class="input-item" lines="none">
-						<mat-form-field class="mat-input-wrapper">
-							<input
-								matInput
-								readonly
-								[matDatepicker]="todate"
-								[max]="maxDate"
-								formControlName="todate"
-								placeholder="To date"
-								(focus)="todate.open()"
-								required
-								(dateChange)="toDateSelected($event)"
-							/>
-							<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
-							<mat-datepicker #todate></mat-datepicker>
-						</mat-form-field>
-					</ion-item>
+				<div style="padding-top: 20px;">
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label>To</mat-label>
+						<input
+							matInput
+							readonly
+							[matDatepicker]="todate"
+							[max]="maxDate"
+							formControlName="todate"
+							(focus)="todate.open()"
+							required
+							(dateChange)="toDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
+						<mat-datepicker #todate></mat-datepicker>
+					</mat-form-field>
 				</div>
 
-				<div>
+				<div style="padding-top: 20px;">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Status</mat-label>
 						<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
@@ -84,70 +71,52 @@
 						</mat-select>
 					</mat-form-field>
 				</div>
-				<div class="search-btn">
+				<div class="search-btn" style="padding-top: 20px;">
 					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem;" (click)="search()">
 						Search
 					</button>
 				</div>
-
-				<!-- <div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Status</mat-label>
-					<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
-						<mat-option value="all">
-							All
-						</mat-option>
-						<mat-option *ngFor="let item of statusList" [value]="item.id">
-							{{item.value}}
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
-			</div> -->
-				<!-- <div class="search-btn">
-					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem;" (click)="search()">
-						Search
-					</button>
-				</div> -->
 			</div>
 		</form>
+		<div style="width: 94%; margin: 0 auto; padding-top: 16px;">
+			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
+				<mat-tab label="All Inquiries ({{(enquiries$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
 
-		<mat-tab-group color="primary" backgroundColor="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-			<mat-tab label="All Inquiries ({{(enquiries$| async)?.length }})">
-				<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-			</mat-tab>
+				<mat-tab label="New ({{(newEnquiries$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
 
-			<mat-tab label="New ({{(newEnquiries$| async)?.length }})">
-				<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-			</mat-tab>
+				<mat-tab label="In Progress ({{(draftEnquiries$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
 
-			<mat-tab label="In Progress ({{(draftEnquiries$| async)?.length }})">
-				<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-			</mat-tab>
+				<mat-tab label="Invoice Ready ({{(invoiceReadyEnquiries$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
 
-			<mat-tab label="Invoice Ready ({{(invoiceReadyEnquiries$| async)?.length }})">
-				<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-			</mat-tab>
-
-			<mat-tab label="Executed ({{(fullfilledEnquiries$| async)?.length }})">
-				<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-			</mat-tab>
-		</mat-tab-group>
+				<mat-tab label="Executed ({{(fullfilledEnquiries$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
+			</mat-tab-group>
+		</div>
 	</div>
 
 	<ng-template #MsgRef>
 		<div class="header">
 			<div>#</div>
-			<div>Inq ID</div>
-			<div>Customer</div>
-			<div>Inquired On</div>
-			<div>Status</div>
-			<div>Items</div>
-			<div></div>
+			<div>INQ ID</div>
+			<div>CUSTOMER</div>
+			<div>INQUIRED ON</div>
+			<div>STATUS</div>
+			<div>ITEMS</div>
+			<div>&nbsp;</div>
 		</div>
 	</ng-template>
 
@@ -173,45 +142,41 @@
 				{{item.noofitems}}
 			</div>
 			<div>
-				<button
-					mat-raised-button
-					color="primary"
-					*ngIf="item.estatus === 'O' "
-					(click)="processEnquiry(item)"
-					style="font-size: 0.8rem; border-radius: 50px; line-height: 32px; width: 155px;"
-				>
-					Step 1: Order Process
-				</button>
+				<div *ngIf="item.estatus === 'O' ">
+					<div style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+						Order Process
+					</div>
+					<div>
+						<img src="/assets/images/svg/step1.svg" style="cursor: pointer;" width="200px" (click)="processEnquiry(item)" />
+					</div>
+				</div>
 
-				<button
-					mat-stroked-button
-					color="primary"
-					*ngIf="item.estatus === 'D' "
-					(click)="processEnquiry(item)"
-					style="font-size: 0.8rem; border-radius: 50px; line-height: 32px; width: 155px;"
-				>
-					Step 2: In Progress
-				</button>
+				<div *ngIf="item.estatus === 'D' ">
+					<div style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+						In Progress
+					</div>
+					<div>
+						<img src="/assets/images/svg/step2.svg" style="cursor: pointer;" width="200px" (click)="processEnquiry(item)" />
+					</div>
+				</div>
 
-				<button
-					mat-raised-button
-					color="primary"
-					*ngIf="item.estatus === 'P' "
-					(click)="moveToSale(item)"
-					style="font-size: 0.8rem; border-radius: 50px; line-height: 32px; width: 155px;"
-				>
-					Step 3: Invoice Ready
-				</button>
+				<div *ngIf="item.estatus === 'P' ">
+					<div style="color: blue; cursor: pointer;" (click)="moveToSale(item)">
+						Invoice Ready
+					</div>
+					<div>
+						<img src="/assets/images/svg/step3.svg" style="cursor: pointer;" width="200px" (click)="moveToSale(item)" />
+					</div>
+				</div>
 
-				<button
-					mat-raised-button
-					color="primary"
-					*ngIf="item.estatus === 'E' "
-					(click)="processEnquiry(item)"
-					style="font-size: 0.8rem; border-radius: 50px; line-height: 32px; width: 155px;"
-				>
-					View
-				</button>
+				<div *ngIf="item.estatus === 'E' ">
+					<div style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+						View
+					</div>
+					<div>
+						<img src="/assets/images/svg/step4.svg" style="cursor: pointer;" width="200px" (click)="processEnquiry(item)" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</ng-template>

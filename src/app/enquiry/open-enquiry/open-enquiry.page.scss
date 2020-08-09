@@ -1,27 +1,29 @@
 .content {
 	display: grid;
-	width: 94%;
-	margin: 0 auto;
-	padding-top: 16px;
+	width: 100%;
 }
 
 .header {
 	padding: 10px;
-	background-color: grey;
-	color: #ffffff;
+	background-color: #f1efef;
+	color: #333;
 }
 
 .header,
 .listItem {
 	display: grid;
+	width: 100%;
+	margin: 0 auto;
 	grid-template-columns: 60px 100px 1fr 1fr 1fr 1fr 1fr;
 	padding: 5px;
 	align-items: center;
+	font-size: 14px;
 }
 
 .header-style {
 	background-color: #757575;
-	color: #ffffff;
+	color: #333;
+	font-weight: 500;
 }
 
 .o-enq-details {
@@ -35,7 +37,7 @@
 	color: #222222;
 }
 .items {
-	font-size: 12px;
+	font-size: 14px;
 	color: #333333;
 	align-self: center;
 }
@@ -57,14 +59,20 @@
 	text-align: center;
 }
 
-// .list-item:hover {
-// 	background-color: #c7c4d7;
-// 	opacity: 1;
-// 	cursor: pointer;
-// }
-
 .form-wrap {
-	display: flex;
+	display: grid;
+	grid-template-columns: 1.5fr 400px 160px 160px 200px 1fr;
+	background-color: #f6f6ff;
+
+	gap: 10px;
+}
+
+.title {
+	font-size: 24px;
+	color: #222222;
+	background-color: #e2e2e2;
+	text-align: center;
+	line-height: 73px;
 }
 
 .search-btn {
@@ -83,4 +91,8 @@
 }
 .width {
 	width: 280px !important;
+}
+
+.mat-input-wrapper {
+	width: 160px;
 }

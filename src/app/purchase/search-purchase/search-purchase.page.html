@@ -1,14 +1,10 @@
 <ion-content>
 	<div class="search-wrap">
-		<div class="title-row">
-			<span>Purchase Management</span>
-
-			<button mat-raised-button color="primary" (click)="goPurchaseAddScreen()" style="font-size: 0.8rem; border-radius: 50px;">
-				+ Add to Stock
-			</button>
-		</div>
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
+				<div class="title" (click)="goPurchaseAddScreen()" style="cursor: pointer;">
+					<span style="font-size: 24px; color: #333;">PURCHASE</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333;">+</span>
+				</div>
 				<div class="vendors">
 					<mat-form-field class="width">
 						<input
@@ -30,58 +26,41 @@
 					</mat-form-field>
 				</div>
 
-				<!-- <div class="vendors">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Vendors</mat-label>
-						<mat-select formControlName="vendorid" value="{selectedVend}" (selectionChange)="selectedVendor($event)">
-							<mat-option value="all">
-								All
-							</mat-option>
-							<mat-option *ngFor="let item of (vendor$ | async)" [value]="item.id">
-								{{item.name}}
-							</mat-option>
-						</mat-select>
+				<div>
+					<mat-form-field class="mat-input-wrapper" style="padding-top: 20px;">
+						<input
+							matInput
+							readonly
+							[max]="maxDate"
+							[matDatepicker]="fromdate"
+							formControlName="fromdate"
+							placeholder="From date"
+							(focus)="fromdate.open()"
+							(dateChange)="fromDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
+						<mat-datepicker #fromdate></mat-datepicker>
 					</mat-form-field>
-				</div> -->
-				<div>
-					<ion-item class="input-item" lines="none">
-						<mat-form-field class="mat-input-wrapper">
-							<input
-								matInput
-								readonly
-								[max]="maxDate"
-								[matDatepicker]="fromdate"
-								formControlName="fromdate"
-								placeholder="From date"
-								(focus)="fromdate.open()"
-								(dateChange)="fromDateSelected($event)"
-							/>
-							<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
-							<mat-datepicker #fromdate></mat-datepicker>
-						</mat-form-field>
-					</ion-item>
 				</div>
 				<div>
-					<ion-item class="input-item" lines="none">
-						<mat-form-field class="mat-input-wrapper">
-							<input
-								matInput
-								readonly
-								[matDatepicker]="todate"
-								[max]="maxDate"
-								formControlName="todate"
-								placeholder="To date"
-								(focus)="todate.open()"
-								required
-								(dateChange)="toDateSelected($event)"
-							/>
-							<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
-							<mat-datepicker #todate></mat-datepicker>
-						</mat-form-field>
-					</ion-item>
+					<mat-form-field class="mat-input-wrapper" style="padding-top: 20px;">
+						<input
+							matInput
+							readonly
+							[matDatepicker]="todate"
+							[max]="maxDate"
+							formControlName="todate"
+							placeholder="To date"
+							(focus)="todate.open()"
+							required
+							(dateChange)="toDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
+						<mat-datepicker #todate></mat-datepicker>
+					</mat-form-field>
 				</div>
 				<div>
-					<mat-form-field class="mat-width-ext">
+					<mat-form-field class="mat-width-ext" style="padding-top: 20px;">
 						<mat-label>Status</mat-label>
 						<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
 							<mat-option *ngFor="let item of statusList" [value]="item.id">
@@ -90,49 +69,50 @@
 						</mat-select>
 					</mat-form-field>
 				</div>
-				<div class="search-btn">
+				<div class="search-btn" style="padding-top: 20px;">
 					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem;" (click)="search()">
 						Search
 					</button>
 				</div>
 			</div>
 		</form>
+		<div style="width: 94%; margin: 0 auto; padding-top: 16px;">
+			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
+				<mat-tab label="All Orders ({{(purchases$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
 
-		<mat-tab-group color="primary" backgroundColor="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-			<mat-tab label="All Orders ({{(purchase$| async)?.length }})">
-				<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-			</mat-tab>
+				<mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
 
-			<mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
-				<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-			</mat-tab>
-
-			<mat-tab label="Fullfilled  ({{(fullfilledPurchase$| async)?.length }})">
-				<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-				<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-			</mat-tab>
-		</mat-tab-group>
+				<mat-tab label="Fullfilled  ({{(fullfilledPurchase$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
+			</mat-tab-group>
+		</div>
 	</div>
 
 	<ng-template #MsgRef>
 		<div class="header header-style">
-			<div>Invoice #</div>
-			<div>Invoice Date</div>
-			<div>Vendor Name</div>
-			<div># of Items</div>
-			<div>Total Value</div>
-			<div>Status</div>
+			<div>INVOICE #</div>
+			<div>INV DATE</div>
+			<div>VENDOR NAME</div>
+			<div class="txt-right-align"># ITEMS</div>
+			<div class="txt-right-align">TOTAL VALUE</div>
+			<div class="txt-center-align">STATUS</div>
 			<div>&nbsp;</div>
-			<div><span>Revision</span></div>
+			<div class="txt-center-align">REVISIONS</div>
 		</div>
-		<div class="headerRow" style="background-color: #efefef;">
+		<div class="headerRow">
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div style="font-size: 1.1rem; font-weight: 400;">&nbsp;</div>
-			<div style="font-size: 1.1rem; font-weight: 400;">{{this.sumNumItems}}</div>
-			<div style="font-size: 1.1rem; font-weight: 400;">{{this.sumTotalValue}}</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500;">&nbsp;</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500;">{{this.sumNumItems}}</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500;">{{this.sumTotalValue | number:'1.2-2'}}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
@@ -144,16 +124,16 @@
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>
 			<div class="item">{{item.vendor_name}}</div>
-			<div class="item">{{item.no_of_items}}</div>
-			<div class="item">{{item.total_value}}</div>
-			<div class="item">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
-			<div class="item cursor">
-				<img src="/assets/images/svg/edit.svg" width="18px" height="18px" (click)="goPurchaseEditScreen(item)" />
+			<div class="item txt-right-align">{{item.no_of_items}}</div>
+			<div class="item txt-right-align">{{item.total_value | number:'1.2-2'}}</div>
+			<div class="item txt-center-align">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
+			<div class="item cursor txt-center-align">
+				<mat-icon [ngStyle]="{'color':'blue'}" (click)="goPurchaseEditScreen(item)">edit </mat-icon>
 			</div>
-			<div class="item cursor" *ngIf="item.status === 'D'">
-				<img src="/assets/images/svg/trash.svg" width="18px" height="18px" (click)="presentAlertConfirm(item)" />
+			<div class="item cursor txt-center-align" *ngIf="item.status === 'D'">
+				<mat-icon [ngStyle]="{'color':'#ff8484'}" (click)="presentAlertConfirm(item)">delete </mat-icon>
 			</div>
-			<div>
+			<div class="txt-center-align">
 				<span *ngIf="item.status === 'C'">{{item.revision}}</span>
 			</div>
 		</div>

@@ -1,14 +1,13 @@
 .search-wrap {
 	display: grid;
-	width: 94%;
-	margin: 0 auto;
-	padding-top: 16px;
+	width: 100%;
 }
 
 .form-wrap {
 	display: grid;
-	grid-template-columns: 2fr 140px 140px 1fr 1fr 1fr;
-	grid-gap: 10px;
+	grid-template-columns: 200px 1fr 130px 130px 150px 150px 120px;
+	gap: 10px;
+	background-color: #f6f6ff;
 }
 
 .search-btn {
@@ -24,8 +23,9 @@
 }
 
 .header-style {
-	background-color: #757575;
-	color: #ffffff;
+	background-color: #f1efef;
+	color: #333333;
+	font-size: 13px;
 }
 
 .listItem {
@@ -39,14 +39,26 @@
 }
 
 .mat-auto-width {
-	width: 300px;
+	width: 280px;
 }
 
 .item {
-	font-size: 13px;
-	color: #555555;
+	font-size: 14px;
+	color: #333333;
 }
 
 .mat-date-wrapper {
-	width: 120px;
+	width: 100%;
+}
+
+.title {
+	font-size: 24px;
+	color: #222222;
+	background-color: #e2e2e2;
+	text-align: center;
+	line-height: 73px;
+}
+
+.mat-width-ext {
+	width: 100%;
 }
