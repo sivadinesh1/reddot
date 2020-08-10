@@ -7,6 +7,7 @@
 				</div>
 				<div class="vendors">
 					<mat-form-field class="width">
+						<mat-label>Search</mat-label>
 						<input
 							matInput
 							[matAutocomplete]="auto"
@@ -28,13 +29,13 @@
 
 				<div>
 					<mat-form-field class="mat-input-wrapper" style="padding-top: 20px;">
+						<mat-label>From</mat-label>
 						<input
 							matInput
 							readonly
 							[max]="maxDate"
 							[matDatepicker]="fromdate"
 							formControlName="fromdate"
-							placeholder="From date"
 							(focus)="fromdate.open()"
 							(dateChange)="fromDateSelected($event)"
 						/>
@@ -44,13 +45,13 @@
 				</div>
 				<div>
 					<mat-form-field class="mat-input-wrapper" style="padding-top: 20px;">
+						<mat-label>To</mat-label>
 						<input
 							matInput
 							readonly
 							[matDatepicker]="todate"
 							[max]="maxDate"
 							formControlName="todate"
-							placeholder="To date"
 							(focus)="todate.open()"
 							required
 							(dateChange)="toDateSelected($event)"

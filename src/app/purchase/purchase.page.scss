@@ -39,9 +39,9 @@
 
 		.row2 {
 			align-items: center;
-			overflow-y: auto;
-			overflow-x: hidden;
-			max-height: 500px;
+			// overflow-y: auto;
+			// overflow-x: hidden;
+			// max-height: 500px;
 			.list-item {
 				display: grid;
 				grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px;

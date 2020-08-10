@@ -28,6 +28,8 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
+@import "./breakpoints//breakpoints.scss";
+
 .select-modal {
 	.modal-wrapper {
 		height: 80vh;

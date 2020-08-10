@@ -1,5 +1,11 @@
+@import "../../breakpoints/breakpoints.scss";
+
 .main_content {
 	width: 100%;
 	height: calc(100vh - 60px);
 	background: #fff;
+
+	@include media("<=phone") {
+		background-color: red;
+	}
 }
