@@ -84,15 +84,16 @@
 		<span>Vendor</span>
 	</button>
 
-	<!-- <button mat-menu-item (click)="viewCustomer()">
-		<span>Customers</span>
-	</button> -->
 	<button mat-menu-item [matMenuTriggerFor]="customeradmin">
 		<span>Customers</span>
 	</button>
 
 	<button mat-menu-item (click)="editCenter()">
 		<span>Centers</span>
+	</button>
+
+	<button mat-menu-item [matMenuTriggerFor]="reportsadmin">
+		<span>Reports</span>
 	</button>
 </mat-menu>
 
@@ -105,5 +106,11 @@
 	</button>
 	<button mat-menu-item (click)="openBackOrder()">
 		<span>Backorders</span>
+	</button>
+</mat-menu>
+
+<mat-menu #reportsadmin="matMenu">
+	<button mat-menu-item (click)="viewInventoryReports()" style="padding-right: 16px;">
+		<span>Inventory Reports</span>
 	</button>
 </mat-menu>

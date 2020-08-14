@@ -423,6 +423,11 @@ export class CommonApiService {
   }
 
 
+  // REPORTS SECTION
+  fetchProductInventoryReports(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/reports/inventory-report', submitForm, { observe: 'response' });
+  }
+
 }
 
 

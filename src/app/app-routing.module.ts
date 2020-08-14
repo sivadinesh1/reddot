@@ -132,6 +132,16 @@ const routes: Routes = [
         loadChildren: () => import('./accounts/accounts-receivable/accounts-receivable.module').then(m => m.AccountsReceivablePageModule)
       },
 
+      {
+        path: 'reports',
+        children: [
+          {
+            path: 'inventory-reports',
+            loadChildren: () => import('./reports/inventory-reports/inventory-reports.module').then(m => m.InventoryReportsPageModule)
+          },
+        ]
+      },
+
 
     ]
   },
@@ -144,6 +154,10 @@ const routes: Routes = [
   {
     path: 'view-discounts',
     loadChildren: () => import('./admin/customer/discounts/view-discounts/view-discounts.module').then(m => m.ViewDiscountsPageModule)
+  },
+  {
+    path: 'inventory-reports',
+    loadChildren: () => import('./reports/inventory-reports/inventory-reports.module').then(m => m.InventoryReportsPageModule)
   },
 
 ];

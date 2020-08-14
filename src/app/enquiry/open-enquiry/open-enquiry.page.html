@@ -143,38 +143,54 @@
 			</div>
 			<div>
 				<div *ngIf="item.estatus === 'O' ">
-					<div style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+					<div style="color: blue; cursor: pointer;">
 						Order Process
 					</div>
 					<div>
-						<img src="/assets/images/svg/step1.svg" style="cursor: pointer;" width="200px" (click)="processEnquiry(item)" />
+						<img src="/assets/images/svg/step1.svg" style="cursor: pointer;" width="200px" />
+					</div>
+					<div class="extra" style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+						<mat-icon>edit </mat-icon>
+						<span>Edit</span>
 					</div>
 				</div>
 
 				<div *ngIf="item.estatus === 'D' ">
-					<div style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+					<div style="color: blue; cursor: pointer;">
 						In Progress
 					</div>
 					<div>
-						<img src="/assets/images/svg/step2.svg" style="cursor: pointer;" width="200px" (click)="processEnquiry(item)" />
+						<img src="/assets/images/svg/step2.svg" style="cursor: pointer;" width="200px" />
+					</div>
+					<div class="extra" style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+						<mat-icon>edit </mat-icon>
+						<span>Edit</span>
 					</div>
 				</div>
 
 				<div *ngIf="item.estatus === 'P' ">
-					<div style="color: blue; cursor: pointer;" (click)="moveToSale(item)">
+					<div style="color: blue; cursor: pointer;">
 						Invoice Ready
 					</div>
 					<div>
-						<img src="/assets/images/svg/step3.svg" style="cursor: pointer;" width="200px" (click)="moveToSale(item)" />
+						<img src="/assets/images/svg/step3.svg" style="cursor: pointer;" width="200px" />
+					</div>
+					<div class="extra" style="color: blue; cursor: pointer;" (click)="moveToSale(item)">
+						<mat-icon>edit </mat-icon>
+						<span>Go</span>
 					</div>
 				</div>
 
 				<div *ngIf="item.estatus === 'E' ">
-					<div style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+					<div style="color: blue; cursor: pointer;">
 						View
 					</div>
 					<div>
-						<img src="/assets/images/svg/step4.svg" style="cursor: pointer;" width="200px" (click)="processEnquiry(item)" />
+						<img src="/assets/images/svg/step4.svg" style="cursor: pointer;" width="200px" />
+					</div>
+					<div class="extra" style="color: blue; cursor: pointer;" (click)="processEnquiry(item)">
+						<mat-icon>edit </mat-icon>
+						<span>Edit</span>
 					</div>
 				</div>
 			</div>

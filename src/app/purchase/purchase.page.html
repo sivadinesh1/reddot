@@ -441,7 +441,8 @@
 						type="button"
 						color="primary"
 					>
-						Add to stock
+						<span *ngIf="breadmenu === 'New Sale'">Add to stock</span>
+						<span *ngIf="breadmenu !== 'New Sale'">Update to stock</span>
 					</button>
 
 					<!-- <button

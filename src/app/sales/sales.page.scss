@@ -40,6 +40,22 @@
 				font-size: 14px;
 				padding-top: 5px;
 			}
+
+			.extra {
+				color: red;
+				display: none;
+			}
+
+			.list-item:hover .extra {
+				display: flex;
+				align-items: baseline;
+			}
+
+			.list-item:hover {
+				font-weight: 500;
+				border-top: 1px solid #e2e2e2;
+				border-bottom: 1px solid #e2e2e2;
+			}
 		}
 
 		// .row3 {
