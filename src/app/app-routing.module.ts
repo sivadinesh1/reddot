@@ -79,7 +79,11 @@ const routes: Routes = [
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardPageModule)
       },
-
+      {
+        path: 'payments',
+        // loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardPageModule)
+        loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
+      },
 
       {
         path: 'enquiry/process-enquiry/:enqid',
@@ -115,7 +119,14 @@ const routes: Routes = [
         path: 'view-discounts',
         loadChildren: () => import('./admin/customer/discounts/view-discounts/view-discounts.module').then(m => m.ViewDiscountsPageModule)
       },
-
+      {
+        path: 'ledger-customer/:center_id/:customer_id',
+        loadChildren: () => import('./admin/customer/ledger-customer/ledger-customer.module').then(m => m.LedgerCustomerPageModule)
+      },
+      {
+        path: 'financials-customer/:center_id/:customer_id',
+        loadChildren: () => import('./admin/customer/financials-customer/financials-customer.module').then(m => m.FinancialsCustomerPageModule)
+      },
 
       // centers
       {
@@ -127,6 +138,7 @@ const routes: Routes = [
         path: 'accounts/accounts-dash',
         loadChildren: () => import('./accounts/accounts-dash/accounts-dash.module').then(m => m.AccountsDashPageModule)
       },
+
       {
         path: 'accounts/accounts-receivable',
         loadChildren: () => import('./accounts/accounts-receivable/accounts-receivable.module').then(m => m.AccountsReceivablePageModule)
@@ -158,6 +170,18 @@ const routes: Routes = [
   {
     path: 'inventory-reports',
     loadChildren: () => import('./reports/inventory-reports/inventory-reports.module').then(m => m.InventoryReportsPageModule)
+  },
+  {
+    path: 'ledger-customer',
+    loadChildren: () => import('./admin/customer/ledger-customer/ledger-customer.module').then(m => m.LedgerCustomerPageModule)
+  },
+  {
+    path: 'financials-customer',
+    loadChildren: () => import('./admin/customer/financials-customer/financials-customer.module').then(m => m.FinancialsCustomerPageModule)
+  },
+  {
+    path: 'accounts-payments',
+    loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
   },
 
 ];

@@ -24,5 +24,6 @@ export class Customer {
     csa_district: string;
     csa_pin: number;
     csa_code: number;
+    credit_amt: number;
 
 }

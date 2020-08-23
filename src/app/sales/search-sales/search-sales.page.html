@@ -91,7 +91,7 @@
 				</div>
 			</div>
 		</form>
-		<div style="width: 94%; margin: 0 auto; padding-top: 16px;">
+		<div style="width: 94%; margin: 0 auto; padding-top: 16px;" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
 				<mat-tab label="All Orders ({{(sales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>

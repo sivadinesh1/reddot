@@ -77,6 +77,10 @@ export class CommonApiService {
     return this.httpClient.get<Brand[]>(`${this.restApiUrl}/api/all-active-brands/${centerid}/${status}`);
   }
 
+  getAllActivePymtModes(centerid, status): Observable<any> {
+    return this.httpClient.get<Brand[]>(`${this.restApiUrl}/api/all-pymt-modes/${centerid}/${status}`);
+  }
+
   getAllActiveCustomers(centerid) {
     return this.httpClient.get(this.restApiUrl + '/api/all-active-customers/' + centerid);
   }
@@ -386,8 +390,8 @@ export class CommonApiService {
   }
 
 
-  addAccountReceived(submitForm) {
-    return this.httpClient.post<any>(this.restApiUrl + '/api/accounts/add-account-received', submitForm, { observe: 'response' });
+  addPymtReceived(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/accounts/add-payment-received', submitForm, { observe: 'response' });
   }
 
 
@@ -426,6 +430,30 @@ export class CommonApiService {
   // REPORTS SECTION
   fetchProductInventoryReports(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/reports/inventory-report', submitForm, { observe: 'response' });
+  }
+
+  // /get-ledger-customer/:centerid/:customerid
+
+
+  getLedgerCustomer(center_id, customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-ledger-customer/${center_id}/${customer_id}`);
+  }
+
+  getSaleInvoiceByCustomer(center_id, customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-sale-invoice-customer/${center_id}/${customer_id}`);
+  }
+
+  getPaymentsByCustomer(center_id, customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-payments-customer/${center_id}/${customer_id}`);
+  }
+
+  getPaymentsByCenter(center_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-payments-center/${center_id}`);
+  }
+
+
+  getSaleInvoiceByCenter(center_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-sale-invoice-center/${center_id}`);
   }
 
 }

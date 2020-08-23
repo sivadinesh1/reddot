@@ -1,23 +1,27 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ShowCustomersComponent } from 'src/app/components/show-customers/show-customers.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ModalController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
-import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
+
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/User';
 import { filter } from 'rxjs/operators';
 
+import { Customer } from 'src/app/models/Customer';
+
+import { CurrencyPipe } from '@angular/common';
+
 @Component({
-  selector: 'app-accounts-receivable',
-  templateUrl: './accounts-receivable.page.html',
-  styleUrls: ['./accounts-receivable.page.scss'],
+  selector: 'app-customer-payment-dialog',
+  templateUrl: './customer-payment-dialog.component.html',
+  styleUrls: ['./customer-payment-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AccountsReceivablePage implements OnInit {
+export class CustomerPaymentDialogComponent implements OnInit {
   customerAdded = false;
   submitForm: FormGroup;
   customerData: any;
@@ -33,10 +37,23 @@ export class AccountsReceivablePage implements OnInit {
 
   userdata$: Observable<User>;
 
-  constructor(private _fb: FormBuilder, public dialog: MatDialog, private _authservice: AuthenticationService,
+  customer: Customer;
+  invoice: any;
+  summed = 0;
+
+  errmsg: any;
+  balancedue: any;
+
+  constructor(private _fb: FormBuilder, public dialog: MatDialog, private currencyPipe: CurrencyPipe,
+    private dialogRef: MatDialogRef<CustomerPaymentDialogComponent>,
+    private _authservice: AuthenticationService, @Inject(MAT_DIALOG_DATA) data: any,
     private _modalcontroller: ModalController, private _router: Router, private _route: ActivatedRoute,
     private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService
   ) {
+
+    this.customer = data.customerdata;
+    this.invoice = data.invoicedata;
+
     this.userdata$ = this._authservice.currentUser;
 
     this.userdata$
@@ -64,51 +81,36 @@ export class AccountsReceivablePage implements OnInit {
   }
 
   ngOnInit() {
+    // init form values
     this.submitForm = this._fb.group({
-      customer: [null, Validators.required],
+      customer: [this.customer, Validators.required],
       centerid: [this.userdata.center_id, Validators.required],
       accountarr: this._fb.array([])
 
     });
 
+    // adds first record
     this.addAccount();
+
+    // subscribes to values chages of "accountarr"
+    this.submitForm.get('accountarr').valueChanges.subscribe(values => {
+      this.checkTotalSum();
+      this._cdr.detectChanges()
+    });
+
 
   }
 
-  // openCurrencyPad(idx) {
-
-  //   const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
-
-  //   dialogRef.afterClosed().subscribe(
-  //     data => {
-  //       if (data != undefined && data.length > 0 && data != 0) {
-
-  //         const faControl =
-  //           (<FormArray>this.submitForm.controls['accountarr']).at(idx);
-  //         faControl['controls'].receivedamount.setValue(data);
-
-
-
-
-  //       }
-
-  //       this._cdr.markForCheck();
-  //     }
-  //   );
-  // }
-
-
-
+  // initialize the values
   initAccount() {
     return this._fb.group({
       checkbox: [false],
-      receivedamount: ['', Validators.required],
+      sale_ref_id: [this.invoice.sale_id, [Validators.required]],
+      receivedamount: ['', [Validators.required, Validators.max(this.invoice.invoice_amt), Validators.min(0)]],
       receiveddate: ['', Validators.required],
       pymtmode: ['', Validators.required],
       bankref: [''],
-      gnrlref: [''],
-
-
+      pymtref: [''],
     });
   }
 
@@ -117,35 +119,39 @@ export class AccountsReceivablePage implements OnInit {
   }
 
   addAccount() {
-    // this.currentcount = this.currentcount++;
     const control = <FormArray>this.submitForm.controls['accountarr'];
     control.push(this.initAccount());
+
     this._cdr.markForCheck();
 
   }
 
+  ngAfterViewInit() {
+    this.getBalanceDue();
+  }
 
+  // logic to delete using check boxs
+  // to solve bug, sort & reverse removedRowArr and then delete using index
   onRemoveRows() {
-
     this.removeRowArr.sort().reverse();
 
     this.removeRowArr.forEach((idx) => {
-
       this.onRemoveAccount(idx);
     });
 
     this.removeRowArr = [];
+    this.delIconStatus();
+    this.getBalanceDue();
+
+    this.checkTotalSum();
 
   }
 
   onRemoveAccount(idx) {
-
-    console.log('On Remove Account Function >> ' + this.removeRowArr);
-
     (<FormArray>this.submitForm.get('accountarr')).removeAt(idx);
-
   }
 
+  // form an array of check box clicked to delete, even if one checkbox then show delete icon 
   checkedRow(idx: number) {
 
     const faControl =
@@ -162,7 +168,7 @@ export class AccountsReceivablePage implements OnInit {
 
   }
 
-
+  // show delete icon only if there are any values in removeRowArr
   delIconStatus() {
     if (this.removeRowArr.length > 0) {
       this.showDelIcon = true;
@@ -172,14 +178,11 @@ export class AccountsReceivablePage implements OnInit {
   }
 
   async showAllCustomersComp() {
-
     const modal = await this._modalcontroller.create({
       component: ShowCustomersComponent,
       componentProps: {},
       cssClass: 'customer-comp-styl'
-
     });
-
 
     modal.onDidDismiss().then((result) => {
       let custData = result.data;
@@ -191,11 +194,8 @@ export class AccountsReceivablePage implements OnInit {
           customer: custData,
         });
 
-
         this.customerData = custData;
       }
-
-
 
       this._cdr.markForCheck();
 
@@ -204,29 +204,56 @@ export class AccountsReceivablePage implements OnInit {
     await modal.present();
   }
 
-  onSubmit() {
+  // method to calculate total payed now and balance due
+  checkTotalSum() {
+    this.summed = 0;
+    const ctrl = <FormArray>this.submitForm.controls['accountarr'];
+    // iterate each object in the form array
+    ctrl.controls.forEach(x => {
+      // get the itemmt value and need to parse the input to number
 
-    console.log('did this submitte?');
+      let parsed = parseFloat((x.get('receivedamount').value === "" || x.get('receivedamount').value === null) ? 0 : x.get('receivedamount').value);
+      // add to total
 
-    console.log('object...' + this.submitForm.value);
+      this.summed += parsed;
+      this.getBalanceDue();
 
-    this._commonApiService.addPymtReceived(this.submitForm.value).subscribe((data: any) => {
-      console.log('object.SAVE ENQ. ' + JSON.stringify(data));
-
-      if (data.body.result === 'success') {
-
-        this.submitForm.reset();
-        console.log('object...SUCCESS..')
-
-        this._router.navigate([`/home/accounts/accounts-dash`]);
-
+      // current set of paymnets + already paid amount > actual invocie amount then error
+      if ((this.summed + this.invoice.paid_amount) > this.invoice.invoice_amt) {
+        let val = this.currencyPipe.transform(((this.summed + this.invoice.paid_amount) - this.invoice.invoice_amt), "INR");
+        this.errmsg = `Total payment exceeds invoice amount ` + val;
+        this._cdr.detectChanges();
+        return false;
       } else {
-
+        this.errmsg = ``;
+        this._cdr.detectChanges();
       }
 
-      this._cdr.markForCheck();
     });
+    return true;
 
+  }
+
+  getBalanceDue() {
+    this.balancedue = this.invoice.invoice_amt - (this.invoice.paid_amount + this.customer.credit_amt + this.summed)
+  }
+
+  onSubmit() {
+    if (this.checkTotalSum()) {
+      this._commonApiService.addPymtReceived(this.submitForm.value).subscribe((data: any) => {
+        if (data.body === 'success') {
+          this.submitForm.reset();
+          this.dialogRef.close('close');
+        } else {
+          // todo nothing as of now
+        }
+        this._cdr.markForCheck();
+      });
+    }
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 
 }

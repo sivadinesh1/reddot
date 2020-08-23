@@ -51,7 +51,7 @@ export class ViewCustomerPage implements OnInit {
   @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
 
-  displayedColumns: string[] = ['name', 'address1', 'actions'];
+  displayedColumns: string[] = ['name', 'address1', 'financial', 'actions'];
   dataSource = new MatTableDataSource<Customer>();
 
   constructor(private _authservice: AuthenticationService, private _cdr: ChangeDetectorRef,
@@ -185,9 +185,9 @@ export class ViewCustomerPage implements OnInit {
 
 
 
-  // setupDiscount(item) {
-  //   this._router.navigate([`/home/customer/save-discount/${item.id}`]);
-  // }
+  goCustomerFinancials(item) {
+    this._router.navigate([`/home/financials-customer/${this.center_id}/${item.id}`]);
+  }
 
   reset() {
     this.searchbar.value = '';

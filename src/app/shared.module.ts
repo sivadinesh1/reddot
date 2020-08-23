@@ -61,8 +61,8 @@ import { ShowCustomersComponent } from './components/show-customers/show-custome
 import { AutoFocusDirective } from './util/directives/auto-focus.directive';
 import { FocusedDirective } from './util/directives/focused-directive';
 import { ShowHidePasswordComponent } from './components/show-hide-password/show-hide-password.component';
-import { SideMenuComponent } from './components/side-menu/side-menu.component';
-import { MenuHeaderComponent } from './components/menu-header/menu-header.component';
+
+
 import { WindowComponent } from './components/window.component';
 
 import { ChangeTaxComponent } from './components/change-tax/change-tax.component';
@@ -78,7 +78,7 @@ import { CustomerViewDialogComponent } from './components/customers/customer-vie
 import { LoadingComponent } from './components/loading/loading.component';
 import { MessagesComponent } from './components/messages/messages.component';
 import { InvoiceSuccessComponent } from './components/invoice-success/invoice-success.component';
-import { SideMnuComponent } from './components/side-mnu/side-mnu.component';
+
 import { HeaderComponent } from './components/header/header.component';
 import { LeftMenuComponent } from './components/left-menu/left-menu.component';
 import { ArrowDivDirective } from './directive/arrow-div.directive';
@@ -93,6 +93,8 @@ import { BrandDiscountsComponent } from './components/customers/discount/brand-d
 import { CustomerEditShippingAddressComponent } from './components/customers/customer-edit-shipping-address/customer-edit-shipping-address.component';
 import { VendorViewDialogComponent } from './components/vendors/vendor-view-dialog/vendor-view-dialog.component';
 import { ConvertToSaleDialogComponent } from './components/convert-to-sale-dialog/convert-to-sale-dialog.component';
+import { CustomerPaymentDialogComponent } from './components/customers/customer-payment-dialog/customer-payment-dialog.component';
+import { AccountsReceivablesComponent } from './components/accounts/accounts-receivables/accounts-receivables.component';
 
 const components = [
 
@@ -117,6 +119,9 @@ const components = [
 
   CustomerAddDialogComponent,
   CustomerEditDialogComponent,
+  CustomerPaymentDialogComponent,
+
+  AccountsReceivablesComponent,
 
   ProductAddDialogComponent,
   ProductEditDialogComponent,
@@ -147,9 +152,7 @@ const components = [
   PreventDoubleClickDirective,
 
   ShowHidePasswordComponent,
-  SideMenuComponent,
-  SideMnuComponent,
-  MenuHeaderComponent,
+
   HeaderComponent,
   LeftMenuComponent,
 
@@ -220,7 +223,7 @@ const matcomponents = [
     BrandAddDialogComponent, BrandEditDialogComponent, ConvertToSaleDialogComponent,
     DefaultDiscountsComponent,
     BrandDiscountsComponent,
-    CustomerAddDialogComponent, CustomerEditDialogComponent,
+    CustomerAddDialogComponent, CustomerEditDialogComponent, CustomerAddDialogComponent, AccountsReceivablesComponent,
 
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
   ]

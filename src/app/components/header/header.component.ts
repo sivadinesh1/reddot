@@ -125,4 +125,8 @@ export class HeaderComponent implements OnInit {
     this._router.navigateByUrl('/home/enquiry/back-order');
   }
 
+  goAccountsScreen() {
+    this._router.navigateByUrl(`/home/accounts/accounts-dash`);
+  }
+
 }

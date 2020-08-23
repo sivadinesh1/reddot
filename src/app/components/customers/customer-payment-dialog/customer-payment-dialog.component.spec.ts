@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { SideMenuComponent } from './side-menu.component';
+import { CustomerPaymentDialogComponent } from './customer-payment-dialog.component';
 
-describe('SideMenuComponent', () => {
-  let component: SideMenuComponent;
-  let fixture: ComponentFixture<SideMenuComponent>;
+describe('CustomerPaymentDialogComponent', () => {
+  let component: CustomerPaymentDialogComponent;
+  let fixture: ComponentFixture<CustomerPaymentDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SideMenuComponent ],
+      declarations: [ CustomerPaymentDialogComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SideMenuComponent);
+    fixture = TestBed.createComponent(CustomerPaymentDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

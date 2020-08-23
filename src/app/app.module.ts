@@ -20,7 +20,7 @@ import { OpenNativeSettings } from '@ionic-native/open-native-settings/ngx';
 import { SharedModule } from 'src/app/shared.module';
 import { KeyBoardService } from './services/keyboard.service';
 
-import { registerLocaleData } from '@angular/common';
+import { registerLocaleData, CurrencyPipe } from '@angular/common';
 
 import localeIn from '@angular/common/locales/en-IN';
 import { HomePageModule } from './home/home.module';
@@ -53,7 +53,7 @@ import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
     KeyBoardService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: MAT_DATE_LOCALE, useValue: 'en-IN' },
-
+    CurrencyPipe
   ],
   bootstrap: [AppComponent]
 })

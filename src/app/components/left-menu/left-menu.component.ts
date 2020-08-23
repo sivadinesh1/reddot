@@ -28,6 +28,7 @@ export class LeftMenuComponent implements OnInit {
     { name: 'Enquiry', link: '/home/enquiry/open-enquiry', icon: '/assets/svg/enquiry.svg' },
     { name: 'Sale', link: '/home/search-sales', icon: '/assets/svg/sales.svg' },
     { name: 'Purchase', link: '/home/search-purchase', icon: '/assets/svg/purchase.svg' },
+    { name: 'Payments', link: '/home/payments', icon: '/assets/svg/money.svg' },
 
   ];
 

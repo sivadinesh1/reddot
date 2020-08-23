@@ -1,0 +1,151 @@
+<ion-content>
+	<div class="screen-header">
+		<div>
+			Payment Receivables
+		</div>
+		<div>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+		</div>
+	</div>
+	<div class="content">
+		<div style="font-size: 20px; align-self: center;">
+			&nbsp;
+		</div>
+		<div>
+			<button appPreventDoubleClick (throttledClick)="addAccount()" [throttleTime]="500" mat-button color="primary">+ Add Payment Record</button>
+		</div>
+	</div>
+	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm">
+		<div class="form">
+			<div class="actn-row">
+				<div style="padding-left: 7px; cursor: pointer;">
+					<img src="/assets/images/svg/trash.svg" width="18px" height="18px" *ngIf="showDelIcon" (click)="onRemoveRows()" />
+					<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()">&nbsp;Delete</span>
+				</div>
+				<!-- <div class="itms-lbl">{{ accountarr.controls.length || 0 }} Rows</div> -->
+				<div class="itms-lbl">&nbsp;</div>
+			</div>
+
+			<div formArrayName="accountarr" class="list-block">
+				<div *ngFor="let product of accountarr.controls; let idx = index">
+					<div class="item-details">
+						<ng-container [formGroupName]="idx">
+							<div class="id">
+								<!-- {{ idx+1}}) -->
+								<mat-checkbox (click)="checkedRow(idx)" formControlName="checkbox"></mat-checkbox>
+							</div>
+
+							<div>
+								<mat-form-field class="example-full-width">
+									<mat-label>Amount Received</mat-label>
+									<input matInput type="number" formControlName="receivedamount" />
+									<mat-error *ngIf="product.controls['receivedamount'].hasError('required')">
+										Required field
+									</mat-error>
+									<mat-error *ngIf="product.controls['receivedamount'].hasError('max')">
+										Paid mount exceeds invoice amount
+									</mat-error>
+
+									<!-- <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon> -->
+								</mat-form-field>
+							</div>
+
+							<div>
+								<ion-item class="input-item" lines="none">
+									<mat-form-field class="example-full-width">
+										<mat-label>Payment Date</mat-label>
+										<input
+											matInput
+											readonly
+											[max]="maxDate"
+											[matDatepicker]="paymentdate"
+											formControlName="receiveddate"
+											required
+											(focus)="paymentdate.open()"
+										/>
+										<mat-datepicker-toggle matSuffix [for]="paymentdate"></mat-datepicker-toggle>
+										<mat-datepicker #paymentdate></mat-datepicker>
+										<mat-error *ngIf="product.controls['receiveddate'].hasError('required')">
+											Required field
+										</mat-error>
+									</mat-form-field>
+								</ion-item>
+							</div>
+
+							<div class="vendor">
+								<mat-form-field class="example-full-width">
+									<mat-label>Payment Mode</mat-label>
+									<mat-select formControlName="pymtmode">
+										<mat-option *ngFor="let item of pymtmodes$ | async" [value]="item.id">
+											{{ item.pymt_mode_name }}
+										</mat-option>
+									</mat-select>
+									<mat-error>This field is required</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="example-full-width">
+									<mat-label>Bank Reference#</mat-label>
+									<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" />
+								</mat-form-field>
+							</div>
+							<div>
+								<mat-form-field class="example-full-width">
+									<mat-label>Notes</mat-label>
+									<input matInput type="text" formControlName="pymtref" />
+								</mat-form-field>
+							</div>
+						</ng-container>
+					</div>
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: 2fr 4fr;">
+				<div>
+					<div style="text-align: left; padding: 2px; color: #000000; font-size: 14px;">
+						Customer
+					</div>
+					<div>
+						<div style="text-align: left; padding: 2px; color: #333333; font-size: 13px;">{{ this.customer.name }}</div>
+						<div style="text-align: left; padding: 2px; color: #333333; font-size: 13px;">{{ this.invoice.invoice_no }}</div>
+						<div style="text-align: left; padding: 2px; color: #333333; font-size: 13px;">Credit Available: {{ this.customer.credit_amt }}</div>
+					</div>
+				</div>
+				<div style="display: flex; justify-content: flex-end;">
+					<div style="display: grid; grid-template-columns: 1fr 1fr;">
+						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px;">Invoice Amount</div>
+						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px;">{{ this.invoice.invoice_amt }}</div>
+
+						<div *ngIf="this.invoice?.paid_amount !== 0.0" style="text-align: right; padding: 2px; color: #333333; font-size: 13px;">Paid Amount</div>
+						<div *ngIf="this.invoice?.paid_amount !== 0.0" style="text-align: right; padding: 2px; color: red; font-size: 13px;">
+							(-) {{ this.invoice?.paid_amount }}
+						</div>
+
+						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px;">Payment Now</div>
+						<div style="text-align: right; padding: 2px; color: red; font-size: 13px;">(-) {{ this.summed }}</div>
+
+						<div *ngIf="this.customer?.credit_amt !== 0.0" style="text-align: right; padding: 2px; color: #333333; font-size: 13px;">
+							Credits used
+						</div>
+						<div *ngIf="this.customer?.credit_amt !== 0.0" style="text-align: right; padding: 2px; color: red; font-size: 13px;">
+							(-) {{ this.customer?.credit_amt }}
+						</div>
+
+						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500;">Balance Due</div>
+						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500; font-size: 13px;">
+							{{ this.balancedue | currency: "INR" }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div style="text-align: center;" class="error">{{ errmsg }}</div>
+		<div class="submit">
+			<button mat-raised-button color="primary" type="submit" name="action" class="cursor" [disabled]="!submitForm.valid">
+				Add Receivables
+			</button>
+		</div>
+	</form>
+</ion-content>
