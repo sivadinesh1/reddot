@@ -19,10 +19,7 @@
 	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm">
 		<div class="form">
 			<div class="actn-row">
-				<div style="padding-left: 7px; cursor: pointer;">
-					<img src="/assets/images/svg/trash.svg" width="18px" height="18px" *ngIf="showDelIcon" (click)="onRemoveRows()" />
-					<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()">&nbsp;Delete</span>
-				</div>
+				&nbsp;
 				<!-- <div class="itms-lbl">{{ accountarr.controls.length || 0 }} Rows</div> -->
 				<div class="itms-lbl">&nbsp;</div>
 			</div>
