@@ -26,7 +26,7 @@ export class InventoryReportsPage implements OnInit {
   center_id: any;
   resultList: any;
 
-  pageLength: any;
+  pageLength = 0;
   isTableHasData = true;
 
   userdata$: Observable<User>;

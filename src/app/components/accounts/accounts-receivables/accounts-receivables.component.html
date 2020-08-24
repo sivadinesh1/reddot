@@ -1,4 +1,4 @@
-<ion-content>
+<div>
 	<div class="screen-header">
 		<div>
 			Payment Receivables
@@ -12,9 +12,10 @@
 			&nbsp;
 		</div>
 		<div>
-			<button appPreventDoubleClick (throttledClick)="addAccount()" *ngIf="iscustomerselected" [throttleTime]="500" mat-button color="primary">
+			&nbsp;
+			<!-- <button appPreventDoubleClick (throttledClick)="addAccount()" *ngIf="iscustomerselected" [throttleTime]="500" mat-button color="primary">
 				+ Add Payment Record
-			</button>
+			</button> -->
 		</div>
 	</div>
 	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm">
@@ -40,22 +41,18 @@
 			</mat-form-field>
 		</div>
 		<div class="form">
-			<div class="actn-row">
+			<!-- <div class="actn-row">
 				<div style="padding-left: 7px; cursor: pointer;">
 					<img src="/assets/images/svg/trash.svg" width="18px" height="18px" *ngIf="showDelIcon" (click)="onRemoveRows()" />
 					<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()">&nbsp;Delete</span>
 				</div>
 				<div class="itms-lbl">&nbsp;</div>
-			</div>
+			</div> -->
 
 			<div formArrayName="accountarr" class="list-block">
 				<div *ngFor="let product of accountarr.controls; let idx = index">
 					<div class="item-details">
 						<ng-container [formGroupName]="idx">
-							<div class="id">
-								<mat-checkbox (click)="checkedRow(idx)" formControlName="checkbox"></mat-checkbox>
-							</div>
-
 							<div>
 								<mat-form-field class="example-full-width">
 									<mat-label>Amount Received</mat-label>
@@ -122,7 +119,7 @@
 				</div>
 			</div>
 
-			<div *ngIf="iscustomerselected" style="padding: 16px 0px; color: #333333;">UNPAID INVOICES - {{ distributeBalance }}</div>
+			<div *ngIf="iscustomerselected" style="padding: 16px 0px; color: #333333;">UNPAID INVOICES</div>
 			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; background-color: #f1f1f1; padding: 6px;" *ngIf="iscustomerselected">
 				<div class="theader">Invoice Date</div>
 				<div class="theader">Invoice #</div>
@@ -131,7 +128,7 @@
 				<div class="theader m-curr-field">&nbsp;</div>
 			</div>
 			<div *ngIf="iscustomerselected">
-				<div *ngFor="let item of customerUnpaidInvoices" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr;">
+				<div *ngFor="let item of origCustomerUnpaidInvoices" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr;">
 					<div style="padding: 4px 4px 4px 6px; font-size: 13px;">{{ item.invoice_date }}</div>
 					<div style="padding: 4px; font-size: 13px;">{{ item.invoice_no }}</div>
 					<div class="m-curr-field" style="padding: 4px; font-size: 13px;">{{ item.invoice_amt }}</div>
@@ -145,7 +142,9 @@
 				*ngIf="iscustomerselected"
 			>
 				<div>
-					<div style="text-align: left; padding: 2px; color: #333333; font-size: 13px;">Credit Available: {{ this.customer?.credit_amt }}</div>
+					<div style="text-align: left; padding: 2px; color: #333333; font-size: 13px;">
+						Credit Available: {{ this.customer?.credit_amt | currency: "INR" }}
+					</div>
 				</div>
 				<div style="display: flex; justify-content: flex-end;">
 					<div style="display: grid; grid-template-columns: 1fr 1fr;">
@@ -183,4 +182,4 @@
 			</button>
 		</div>
 	</form>
-</ion-content>
+</div>

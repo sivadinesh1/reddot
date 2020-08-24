@@ -681,8 +681,8 @@ export class SalesPage implements OnInit {
       return false;
     }
 
-    if (this.submitForm.value.invoicedate !== null && this.submitForm.value.orderdate !== "") {
-      if (this.submitForm.value.orderno === "") {
+    if (this.submitForm.value.invoicedate !== null && (this.submitForm.value.orderdate !== "" && this.submitForm.value.orderdate != null)) {
+      if ((this.submitForm.value.orderno === "") && this.submitForm.value.orderdate != null) {
         this.orderNoEl.nativeElement.focus();
         this.presentAlert('Order Date without Order # not allowed');
         return false;
@@ -697,7 +697,7 @@ export class SalesPage implements OnInit {
 
     }
 
-    if (this.submitForm.value.invoicedate !== null && this.submitForm.value.lrdate !== "") {
+    if (this.submitForm.value.invoicedate !== null && (this.submitForm.value.lrdate !== "" && this.submitForm.value.lrdate !== null)) {
       if (this.submitForm.value.lrno === "") {
         this.presentAlert('Lr Date without Lr # not allowed');
         return false;
@@ -993,6 +993,9 @@ export class SalesPage implements OnInit {
                 // this.submitForm.reset();
                 this.formRef.resetForm();
 
+
+
+
                 // reinit after successful insert
                 this.getInvoiceSequence(this.center_id, "gstinvoice");
 
@@ -1003,6 +1006,12 @@ export class SalesPage implements OnInit {
                 } else {
                   this.presentAlert('Saved to Draft!');
                 }
+
+                this.submitForm.patchValue({
+                  invoicedate: new Date(),
+                });
+
+                this.salesDashboard();
 
               } else {
                 this.presentAlert('Error: Something went wrong Contact Admin!');

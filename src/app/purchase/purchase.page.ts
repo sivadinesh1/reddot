@@ -955,6 +955,8 @@ export class PurchasePage implements OnInit {
                   this.presentAlert('Saved to Draft!');
                 }
 
+                this.purchaseDashboard();
+
               } else {
                 this.presentAlert('Error: Something went wrong Contact Admin!');
               }

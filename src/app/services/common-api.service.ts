@@ -395,6 +395,11 @@ export class CommonApiService {
   }
 
 
+  addBulkPymtReceived(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/accounts/add-bulk-payment-received', submitForm, { observe: 'response' });
+  }
+
+
 
   getAccountsReceivable(centerid) {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-accounts-receivable/${centerid}`);

@@ -139,10 +139,7 @@ const routes: Routes = [
         loadChildren: () => import('./accounts/accounts-dash/accounts-dash.module').then(m => m.AccountsDashPageModule)
       },
 
-      {
-        path: 'accounts/accounts-receivable',
-        loadChildren: () => import('./accounts/accounts-receivable/accounts-receivable.module').then(m => m.AccountsReceivablePageModule)
-      },
+
 
       {
         path: 'reports',
