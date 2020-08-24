@@ -107,13 +107,13 @@
 	<button mat-menu-item (click)="viewDiscounts()">
 		<span>Discounts</span>
 	</button>
-	<button mat-menu-item (click)="openBackOrder()">
-		<span>Backorders</span>
-	</button>
 </mat-menu>
 
 <mat-menu #reportsadmin="matMenu">
 	<button mat-menu-item (click)="viewInventoryReports()" style="padding-right: 16px;">
-		<span>Inventory Reports</span>
+		<span>Inventory </span>
+		<button mat-menu-item (click)="openBackOrder()">
+			<span>Backorders</span>
+		</button>
 	</button>
 </mat-menu>
