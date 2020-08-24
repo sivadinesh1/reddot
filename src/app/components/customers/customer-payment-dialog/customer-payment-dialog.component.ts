@@ -26,7 +26,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
   submitForm: FormGroup;
   customerData: any;
 
-  removeRowArr = [];
+
   showDelIcon = false;
 
   maxDate = new Date();
@@ -130,79 +130,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
     this.getBalanceDue();
   }
 
-  // logic to delete using check boxs
-  // to solve bug, sort & reverse removedRowArr and then delete using index
-  onRemoveRows() {
-    this.removeRowArr.sort().reverse();
 
-    this.removeRowArr.forEach((idx) => {
-      this.onRemoveAccount(idx);
-    });
-
-    this.removeRowArr = [];
-    this.delIconStatus();
-    this.getBalanceDue();
-
-    this.checkTotalSum();
-
-  }
-
-  onRemoveAccount(idx) {
-    (<FormArray>this.submitForm.get('accountarr')).removeAt(idx);
-  }
-
-  // form an array of check box clicked to delete, even if one checkbox then show delete icon 
-  checkedRow(idx: number) {
-
-    const faControl =
-      (<FormArray>this.submitForm.controls['accountarr']).at(idx);
-    faControl['controls'].checkbox;
-
-    if (!faControl.value.checkbox) {
-      this.removeRowArr.push(idx);
-    } else {
-      this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
-    }
-    this.delIconStatus();
-    console.log('Array after Check Box..' + this.removeRowArr);
-
-  }
-
-  // show delete icon only if there are any values in removeRowArr
-  delIconStatus() {
-    if (this.removeRowArr.length > 0) {
-      this.showDelIcon = true;
-    } else {
-      this.showDelIcon = false;
-    }
-  }
-
-  async showAllCustomersComp() {
-    const modal = await this._modalcontroller.create({
-      component: ShowCustomersComponent,
-      componentProps: {},
-      cssClass: 'customer-comp-styl'
-    });
-
-    modal.onDidDismiss().then((result) => {
-      let custData = result.data;
-
-      if (custData !== undefined) {
-        this.customerAdded = true;
-
-        this.submitForm.patchValue({
-          customer: custData,
-        });
-
-        this.customerData = custData;
-      }
-
-      this._cdr.markForCheck();
-
-    })
-
-    await modal.present();
-  }
 
   // method to calculate total payed now and balance due
   checkTotalSum() {
@@ -235,7 +163,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
   }
 
   getBalanceDue() {
-    this.balancedue = this.invoice.invoice_amt - (this.invoice.paid_amount + this.customer.credit_amt + this.summed)
+    this.balancedue = this.invoice.invoice_amt - (this.invoice.paid_amount + this.summed)
   }
 
   onSubmit() {

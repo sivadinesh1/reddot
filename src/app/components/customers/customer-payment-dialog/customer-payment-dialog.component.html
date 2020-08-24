@@ -31,11 +31,6 @@
 				<div *ngFor="let product of accountarr.controls; let idx = index">
 					<div class="item-details">
 						<ng-container [formGroupName]="idx">
-							<div class="id">
-								<!-- {{ idx+1}}) -->
-								<mat-checkbox (click)="checkedRow(idx)" formControlName="checkbox"></mat-checkbox>
-							</div>
-
 							<div>
 								<mat-form-field class="example-full-width">
 									<mat-label>Amount Received</mat-label>
@@ -125,13 +120,6 @@
 
 						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px;">Payment Now</div>
 						<div style="text-align: right; padding: 2px; color: red; font-size: 13px;">(-) {{ this.summed }}</div>
-
-						<div *ngIf="this.customer?.credit_amt !== 0.0" style="text-align: right; padding: 2px; color: #333333; font-size: 13px;">
-							Credits used
-						</div>
-						<div *ngIf="this.customer?.credit_amt !== 0.0" style="text-align: right; padding: 2px; color: red; font-size: 13px;">
-							(-) {{ this.customer?.credit_amt }}
-						</div>
 
 						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500;">Balance Due</div>
 						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500; font-size: 13px;">
