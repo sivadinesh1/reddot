@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { CustomerPaymentDialogComponent } from 'src/app/components/customers/customer-payment-dialog/customer-payment-dialog.component';
 import { AccountsReceivablesComponent } from 'src/app/components/accounts/accounts-receivables/accounts-receivables.component';
+import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 
 @Component({
   selector: 'app-accounts-payments',
@@ -220,7 +221,7 @@ export class AccountsPaymentsPage implements OnInit {
   }
 
 
-
+  // can be deleted not used
   addPayments() {
 
     const dialogConfig = new MatDialogConfig();
@@ -250,7 +251,7 @@ export class AccountsPaymentsPage implements OnInit {
   addPaymentsBillToBill(element) {
 
 
-
+    let success = 0;
 
 
     this._commonApiService.getCustomerDetails(this.userdata.center_id, element.customer_id).subscribe(customerdata => {
@@ -269,10 +270,25 @@ export class AccountsPaymentsPage implements OnInit {
           tap(() => {
 
             this.init();
+
             this._cdr.markForCheck();
           }
           )
-        ).subscribe();
+        ).subscribe((data: any) => {
+
+          if (data === 'success') {
+
+            const dialogConfigSuccess = new MatDialogConfig();
+            dialogConfigSuccess.disableClose = false;
+            dialogConfigSuccess.autoFocus = true;
+            dialogConfigSuccess.width = "25%";
+            dialogConfigSuccess.height = "25%";
+            dialogConfigSuccess.data = "Add receivables succesful";
+
+            const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+          }
+        });
 
     })
 

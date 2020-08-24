@@ -18,6 +18,7 @@ import { MatSort } from '@angular/material/sort';
 import { Observable } from 'rxjs';
 import { Product } from 'src/app/models/Product';
 import { ProductEditDialogComponent } from 'src/app/components/products/product-edit-dialog/product-edit-dialog.component';
+import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 
 @Component({
   selector: 'app-view-products',
@@ -193,7 +194,20 @@ export class ViewProductsPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Products updated successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
 
 
   }

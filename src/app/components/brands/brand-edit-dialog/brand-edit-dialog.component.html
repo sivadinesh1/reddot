@@ -1,5 +1,4 @@
-<ion-content>
-	<app-loading></app-loading>
+<div>
 	<div class="screen-header">
 		<div>
 			Edit Brand Details
@@ -15,16 +14,15 @@
 				<div class="name">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Name</mat-label>
-						<input matInput placeholder="Name" readonly formControlName="name" required />
+						<input matInput placeholder="Name" formControlName="name" required />
 						<mat-error>This field is required</mat-error>
 					</mat-form-field>
 				</div>
 			</div>
 
-			<div style="text-align: center;">
-				<button mat-stroked-button type="button">Clear</button>&nbsp;&nbsp;
+			<div style="text-align: center; padding: 16px;">
 				<button mat-raised-button color="primary" [disabled]="!submitForm.valid" type="submit">Update Brand</button>
 			</div>
 		</form>
 	</div>
-</ion-content>
+</div>

@@ -18,6 +18,7 @@ import * as xlsx from 'xlsx';
 import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
 import { CustomerEditDialogComponent } from 'src/app/components/customers/customer-edit-dialog/customer-edit-dialog.component';
 import { CustomerEditShippingAddressComponent } from 'src/app/components/customers/customer-edit-shipping-address/customer-edit-shipping-address.component';
+import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 
 
 @Component({
@@ -177,7 +178,20 @@ export class ViewCustomerPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Customer updated successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
 
 
   }

@@ -104,7 +104,7 @@ export class VendorEditDialogComponent implements OnInit {
     this._loadingService.showLoaderUntilCompleted(updateVendor$)
       .subscribe((data: any) => {
         console.log('object.. vendor updated ..')
-        this.dialogRef.close(data);
+        this.dialogRef.close('success');
       });
 
     // this._commonApiService.updateVendor(this.vendor.id, changes).subscribe((data: any) => {

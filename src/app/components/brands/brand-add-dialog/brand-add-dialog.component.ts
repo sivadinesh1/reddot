@@ -46,7 +46,7 @@ export class BrandAddDialogComponent implements OnInit {
     this._commonApiService.addBrand(this.submitForm.value).subscribe((data: any) => {
 
       if (data.body.result === 'success') {
-        this.dialogRef.close(data);
+        this.dialogRef.close('success');
       }
     });
 

@@ -95,6 +95,7 @@ import { VendorViewDialogComponent } from './components/vendors/vendor-view-dial
 import { ConvertToSaleDialogComponent } from './components/convert-to-sale-dialog/convert-to-sale-dialog.component';
 import { CustomerPaymentDialogComponent } from './components/customers/customer-payment-dialog/customer-payment-dialog.component';
 import { AccountsReceivablesComponent } from './components/accounts/accounts-receivables/accounts-receivables.component';
+import { SuccessMessageDialogComponent } from './components/success-message-dialog/success-message-dialog.component';
 
 const components = [
 
@@ -136,6 +137,8 @@ const components = [
 
   CustomerViewDialogComponent,
   CustomerEditShippingAddressComponent,
+
+  SuccessMessageDialogComponent,
 
   CurrencyPadComponent,
   InvoiceSuccessComponent,
@@ -224,7 +227,7 @@ const matcomponents = [
     DefaultDiscountsComponent,
     BrandDiscountsComponent,
     CustomerAddDialogComponent, CustomerEditDialogComponent, CustomerAddDialogComponent, AccountsReceivablesComponent,
-
+    SuccessMessageDialogComponent,
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
   ]
 })

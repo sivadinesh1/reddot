@@ -12,6 +12,7 @@ import { CommonApiService } from 'src/app/services/common-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { CustomerPaymentDialogComponent } from 'src/app/components/customers/customer-payment-dialog/customer-payment-dialog.component';
+import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 
 @Component({
   selector: 'app-financials-customer',
@@ -238,7 +239,22 @@ export class FinancialsCustomerPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+
+        console.log('object dinesh ');
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Add receivables succesful";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
 
 
   }

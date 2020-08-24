@@ -103,7 +103,7 @@ export class ProductEditDialogComponent implements OnInit {
       console.log('object... update successful');
 
       if (data.body.result === 'success') {
-        this.dialogRef.close();
+        this.dialogRef.close('success');
         this.searchProducts();
       }
 

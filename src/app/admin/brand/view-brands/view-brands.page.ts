@@ -18,6 +18,7 @@ import { Observable } from 'rxjs';
 import { User } from "../../../models/User";
 import { BrandAddDialogComponent } from 'src/app/components/brands/brand-add-dialog/brand-add-dialog.component';
 import * as xlsx from 'xlsx';
+import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 
 @Component({
   selector: 'app-view-brands',
@@ -109,8 +110,8 @@ export class ViewBrandsPage implements OnInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = "80%";
-    dialogConfig.height = "80%";
+    dialogConfig.width = "40%";
+    dialogConfig.height = "40%";
     dialogConfig.data = brand;
 
 
@@ -124,7 +125,21 @@ export class ViewBrandsPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Brand updated successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
+
 
 
   }

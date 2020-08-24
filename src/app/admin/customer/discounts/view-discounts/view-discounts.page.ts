@@ -21,6 +21,7 @@ import * as xlsx from 'xlsx';
 import { User } from 'src/app/models/User';
 import { DefaultDiscountsComponent } from 'src/app/components/customers/discount/default-discounts/default-discounts.component';
 import { BrandDiscountsComponent } from 'src/app/components/customers/discount/brand-discounts/brand-discounts.component';
+import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 
 @Component({
   selector: 'app-view-discounts',
@@ -151,7 +152,20 @@ export class ViewDiscountsPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Discounts successfull";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
 
 
   }
@@ -178,7 +192,20 @@ export class ViewDiscountsPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Discounts added successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
 
 
   }

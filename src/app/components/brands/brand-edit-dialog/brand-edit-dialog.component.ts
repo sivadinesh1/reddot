@@ -59,7 +59,7 @@ export class BrandEditDialogComponent implements OnInit {
     this._loadingService.showLoaderUntilCompleted(updateBrand$)
       .subscribe((data: any) => {
         console.log('object.. brand updated ..')
-        this.dialogRef.close(data);
+        this.dialogRef.close('success');
       });
 
   }

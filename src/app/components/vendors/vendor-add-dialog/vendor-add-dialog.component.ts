@@ -88,7 +88,7 @@ export class VendorAddDialogComponent implements OnInit {
     this._commonApiService.addVendor(this.submitForm.value).subscribe((data: any) => {
 
       if (data.body.result === 'success') {
-        this.dialogRef.close(data);
+        this.dialogRef.close('success');
       }
     });
 
