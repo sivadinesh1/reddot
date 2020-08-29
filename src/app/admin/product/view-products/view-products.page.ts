@@ -1,5 +1,5 @@
 
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonSearchbar } from '@ionic/angular';
@@ -24,6 +24,7 @@ import { SuccessMessageDialogComponent } from 'src/app/components/success-messag
   selector: 'app-view-products',
   templateUrl: './view-products.page.html',
   styleUrls: ['./view-products.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ViewProductsPage implements OnInit {
 
@@ -33,15 +34,7 @@ export class ViewProductsPage implements OnInit {
 
   pcount: any;
   pageLength: any;
-  isTableHasData = true;
-
-
-  resultList: any;
-  noMatch: any;
-
-  customer_id;
-
-  order_date;
+  isTableHasData = false;
 
   userdata$: Observable<User>;
   userdata: any;
@@ -57,6 +50,8 @@ export class ViewProductsPage implements OnInit {
   displayedColumns: string[] = ['productcode', 'description', 'name', 'actions'];
   dataSource = new MatTableDataSource<Product>();
 
+  tempsearchstring = "";
+
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _route: ActivatedRoute, private _dialog: MatDialog,
     private _router: Router, private _authservice: AuthenticationService
@@ -70,8 +65,16 @@ export class ViewProductsPage implements OnInit {
         this.userdata = data;
         this.center_id = this.userdata.center_id;
 
+
         this._cdr.markForCheck();
       });
+
+    this._route.params.subscribe(params => {
+      this.tempsearchstring = "";
+      if (this.userdata !== undefined) {
+        this.reset();
+      }
+    });
 
 
 
@@ -79,14 +82,11 @@ export class ViewProductsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.productinfo = this._commonApiService
-      .viewProductsCount(this.center_id).subscribe((data: any) => {
 
-        this.pcount = data[0].count || 0;
-
-        this._cdr.markForCheck();
-      });
+    this.dataSource.paginator = this.paginator;
   }
+
+
 
   addProduct() {
     this._router.navigate([`/home/product/add`]);
@@ -101,52 +101,55 @@ export class ViewProductsPage implements OnInit {
   }
 
 
-
-  // this._commonApiService.getAllActiveVendors(this.center_id)
-  // .subscribe((data: any) => {
-
-  //   // DnD - code to add a "key/Value" in every object of array
-  //   this.dataSource.data = data.map(el => {
-  //     var o = Object.assign({}, el);
-  //     o.isExpanded = false;
-  //     return o;
-  //   })
-
-  //   this.dataSource.sort = this.sort;
-  //   this.pageLength = data.length;
-
-  // });
-
   openDialog(searchstring): void {
 
 
-    if (searchstring.length >= 2) {
-
-      this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": searchstring })
-        .subscribe((data: any) => {
-
-          // DnD - code to add a "key/Value" in every object of array
-          this.dataSource.data = data.body.map(el => {
-            var o = Object.assign({}, el);
-            o.isExpanded = false;
-            return o;
-          })
-
-          this.dataSource.sort = this.sort;
-          this.pageLength = data.length;
-
-          this._cdr.markForCheck();
 
 
-        });
+    this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": searchstring })
+      .subscribe((data: any) => {
 
-    }
+        this.tempsearchstring = searchstring;
+
+        // DnD - code to add a "key/Value" in every object of array
+        this.dataSource.data = data.body.map(el => {
+          var o = Object.assign({}, el);
+          o.isExpanded = false;
+          return o;
+        })
+
+        this.dataSource.sort = this.sort;
+        this.pageLength = data.body.length;
+
+        if (data.body.length === 0) {
+          this.isTableHasData = false;
+        } else {
+          this.isTableHasData = true;
+        }
+
+
+        if (searchstring.length === 0) {
+          this.reset();
+          this.isTableHasData = false;
+        }
+
+
+        this._cdr.markForCheck();
+
+
+      });
+
+
   }
 
   reset() {
     this.searchbar.value = '';
-    this.noMatch = '';
-    this.resultList = null;
+
+
+
+    this.dataSource.data = [];
+    this.pageLength = 0;
+    this.isTableHasData = false;
   }
 
 
@@ -191,6 +194,7 @@ export class ViewProductsPage implements OnInit {
         filter(val => !!val),
         tap(() => {
           // do nothing
+          this.openDialog(this.tempsearchstring);
           this._cdr.markForCheck();
         }
         )
@@ -202,9 +206,9 @@ export class ViewProductsPage implements OnInit {
           dialogConfigSuccess.autoFocus = true;
           dialogConfigSuccess.width = "25%";
           dialogConfigSuccess.height = "25%";
-          dialogConfigSuccess.data = "Products updated successfully";
+          dialogConfigSuccess.data = "Product details updated successfully";
 
-          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+          const dialogRef1 = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 
         }
       });

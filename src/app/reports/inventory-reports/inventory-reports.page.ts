@@ -70,7 +70,26 @@ export class InventoryReportsPage implements OnInit {
     }
   }
 
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.filteredData.length > 0) {
+      this.isTableHasData = true;
+    } else {
+      this.isTableHasData = false;
+    }
+
+  }
+
+  reset() {
+
+  }
+
   ngOnInit() {
+    this.dataSource.paginator = this.paginator;
   }
 
 

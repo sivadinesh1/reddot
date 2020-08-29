@@ -55,10 +55,7 @@ const routes: Routes = [
         loadChildren: () => import('./admin/product/view-product/view-product.module').then(m => m.ViewProductPageModule)
       },
 
-      {
-        path: 'product/add',
-        loadChildren: () => import('./admin/product/add-product/add-product.module').then(m => m.AddProductPageModule)
-      },
+
 
 
       {
@@ -133,14 +130,6 @@ const routes: Routes = [
         path: 'center/edit/:center_id',
         loadChildren: () => import('./admin/center/edit-center/edit-center.module').then(m => m.EditCenterPageModule)
       },
-      // accounts
-      {
-        path: 'accounts/accounts-dash',
-        loadChildren: () => import('./accounts/accounts-dash/accounts-dash.module').then(m => m.AccountsDashPageModule)
-      },
-
-
-
       {
         path: 'reports',
         children: [

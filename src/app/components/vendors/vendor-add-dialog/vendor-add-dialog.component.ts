@@ -27,7 +27,7 @@ export class VendorAddDialogComponent implements OnInit {
   statesdata: any;
   isLinear = true;
 
-
+  vexists: any;
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
     private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<VendorAddDialogComponent>,
@@ -39,7 +39,7 @@ export class VendorAddDialogComponent implements OnInit {
 
     this.submitForm = this._formBuilder.group({
       center_id: [this.center_id],
-      name: [null, Validators.required],
+      name: ['', Validators.required],
       address1: [''],
       address2: [''],
       address3: [''],
@@ -57,7 +57,7 @@ export class VendorAddDialogComponent implements OnInit {
         Validators.required, PhoneValidator.invalidCountryPhone(country)
       ])],
       mobile2: ['', Validators.compose([
-        Validators.required, PhoneValidator.invalidCountryPhone(country)
+        PhoneValidator.invalidCountryPhone(country)
       ])],
       whatsapp: ['', Validators.compose([
         Validators.required, PhoneValidator.invalidCountryPhone(country)
@@ -79,9 +79,33 @@ export class VendorAddDialogComponent implements OnInit {
   }
 
 
+  isVendorExists() {
+
+    if (this.submitForm.value.name.length > 0) {
+      this._commonApiService.isVendorExists(this.submitForm.value.name).subscribe((data: any) => {
+
+        if (data.result.length > 0) {
+          if (data.result[0].id > 0) {
+            this.vexists = true;
+          }
+        } else {
+          this.vexists = false;
+        }
+
+        this._cdr.markForCheck();
+      });
+    }
+
+  }
+
+
   onSubmit() {
 
     if (!this.submitForm.valid) {
+      return false;
+    }
+
+    if (this.vexists) {
       return false;
     }
 

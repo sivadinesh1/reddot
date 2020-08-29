@@ -73,6 +73,7 @@ export class CustomerEditDialogComponent implements OnInit {
 
     this._commonApiService.getStates().subscribe((data: any) => {
       this.statesdata = data;
+      this._cdr.markForCheck();
     });
 
   }
@@ -88,11 +89,9 @@ export class CustomerEditDialogComponent implements OnInit {
   onSubmit() {
     const changes = this.submitForm.value;
     this._commonApiService.updateCustomer(this.customer.id, changes).subscribe((data: any) => {
-      console.log('object.. vendor updated ..')
-      this.dialogRef.close(data);
+
+      this.dialogRef.close("success");
     })
-
-
 
   }
 

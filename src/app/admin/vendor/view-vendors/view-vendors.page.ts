@@ -21,6 +21,7 @@ import { User } from "../../../models/User";
 import { VendorAddDialogComponent } from 'src/app/components/vendors/vendor-add-dialog/vendor-add-dialog.component';
 import * as xlsx from 'xlsx';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
+import { DeleteVendorDialogComponent } from 'src/app/components/delete-vendor-dialog/delete-vendor-dialog.component';
 
 @Component({
   selector: 'app-view-vendors',
@@ -181,6 +182,48 @@ export class ViewVendorsPage implements OnInit {
     } else {
       this.isTableHasData = false;
     }
+
+  }
+
+
+  delete(vendor: Vendor) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "40%";
+    dialogConfig.height = "40%";
+    dialogConfig.data = vendor;
+
+
+    const dialogRef = this._dialog.open(DeleteVendorDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          this.reloadVendors();
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Vendor deleted successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+          this.reloadVendors();
+
+        }
+      });
+
+
 
   }
 

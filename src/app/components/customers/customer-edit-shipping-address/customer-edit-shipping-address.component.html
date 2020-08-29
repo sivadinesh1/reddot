@@ -1,8 +1,6 @@
 <div class="content">
 	<div class="screen-header">
-		<div>
-			Edit Customer Details
-		</div>
+		<div>Edit Customer Details</div>
 		<div>
 			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
 		</div>
@@ -14,7 +12,10 @@
 				<table mat-table [dataSource]="dataSource" multiTemplateDataRows>
 					<ng-container matColumnDef="stat">
 						<th mat-header-cell *matHeaderCellDef></th>
-						<td mat-cell *matCellDef="let element" class="m-card-title">{{ element.def_address === "Y" ? "default" : "" }}</td>
+						<td mat-cell *matCellDef="let element" class="m-card-title">
+							<mat-icon *ngIf="element.def_address === 'Y'" color="primary">check_circle_outline</mat-icon>
+							<mat-icon *ngIf="element.def_address === 'N'" color="primary">&nbsp;</mat-icon>
+						</td>
 					</ng-container>
 
 					<ng-container matColumnDef="address1">
@@ -43,11 +44,11 @@
 					<ng-container matColumnDef="actions">
 						<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
 						<td mat-cell *matCellDef="let element">
-							<mat-icon style="cursor: pointer;" (click)="internalEdit(element)">edit</mat-icon>
+							<mat-icon style="cursor: pointer" (click)="internalEdit(element)">edit</mat-icon>
 						</td>
 					</ng-container>
 
-					<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+					<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 					<tr
 						class="example-element-row"
 						[ngClass]="{ selected: selectedRowIndex == row.id }"
@@ -56,31 +57,31 @@
 						*matRowDef="let row; columns: displayedColumns"
 					></tr>
 				</table>
-				<div [hidden]="isTableHasData" class="center-message">
-					No Data available.
-				</div>
+				<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
 			</div>
 			<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 		</div>
 	</ng-container>
 
 	<div>
-		<div *ngIf="mode === 'add'" style="padding: 16px 0px 0px 32px; font-size: 14px; color: #666666;">Add new shipping address</div>
+		<div *ngIf="mode === 'add'" style="padding: 24px 0px 0px 32px; font-size: 18px; color: #111111">Add new shipping address</div>
 
-		<div *ngIf="mode === 'update'" style="padding: 16px 0px 0px 32px; font-size: 14px; color: #666666;">Update shipping address</div>
+		<div *ngIf="mode === 'update'" style="padding: 24px 0px 0px 32px; font-size: 18px; color: #111111">Update shipping address</div>
 
-		<form class="myForm" [formGroup]="submitForm">
+		<form class="myForm" [formGroup]="submitForm" (ngSubmit)="onSubmit()" #myForm="ngForm">
 			<div class="customer-info">
 				<div class="address1">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 1</mat-label>
 						<input matInput formControlName="address1" />
+						<mat-error>This field is required</mat-error>
 					</mat-form-field>
 				</div>
 				<div class="address2">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 2</mat-label>
 						<input matInput formControlName="address2" />
+						<mat-error>This field is required</mat-error>
 					</mat-form-field>
 				</div>
 
@@ -88,6 +89,7 @@
 					<mat-form-field class="mat-width-ext">
 						<mat-label>District</mat-label>
 						<input matInput formControlName="district" />
+						<mat-error>This field is required</mat-error>
 					</mat-form-field>
 				</div>
 
@@ -99,31 +101,33 @@
 								{{ item.description }}
 							</mat-option>
 						</mat-select>
+						<mat-error>This field is required</mat-error>
 					</mat-form-field>
 				</div>
 
 				<div class="pin">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Pin</mat-label>
-						<input matInput formControlName="pin" />
+						<input matInput formControlName="pin" type="number" />
+						<mat-error>Missing (or) wrong format</mat-error>
 					</mat-form-field>
 				</div>
 				<div><mat-checkbox formControlName="def_address">Mark as default</mat-checkbox></div>
 			</div>
 
-			<div style="display: grid; grid-column: 1 / span 5; text-align: left; width: 80%; margin: 0 auto;" class="error">
+			<div style="display: grid; grid-column: 1 / span 5; text-align: left; width: 80%; margin: 0 auto" class="error">
 				{{ responsemsg }}
 			</div>
 
-			<div *ngIf="mode === 'add'" style="display: grid; width: 80%; margin: 0 auto; grid-column: 1 / span 5;">
-				<div style="text-align: center;">
-					<button mat-raised-button color="primary" type="button" (click)="onSubmit('add')">Add new Address</button>
+			<div *ngIf="mode === 'add'" style="display: grid; width: 80%; margin: 0 auto; grid-column: 1 / span 5">
+				<div style="text-align: center">
+					<button mat-raised-button color="primary" type="submit">Add new Address</button>
 				</div>
 			</div>
 
-			<div *ngIf="mode === 'update'" style="display: grid; width: 80%; margin: 0 auto; grid-column: 1 / span 5;">
-				<div style="text-align: center;">
-					<button mat-raised-button color="primary" type="button" (click)="onSubmit('update')">Update Address</button>
+			<div *ngIf="mode === 'update'" style="display: grid; width: 80%; margin: 0 auto; grid-column: 1 / span 5">
+				<div style="text-align: center">
+					<button mat-raised-button color="primary" type="submit">Update Address</button>
 				</div>
 			</div>
 		</form>

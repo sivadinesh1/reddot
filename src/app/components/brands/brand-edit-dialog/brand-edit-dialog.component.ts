@@ -53,6 +53,12 @@ export class BrandEditDialogComponent implements OnInit {
 
 
   onSubmit() {
+
+    if (!this.submitForm.valid) {
+      return false;
+    }
+
+
     const changes = this.submitForm.value;
     const updateBrand$ = this._commonApiService.updateBrand(this.brand.id, changes);
 

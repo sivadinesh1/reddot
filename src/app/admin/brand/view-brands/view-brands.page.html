@@ -3,17 +3,11 @@
 		<app-messages></app-messages>
 		<div class="header">
 			<div>
-				<div>
-					List of Brands
-				</div>
-				<div style="font-size: 12px; color: #797979;">
-					Showing {{pageLength }} Records
-				</div>
+				<div>List of Active Brands</div>
+				<div style="font-size: 12px; color: #797979">Showing {{pageLength }} Records</div>
 			</div>
 			<div>
-				<button appPreventDoubleClick (throttledClick)="add()" [throttleTime]="500" mat-raised-button color="primary">
-					+ Add Brands
-				</button>
+				<button appPreventDoubleClick (throttledClick)="add()" [throttleTime]="500" mat-raised-button color="primary">+ Add Brands</button>
 			</div>
 		</div>
 
@@ -22,7 +16,7 @@
 				<ion-searchbar
 					autofocus
 					debounce="300"
-					placeholder="Search from {{pageLength }} brands, by name / address"
+					placeholder="Search by brand names"
 					#mySearchbar
 					show-cancel-button="focus"
 					(ionClear)="reset()"
@@ -30,7 +24,7 @@
 				></ion-searchbar>
 			</div>
 			<div class="actions">
-				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer;" width="32px" height="32px" (click)="exportToExcel()" />
+				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportToExcel()" />
 			</div>
 		</div>
 
@@ -56,9 +50,7 @@
 
 						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">
-						No Data available.
-					</div>
+					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
 				</div>
 				<mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
 			</div>
@@ -69,10 +61,10 @@
 						<span>Edit</span>
 					</button>
 
-					<!-- <button mat-menu-item disabled>
+					<button mat-menu-item (click)="delete(element)">
 						<mat-icon>delete</mat-icon>
 						<span>Delete </span>
-					</button> -->
+					</button>
 				</ng-template>
 			</mat-menu>
 		</ng-container>

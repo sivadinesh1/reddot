@@ -7,33 +7,33 @@
 					<div class="name">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Name</mat-label>
-							<input matInput placeholder="Name" readonly formControlName="name" required />
+							<input matInput readonly formControlName="name" required />
 							<mat-error>This field is required</mat-error>
 						</mat-form-field>
 					</div>
 					<div class="address1">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Address Line 1</mat-label>
-							<input matInput placeholder="Address Line 1" formControlName="address1" />
+							<input matInput formControlName="address1" />
 						</mat-form-field>
 					</div>
 					<div class="address2">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Address Line 2</mat-label>
-							<input matInput placeholder="Address Line 2" formControlName="address2" />
+							<input matInput formControlName="address2" />
 						</mat-form-field>
 					</div>
 					<div class="address3">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Address Line 3</mat-label>
-							<input matInput placeholder="Address Line 3" formControlName="address3" />
+							<input matInput formControlName="address3" />
 						</mat-form-field>
 					</div>
 
 					<div class="district">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>District</mat-label>
-							<input matInput placeholder="District" formControlName="district" />
+							<input matInput formControlName="district" />
 						</mat-form-field>
 					</div>
 
@@ -41,9 +41,7 @@
 						<mat-form-field class="mat-width-ext">
 							<mat-label>State</mat-label>
 							<mat-select formControlName="state_id" required>
-								<mat-option *ngFor="let item of statesdata" [value]="item.id">
-									{{item.description}}
-								</mat-option>
+								<mat-option *ngFor="let item of statesdata" [value]="item.id"> {{item.description}} </mat-option>
 							</mat-select>
 						</mat-form-field>
 					</div>
@@ -51,7 +49,7 @@
 					<div class="pin">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Pin</mat-label>
-							<input matInput placeholder="State" formControlName="pin" />
+							<input matInput formControlName="pin" />
 						</mat-form-field>
 					</div>
 				</div>
@@ -67,33 +65,35 @@
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>GST</mat-label>
-							<input type="text" matInput formControlName="gst" placeholder="GST" />
-						</mat-form-field>
-					</div>
-					<div>
-						<mat-form-field class="mat-width-ext">
-							<mat-label>Phone</mat-label>
-							<input type="number" matInput formControlName="phone" placeholder="Phone" />
-						</mat-form-field>
-					</div>
-					<div>
-						<mat-form-field class="mat-width-ext">
-							<mat-label>Mobile 1</mat-label>
-							<input type="number" matInput formControlName="mobile" placeholder="Mobile 1" />
+							<input type="text" matInput formControlName="gst" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Mobile 2</mat-label>
-							<input type="number" matInput formControlName="mobile2" placeholder="Mobile 2" />
+							<mat-label>Primary Contact #</mat-label>
+							<input type="number" matInput formControlName="mobile" />
+						</mat-form-field>
+					</div>
+
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Secondary Contact #</mat-label>
+							<input type="number" matInput formControlName="mobile2" />
+						</mat-form-field>
+					</div>
+
+					<div>
+						<mat-form-field class="mat-width-ext">
+							<mat-label>Landline</mat-label>
+							<input type="number" matInput formControlName="phone" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Whatsapp</mat-label>
-							<input type="number" matInput formControlName="whatsapp" placeholder="Whatsapp" />
+							<input type="number" matInput formControlName="whatsapp" />
 						</mat-form-field>
 					</div>
 				</div>
@@ -109,41 +109,40 @@
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Email</mat-label>
-							<input type="text" matInput formControlName="email" placeholder="Email" />
+							<input type="text" matInput formControlName="email" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Bank Name</mat-label>
-							<input type="text" matInput formControlName="bankname" placeholder="Bank Name" />
+							<input type="text" matInput formControlName="bankname" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Account #</mat-label>
-							<input type="text" matInput formControlName="accountno" placeholder="Account No." />
+							<input type="text" matInput formControlName="accountno" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>IFSC Code</mat-label>
-							<input type="text" matInput formControlName="ifsccode" placeholder="IFSC Code" />
+							<input type="text" matInput formControlName="ifsccode" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Branch</mat-label>
-							<input type="text" matInput formControlName="branch" placeholder="Branch" />
+							<input type="text" matInput formControlName="branch" />
 						</mat-form-field>
 					</div>
 				</div>
 				<div>
 					<button mat-button matStepperPrevious>Back</button>
-					<button mat-button (click)="stepper.reset()">Clear</button>
 					<button mat-button (click)="submit()">Update Center</button>
 				</div>
 			</mat-step>

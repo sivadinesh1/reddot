@@ -389,6 +389,28 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/admin/prod-exists/${pCode}`);
   }
 
+  isCustomerExists(cname) {
+    return this.httpClient.get(`${this.restApiUrl}/api/customer-exists/${cname}`);
+  }
+
+
+  deleteBrand(id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/brand-delete/${id}`);
+  }
+
+  deleteVendor(id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/vendor-delete/${id}`);
+  }
+
+  // end
+  isBrandExists(name) {
+    return this.httpClient.get(`${this.restApiUrl}/api/brand-exists/${name}`);
+  }
+
+  isVendorExists(name) {
+    return this.httpClient.get(`${this.restApiUrl}/api/vendor-exists/${name}`);
+  }
+
 
   addPymtReceived(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/accounts/add-payment-received', submitForm, { observe: 'response' });

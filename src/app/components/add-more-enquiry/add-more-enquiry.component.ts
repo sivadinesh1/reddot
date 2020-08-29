@@ -162,18 +162,11 @@ export class AddMoreEnquiryComponent implements OnInit {
 
 
   onSubmit() {
-
     this._commonApiService.addMoreEnquiry(this.submitForm.value).subscribe((data: any) => {
-      //      console.log('object.SAVE ENQ. ' + JSON.stringify(data));
       this.submitForm.reset();
       this.myForm.resetForm();
-      this.dialogRef.close(data.body.result);
-
-      // this._router.navigate([`/home/enquiry/open-enquiry`]);
-
-
+      this.dialogRef.close('success');
       this._cdr.markForCheck();
-
     });
 
 

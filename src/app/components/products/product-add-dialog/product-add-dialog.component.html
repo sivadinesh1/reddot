@@ -1,29 +1,25 @@
 <div class="content">
 	<div class="screen-header">
-		<div>
-			Add New Product
-		</div>
+		<div>Add New Product</div>
 		<div>
 			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
 		</div>
 	</div>
 
-	<form [formGroup]="submitForm">
+	<form [formGroup]="submitForm" (ngSubmit)="onSubmit()">
 		<div class="product-info">
 			<div class="code">
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Code</mat-label>
-					<input matInput placeholder="Code" (blur)="isProdExists()" formControlName="product_code" required />
+					<input matInput (blur)="isProdExists()" formControlName="product_code" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
-				<div *ngIf="pexists" class="error">
-					Already Exists
-				</div>
+				<div *ngIf="pexists" class="error">Already Exists</div>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Description</mat-label>
-					<input matInput placeholder="Description" formControlName="description" required />
+					<input matInput formControlName="description" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
@@ -52,21 +48,21 @@
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Packet Size</mat-label>
-					<input matInput type="number" formControlName="packetsize" placeholder="Packet Size" required />
+					<input matInput type="number" formControlName="packetsize" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>HSN Code</mat-label>
-					<input matInput formControlName="hsncode" placeholder="HSN Code" required />
+					<input matInput formControlName="hsncode" required />
 					<mat-hint matTooltip="Info about the action">What is HSN Code?</mat-hint>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Tax Rate (%)</mat-label>
-					<input matInput type="number" formControlName="taxrate" placeholder="Tax Rate (%)" required />
+					<input matInput type="number" formControlName="taxrate" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
@@ -74,7 +70,7 @@
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Min. Qty</mat-label>
-					<input matInput type="number" formControlName="minqty" placeholder="Min Stock Qty" required />
+					<input matInput type="number" formControlName="minqty" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
@@ -82,7 +78,7 @@
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Unit/Price</mat-label>
-					<input matInput type="number" formControlName="unit_price" placeholder="Unit Price" required />
+					<input matInput type="number" formControlName="unit_price" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
@@ -96,35 +92,35 @@
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Purchase Price</mat-label>
-					<input matInput type="number" formControlName="purchase_price" placeholder="Purchase PRice" required />
+					<input matInput type="number" formControlName="purchase_price" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Sale Price</mat-label>
-					<input matInput type="number" formControlName="salesprice" placeholder="Sale Price" />
+					<input matInput type="number" formControlName="salesprice" />
 				</mat-form-field>
 			</div>
 
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Max. Discount</mat-label>
-					<input matInput type="number" formControlName="maxdiscount" required placeholder="Max Discount" />
+					<input matInput type="number" formControlName="maxdiscount" required />
 					<mat-hint matTooltip="Info about the action">Hint: Max 100</mat-hint>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Rack #</mat-label>
-					<input matInput type="number" formControlName="rackno" required placeholder="Rack #" />
+					<input matInput type="number" formControlName="rackno" required />
 				</mat-form-field>
 			</div>
 		</div>
-		<div style="text-align: center;" class="error">{{ responsemsg }}</div>
-		<div style="text-align: center;">
+		<div style="text-align: center" class="error" style="padding: 16px 0px">{{ responsemsg }}</div>
+		<div style="text-align: center">
 			<button mat-stroked-button type="button">Clear</button>&nbsp;&nbsp;
-			<button mat-raised-button color="primary" [disabled]="!submitForm.valid" (click)="submit()" type="button">+ Add Product</button>
+			<button mat-raised-button color="primary" type="submit">+ Add Product</button>
 		</div>
 	</form>
 </div>

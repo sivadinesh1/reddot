@@ -26,6 +26,7 @@ import { CustomerAddDialogComponent } from 'src/app/components/customers/custome
 import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
 import { CustomerViewDialogComponent } from 'src/app/components/customers/customer-view-dialog/customer-view-dialog.component';
 import { RequireMatch } from 'src/app/util/directives/requireMatch';
+import { User } from 'src/app/models/User';
 
 @Component({
   selector: 'app-process-enquiry',
@@ -70,6 +71,9 @@ export class ProcessEnquiryPage implements OnInit {
   // TAB navigation for customer list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
 
+  userdata$: Observable<User>;
+  userdata: any;
+  ready = 0;
 
   constructor(private _route: ActivatedRoute, private _router: Router,
     private dialog: MatDialog, private _modalcontroller: ModalController,
@@ -78,6 +82,27 @@ export class ProcessEnquiryPage implements OnInit {
     private _cdr: ChangeDetectorRef) {
     const currentUser = this._authservice.currentUserValue;
     this.center_id = currentUser.center_id;
+
+
+
+    this.userdata$ = this._authservice.currentUser;
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+        this.ready = 1;
+
+        this._cdr.markForCheck();
+      });
+
+    this._route.params.subscribe(params => {
+      this.enqid = params['enqid'];
+
+      this.reloadEnqDetails();
+    });
+
+
 
     this.submitForm = this._fb.group({
 
@@ -89,11 +114,15 @@ export class ProcessEnquiryPage implements OnInit {
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
-    this.enqid = this._route.snapshot.params['enqid'];
+
+
+  }
+
+  reloadEnqDetails() {
     this._commonApiService.getEnquiryDetails(this.enqid).subscribe((data: any) => {
       this.enqDetailsOrig = data;
 
-      this._commonApiService.getCustomerDetails(this.center_id, this.enqDetailsOrig[0].customer_id).subscribe((custData: any) => {
+      this._commonApiService.getCustomerDetails(this.userdata.center_id, this.enqDetailsOrig[0].customer_id).subscribe((custData: any) => {
         this.customerdata = custData[0];
 
 
@@ -117,10 +146,11 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   init(enqList) {
+    this.productArr = [];
     enqList.forEach(element => {
       let tmpGiveqty = 0;
       if (element.status === 'D') {
-        tmpGiveqty = element.giveqty || 1;
+        tmpGiveqty = element.giveqty === 0 ? 0 : element.giveqty;
       } else {
         tmpGiveqty = element.askqty;
       }
@@ -414,7 +444,7 @@ export class ProcessEnquiryPage implements OnInit {
         filter(val => !!val),
         tap((val) => {
 
-          this.init(val);
+          this.reloadEnqDetails();
           this._cdr.markForCheck();
         }
         )

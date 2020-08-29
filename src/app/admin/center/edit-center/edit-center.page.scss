@@ -20,7 +20,7 @@
 }
 
 .gap {
-	padding: 0px 10px;
+	padding: 0px 20px;
 	cursor: pointer;
 }
 
@@ -29,4 +29,6 @@
 .center-info2 {
 	display: grid;
 	grid-template-columns: auto auto auto;
+	gap: 16px;
+	padding-top: 16px;
 }

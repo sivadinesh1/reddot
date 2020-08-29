@@ -2,16 +2,9 @@
 	<div class="content">
 		<div class="header">
 			<div>
-				<div>
-					Product Inventory Reports
-				</div>
-				<div style="font-size: 12px; color: #797979;">
-					Showing {{pageLength }} Records
-				</div>
+				<div>Product Inventory Reports</div>
 			</div>
-			<div>
-				&nbsp;
-			</div>
+			<div>&nbsp;</div>
 		</div>
 
 		<div class="row1">
@@ -19,13 +12,16 @@
 				<ion-searchbar
 					autofocus
 					debounce="300"
-					placeholder="Search from {{pageLength }} brands, by name / address"
+					placeholder="Search from product inventory"
 					#mySearchbar
 					show-cancel-button="focus"
-				></ion-searchbar>
+					(ionClear)="reset()"
+					(ionInput)="applyFilter($event.target.value)"
+				>
+				</ion-searchbar>
 			</div>
 			<div class="actions">
-				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer;" width="32px" height="32px" />
+				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" />
 			</div>
 		</div>
 
@@ -72,9 +68,7 @@
 
 						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">
-						No Data available.
-					</div>
+					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
 				</div>
 				<mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
 			</div>

@@ -97,7 +97,7 @@
 
 .row-cnt {
 	align-self: center;
-	padding-left: 50px;
+	padding: 5px;
 }
 
 .desc-styl {
@@ -148,7 +148,7 @@
 
 .row1 {
 	display: grid;
-	grid-template-columns: 1fr 100px;
+	grid-template-columns: 1fr 200px;
 }
 .actions {
 	align-self: center;

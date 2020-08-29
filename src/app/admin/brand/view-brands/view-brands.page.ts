@@ -19,6 +19,7 @@ import { User } from "../../../models/User";
 import { BrandAddDialogComponent } from 'src/app/components/brands/brand-add-dialog/brand-add-dialog.component';
 import * as xlsx from 'xlsx';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
+import { DeleteBrandDialogComponent } from '../../../components/delete-brand-dialog/delete-brand-dialog.component';
 
 @Component({
   selector: 'app-view-brands',
@@ -105,6 +106,48 @@ export class ViewBrandsPage implements OnInit {
   }
 
 
+  delete(brand: Brand) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "40%";
+    dialogConfig.height = "40%";
+    dialogConfig.data = brand;
+
+
+    const dialogRef = this._dialog.open(DeleteBrandDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          this.reloadBrands();
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Brand deleted successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+          this.reloadBrands();
+
+        }
+      });
+
+
+
+  }
+
+
   edit(brand: Brand) {
 
     const dialogConfig = new MatDialogConfig();
@@ -144,15 +187,13 @@ export class ViewBrandsPage implements OnInit {
 
   }
 
-
-
   add() {
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = "80%";
-    dialogConfig.height = "80%";
+    dialogConfig.width = "50%";
+    dialogConfig.height = "50%";
 
     const dialogRef = this._dialog.open(BrandAddDialogComponent, dialogConfig);
 
@@ -165,7 +206,20 @@ export class ViewBrandsPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "New Brand added successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
 
 
   }

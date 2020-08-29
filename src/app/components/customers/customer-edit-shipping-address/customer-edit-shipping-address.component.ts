@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild, Inject, ChangeDetectio
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from '../../../services/common-api.service';
-import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
+import { Validators, FormBuilder, AbstractControl, NgForm } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import { GSTN_REGEX, country, PINCODE_REGEX, EMAIL_REGEX } from 'src/app/util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
@@ -14,6 +14,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { MatSort } from '@angular/material/sort';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-customer-edit-shipping-address',
@@ -25,7 +26,7 @@ import { MatSort } from '@angular/material/sort';
   ],
 })
 export class CustomerEditShippingAddressComponent implements OnInit {
-
+  durationInSeconds = 3;
   center_id: any;
   customer_id: any;
   resultList: any;
@@ -51,9 +52,12 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 
   @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
+  @ViewChild('myForm', { static: true }) myForm: NgForm;
+
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
     private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<CustomerEditShippingAddressComponent>,
     private _route: ActivatedRoute, private _authservice: AuthenticationService,
+    private _snackBar: MatSnackBar,
     private _loadingService: LoadingService, @Inject(MAT_DIALOG_DATA) customer: Customer,
     private _commonApiService: CommonApiService) {
     const currentUser = this._authservice.currentUserValue;
@@ -66,13 +70,13 @@ export class CustomerEditShippingAddressComponent implements OnInit {
       customer_id: [this.customer.id],
       center_id: [this.center_id],
 
-      address1: [],
-      address2: [],
+      address1: ['', [Validators.required]],
+      address2: ['', [Validators.required]],
 
 
-      district: [],
-      state_id: [Validators.required],
-      pin: [null, [patternValidator(PINCODE_REGEX)]],
+      district: ['', [Validators.required]],
+      state_id: ['', Validators.required],
+      pin: ['', [Validators.required, patternValidator(PINCODE_REGEX)]],
       def_address: [false]
 
 
@@ -91,13 +95,29 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 
   }
 
+  addSnackBar() {
+    this._snackBar.openFromComponent(AddSnackBarComponent, {
+      duration: this.durationInSeconds * 1000,
+    });
+  }
+
+  updateSnackBar() {
+    this._snackBar.openFromComponent(UpdateSnackBarComponent, {
+      duration: this.durationInSeconds * 1000,
+    });
+  }
+
   highlight(row) {
 
     this.selectedRowIndex = row.id;
   }
 
   init() {
+    this.reloadAddresses();
+  }
 
+
+  reloadAddresses() {
     this._commonApiService.getShippingAddressByCustomer(this.customer.id).subscribe((data: any) => {
 
 
@@ -122,36 +142,39 @@ export class CustomerEditShippingAddressComponent implements OnInit {
     });
   }
 
-
-  onSubmit(action) {
+  onSubmit() {
 
     const changes = this.submitForm.value;
 
 
     if (!this.submitForm.valid) {
-      this.responsemsg = 'Mandatory feilds missing!'
+      this.responsemsg = 'Mandatory feilds missing!';
       return false;
     } else {
 
       this.responsemsg = '';
     }
 
-    if (action === 'add') {
+    if (this.mode === 'add') {
       const insertVendor$ = this._commonApiService.insertCustomerShippingAddress(this.submitForm.value);
 
       this._loadingService.showLoaderUntilCompleted(insertVendor$)
         .subscribe((data: any) => {
-          console.log('object.. vendor updated ..')
-          this.dialogRef.close(data);
+          this.responsemsg = '';
+          this.myForm.resetForm();
+          this.addSnackBar();
+          this.reloadAddresses();
         });
 
-    } else if (action === 'update') {
+    } else if (this.mode === 'update') {
       const updateVendor$ = this._commonApiService.updateCustomerShippingAddress(this.submitForm.value.id, changes);
 
       this._loadingService.showLoaderUntilCompleted(updateVendor$)
         .subscribe((data: any) => {
-          console.log('object.. vendor updated ..')
-          this.dialogRef.close(data);
+          this.responsemsg = '';
+          this.myForm.resetForm();
+          this.updateSnackBar();
+          this.reloadAddresses();
         });
     }
 
@@ -202,3 +225,33 @@ export class CustomerEditShippingAddressComponent implements OnInit {
   }
 
 }
+
+@Component({
+  selector: 'update-snack-bar',
+  template: `<span class="snackbar">
+  Update shipping address successful !!!
+</span>`,
+  styles: [`
+    .snackbar {
+      color: #ffffff;
+    }
+  `],
+})
+export class UpdateSnackBarComponent { }
+
+
+
+@Component({
+  selector: 'add-snack-bar',
+  template: `<span class="snackbar">
+  Add shipping address successful !!!
+</span>`,
+  styles: [`
+    .snackbar {
+      color: #ffffff;
+    }
+  `],
+})
+export class AddSnackBarComponent { }
+
+

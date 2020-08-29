@@ -6,6 +6,10 @@ import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import { EMAIL_REGEX, GSTN_REGEX, country, PINCODE_REGEX } from 'src/app/util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
+import { Observable } from 'rxjs';
+import { User } from 'src/app/models/User';
+import { filter } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -15,7 +19,7 @@ import { PhoneValidator } from 'src/app/util/validators/phone.validator';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditCenterPage implements OnInit {
-
+  durationInSeconds = 2;
   center_id: any;
   customer_id: any;
   resultList: any;
@@ -24,21 +28,31 @@ export class EditCenterPage implements OnInit {
   statesdata: any;
   isLinear = true;
 
-
+  userdata$: Observable<User>;
+  ready = 0;
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: FormBuilder, private _snackBar: MatSnackBar,
     private _route: ActivatedRoute, private _authservice: AuthenticationService,
     private _commonApiService: CommonApiService) {
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
+
+    this.userdata$ = this._authservice.currentUser;
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.center_id = data.center_id;
+        this.ready = 1;
+        this.reloadCenterDetails();
+        this._cdr.markForCheck();
+      });
 
 
     this.submitForm = this._formBuilder.group({
       formArray: this._formBuilder.array([
         this._formBuilder.group({
 
-          center_id: [this.center_id],
+          center_id: [''],
           company_id: [''],
           name: ['', Validators.required],
           address1: [''],
@@ -52,16 +66,16 @@ export class EditCenterPage implements OnInit {
         this._formBuilder.group({
           gst: ['', [patternValidator(GSTN_REGEX)]],
           phone: ['', Validators.compose([
-            Validators.required, PhoneValidator.invalidCountryPhone(country)
+            PhoneValidator.invalidCountryPhone(country)
           ])],
           mobile: ['', Validators.compose([
-            Validators.required, PhoneValidator.invalidCountryPhone(country)
+            PhoneValidator.invalidCountryPhone(country)
           ])],
           mobile2: ['', Validators.compose([
-            Validators.required, PhoneValidator.invalidCountryPhone(country)
+            PhoneValidator.invalidCountryPhone(country)
           ])],
           whatsapp: ['', Validators.compose([
-            Validators.required, PhoneValidator.invalidCountryPhone(country)
+            PhoneValidator.invalidCountryPhone(country)
           ])],
         }),
 
@@ -84,6 +98,11 @@ export class EditCenterPage implements OnInit {
   }
 
   ngOnInit() {
+
+
+  }
+
+  reloadCenterDetails() {
     this._commonApiService.getCenterDetails(this.center_id).subscribe((data: any) => {
       this.resultList = data[0];
 
@@ -91,12 +110,11 @@ export class EditCenterPage implements OnInit {
 
       this._cdr.markForCheck();
     });
-
   }
 
 
-
   setFormValues() {
+    (this.submitForm.get('formArray')).get([0]).patchValue({ 'center_id': this.center_id });
     (this.submitForm.get('formArray')).get([0]).patchValue({ 'company_id': this.resultList.company_id });
     (this.submitForm.get('formArray')).get([0]).patchValue({ 'name': this.resultList.name });
     (this.submitForm.get('formArray')).get([0]).patchValue({ 'address1': this.resultList.address1 });
@@ -130,7 +148,7 @@ export class EditCenterPage implements OnInit {
   submit() {
 
     this._commonApiService.updateCenter(this.submitForm.value).subscribe((data: any) => {
-      console.log('object.. customer updated ..')
+      this.updateSnackBar();
     });
 
   }
@@ -144,4 +162,25 @@ export class EditCenterPage implements OnInit {
     this._router.navigate([`/home/center/add`]);
   }
 
+  updateSnackBar() {
+    this._snackBar.openFromComponent(UpdateSnackBarComponent, {
+      duration: this.durationInSeconds * 1000,
+    });
+  }
+
 }
+
+
+
+@Component({
+  selector: 'update-snack-bar',
+  template: `<span class="snackbar">
+  Center details update successful !!!
+</span>`,
+  styles: [`
+    .snackbar {
+      color: #ffffff;
+    }
+  `],
+})
+export class UpdateSnackBarComponent { }

@@ -4,40 +4,40 @@
 		<mat-icon>menu</mat-icon>
 	</button>
 
-	<span style="align-self: center;">
+	<span style="align-self: center">
 		<div>
 			{{ userdata?.center_name }}
 		</div>
 		<div>
-			<span style="font-size: 0.8rem;">{{ today | date: "dd LLLL yyyy" }} </span> <span style="font-size: 0.8rem;">VER: 1.001</span>
+			<span style="font-size: 0.8rem">{{ today | date: "dd LLLL yyyy" }} </span> <span style="font-size: 0.8rem">VER: 1.001</span>
 		</div>
 	</span>
 	<span class="spacer"></span>
-	<span style="align-self: center;">
+	<span style="align-self: center">
 		<a mat-stroked-button routerLink="/home/sales/edit/0">
 			<img src="../../assets/svg/sales-white.svg" width="20px" height="20px" class="img cursor" />
 		</a>
 	</span>
-	<span style="align-self: center;">
+	<span style="align-self: center">
 		<a mat-stroked-button routerLink="/home/enquiry">
 			<img src="../../assets/svg/enquiry-white.svg" width="20px" height="20px" class="img cursor" />
 		</a>
 	</span>
 	&nbsp;&nbsp;
-	<span style="align-self: center;">
+	<span style="align-self: center">
 		<a mat-stroked-button [routerLink]="" (click)="showAddProductComp()">
 			<img src="../../assets/svg/search.svg" width="20px" height="20px" class="img cursor" />
 		</a>
 	</span>
 	&nbsp;&nbsp;
-	<span style="align-self: center;">
+	<span style="align-self: center">
 		<ng-container *ngIf="userdata">
 			<div class="fname">{{ userdata?.firstname }}</div>
 			<div class="role">{{ userdata?.role }}</div>
 		</ng-container>
 	</span>
 
-	<span style="align-self: center;">
+	<span style="align-self: center">
 		<img src="../../assets/svg/account.svg" width="28px" height="28px" class="img cursor" [matMenuTriggerFor]="menu" />
 	</span>
 </div>
@@ -48,8 +48,8 @@
 		<span>Profile</span>
 	</button>
 	<button mat-menu-item [matMenuTriggerFor]="admin">
-		<span style="padding-right: 16px; vertical-align: middle;">
-			<img src="../../assets/svg/manager.svg" width="24px" height="24px" style="vertical-align: middle;" />
+		<span style="padding-right: 16px; vertical-align: middle">
+			<img src="../../assets/svg/manager.svg" width="24px" height="24px" style="vertical-align: middle" />
 		</span>
 		Admin
 	</button>
@@ -65,8 +65,8 @@
 		<span>Settings</span>
 	</button>
 	<button mat-menu-item (click)="logout()">
-		<span style="padding-right: 16px; vertical-align: middle;">
-			<img src="../../assets/svg/logout.svg" width="24px" height="24px" style="vertical-align: middle;" />
+		<span style="padding-right: 16px; vertical-align: middle">
+			<img src="../../assets/svg/logout.svg" width="24px" height="24px" style="vertical-align: middle" />
 		</span>
 
 		<span>Log Out</span>
@@ -74,7 +74,7 @@
 </mat-menu>
 
 <mat-menu #admin="matMenu">
-	<button mat-menu-item (click)="viewProduct()" style="padding-right: 16px;">
+	<button mat-menu-item (click)="viewProduct()" style="padding-right: 16px">
 		<span>Product</span>
 	</button>
 	<button mat-menu-item (click)="viewBrand()">
@@ -89,10 +89,7 @@
 	</button>
 
 	<button mat-menu-item (click)="editCenter()">
-		<span>Centers</span>
-	</button>
-	<button mat-menu-item (click)="goAccountsScreen()">
-		<span>Accounts</span>
+		<span>Center</span>
 	</button>
 
 	<button mat-menu-item [matMenuTriggerFor]="reportsadmin">
@@ -101,7 +98,7 @@
 </mat-menu>
 
 <mat-menu #customeradmin="matMenu">
-	<button mat-menu-item (click)="viewCustomer()" style="padding-right: 16px;">
+	<button mat-menu-item (click)="viewCustomer()" style="padding-right: 16px">
 		<span>Customer</span>
 	</button>
 	<button mat-menu-item (click)="viewDiscounts()">
@@ -110,7 +107,7 @@
 </mat-menu>
 
 <mat-menu #reportsadmin="matMenu">
-	<button mat-menu-item (click)="viewInventoryReports()" style="padding-right: 16px;">
+	<button mat-menu-item (click)="viewInventoryReports()" style="padding-right: 16px">
 		<span>Inventory </span>
 		<button mat-menu-item (click)="openBackOrder()">
 			<span>Backorders</span>

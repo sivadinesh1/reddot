@@ -178,8 +178,8 @@ export class ViewDiscountsPage implements OnInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = "80%";
-    dialogConfig.height = "80%";
+    dialogConfig.width = "50%";
+    dialogConfig.height = "50%";
 
     const dialogRef = this._dialog.open(BrandAddDialogComponent, dialogConfig);
 

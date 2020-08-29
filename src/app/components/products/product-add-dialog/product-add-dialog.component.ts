@@ -107,27 +107,30 @@ export class ProductAddDialogComponent implements OnInit {
 
   isProdExists() {
 
-    this._commonApiService.isProdExists(this.submitForm.value.product_code).subscribe((data: any) => {
+    if (this.submitForm.value.product_code.length > 0) {
+      this._commonApiService.isProdExists(this.submitForm.value.product_code).subscribe((data: any) => {
 
-      if (data.result.length > 0) {
-        if (data.result[0].id > 0) {
-          this.pexists = true;
-          this.temppcode = data.result[0];
+        if (data.result.length > 0) {
+          if (data.result[0].id > 0) {
+            this.pexists = true;
+            this.temppcode = data.result[0];
 
+          }
+        } else {
+          this.pexists = false;
         }
-      } else {
-        this.pexists = false;
-      }
 
-      this._cdr.markForCheck();
-    });
+        this._cdr.markForCheck();
+      });
+    }
 
   }
 
 
-  submit() {
+  onSubmit() {
 
     if (!this.submitForm.valid) {
+      this.responsemsg = "Missing required field(s)."
       this._cdr.markForCheck();
       return false;
     }

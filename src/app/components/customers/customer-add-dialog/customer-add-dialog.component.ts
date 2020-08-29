@@ -25,7 +25,10 @@ export class CustomerAddDialogComponent implements OnInit {
   statesdata: any;
   isLinear = true;
 
+  cexists: any;
+
   discountType = ["NET", "GROSS"];
+  responseMsg;
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
     private _formBuilder: FormBuilder, public alertController: AlertController,
@@ -39,11 +42,11 @@ export class CustomerAddDialogComponent implements OnInit {
 
     this.submitForm = this._formBuilder.group({
       center_id: [this.center_id],
-      name: [null, Validators.required],
+      name: ['', Validators.required],
 
       address1: [''],
       address2: [''],
-      address3: [''],
+
 
       district: [''],
       state_id: ['', Validators.required],
@@ -80,7 +83,28 @@ export class CustomerAddDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.responseMsg = '';
 
+  }
+
+
+  isCustomerExists() {
+
+    if (this.submitForm.value.name.length > 0) {
+      this._commonApiService.isCustomerExists(this.submitForm.value.name).subscribe((data: any) => {
+
+        if (data.result.length > 0) {
+          if (data.result[0].id > 0) {
+            this.responseMsg = "Customer Already Exists!";
+            this.cexists = true;
+          }
+        } else {
+          this.cexists = false;
+        }
+
+        this._cdr.markForCheck();
+      });
+    }
 
   }
 
@@ -91,11 +115,16 @@ export class CustomerAddDialogComponent implements OnInit {
       return false;
     }
 
-    this._commonApiService.addCustomer(this.submitForm.value).subscribe((data: any) => {
-      console.log('object.. customer updated ..');
+    if (this.cexists) {
+      this.responseMsg = "Customer Already Exists!";
+      this._cdr.markForCheck();
+      return false;
+    }
 
+
+    this._commonApiService.addCustomer(this.submitForm.value).subscribe((data: any) => {
       if (data.body.result === 'success') {
-        this.dialogRef.close(data);
+        this.dialogRef.close('success');
       }
 
     });

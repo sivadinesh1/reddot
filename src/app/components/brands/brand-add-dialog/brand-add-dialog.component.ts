@@ -16,6 +16,9 @@ export class BrandAddDialogComponent implements OnInit {
 
   center_id: any;
   submitForm: any;
+  bexists: any;
+
+
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
     private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<BrandAddDialogComponent>,
@@ -43,6 +46,10 @@ export class BrandAddDialogComponent implements OnInit {
       return false;
     }
 
+    if (this.bexists) {
+      return false;
+    }
+
     this._commonApiService.addBrand(this.submitForm.value).subscribe((data: any) => {
 
       if (data.body.result === 'success') {
@@ -67,5 +74,26 @@ export class BrandAddDialogComponent implements OnInit {
   close() {
     this.dialogRef.close();
   }
+
+
+  isBrandExists() {
+
+    if (this.submitForm.value.name.length > 0) {
+      this._commonApiService.isBrandExists(this.submitForm.value.name).subscribe((data: any) => {
+
+        if (data.result.length > 0) {
+          if (data.result[0].id > 0) {
+            this.bexists = true;
+          }
+        } else {
+          this.bexists = false;
+        }
+
+        this._cdr.markForCheck();
+      });
+    }
+
+  }
+
 
 }

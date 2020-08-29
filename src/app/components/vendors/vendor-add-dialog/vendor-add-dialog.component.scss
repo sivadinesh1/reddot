@@ -7,12 +7,12 @@
 	padding: 16px;
 }
 
-.vendor-info {
-	display: grid;
-	grid-template-columns: auto auto auto auto;
-	grid-gap: 10px;
-	width: 100%;
-}
+// .vendor-info {
+// 	display: grid;
+// 	grid-template-columns: auto auto auto auto;
+// 	grid-gap: 10px;
+// 	width: 100%;
+// }
 
 .screen-header {
 	display: flex;
@@ -25,4 +25,12 @@
 
 .mat-width-ext {
 	width: 100%;
+}
+
+.vendor-info,
+.vendor-info1 {
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-gap: 16px;
+	padding: 1rem;
 }
