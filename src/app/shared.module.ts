@@ -98,6 +98,7 @@ import { AccountsReceivablesComponent } from './components/accounts/accounts-rec
 import { SuccessMessageDialogComponent } from './components/success-message-dialog/success-message-dialog.component';
 import { DeleteBrandDialogComponent } from './components/delete-brand-dialog/delete-brand-dialog.component';
 import { DeleteVendorDialogComponent } from './components/delete-vendor-dialog/delete-vendor-dialog.component';
+import { DeleteEnquiryDialogComponent } from './components/delete-enquiry-dialog/delete-enquiry-dialog.component';
 
 const components = [
 
@@ -126,6 +127,8 @@ const components = [
 
   DeleteBrandDialogComponent,
   DeleteVendorDialogComponent,
+
+  DeleteEnquiryDialogComponent,
 
   AccountsReceivablesComponent,
 
@@ -230,7 +233,7 @@ const matcomponents = [
     ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent, VendorViewDialogComponent,
     BrandAddDialogComponent, BrandEditDialogComponent, ConvertToSaleDialogComponent,
     DefaultDiscountsComponent,
-    BrandDiscountsComponent,
+    BrandDiscountsComponent, DeleteEnquiryDialogComponent,
     CustomerAddDialogComponent, CustomerEditDialogComponent, CustomerAddDialogComponent, AccountsReceivablesComponent,
     SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent

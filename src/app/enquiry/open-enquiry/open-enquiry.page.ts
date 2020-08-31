@@ -7,7 +7,12 @@ import { Customer } from 'src/app/models/Customer';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Enquiry } from 'src/app/models/Enquiry';
-import { filter, map, startWith } from 'rxjs/operators';
+import { filter, map, startWith, tap } from 'rxjs/operators';
+import { Vendor } from 'src/app/models/Vendor';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
+
+import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
+import { DeleteEnquiryDialogComponent } from 'src/app/components/delete-enquiry-dialog/delete-enquiry-dialog.component';
 
 @Component({
   selector: 'app-open-enquiry',
@@ -38,9 +43,9 @@ export class OpenEnquiryPage implements OnInit {
 
   filteredValues: any;
 
-  statusList = [{ "id": "all", "value": "All" }, { "id": "O", "value": "New" }, { "id": "D", "value": "In Progress" },
-  { "id": "P", "value": "Invoice Ready" },
-  { "id": "E", "value": "Executed" }
+  statusList = [{ "id": "all", "value": "All" }, { "id": "O", "value": "New Inquiry" }, { "id": "D", "value": "In Progress" },
+  { "id": "P", "value": "Ready to Invoice" },
+  { "id": "E", "value": "Closed Inquiry" }, { "id": "X", "value": "Cancelled Inquiry" }
   ]
 
   navigationSubscription: any;
@@ -53,6 +58,8 @@ export class OpenEnquiryPage implements OnInit {
   invoiceReadyEnquiries$: Observable<Enquiry[]>;
   fullfilledEnquiries$: Observable<Enquiry[]>;
 
+  cancelledEnquiries$: Observable<Enquiry[]>;
+
   filteredEnquiries$: Observable<Enquiry[]>;
 
   test: any;
@@ -62,8 +69,7 @@ export class OpenEnquiryPage implements OnInit {
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
-
-    private _authservice: AuthenticationService,
+    private _dialog: MatDialog, private _authservice: AuthenticationService,
 
   ) {
 
@@ -168,6 +174,7 @@ export class OpenEnquiryPage implements OnInit {
     this.draftEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'D')));
     this.invoiceReadyEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'P')));
     this.fullfilledEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'E')));
+    this.cancelledEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'X')));
 
     this._cdr.markForCheck();
   }
@@ -238,7 +245,7 @@ export class OpenEnquiryPage implements OnInit {
 
     if ($event.index === 0) {
       this.filteredValues = value.filter((data: any) =>
-        (data.estatus === 'O' || data.estatus === 'D') || (data.estatus === 'P' || data.estatus === 'E'));
+        (data.estatus === 'O' || data.estatus === 'D') || (data.estatus === 'P' || data.estatus === 'E' || data.estatus === 'X'));
     } else if ($event.index === 1) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'O');
     } else if ($event.index === 2) {
@@ -247,10 +254,57 @@ export class OpenEnquiryPage implements OnInit {
       this.filteredValues = value.filter((data: any) => data.estatus === 'P');
     } else if ($event.index === 4) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'E');
+    } else if ($event.index === 5) {
+      this.filteredValues = value.filter((data: any) => data.estatus === 'X');
     }
 
     this._cdr.markForCheck();
 
   }
+
+
+
+  delete(enquiry: Enquiry) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "40%";
+    dialogConfig.height = "40%";
+    dialogConfig.data = enquiry;
+
+
+    const dialogRef = this._dialog.open(DeleteEnquiryDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+          this.init();
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Inquiry deleted successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+          this.init();
+
+        }
+      });
+
+
+
+  }
+
+
 
 }

@@ -74,6 +74,11 @@
 				</div>
 			</div>
 		</form>
+
+		<div style="display: flex; justify-content: flex-end">
+			<button mat-button color="accent" (click)="openBackOrder()">Backorder Report</button>
+		</div>
+
 		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
 				<mat-tab label="All Inquiries ({{(enquiries$| async)?.length }})">
@@ -81,7 +86,7 @@
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 
-				<mat-tab label="New ({{(newEnquiries$| async)?.length }})">
+				<mat-tab label="New Inquiry ({{(newEnquiries$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
@@ -91,12 +96,17 @@
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 
-				<mat-tab label="Invoice Ready ({{(invoiceReadyEnquiries$| async)?.length }})">
+				<mat-tab label="Ready to Invoice ({{(invoiceReadyEnquiries$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 
-				<mat-tab label="Executed ({{(fullfilledEnquiries$| async)?.length }})">
+				<mat-tab label="Closed Inquiry ({{(fullfilledEnquiries$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
+
+				<mat-tab label="Cancelled Inquiry ({{(cancelledEnquiries$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
@@ -107,10 +117,10 @@
 	<ng-template #MsgRef>
 		<div class="header">
 			<div>#</div>
-			<div>INQ ID</div>
+
 			<div>CUSTOMER</div>
 			<div>INQUIRED ON</div>
-			<div>STATUS</div>
+
 			<div>ITEMS</div>
 			<div>&nbsp;</div>
 		</div>
@@ -119,17 +129,23 @@
 	<ng-template #MsgRef1>
 		<div *ngFor="let item of filteredValues let idx = index;" class="listItem">
 			<div>{{idx + 1}}</div>
-			<div>{{item.id}}</div>
+
 			<div>{{item.customer_name}}</div>
 			<div>{{item.enquiry_date | date: 'dd/MMM/yyyy h:mm a'}}</div>
-			<div>{{item.status_txt }}</div>
 
 			<div class="items">{{item.noofitems}}</div>
 			<div>
 				<div *ngIf="item.estatus === 'O' ">
-					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="processEnquiry(item)">
-						<div style="color: blue">Order Process</div>
-						<div class="extra" style="color: blue; cursor: pointer"><mat-icon>edit </mat-icon></div>
+					<div style="display: flex; justify-content: space-between; cursor: pointer">
+						<div style="color: blue">New Inquiry</div>
+						<div style="display: flex">
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="delete(item)"
+								><mat-icon>delete_outline </mat-icon></span
+							>
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="processEnquiry(item)"
+								><mat-icon>edit </mat-icon></span
+							>
+						</div>
 					</div>
 
 					<div>
@@ -140,7 +156,14 @@
 				<div *ngIf="item.estatus === 'D' ">
 					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="processEnquiry(item)">
 						<div style="color: blue; cursor: pointer">In Progress</div>
-						<div class="extra" style="color: blue; cursor: pointer"><mat-icon>edit </mat-icon></div>
+						<div style="display: flex">
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="delete(item)"
+								><mat-icon>delete_outline </mat-icon></span
+							>
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="processEnquiry(item)"
+								><mat-icon>edit </mat-icon></span
+							>
+						</div>
 					</div>
 
 					<div>
@@ -150,8 +173,15 @@
 
 				<div *ngIf="item.estatus === 'P' ">
 					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="moveToSale(item)">
-						<div style="color: blue; cursor: pointer">Invoice Ready</div>
-						<div class="extra" style="color: blue; cursor: pointer"><mat-icon>edit </mat-icon></div>
+						<div style="color: blue; cursor: pointer">Ready to Invoice</div>
+						<div style="display: flex">
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="delete(item)"
+								><mat-icon>delete_outline </mat-icon></span
+							>
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="moveToSale(item)"
+								><mat-icon>edit </mat-icon></span
+							>
+						</div>
 					</div>
 
 					<div>
@@ -161,7 +191,7 @@
 
 				<div *ngIf="item.estatus === 'E' ">
 					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="processEnquiry(item)">
-						<div style="color: blue; cursor: pointer">View</div>
+						<div style="color: blue; cursor: pointer">Closed Inquiry</div>
 						<div class="extra" style="color: blue; cursor: pointer"><mat-icon>remove_red_eye </mat-icon></div>
 					</div>
 

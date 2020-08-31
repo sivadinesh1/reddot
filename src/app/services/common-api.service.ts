@@ -402,6 +402,10 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/vendor-delete/${id}`);
   }
 
+  deleteEnquiry(id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/enquiry-delete/${id}`);
+  }
+
   // end
   isBrandExists(name) {
     return this.httpClient.get(`${this.restApiUrl}/api/brand-exists/${name}`);

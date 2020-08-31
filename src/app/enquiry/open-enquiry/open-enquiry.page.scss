@@ -14,7 +14,7 @@
 	display: grid;
 	width: 100%;
 	margin: 0 auto;
-	grid-template-columns: 60px 100px 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 60px 1fr 1fr 1fr 1fr;
 	padding: 5px;
 	align-items: center;
 	font-size: 14px;
@@ -29,6 +29,7 @@
 .listItem:hover .extra {
 	display: flex;
 	align-items: baseline;
+	justify-items: flex-end;
 }
 
 .listItem:hover {
@@ -112,4 +113,8 @@
 
 .mat-input-wrapper {
 	width: 160px;
+}
+
+.highlight:hover {
+	background-color: #f1efef;
 }
