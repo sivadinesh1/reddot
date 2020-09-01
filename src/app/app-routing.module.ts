@@ -81,10 +81,10 @@ const routes: Routes = [
         loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
       },
 
-      {
-        path: 'accounts-payments',
-        loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
-      },
+      // {
+      //   path: 'accounts-payments',
+      //   loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
+      // },
 
       {
         path: 'enquiry/process-enquiry/:enqid',
