@@ -78,7 +78,11 @@ const routes: Routes = [
       },
       {
         path: 'payments',
-        // loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardPageModule)
+        loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
+      },
+
+      {
+        path: 'accounts-payments',
         loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
       },
 
@@ -165,10 +169,7 @@ const routes: Routes = [
     path: 'financials-customer',
     loadChildren: () => import('./admin/customer/financials-customer/financials-customer.module').then(m => m.FinancialsCustomerPageModule)
   },
-  {
-    path: 'accounts-payments',
-    loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
-  },
+
 
 ];
 @NgModule({
