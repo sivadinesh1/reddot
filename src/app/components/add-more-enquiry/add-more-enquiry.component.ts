@@ -6,6 +6,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CurrencyPadComponent } from '../currency-pad/currency-pad.component';
+import { Product } from 'src/app/models/Product';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-add-more-enquiry',
@@ -26,8 +28,15 @@ export class AddMoreEnquiryComponent implements OnInit {
   userid: any;
 
   data: any;
+  isLoading = false;
+  product_lis: Product[];
 
   @ViewChild('myForm', { static: true }) myForm: NgForm;
+
+  // TAB navigation for product list
+  @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
+
+  @ViewChild('plist', { static: true }) plist: any;
 
   constructor(private _fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) data: any,
@@ -64,8 +73,8 @@ export class AddMoreEnquiryComponent implements OnInit {
 
 
     this.addProduct();
-    this.addProduct();
-    this.addProduct();
+    // this.addProduct();
+    // this.addProduct();
     // this.addProduct();
     // this.addProduct();
 
@@ -97,6 +106,39 @@ export class AddMoreEnquiryComponent implements OnInit {
     });
   }
 
+
+  clearProdInput() {
+
+    this.submitForm.patchValue({
+      product_code: null,
+
+      tempdesc: null,
+      tempqty: 1
+    });
+    this.product_lis = null;
+    this._cdr.markForCheck();
+
+  }
+
+
+
+  setItemDesc(event, from) {
+
+    if (from === 'tab') {
+      this.submitForm.patchValue({
+        tempdesc: event.description,
+      });
+    } else {
+      this.submitForm.patchValue({
+        tempdesc: event.option.value.description,
+      });
+    }
+
+
+    this._cdr.markForCheck();
+
+
+  }
 
   onRemoveRows() {
     this.removeRowArr.sort().reverse();
@@ -160,8 +202,18 @@ export class AddMoreEnquiryComponent implements OnInit {
     );
   }
 
+  displayProdFn(obj: any): string | undefined {
+    return obj && obj.product_code ? obj.product_code : undefined;
+
+  }
 
   onSubmit() {
+
+    if (!this.submitForm.valid) {
+      return false;
+    }
+
+
     this._commonApiService.addMoreEnquiry(this.submitForm.value).subscribe((data: any) => {
       this.submitForm.reset();
       this.myForm.resetForm();

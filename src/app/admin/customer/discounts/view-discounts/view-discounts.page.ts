@@ -231,6 +231,10 @@ export class ViewDiscountsPage implements OnInit {
   exportToExcel() {
     const ws: xlsx.WorkSheet =
       xlsx.utils.table_to_sheet(this.epltable.nativeElement);
+
+    ws['!cols'] = [];
+    ws['!cols'][7] = { hidden: true };
+
     const wb: xlsx.WorkBook = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(wb, 'epltable.xlsx');

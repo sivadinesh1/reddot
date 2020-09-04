@@ -1,16 +1,14 @@
 <ion-content>
 	<div class="screen-header">
 		<div>
-			<span style="color: #310ac0; cursor: pointer;" (click)="viewAllCustomers()"> All Customers </span> /
-			<span style="color: #797979;">{{customerdata?.name}}</span> / <span style="color: #797979;">Financial Transactions</span>
+			<span style="color: #310ac0; cursor: pointer" (click)="viewAllCustomers()"> All Customers </span> /
+			<span style="color: #797979">{{customerdata?.name}}</span> / <span style="color: #797979">Financial Transactions</span>
 		</div>
-		<div>
-			&nbsp;
-		</div>
+		<div>&nbsp;</div>
 	</div>
 
 	<div class="search-wrap">
-		<div style="width: 94%; margin: 0 auto; padding-top: 16px;" [@.disabled]="true">
+		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
 				<mat-tab label="Invoices">
 					<ng-template [ngTemplateOutlet]="INVTABLE"></ng-template>
@@ -34,44 +32,32 @@
 					<table mat-table [dataSource]="saleInvoicedataSource" multiTemplateDataRows>
 						<ng-container matColumnDef="invoicedate">
 							<th mat-header-cell *matHeaderCellDef>Invoice Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.invoice_date )}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.invoice_date )}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="invoiceno">
 							<th mat-header-cell *matHeaderCellDef>Inv #</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.invoice_no)}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.invoice_no)}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paymentstatus">
 							<th class="m-txt-field" mat-header-cell *matHeaderCellDef>Payment Status</th>
-							<td mat-cell *matCellDef="let element" class="m-txt-field">
-								{{(element.payment_status)}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-txt-field">{{(element.payment_status)}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="nettotal">
 							<th class="m-curr-field" mat-header-cell *matHeaderCellDef>Amount</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">
-								{{(element.invoice_amt)}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">{{(element.invoice_amt)}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paidamt">
 							<th class="m-curr-field" mat-header-cell *matHeaderCellDef>Paid Amount</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">
-								{{(element.paid_amount | nullzero)}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">{{(element.paid_amount | nullzero)}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="balamt">
 							<th class="m-curr-field" mat-header-cell *matHeaderCellDef>Balance Amount</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">
-								{{(element.bal_amount | nullzero)}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">{{(element.bal_amount | nullzero)}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paybtn">
@@ -100,9 +86,7 @@
 
 						<tr class="example-element-row" mat-row *matRowDef="let row; columns: saleInvoiceDisplayedColumns;"></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">
-						No Data available.
-					</div>
+					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
 				</div>
 				<mat-paginator #InvoiceTablePaginator="matPaginator" [pageSizeOptions]="[100, 200]" showFirstLastButtons></mat-paginator>
 			</div>
@@ -124,44 +108,34 @@
 					<table mat-table [dataSource]="paymentdataSource" multiTemplateDataRows>
 						<ng-container matColumnDef="invoiceno">
 							<th mat-header-cell *matHeaderCellDef>Invoice #</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								INV-{{(element.invoice_no )}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-card-title">INV-{{(element.invoice_no )}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="invoicedate">
 							<th mat-header-cell *matHeaderCellDef>Invoice Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.invoice_date )}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.invoice_date )}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="pymtdate">
 							<th mat-header-cell *matHeaderCellDef>Payment Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.pymt_date )}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.pymt_date )}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paymentno">
 							<th mat-header-cell *matHeaderCellDef>Pymt #</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.payment_no)}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.payment_no)}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paidamt">
 							<th class="m-curr-field" mat-header-cell *matHeaderCellDef>Paid Amt</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">{{element.payment_now_amt}}</td>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">{{element.applied_amount}}</td>
 						</ng-container>
 
 						<tr mat-header-row *matHeaderRowDef="paymentDisplayedColumns; sticky: true"></tr>
 
 						<tr class="example-element-row" mat-row *matRowDef="let row; columns: paymentDisplayedColumns;"></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">
-						No Data available.
-					</div>
+					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
 				</div>
 				<mat-paginator #PaymentTablePaginator="matPaginator" [pageSize]="100" [pageSizeOptions]="[100, 200]" showFirstLastButtons></mat-paginator>
 			</div>
@@ -183,9 +157,7 @@
 					<table mat-table [dataSource]="ledgerdataSource" multiTemplateDataRows>
 						<ng-container matColumnDef="ledgerdate">
 							<th mat-header-cell *matHeaderCellDef>Ledger Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.ledger_date | date: 'dd/MMM/yyyy')}}
-							</td>
+							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.ledger_date | date: 'dd/MMM/yyyy')}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="ledgerrefid">
@@ -219,9 +191,7 @@
 
 						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">
-						No Data available.
-					</div>
+					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
 				</div>
 				<mat-paginator #LedgerTablePaginator="matPaginator" [pageSizeOptions]="[100, 200]" showFirstLastButtons></mat-paginator>
 			</div>
