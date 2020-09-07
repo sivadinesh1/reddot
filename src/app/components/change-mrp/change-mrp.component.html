@@ -1,20 +1,23 @@
 <div class="element-edit-wrap">
-	<h4 style="text-align: center;">Change MRP</h4>
+	<div class="screen-header">
+		<div style="font-size: 14px">Change MRP</div>
+		<div>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="closeModal()" width="20px" height="20px" />
+		</div>
+	</div>
 
-	<form [formGroup]="submitForm">
+	<form [formGroup]="submitForm" (ngSubmit)="onSubmit()">
 		<div class="element">
 			<mat-form-field>
-				<mat-label>Mrp</mat-label>
-				<input type="number" matInput placeholder="Mrp" min="1" max="99999" formControlName="mrp" required />
+				<mat-label>mrp</mat-label>
+				<input type="number" matInput min="1" max="99999" formControlName="mrp" required />
 				<mat-error>This field is required</mat-error>
 			</mat-form-field>
 		</div>
-		<div>{{ this.msg }}</div>
+		<div class="error" style="text-align: center; padding: 10px">{{ this.msg }}</div>
 
 		<div class="save">
-			<button mat-raised-button color="primary" (click)="newMRP()" style="font-size: 1rem; padding: 0px 20px;">
-				Create New MRP
-			</button>
+			<button mat-raised-button color="primary" type="submit" style="font-size: 1rem; padding: 0px 20px">Create New MRP</button>
 		</div>
 	</form>
 </div>

@@ -33,7 +33,7 @@ export class ChangeMrpComponent implements OnInit {
 
 
     this.submitForm = new FormGroup({
-      'mrp': new FormControl('', Validators.compose([Validators.required])),
+      mrp: new FormControl('', Validators.compose([Validators.required])),
     });
 
 
@@ -59,11 +59,22 @@ export class ChangeMrpComponent implements OnInit {
 
   }
 
-  async newMRP() {
+  async onSubmit() {
 
-    if (this.current_mrp === this.submitForm.value.mrp) {
+    if (!this.submitForm.valid) {
+      return false;
+    }
+
+    if (+this.current_mrp === this.submitForm.value.mrp) {
       this.msg = "No Change in MRP";
-    } else {
+      return false;
+    } else if (this.submitForm.value.mrp === 0) {
+      this.msg = "MRP Zero is not allowed";
+      return false;
+    }
+
+
+    else {
       await this._modalcontroller.dismiss(this.submitForm.value.mrp);
     }
 

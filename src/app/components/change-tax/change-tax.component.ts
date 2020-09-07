@@ -17,7 +17,7 @@ export class ChangeTaxComponent implements OnInit {
   noMatch: any;
 
 
-  center_id;
+
   pArry;
   rArry;
 
@@ -32,7 +32,7 @@ export class ChangeTaxComponent implements OnInit {
 
 
     this.submitForm = new FormGroup({
-      'tax': new FormControl('', Validators.compose([Validators.required])),
+      tax: new FormControl('', Validators.compose([Validators.max(50), Validators.min(1), Validators.required])),
     });
 
 
@@ -59,10 +59,19 @@ export class ChangeTaxComponent implements OnInit {
   }
 
   async applyOnce() {
+
+    if (!this.submitForm.valid) {
+      return false;
+    }
+
     await this._modalcontroller.dismiss(this.submitForm.value.tax);
   }
 
   async permanentTaxChange() {
+
+    if (!this.submitForm.valid) {
+      return false;
+    }
 
     this._commonApiService.updateTax({ productid: this.product_id, taxrate: this.submitForm.value.tax }).subscribe(
       data => {
