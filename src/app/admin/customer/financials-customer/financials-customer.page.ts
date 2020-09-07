@@ -62,7 +62,7 @@ export class FinancialsCustomerPage implements OnInit {
   displayedColumns: string[] = ['ledgerdate', 'ledgerrefid', 'type', 'creditamt', 'debitamt', 'balamt'];
   saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
 
-  paymentDisplayedColumns: string[] = ['invoiceno', 'invoicedate', 'pymtdate', 'paymentno', 'paidamt'];
+  paymentDisplayedColumns: string[] = ['invoiceno', 'invoicedate', 'pymtdate', 'paymentno', 'bankref', 'pymtref', 'paidamt'];
 
   // data sources
   ledgerdataSource = new MatTableDataSource<any>();
@@ -86,9 +86,10 @@ export class FinancialsCustomerPage implements OnInit {
       .subscribe((data: any) => {
         this.center_id = data.center_id;
         this.ready = 1;
-        this.reloadCustomerLedger();
-        this.reloadSaleInvoiceByCustomer();
-        this.reloadPaymentsByCustomer();
+        // this.reloadCustomerLedger();
+        // this.reloadSaleInvoiceByCustomer();
+        // this.reloadPaymentsByCustomer();
+        this.init();
 
         this._cdr.markForCheck();
       });
@@ -103,7 +104,7 @@ export class FinancialsCustomerPage implements OnInit {
     this._route.params.subscribe(params => {
 
       this.center_id = params['center_id'];
-      //    this.customer_id = params['customer_id'];
+      this.customer_id = params['customer_id'];
 
       this._cdr.markForCheck();
       this.init();
@@ -117,7 +118,7 @@ export class FinancialsCustomerPage implements OnInit {
 
   init() {
 
-    if (this.ready === 1) {
+    if (this.ready === 1 && this.customer_id !== undefined) {
 
       this.reloadSaleInvoiceByCustomer();
       this.reloadCustomerLedger();

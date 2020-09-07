@@ -126,6 +126,16 @@
 							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.payment_no)}}</td>
 						</ng-container>
 
+						<ng-container matColumnDef="bankref">
+							<th mat-header-cell *matHeaderCellDef>Bank Notes</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.bank_ref)}}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="pymtref">
+							<th mat-header-cell *matHeaderCellDef>Notes</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.pymt_ref)}}</td>
+						</ng-container>
+
 						<ng-container matColumnDef="paidamt">
 							<th class="m-curr-field" mat-header-cell *matHeaderCellDef>Paid Amt</th>
 							<td mat-cell *matCellDef="let element" class="m-curr-field">{{element.applied_amount}}</td>

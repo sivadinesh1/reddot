@@ -156,6 +156,7 @@ export class CustomerEditShippingAddressComponent implements OnInit {
     }
 
     if (this.mode === 'add') {
+
       const insertVendor$ = this._commonApiService.insertCustomerShippingAddress(this.submitForm.value);
 
       this._loadingService.showLoaderUntilCompleted(insertVendor$)
@@ -164,6 +165,12 @@ export class CustomerEditShippingAddressComponent implements OnInit {
           this.myForm.resetForm();
           this.addSnackBar();
           this.reloadAddresses();
+
+          this.submitForm.patchValue({
+            customer_id: this.customer.id,
+            center_id: this.center_id,
+          });
+
         });
 
     } else if (this.mode === 'update') {
@@ -175,6 +182,11 @@ export class CustomerEditShippingAddressComponent implements OnInit {
           this.myForm.resetForm();
           this.updateSnackBar();
           this.reloadAddresses();
+
+          this.submitForm.patchValue({
+            customer_id: this.customer.id,
+            center_id: this.center_id,
+          });
         });
     }
 

@@ -8,6 +8,9 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CurrencyPadComponent } from '../currency-pad/currency-pad.component';
 import { Product } from 'src/app/models/Product';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { RequireMatch as RequireMatch } from '../../util/directives/requireMatch';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { empty } from 'rxjs';
 
 @Component({
   selector: 'app-add-more-enquiry',
@@ -50,7 +53,12 @@ export class AddMoreEnquiryComponent implements OnInit {
       enquiry_id: [data.enquiry_id, Validators.required],
       customer: [data.customer_id, Validators.required],
       centerid: [data.center_id, Validators.required],
+      productctrl: [null, [RequireMatch]],
       remarks: [''],
+
+      tempdesc: [''],
+
+      tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
       productarr: this._fb.array([])
 
@@ -71,8 +79,9 @@ export class AddMoreEnquiryComponent implements OnInit {
     this.customerData = "";
     this.customerAdded = false;
 
+    this.searchProducts();
 
-    this.addProduct();
+    // this.addProduct();
     // this.addProduct();
     // this.addProduct();
     // this.addProduct();
@@ -120,7 +129,10 @@ export class AddMoreEnquiryComponent implements OnInit {
 
   }
 
-
+  getLength() {
+    const control = <FormArray>this.submitForm.controls['productarr'];
+    return control.length;
+  }
 
   setItemDesc(event, from) {
 
@@ -206,6 +218,93 @@ export class AddMoreEnquiryComponent implements OnInit {
     return obj && obj.product_code ? obj.product_code : undefined;
 
   }
+
+  ngAfterViewInit() {
+    this.autoTrigger.panelClosingActions.subscribe(x => {
+      if (this.autoTrigger.activeOption) {
+
+        this.submitForm.patchValue({
+          productctrl: this.autoTrigger.activeOption.value
+        });
+        this.setItemDesc(this.autoTrigger.activeOption.value, "tab");
+
+      }
+    })
+
+
+  }
+
+  searchProducts() {
+    let search = "";
+    this.submitForm.controls['productctrl'].valueChanges.pipe(
+      debounceTime(300),
+      tap(() => this.isLoading = true),
+      switchMap(id => {
+        console.log(id);
+        search = id;
+        if (id != null && id.length >= 0) {
+
+          return this._commonApiService.getProductInfo({ "centerid": this.submitForm.value.centerid, "searchstring": id });
+        } else {
+          return empty();
+        }
+
+      })
+
+    )
+
+      .subscribe((data: any) => {
+        this.isLoading = false;
+        this.product_lis = data.body;
+        this._cdr.markForCheck();
+      });
+  }
+
+
+  add() {
+
+    if (this.submitForm.value.tempdesc === '' || this.submitForm.value.tempdesc === null) {
+      this.submitForm.controls['tempdesc'].setErrors({ 'required': true });
+      this.submitForm.controls['tempdesc'].markAsTouched();
+
+      return false;
+    }
+
+    if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null) {
+      this.submitForm.controls['tempqty'].setErrors({ 'required': true });
+      this.submitForm.controls['tempqty'].markAsTouched();
+
+      return false;
+    }
+
+    const control = <FormArray>this.submitForm.controls['productarr'];
+
+    control.push(this._fb.group({
+      checkbox: [false],
+      product_code: [this.submitForm.value.productctrl === null ? "" : this.submitForm.value.productctrl.product_code],
+
+      notes: [this.submitForm.value.tempdesc, Validators.required],
+      quantity: [this.submitForm.value.tempqty, [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
+
+    }));
+
+    this.submitForm.patchValue({
+      productctrl: "",
+      tempdesc: "",
+      tempqty: 1,
+    });
+
+    this.submitForm.controls['tempdesc'].setErrors(null);
+    this.submitForm.controls['tempqty'].setErrors(null);
+    this.submitForm.controls['productctrl'].setErrors(null);
+    this.plist.nativeElement.focus();
+
+
+
+    this._cdr.markForCheck();
+
+  }
+
 
   onSubmit() {
 

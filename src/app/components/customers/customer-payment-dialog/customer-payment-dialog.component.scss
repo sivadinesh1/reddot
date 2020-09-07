@@ -33,12 +33,12 @@
 	justify-content: center;
 }
 
-.list-item {
-	display: grid;
-	max-height: 70vh;
-	min-height: 70vh;
-	overflow-y: auto;
-}
+// .list-item {
+// 	display: grid;
+// 	max-height: 70vh;
+// 	min-height: 70vh;
+// 	overflow-y: auto;
+// }
 
 .item-details {
 	display: grid;
@@ -112,7 +112,7 @@
 
 .list-block {
 	display: grid;
-	max-height: 70vh;
+	height: auto;
 }
 
 .elseblock {

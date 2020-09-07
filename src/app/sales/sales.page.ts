@@ -1502,7 +1502,7 @@ export class SalesPage implements OnInit {
 
     // this line over writes default qty vs entered qty
     this.lineItemData.qty = this.submitForm.value.tempqty;
-    debugger;
+
     // lineitemdata is the input box row to add items
     this.processItems(this.lineItemData);
 

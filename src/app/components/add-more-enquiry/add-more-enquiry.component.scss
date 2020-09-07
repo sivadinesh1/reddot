@@ -3,7 +3,6 @@
 	align-content: flex-start;
 	width: 90%;
 	margin: 0 auto;
-	min-height: 90vh;
 }
 
 .e-form {
@@ -150,4 +149,27 @@
 
 .content {
 	display: grid;
+}
+
+.main-add {
+	display: grid;
+	grid-template-columns: 2fr minmax(110px, 100px);
+
+	background-color: #e8e8e8;
+
+	.left {
+		display: grid;
+		grid-template-columns: minmax(350px, 1fr) 2fr minmax(60px, 80px) 110px;
+		align-items: center;
+		grid-gap: 10px;
+		background-color: #e8e8e8;
+		padding: 1rem;
+		align-self: center;
+	}
+	.right {
+		display: grid;
+		grid-template-columns: 1fr;
+		background-color: #efefef;
+		padding: 5px;
+	}
 }

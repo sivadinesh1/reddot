@@ -47,7 +47,7 @@ export class ViewProductsPage implements OnInit {
   @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
 
-  displayedColumns: string[] = ['productcode', 'description', 'name', 'actions'];
+  displayedColumns: string[] = ['productcode', 'description', 'name', 'rackno', 'avlstock', 'mrp', 'actions'];
   dataSource = new MatTableDataSource<Product>();
 
   tempsearchstring = "";

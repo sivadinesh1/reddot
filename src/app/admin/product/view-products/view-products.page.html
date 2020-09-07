@@ -47,6 +47,21 @@
 							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.name}}</td>
 						</ng-container>
 
+						<ng-container matColumnDef="rackno">
+							<th mat-header-cell *matHeaderCellDef>Rack #</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.rackno}}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="avlstock">
+							<th mat-header-cell *matHeaderCellDef>Available Qty</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.available_stock}}</td>
+						</ng-container>
+
+						<ng-container matColumnDef="mrp">
+							<th mat-header-cell *matHeaderCellDef>MRP</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.mrp}}</td>
+						</ng-container>
+
 						<ng-container matColumnDef="actions">
 							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
 							<td mat-cell *matCellDef="let element">
