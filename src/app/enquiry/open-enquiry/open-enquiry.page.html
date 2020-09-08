@@ -61,30 +61,33 @@
 					</mat-form-field>
 				</div>
 
-				<div style="padding-top: 20px">
+				<!-- <div style="padding-top: 20px">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Status</mat-label>
 						<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
 							<mat-option *ngFor="let item of statusList" [value]="item.id"> {{item.value}} </mat-option>
 						</mat-select>
 					</mat-form-field>
-				</div>
+				</div> -->
 				<div class="search-btn" style="padding-top: 20px">
 					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search()">Search</button>
 				</div>
 			</div>
 		</form>
 
-		<div style="display: flex; justify-content: flex-end">
-			<button mat-button color="accent" (click)="openBackOrder()">Backorder Report</button>
+		<div style="display: flex; justify-content: space-between">
+			<div style="align-self: center; font-size: 14px; padding-left: 16px">All Inquiries ({{(enquiries$| async)?.length }}) records</div>
+			<div>
+				<button mat-button color="accent" (click)="openBackOrder()">Backorder Report</button>
+			</div>
 		</div>
 
 		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-				<mat-tab label="All Inquiries ({{(enquiries$| async)?.length }})">
+				<!-- <mat-tab label="All Inquiries ({{(enquiries$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
+				</mat-tab> -->
 
 				<mat-tab label="New Inquiry ({{(newEnquiries$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>

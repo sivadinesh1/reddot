@@ -71,7 +71,7 @@ export class AccountsPaymentsPage implements OnInit {
     private _dialog: MatDialog,
     private _commonApiService: CommonApiService, private _route: ActivatedRoute,
     private _router: Router,) {
-
+    this._authservice.setCurrentMenu("Payments");
     this.userdata$ = this._authservice.currentUser;
 
     this.userdata$

@@ -28,6 +28,10 @@ import { Vendor } from '../models/Vendor';
 import * as moment from 'moment';
 import { VendorAddDialogComponent } from '../components/vendors/vendor-add-dialog/vendor-add-dialog.component';
 
+import { Observable } from 'rxjs';
+import { User } from '../models/User';
+
+
 @Component({
   selector: 'app-purchase',
   templateUrl: './purchase.page.html',
@@ -85,6 +89,9 @@ export class PurchasePage implements OnInit {
   product_lis: Product[];
   lineItemData: any;
 
+  userdata$: Observable<User>;
+  ready = 0; // flag check - centerid (localstorage) & customerid (param)
+
   @ViewChild('invno', { static: false }) inputEl: ElementRef;
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
@@ -107,14 +114,32 @@ export class PurchasePage implements OnInit {
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
 
+
+
+
+    this.userdata$ = this._authservice.currentUser;
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        debugger;
+        this._authservice.setCurrentMenu("Purchase");
+        this.center_id = data.center_id;
+        this.center_state_code = data.code;
+        this.ready = 1;
+
+        this._cdr.markForCheck();
+      });
+
+
+
+
     this._route.data.subscribe(data => {
 
       this.listArr = [];
       this.rawPurchaseData = data['rawpurchasedata'];
 
-      const currentUser = this._authservice.currentUserValue;
-      this.center_state_code = currentUser.code;
-      this.center_id = currentUser.center_id;
+
       this.initialize();
     });
 

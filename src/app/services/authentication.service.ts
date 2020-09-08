@@ -21,6 +21,10 @@ export class AuthenticationService {
     private currentUserSubject = new BehaviorSubject<User>(null);
     public currentUser: Observable<User> = this.currentUserSubject.asObservable();
 
+
+    private currentMenuSubject = new BehaviorSubject<any>(null);
+    public currentMenu: Observable<any> = this.currentMenuSubject.asObservable();
+
     restApiUrl = environment.restApiUrl;
 
     storagemode: any;
@@ -56,9 +60,13 @@ export class AuthenticationService {
 
     async reloadLocalStorage() {
         let tempCurrentUser = await this.getLocalStoreItems('currentUser');
+        let tempMenuUser = await this.getLocalStoreItems('currentMenu');
 
         if (tempCurrentUser) {
             this.currentUserSubject.next(JSON.parse(tempCurrentUser));
+        }
+        if (tempMenuUser) {
+            this.currentMenuSubject.next(tempMenuUser);
         }
 
     }
@@ -105,7 +113,6 @@ export class AuthenticationService {
     }
 
 
-
     login(username: string, password: string) {
 
         return this.httpClient.post<any>(`${this.restApiUrl}/api/auth/login`, { username, password })
@@ -123,6 +130,11 @@ export class AuthenticationService {
             }));
     }
 
+
+    setCurrentMenu(clickedMenu) {
+        this.storagemode.set('currentMenu', clickedMenu);
+        this.currentMenuSubject.next(clickedMenu);
+    }
 
 }
 

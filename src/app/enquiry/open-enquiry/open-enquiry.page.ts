@@ -76,10 +76,11 @@ export class OpenEnquiryPage implements OnInit {
     const currentUser = this._authservice.currentUserValue;
     this.center_id = currentUser.center_id;
 
-    const dateOffset = (24 * 60 * 60 * 1000) * 3;
+    const dateOffset = (24 * 60 * 60 * 1000) * 7;
     this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
     this._route.params.subscribe(params => {
+      this.tabIndex = 0;
       this.init();
     });
 
@@ -135,7 +136,7 @@ export class OpenEnquiryPage implements OnInit {
   clearInput() {
     this.submitForm.patchValue({
       customerid: 'all',
-      customerctrl: ''
+      customerctrl: 'All Customers'
     });
     this._cdr.markForCheck();
     this.search();
@@ -167,7 +168,9 @@ export class OpenEnquiryPage implements OnInit {
     this.filteredEnquiries$ = this.enquiries$;
 
     // for initial load of first tab (ALL)
-    this.filteredValues = await this.filteredEnquiries$.toPromise();
+    let value = await this.filteredEnquiries$.toPromise();
+
+    this.filteredValues = value.filter((data: any) => data.estatus === 'O');
 
     // to calculate the count on each status    
     this.newEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'O')));
@@ -243,18 +246,21 @@ export class OpenEnquiryPage implements OnInit {
   async tabClick($event) {
     let value = await this.filteredEnquiries$.toPromise();
 
+    // commented all status as it is not making sense, future, if its confirmed, remove below line
+    // if ($event.index === 0) {
+    //   this.filteredValues = value.filter((data: any) =>
+    //     (data.estatus === 'O' || data.estatus === 'D') || (data.estatus === 'P' || data.estatus === 'E' || data.estatus === 'X'));
+    // } else 
+
     if ($event.index === 0) {
-      this.filteredValues = value.filter((data: any) =>
-        (data.estatus === 'O' || data.estatus === 'D') || (data.estatus === 'P' || data.estatus === 'E' || data.estatus === 'X'));
-    } else if ($event.index === 1) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'O');
-    } else if ($event.index === 2) {
+    } else if ($event.index === 1) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'D');
-    } else if ($event.index === 3) {
+    } else if ($event.index === 2) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'P');
-    } else if ($event.index === 4) {
+    } else if ($event.index === 3) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'E');
-    } else if ($event.index === 5) {
+    } else if ($event.index === 4) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'X');
     }
 

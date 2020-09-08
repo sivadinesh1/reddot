@@ -146,7 +146,7 @@ export class SearchPurchasePage implements OnInit {
   clearInput() {
     this.submitForm.patchValue({
       vendorid: 'all',
-      vendorctrl: ''
+      vendorctrl: 'All Customers'
     });
     this._cdr.markForCheck();
     this.search();

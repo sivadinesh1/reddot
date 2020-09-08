@@ -151,7 +151,7 @@ export class SearchSalesPage implements OnInit {
   clearInput() {
     this.submitForm.patchValue({
       customerid: 'all',
-      customerctrl: ''
+      customerctrl: 'All Customers'
     });
     this._cdr.markForCheck();
     this.search();

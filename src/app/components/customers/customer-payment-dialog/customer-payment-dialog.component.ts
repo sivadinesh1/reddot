@@ -168,6 +168,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
 
   onSubmit() {
     if (this.checkTotalSum()) {
+      debugger;
       this._commonApiService.addPymtReceived(this.submitForm.value).subscribe((data: any) => {
 
         if (data.body === 'success') {

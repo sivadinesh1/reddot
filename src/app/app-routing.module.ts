@@ -77,6 +77,10 @@ const routes: Routes = [
         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardPageModule)
       },
       {
+        path: 'admin-dashboard',
+        loadChildren: () => import('./dashboard/admin-dashboard/admin-dashboard.module').then(m => m.AdminDashboardPageModule)
+      },
+      {
         path: 'payments',
         loadChildren: () => import('./accounts/accounts-payments/accounts-payments.module').then(m => m.AccountsPaymentsPageModule)
       },

@@ -29,7 +29,8 @@ import { IonContent } from '@ionic/angular';
 import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
 import { CustomerAddDialogComponent } from '../components/customers/customer-add-dialog/customer-add-dialog.component';
 import { ConvertToSaleDialogComponent } from '../components/convert-to-sale-dialog/convert-to-sale-dialog.component';
-
+import { Observable } from 'rxjs';
+import { User } from '../models/User';
 
 @Component({
   selector: 'app-sales',
@@ -144,11 +145,14 @@ export class SalesPage implements OnInit {
   customer_lis: Customer[];
   product_lis: Product[];
 
+  userdata$: Observable<User>;
+
   // @ViewChild('stickyHeaderStart', { static: true }) stickyHeaderStart: ElementRef<HTMLElement>;
 
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
   question = '+ Add Customer"';
+  ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
   constructor(private _modalcontroller: ModalController, private _pickerctrl: PickerController,
     public dialog: MatDialog, public alertController: AlertController, private _router: Router,
@@ -157,11 +161,30 @@ export class SalesPage implements OnInit {
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
 
-    const currentUser = this._authservice.currentUserValue;
-    this.center_state_code = currentUser.code;
-    this.center_id = currentUser.center_id;
+
+
+
+    this.userdata$ = this._authservice.currentUser;
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this._authservice.setCurrentMenu("Sale");
+        this.center_id = data.center_id;
+        this.center_state_code = data.code;
+        this.ready = 1;
+
+        this._cdr.markForCheck();
+      });
+
+
+
+    //  const currentUser = this._authservice.currentUserValue;
+    //  this.center_state_code = currentUser.code;
+    //  this.center_id = currentUser.center_id;
 
     this._route.data.subscribe(data => {
+      this._authservice.setCurrentMenu("Sale");
       this.selInvType = "gstinvoice";
       this.listArr = [];
       this.cancel()
@@ -345,9 +368,9 @@ export class SalesPage implements OnInit {
       igst: new FormControl(0),
       cgst: [0],
       sgst: new FormControl(0),
-      transport_charges: new FormControl(0),
-      unloading_charges: new FormControl(0),
-      misc_charges: new FormControl(0),
+      transport_charges: [0],
+      unloading_charges: [0],
+      misc_charges: [0],
       net_total: new FormControl(0),
       taxable_value: new FormControl(0),
       status: new FormControl(),
@@ -773,6 +796,14 @@ export class SalesPage implements OnInit {
     }
 
 
+  }
+
+  getNetTotal() {
+
+    let tmp = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges || 0) +
+      parseFloat(this.submitForm.value.unloading_charges || 0) +
+      parseFloat(this.submitForm.value.misc_charges || 0);
+    return tmp.toFixed(2);
   }
 
   async presentAlert(msg: string) {

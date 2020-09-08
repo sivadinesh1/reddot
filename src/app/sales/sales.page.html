@@ -1,18 +1,16 @@
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
 	<div class="screen-header">
 		<div>
-			<span style="color: #310ac0; cursor: pointer;" (click)="salesDashboard()">Sales Dashboard</span> /
-			<span style="color: #797979;">{{breadmenu}}</span>
+			<span style="color: #310ac0; cursor: pointer" (click)="salesDashboard()">Sales Dashboard</span> /
+			<span style="color: #797979">{{breadmenu}}</span>
 		</div>
-		<div>
-			&nbsp;
-		</div>
+		<div>&nbsp;</div>
 	</div>
 
 	<form [formGroup]="submitForm">
 		<div class="customer">
 			<div>
-				<mat-form-field class="example-full-width" style="padding-right: 10px;">
+				<mat-form-field class="example-full-width" style="padding-right: 10px">
 					<input
 						matInput
 						[matAutocomplete]="auto"
@@ -32,31 +30,27 @@
 							<mat-option *ngFor="let customer of customer_lis" [value]="customer">
 								<span>{{ customer.name }} </span>
 							</mat-option>
-							<mat-option style="background-color: #f2f2f2;" value="new">+ New Customer</mat-option>
+							<mat-option style="background-color: #f2f2f2" value="new">+ New Customer</mat-option>
 						</ng-container>
 					</mat-autocomplete>
-					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')">
-						Please enter a value
-					</mat-error>
-					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
-						Please select a valid customer
-					</mat-error>
+					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')"> Please enter a value </mat-error>
+					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"> Please select a valid customer </mat-error>
 					<mat-hint *ngIf="iscustomerselected">
-						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer;">View Customer Details</span>
+						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Customer Details</span>
 					</mat-hint>
 				</mat-form-field>
 
-				<div *ngIf="iscustomerselected" style="display: grid; grid-template-columns: 1fr 1fr; font-size: 12px; color: #666666;">
-					<div style="padding: 0.5rem 0.5rem 0.5rem 0px;">
-						<div style="font-weight: 500; font-size: 14px;">BILLING ADDRESS</div>
+				<div *ngIf="iscustomerselected" style="display: grid; grid-template-columns: 1fr 1fr; font-size: 12px; color: #666666">
+					<div style="padding: 0.5rem 0.5rem 0.5rem 0px">
+						<div style="font-weight: 500; font-size: 14px">BILLING ADDRESS</div>
 						<div>{{customerdata.address1 | nullquote}}</div>
 						<div>{{customerdata.address2 | nullquote}}</div>
 
 						<div>{{customerdata.state | nullquote}}</div>
 						<div>{{customerdata.pin | nullquote}}</div>
 					</div>
-					<div style="padding: 0.5rem 0.5rem 0.5rem 0px;">
-						<div style="font-weight: 500; font-size: 14px;">SHIPPING ADDRESS</div>
+					<div style="padding: 0.5rem 0.5rem 0.5rem 0px">
+						<div style="font-weight: 500; font-size: 14px">SHIPPING ADDRESS</div>
 						<div>{{customerdata.address1 | nullquote}}</div>
 						<div>{{customerdata.address2 | nullquote}}</div>
 
@@ -68,7 +62,7 @@
 
 			<!-- <mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}"> -->
 
-			<div style="justify-content: left; align-self: flex-start; padding-left: 1rem;">
+			<div style="justify-content: left; align-self: flex-start; padding-left: 1rem">
 				<div>
 					<mat-form-field appearance="fill">
 						<mat-label>Sale Type</mat-label>
@@ -87,7 +81,7 @@
 				</div>
 			</div>
 
-			<div style="justify-content: left; align-self: flex-start; padding-left: 1rem;">
+			<div style="justify-content: left; align-self: flex-start; padding-left: 1rem">
 				<div>
 					<div>
 						<mat-form-field class="mat-input-wrapper" floatLabel="always">
@@ -110,7 +104,7 @@
 				</div>
 			</div>
 
-			<div style="justify-content: left; align-self: flex-start; padding-left: 1rem;">
+			<div style="justify-content: left; align-self: flex-start; padding-left: 1rem">
 				<div>
 					<mat-form-field class="mat-input-wrapper">
 						<input
@@ -187,16 +181,16 @@
 				</div>
 				<div class="row2">
 					<ng-container *ngIf="listArr.length === 0 && iscustomerselected">
-						<div style="display: grid; place-items: center; padding: 2rem 2rem;">
-							<div style="color: #333333;"><h4>Sales cart</h4></div>
-							<div style="color: #666666;">There are no items in your Sales cart</div>
+						<div style="display: grid; place-items: center; padding: 2rem 2rem">
+							<div style="color: #333333"><h4>Sales cart</h4></div>
+							<div style="color: #666666">There are no items in your Sales cart</div>
 						</div>
 					</ng-container>
 
 					<ng-container *ngIf="!iscustomerselected">
-						<div style="display: grid; place-items: center; padding: 2rem 2rem;">
-							<div style="color: #333333;"><h4>Customer not selected</h4></div>
-							<div style="color: #666666;">Select customer & start adding items to sales cart</div>
+						<div style="display: grid; place-items: center; padding: 2rem 2rem">
+							<div style="color: #333333"><h4>Customer not selected</h4></div>
+							<div style="color: #666666">Select customer & start adding items to sales cart</div>
 						</div>
 					</ng-container>
 
@@ -206,9 +200,7 @@
 						</div>
 						<div class="item2">
 							{{item.product_code}}
-							<div class="desc">
-								{{item.product_desc}}
-							</div>
+							<div class="desc">{{item.product_desc}}</div>
 						</div>
 
 						<div class="item4 txt-right-align num-format-cell-style">
@@ -235,14 +227,10 @@
 							/>
 						</div>
 
-						<div class="item4 txt-right-align num-format-cell-style">
-							{{item.taxrate}}
-						</div>
+						<div class="item4 txt-right-align num-format-cell-style">{{item.taxrate}}</div>
 
 						<div class="item4 txt-right-align num-format-cell-style">
-							<span [ngClass]="marginCheck(item.margin)">
-								{{item.total_value }}
-							</span>
+							<span [ngClass]="marginCheck(item.margin)"> {{item.total_value }} </span>
 						</div>
 					</div>
 				</div>
@@ -274,16 +262,16 @@
 										<mat-option
 											*ngFor="let product of product_lis"
 											[value]="product"
-											style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px;"
+											style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px"
 										>
-											<div style="display: grid; grid-template-columns: 1fr 80px;">
+											<div style="display: grid; grid-template-columns: 1fr 80px">
 												<div>
-													<div style="font-size: 15px; padding: 2px; line-height: 1em;">{{ product.product_code }}</div>
-													<div style="font-size: 14px; padding: 2px; line-height: 1em;">{{ product.description }}</div>
+													<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ product.product_code }}</div>
+													<div style="font-size: 14px; padding: 2px; line-height: 1em">{{ product.description }}</div>
 												</div>
 												<div>
-													<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right;">In Stock</div>
-													<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue;">
+													<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right">In Stock</div>
+													<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
 														{{ product.available_stock }}
 													</div>
 												</div>
@@ -292,9 +280,7 @@
 									</ng-container>
 								</mat-autocomplete>
 
-								<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')">
-									Invalid product code
-								</mat-error>
+								<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')"> Invalid product code </mat-error>
 							</mat-form-field>
 						</div>
 					</div>
@@ -312,30 +298,28 @@
 					</div>
 				</div>
 				<div class="right">
-					<div style="display: grid; grid-template-columns: 1fr 1fr;">
-						<div style="color: #666666; text-align: right; font-size: 14px;"># Items</div>
-						<div style="color: #666666; text-align: right; font-size: 14px;">{{listArr.length}}</div>
+					<div style="display: grid; grid-template-columns: 1fr 1fr">
+						<div style="color: #666666; text-align: right; font-size: 14px"># Items</div>
+						<div style="color: #666666; text-align: right; font-size: 14px">{{listArr.length}}</div>
 
-						<div *ngIf="i_gst" style="color: #666666; text-align: right; font-size: 14px;">IGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="i_gst">{{igstTotal | number:'1.2-2'}}</div>
+						<div *ngIf="i_gst" style="color: #666666; text-align: right; font-size: 14px">IGST</div>
+						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="i_gst">{{igstTotal | number:'1.2-2'}}</div>
 
-						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px;">CGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="!i_gst">{{cgstTotal | number:'1.2-2'}}</div>
+						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px">CGST</div>
+						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="!i_gst">{{cgstTotal | number:'1.2-2'}}</div>
 
-						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px;">SGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px;" *ngIf="!i_gst">{{sgstTotal | number:'1.2-2'}}</div>
+						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px">SGST</div>
+						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="!i_gst">{{sgstTotal | number:'1.2-2'}}</div>
 					</div>
 					<div>
-						<div style="color: #666666; text-align: right; font-size: 14px;">Total</div>
-						<div style="text-align: right;" class="align-self-center left-pad20 fsize40 fweight500">
-							{{this.total | number:'1.2-2'}}
-						</div>
+						<div style="color: #666666; text-align: right; font-size: 14px">Total</div>
+						<div style="text-align: right" class="align-self-center left-pad20 fsize40 fweight500">{{this.total | number:'1.2-2'}}</div>
 					</div>
 				</div>
 			</div>
 
-			<div style="display: grid; padding: 60px 0px 16px 0px;">Delivery</div>
-			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-gap: 10px;">
+			<div style="display: grid; padding: 60px 0px 16px 0px">Delivery</div>
+			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-gap: 10px">
 				<div>
 					<mat-form-field class="mat-input-wrapper">
 						<input matInput placeholder="Lr #" #lrno type="text" formControlName="lrno" />
@@ -379,7 +363,7 @@
 					</mat-form-field>
 				</div>
 			</div>
-			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-gap: 10px;">
+			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-gap: 10px">
 				<div>
 					<mat-form-field class="example-full-width cursor">
 						<input matInput type="number" placeholder="# of boxes" formControlName="noofboxes" />
@@ -409,27 +393,21 @@
 
 		<ng-container>
 			<div class="footer">
+				<div>
+					<div style="font-size: 12px; color: #797979">Net Total</div>
+					<div style="font-size: 32px">{{getNetTotal()}}</div>
+				</div>
 				<div class="stockissue" *ngIf="stock_issue_ref">
 					<div>
-						<div style="font-size: 12px; color: grey;">
-							Stock Issued Ref#
-						</div>
-						<div style="font-size: 14px; color: #444444;">
-							{{stock_issue_ref}}
-						</div>
+						<div style="font-size: 12px; color: grey">Stock Issued Ref#</div>
+						<div style="font-size: 14px; color: #444444">{{stock_issue_ref}}</div>
 					</div>
 					<div>
-						<div style="font-size: 12px; color: grey;">
-							Stock Issued on
-						</div>
-						<div style="font-size: 14px; color: #444444;">
-							{{stock_issue_date_ref}}
-						</div>
+						<div style="font-size: 12px; color: grey">Stock Issued on</div>
+						<div style="font-size: 14px; color: #444444">{{stock_issue_date_ref}}</div>
 					</div>
 				</div>
-				<div *ngIf="!stock_issue_ref">
-					&nbsp;
-				</div>
+				<div *ngIf="!stock_issue_ref">&nbsp;</div>
 
 				<div class="submit">
 					<button
@@ -445,7 +423,7 @@
 					>&nbsp;
 					<button
 						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
-						style="border-radius: 0px;"
+						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
 						(throttledClick)="onSubmit('draft')"
@@ -459,7 +437,7 @@
 					</button>
 					<button
 						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType === 'stockissue')) "
-						style="border-radius: 0px;"
+						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
 						(throttledClick)="onSubmit('draft')"
@@ -477,14 +455,14 @@
 						color="primary"
 						#ddTrigger="matMenuTrigger"
 						[matMenuTriggerFor]="dd1"
-						style="border-radius: 0px; border-left: 1px solid grey; padding: 0px 8px;"
+						style="border-radius: 0px; border-left: 1px solid grey; padding: 0px 8px"
 					>
 						<mat-icon>arrow_drop_up</mat-icon>
 					</button>
 					&nbsp;
 					<button
 						*ngIf="selInvType !== 'stockissue'"
-						style="border-radius: 0px;"
+						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
 						(throttledClick)="onSubmit('add')"
@@ -503,7 +481,7 @@
 						color="primary"
 						#ddTrigger="matMenuTrigger"
 						[matMenuTriggerFor]="dd"
-						style="border-radius: 0px; border-left: 1px solid grey; padding: 0px 8px;"
+						style="border-radius: 0px; border-left: 1px solid grey; padding: 0px 8px"
 					>
 						<mat-icon>arrow_drop_up</mat-icon>
 					</button>
@@ -511,7 +489,7 @@
 
 					<button
 						*ngIf="((submitForm.get('status').value === 'D') && (selInvType === 'stockissue')) "
-						style="border-radius: 0px;"
+						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
 						(throttledClick)="presentConvertSaleConfirm()"

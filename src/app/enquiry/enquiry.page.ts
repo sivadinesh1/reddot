@@ -80,7 +80,7 @@ export class EnquiryPage {
     private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService, private _dialog: MatDialog,
     private _authservice: AuthenticationService,
   ) {
-
+    this._authservice.setCurrentMenu("Enquiry");
     this.userdata$ = this._authservice.currentUser;
 
     this.submitForm = this._fb.group({
