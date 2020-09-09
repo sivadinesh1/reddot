@@ -172,8 +172,7 @@ export class SalesPage implements OnInit {
       .subscribe((data: any) => {
         this._authservice.setCurrentMenu("Sale");
         this.userdata = data;
-        //this.center_id = data.center_id;
-        // this.center_state_code = data.code;
+
 
         this.submitForm.patchValue({
           center_id: data.center_id,
@@ -181,15 +180,11 @@ export class SalesPage implements OnInit {
 
 
         this.ready = 1;
-        this.initialize();
+        //    this.initialize();
         this._cdr.markForCheck();
       });
 
 
-
-    //  const currentUser = this._authservice.currentUserValue;
-    //  this.center_state_code = currentUser.code;
-    //  this.center_id = currentUser.center_id;
 
     this._route.data.subscribe(data => {
       this._authservice.setCurrentMenu("Sale");
@@ -198,15 +193,11 @@ export class SalesPage implements OnInit {
       this.cancel()
       this.rawSalesData = data['rawsalesdata'];
 
-      //  this.id = this._route.snapshot.params['id'];
-      //  this.mode = this._route.snapshot.params['mode'];
 
-      //  this.initialize();
     });
 
     this._route.params.subscribe(params => {
-      // this.center_id = params['center_id'];
-      // this.center_id = params['center_id'];
+
 
       this.id = params['id'];
       this.mode = params['mode'];
@@ -415,44 +406,6 @@ export class SalesPage implements OnInit {
   }
 
   init() {
-    // this.submitForm = this._fb.group({
-    //   center_id: [this.userdata.center_id],
-    //   salesid: new FormControl('', Validators.required),
-
-    //   invoiceno: [null],
-    //   invoicedate: new FormControl(this.invoicedate, Validators.required),
-    //   orderno: new FormControl(''),
-    //   orderdate: new FormControl(''),
-    //   lrno: new FormControl(''),
-    //   lrdate: new FormControl(''),
-    //   noofboxes: new FormControl(0),
-    //   orderrcvddt: new FormControl(''),
-    //   noofitems: [0],
-    //   totalqty: [0],
-    //   value: new FormControl(0),
-    //   totalvalue: new FormControl(0),
-    //   igst: new FormControl(0),
-    //   cgst: [0],
-    //   sgst: new FormControl(0),
-    //   transport_charges: [0],
-    //   unloading_charges: [0],
-    //   misc_charges: [0],
-    //   net_total: new FormControl(0),
-    //   taxable_value: new FormControl(0),
-    //   status: new FormControl(),
-    //   enqref: [0],
-    //   revision: [0],
-    //   invoicetype: ["gstinvoice", [Validators.required]],
-
-    //   customerctrl: [null, [Validators.required, RequireMatch]],
-    //   productctrl: [null, [RequireMatch]],
-    //   tempdesc: [''],
-
-    //   tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
-
-    //   productarr: new FormControl(null, Validators.required)
-
-    // });
 
     this.searchCustomers();
     this.searchProducts();
@@ -633,10 +586,6 @@ export class SalesPage implements OnInit {
 
     this.iscustomerselected = false;
 
-    // this.submitForm.patchValue({
-    //   customerid: 'all',
-    //   customer: ''
-    // });
     this._cdr.markForCheck();
 
   }
@@ -688,7 +637,7 @@ export class SalesPage implements OnInit {
 
 
   ngAfterViewInit() {
-    this.autoTrigger.panelClosingActions.subscribe(x => {
+    this.autoTrigger && this.autoTrigger.panelClosingActions.subscribe(x => {
       if (this.autoTrigger.activeOption) {
 
         this.submitForm.patchValue({
@@ -699,7 +648,7 @@ export class SalesPage implements OnInit {
       }
     })
 
-    this.autoTrigger1.panelClosingActions.subscribe(x => {
+    this.autoTrigger1 && this.autoTrigger1.panelClosingActions.subscribe(x => {
       if (this.autoTrigger1.activeOption) {
 
         this.submitForm.patchValue({
@@ -1096,7 +1045,7 @@ export class SalesPage implements OnInit {
                 status: 'D',
               });
             }
-            debugger;
+
 
             this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('saveSaleOrder ' + JSON.stringify(data));
@@ -1668,7 +1617,7 @@ export class SalesPage implements OnInit {
 
       this.iscustomerselected = true;
     }
-
+    this.setTaxLabel(this.customer_state_code);
 
     this._cdr.markForCheck();
 

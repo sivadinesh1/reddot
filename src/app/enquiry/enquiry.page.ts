@@ -144,7 +144,7 @@ export class EnquiryPage {
       debounceTime(300),
       tap(() => this.isCLoading = true),
       switchMap(id => {
-        console.log(id);
+
         search = id;
         if (id != null && id.length >= 2) {
           return this._commonApiService.getCustomerInfo({ "centerid": this.center_id, "searchstr": id });
@@ -300,7 +300,7 @@ export class EnquiryPage {
 
 
   ngAfterViewInit() {
-    this.autoTrigger.panelClosingActions.subscribe(x => {
+    this.autoTrigger && this.autoTrigger.panelClosingActions.subscribe(x => {
       if (this.autoTrigger.activeOption) {
 
         this.submitForm.patchValue({
@@ -311,7 +311,7 @@ export class EnquiryPage {
       }
     })
 
-    this.autoTrigger1.panelClosingActions.subscribe(x => {
+    this.autoTrigger1 && this.autoTrigger1.panelClosingActions.subscribe(x => {
       if (this.autoTrigger1.activeOption) {
 
         this.submitForm.patchValue({
@@ -358,15 +358,6 @@ export class EnquiryPage {
       return false;
     }
 
-    // if (this.submitForm.value.customerctrl === '' || this.submitForm.value.customerctrl === null) {
-    //   this.submitForm.controls['customerctrl'].setErrors({ 'required': true });
-    //   this.submitForm.controls['customerctrl'].markAsTouched();
-
-    //   return false;
-    // }
-
-
-
 
     const control = <FormArray>this.submitForm.controls['productarr'];
 
@@ -391,7 +382,7 @@ export class EnquiryPage {
     this.submitForm.controls['tempdesc'].setErrors(null);
     this.submitForm.controls['tempqty'].setErrors(null);
     this.submitForm.controls['productctrl'].setErrors(null);
-    this.plist.nativeElement.focus();
+    this.plist && this.plist.nativeElement.focus();
     let v1 = (document.documentElement.clientHeight - 250) + 70;
     console.log('clinet height ' + document.documentElement.clientHeight);
     console.log('clinet height ' + v1);
@@ -417,10 +408,11 @@ export class EnquiryPage {
 
 
   clearInput() {
+
     this.submitForm.patchValue({
-      customer: null,
       customerctrl: null
     });
+    this.iscustomerselected = false;
     this.customer_lis = null;
     this.address1 = null;
     this.address2 = null;
@@ -490,13 +482,31 @@ export class EnquiryPage {
     }
   }
 
+  async presentAlert(msg: string) {
+    const alert = await this.alertController.create({
+      header: 'Alert',
+
+      message: msg,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+
 
   onSubmit() {
+
+
+    if (this.getLength() == 0) {
+      return this.presentAlert('No products added to save!');
+    }
 
 
     if (!this.submitForm.valid) {
       return false;
     }
+
 
     this._commonApiService.saveEnquiry(this.submitForm.value).subscribe((data: any) => {
       console.log('object.SAVE ENQ. ' + JSON.stringify(data));
@@ -522,6 +532,10 @@ export class EnquiryPage {
     });
 
   }
+
+
+
+
 
   reset() {
     this.clearInput();
@@ -601,11 +615,11 @@ export class EnquiryPage {
   }
 
   logScrolling(event) {
-    if (this.autoTrigger1.panelOpen) {
+    if (this.autoTrigger1 && this.autoTrigger1.panelOpen) {
       this.autoTrigger1.closePanel();
     }
 
-    if (this.autoTrigger.panelOpen) {
+    if (this.autoTrigger && this.autoTrigger.panelOpen) {
       this.autoTrigger.closePanel();
     }
 

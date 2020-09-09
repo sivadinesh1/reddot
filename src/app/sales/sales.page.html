@@ -19,7 +19,7 @@
 						[attr.disabled]="iscustomerselected?'true':null"
 					/>
 
-					<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+					<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
 						<mat-icon>close</mat-icon>
 					</button>
 					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">

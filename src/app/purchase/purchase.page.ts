@@ -271,7 +271,7 @@ export class PurchasePage implements OnInit {
 
 
   ngAfterViewInit() {
-    this.autoTrigger.panelClosingActions.subscribe(x => {
+    this.autoTrigger && this.autoTrigger.panelClosingActions.subscribe(x => {
       if (this.autoTrigger.activeOption) {
 
         this.submitForm.patchValue({
@@ -282,7 +282,7 @@ export class PurchasePage implements OnInit {
       }
     })
 
-    this.autoTrigger1.panelClosingActions.subscribe(x => {
+    this.autoTrigger1 && this.autoTrigger1.panelClosingActions.subscribe(x => {
       if (this.autoTrigger1.activeOption) {
 
         this.submitForm.patchValue({
@@ -304,10 +304,6 @@ export class PurchasePage implements OnInit {
 
     this.vendorselected = false;
 
-    // this.submitForm.patchValue({
-    //   customerid: 'all',
-    //   customer: ''
-    // });
     this._cdr.markForCheck();
 
   }
@@ -338,61 +334,6 @@ export class PurchasePage implements OnInit {
         this._cdr.markForCheck();
       });
   }
-
-
-  async showAllVendorsComp() {
-
-    const modal = await this._modalcontroller.create({
-      component: ShowVendorsComponent,
-      componentProps: {},
-      cssClass: 'vendor-comp-styl'
-
-    });
-
-
-    modal.onDidDismiss().then((result) => {
-      let vendData = result.data;
-
-      this.vendor_state_code = vendData.code;
-
-      this.submitForm.patchValue({
-        vendor: vendData,
-      });
-
-      this.vendorname = vendData.name;
-      this.vendorstate = vendData.state;
-
-      this.vendorselected = true;
-      this.setTaxLabel();
-      this.setTaxSegment(vendData.taxrate);
-
-      this._cdr.markForCheck();
-
-    })
-
-    await modal.present();
-  }
-
-  // async showAddProductComp() {
-
-  //   const modal = await this._modalcontroller.create({
-  //     component: AddProductComponent,
-  //     componentProps: { center_id: this.center_id, customer_id: 0 },
-  //     cssClass: 'select-modal'
-
-  //   });
-
-  //   modal.onDidDismiss().then((result) => {
-  //     console.log('The result:', result);
-  //     let temp = result.data;
-
-  //     this.processItems(temp);
-
-  //   });
-
-  //   await modal.present();
-
-  // }
 
 
 
@@ -552,6 +493,8 @@ export class PurchasePage implements OnInit {
 
   }
 
+
+
   setVendorInfo(event, from) {
 
     if (from === 'click' && event.option.value === 'new') {
@@ -560,12 +503,14 @@ export class PurchasePage implements OnInit {
 
     if (from === 'tab') {
       this.vendordata = event;
+      this.vendor_state_code = this.vendordata.code;
       this.vendorselected = true;
     } else {
       this.vendordata = event.option.value;
+      this.vendor_state_code = this.vendordata.code;
       this.vendorselected = true;
     }
-
+    this.setTaxLabel();
     this._cdr.markForCheck();
 
   }
@@ -632,32 +577,6 @@ export class PurchasePage implements OnInit {
     this.delIconStatus();
     this.checkIsSingleRow();
     this.calc();
-
-
-    // this._commonApiService.deletePurchaseDetails({ id: this.listArr[idx].pur_det_id, purchaseid: this.listArr[idx].purchase_id }).subscribe((data: any) => {
-
-
-    //   if (data.body.result === 'success') {
-    //     this.listArr.splice(idx, 1);
-    //     this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
-
-    //     this.delIconStatus();
-    //     this.checkIsSingleRow();
-    //     this.calc();
-
-
-
-    //   } else {
-    //     this.presentAlert('Error: Something went wrong Contact Admin!');
-    //   }
-
-    //   this._cdr.markForCheck();
-    // });
-
-
-
-
-
 
     this._cdr.markForCheck();
   }
@@ -837,20 +756,6 @@ export class PurchasePage implements OnInit {
 
     await alert.present();
   }
-
-  selectVendor() {
-
-    let vendorvalue = this.submitForm.value.vendor;
-    console.log('print list ' + JSON.stringify(vendorvalue));
-    this.vendor_state_code = vendorvalue.code;
-    this.vendorselected = true;
-    this.setTaxLabel();
-
-    this._cdr.markForCheck();
-  }
-
-
-
 
 
   openCurrencyPad(idx) {
@@ -1177,6 +1082,8 @@ export class PurchasePage implements OnInit {
         });
 
         this.removeRowArr = [];
+        this.delIconStatus();
+        this.checkIsSingleRow();
 
         this._cdr.markForCheck();
       }
@@ -1376,7 +1283,7 @@ export class PurchasePage implements OnInit {
     this.submitForm.controls['tempqty'].setErrors(null);
     this.submitForm.controls['temppurchaseprice'].setErrors(null);
     this.submitForm.controls['productctrl'].setErrors(null);
-    this.plist.nativeElement.focus();
+    this.plist && this.plist.nativeElement.focus();
 
 
     this._cdr.markForCheck();

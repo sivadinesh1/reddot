@@ -7,12 +7,19 @@
 
 .vendor {
 	display: grid;
-	grid-template-columns: 400px 1fr 1fr 1fr 1fr;
-	grid-gap: 10px;
+	// grid-template-columns: 400px 1fr 1fr 1fr 1fr;
+	grid-template-columns: minmax(410px, 450px) 1fr;
+	gap: 100px;
 	padding: 2rem 1rem;
 	width: 94%;
 	margin: 0 auto;
 	border: 0px solid;
+}
+
+.vendor-left {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	gap: 10px;
 }
 
 .purchase-wrap {
@@ -178,9 +185,9 @@
 	display: flex;
 }
 
-.wrap div:last-child {
-	margin-left: auto;
-}
+// .wrap div:last-child {
+// 	margin-left: auto;
+// }
 
 .sub-menu {
 	font-size: 13px;
@@ -229,4 +236,7 @@
 
 .example-full-width {
 	width: 100%;
+}
+.mat-input-wrapper {
+	width: 150px;
 }

@@ -1,18 +1,11 @@
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
-	<div class="screen-header">
-		<div>
-			<span style="color: #310ac0; cursor: pointer;" (click)="openEnquiry()">Inquiry Dashboard</span> /
-			<span style="color: #797979;">Add Inquiry</span>
-		</div>
-		<div>
-			&nbsp;
-		</div>
-	</div>
+	<div class="screen-header"><span style="font-size: 18px">Add New Inquiry</span></div>
 
-	<form [formGroup]="submitForm" #myForm="ngForm">
+	<form [formGroup]="submitForm" #myForm="ngForm" (ngSubmit)="onSubmit()">
 		<div class="customer">
 			<div>
-				<mat-form-field class="example-full-width" style="padding-right: 10px;">
+				<mat-form-field class="mat-auto-width" style="padding-right: 10px">
+					<mat-label>Select or Add Customer</mat-label>
 					<input
 						matInput
 						[matAutocomplete]="auto"
@@ -22,8 +15,12 @@
 						autofocus
 						required
 						matTooltipPosition="after"
+						[attr.disabled]="iscustomerselected?'true':null"
 					/>
-					<mat-placeholder class="placeholder">Select or Add Customer</mat-placeholder>
+
+					<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
+						<mat-icon>close</mat-icon>
+					</button>
 
 					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
 						<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
@@ -31,74 +28,57 @@
 							<mat-option *ngFor="let customer of customer_lis" [value]="customer">
 								<span>{{ customer.name }} </span>
 							</mat-option>
-							<mat-option style="background-color: #f2f2f2;" value="new">+ New Customer</mat-option>
+							<mat-option style="background-color: #f2f2f2" value="new">+ New Customer</mat-option>
 						</ng-container>
 					</mat-autocomplete>
-					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')">
-						Please enter a value
-					</mat-error>
-					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
-						Customer does not exist
-					</mat-error>
+					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')"> Please enter a value </mat-error>
+					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"> Customer does not exist </mat-error>
 					<mat-hint *ngIf="iscustomerselected">
-						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer;">View Customer Details</span>
+						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Customer Details</span>
 					</mat-hint>
 				</mat-form-field>
 			</div>
-
-			<div *ngIf="iscustomerselected" style="font-size: 12px; color: #666666; padding: 0.5rem 0.5rem 0.5rem 0px;">
-				<div style="font-weight: 500; font-size: 14px;">BILLING ADDRESS</div>
-				<div>{{customerdata.address1 | nullquote}}</div>
-				<div>{{customerdata.address2 | nullquote}}</div>
-
-				<div>{{customerdata.state | nullquote}}</div>
-				<div>{{customerdata.pin | nullquote}}</div>
-			</div>
-
-			<div *ngIf="iscustomerselected" style="padding: 0.5rem 0.5rem 0.5rem 0px; font-size: 12px; color: #666666;">
-				<div style="font-weight: 500; font-size: 14px;">SHIPPING ADDRESS</div>
-				<div>{{customerdata.address1 | nullquote}}</div>
-				<div>{{customerdata.address2 | nullquote}}</div>
-
-				<div>{{customerdata.state | nullquote}}</div>
-				<div>{{customerdata.pin | nullquote}}</div>
-			</div>
-			<div *ngIf="iscustomerselected" style="padding: 0.5rem 0.5rem 0.5rem 0px; font-size: 12px; color: #666666;">
-				<div style="font-weight: 500; font-size: 14px;">CONTACT INFO</div>
-				<div>{{customerdata.mobile | nullquote}}</div>
+			<div>
+				<div *ngIf="iscustomerselected">
+					<mat-form-field style="width: 400px">
+						<mat-label>Remarks (Optional)</mat-label>
+						<input matInput type="text" formControlName="remarks" />
+					</mat-form-field>
+				</div>
 			</div>
 		</div>
-
-		<div class="enq-wrap">
+		<ng-container *ngIf="!iscustomerselected">
+			<div style="display: grid; place-items: center; padding: 2rem 2rem">
+				<div style="color: #333333"><h4>Customer Not Selected</h4></div>
+				<div style="color: #666666">Quickly select or create a customer to proceed</div>
+			</div>
+		</ng-container>
+		<div class="enq-wrap" *ngIf="iscustomerselected">
 			<div class="row">
 				<div class="row1">
 					<div>&nbsp;</div>
-					<div style="cursor: pointer; text-align: center;">
+					<div style="cursor: pointer; text-align: center">
 						<img src="/assets/images/svg/trash.svg" width="18px" height="18px" *ngIf="showDelIcon" (click)="onRemoveRows()" />
 						<span class="itms-lbl" *ngIf="showDelIcon" (click)="onRemoveRows()"></span>
 					</div>
 					<div class="itms-lbl">Item Code</div>
 					<div class="itms-lbl">Item Description</div>
 
-					<div class="itms-lbl">
-						Qty
-					</div>
+					<div class="itms-lbl">Qty</div>
 				</div>
 
 				<div class="row2">
 					<ng-container *ngIf="getLength() === 0">
-						<div style="display: grid; place-items: center; padding: 2rem 2rem;">
-							<div style="color: #333333;"><h4>Inquiry cart</h4></div>
-							<div style="color: #666666;">There are no items in your Inquiry cart</div>
+						<div style="display: grid; place-items: center; padding: 2rem 2rem">
+							<div style="color: #333333"><h4>Inquiry cart</h4></div>
+							<div style="color: #666666">There are no items in your Inquiry cart</div>
 						</div>
 					</ng-container>
 
 					<div formArrayName="productarr" class="list-block" *ngIf="getLength() !== 0">
 						<div class="list-item" *ngFor="let product of productarr.controls; let idx = index">
 							<ng-container [formGroupName]="idx">
-								<div>
-									{{idx + 1}}
-								</div>
+								<div>{{idx + 1}}</div>
 								<div class="id">
 									<mat-checkbox (change)="checkedRow(idx, $event)" formControlName="checkbox"></mat-checkbox>
 								</div>
@@ -111,18 +91,14 @@
 								<div>
 									<mat-form-field class="example-full-width" floatLabel="never">
 										<input matInput type="text" formControlName="notes" placeholder="Item description" />
-										<mat-error *ngIf="product.controls.notes.hasError('required')">
-											Item description required
-										</mat-error>
+										<mat-error *ngIf="product.controls.notes.hasError('required')"> Item description required </mat-error>
 									</mat-form-field>
 								</div>
 
 								<div>
 									<mat-form-field class="example-full-width" floatLabel="never">
 										<input matInput type="number" formControlName="quantity" />
-										<mat-error *ngIf="product.controls.quantity.hasError('required')">
-											Quantity required
-										</mat-error>
+										<mat-error *ngIf="product.controls.quantity.hasError('required')"> Quantity required </mat-error>
 									</mat-form-field>
 								</div>
 							</ng-container>
@@ -147,16 +123,18 @@
 									<mat-option
 										*ngFor="let product of product_lis"
 										[value]="product"
-										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px;"
+										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px"
 									>
-										<div style="display: grid; grid-template-columns: 1fr 80px;">
+										<div style="display: grid; grid-template-columns: 1fr 80px">
 											<div>
-												<div style="font-size: 15px; padding: 2px; line-height: 1em;">{{ product.product_code }}</div>
-												<div style="font-size: 14px; padding: 2px; line-height: 1em;">{{ product.description }}</div>
+												<div style="font-size: 15px; padding: 2px; line-height: 1em">
+													{{ product.product_code }} &nbsp;&nbsp; <span style="color: blue">MRP: {{ product.mrp | currency: "INR"}}</span>
+												</div>
+												<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ product.description }}</div>
 											</div>
 											<div>
-												<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right;">In Stock</div>
-												<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue;">
+												<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right">In Stock</div>
+												<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
 													{{ product.available_stock }}
 												</div>
 											</div>
@@ -165,18 +143,14 @@
 								</ng-container>
 							</mat-autocomplete>
 
-							<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')">
-								Invalid product code
-							</mat-error>
+							<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')"> Invalid product code </mat-error>
 						</mat-form-field>
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
 							<input matInput type="text" formControlName="tempdesc" required tabindex="2" />
 							<mat-placeholder class="placeholder">Item description</mat-placeholder>
-							<mat-error *ngIf="submitForm.controls['tempdesc'].hasError('required')">
-								Please enter a value
-							</mat-error>
+							<mat-error *ngIf="submitForm.controls['tempdesc'].hasError('required')"> Please enter a value </mat-error>
 						</mat-form-field>
 					</div>
 
@@ -192,19 +166,19 @@
 					</div>
 				</div>
 				<div class="right">
-					<div style="color: #999999; font-size: 14px; text-align: left;"># items</div>
-					<div style="color: #666666; font-size: 32px; text-align: center;">{{getLength()}}</div>
+					<div style="color: #999999; font-size: 14px; text-align: left"># items</div>
+					<div style="color: #666666; font-size: 32px; text-align: center">{{getLength()}}</div>
 				</div>
 			</div>
 		</div>
 
 		<ng-container>
-			<div class="footer">
+			<div class="footer" *ngIf="iscustomerselected">
 				<div>
-					<mat-form-field style="width: 320px;">
+					<!-- <mat-form-field style="width: 320px">
 						<mat-label>Remarks (Optional)</mat-label>
 						<input matInput type="text" formControlName="remarks" />
-					</mat-form-field>
+					</mat-form-field> -->
 				</div>
 				<div class="submit">
 					<!-- <span class="itms-lbl">Showing {{productarr.controls.length || 0}} Items</span>&nbsp; -->
@@ -223,12 +197,10 @@
 						appPreventDoubleClick
 						class="cursor"
 						(throttledClick)="onSubmit()"
-						type="button"
 						[throttleTime]="500"
 						mat-raised-button
-						type="button"
+						type="submit"
 						color="primary"
-						[disabled]="!iscustomerselected"
 					>
 						Add Inquiry
 					</button>

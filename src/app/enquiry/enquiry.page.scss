@@ -86,6 +86,10 @@
 	width: 100%;
 }
 
+.mat-auto-width {
+	width: 80%;
+}
+
 .remarks-txtarea {
 	width: 400px;
 }
@@ -139,8 +143,9 @@
 
 .customer {
 	display: grid;
-	grid-template-columns: 450px 1fr 1fr 1fr;
-	padding: 3rem 1rem;
+	grid-template-columns: 1fr 1fr;
+	gap: 100px;
+	padding: 3rem 1rem 1rem 1rem;
 	width: 94%;
 	margin: 0 auto;
 }
@@ -162,28 +167,22 @@
 	font-size: 14px;
 }
 
-//@extend
-// .main-add {
-// 	display: grid;
-// 	grid-template-columns: 200px 1fr minmax(80px, 100px) 150px;
-// 	align-items: center;
-// 	grid-gap: 10px;
-// }
-
 .main-add {
 	display: grid;
 	grid-template-columns: 2fr minmax(110px, 100px);
 
-	background-color: #e8e8e8;
+	background-color: #7e8bb1;
 
 	.left {
 		display: grid;
-		grid-template-columns: minmax(350px, 1fr) 2fr minmax(60px, 80px) 110px;
+		grid-template-columns: minmax(410px, 1fr) 1.5fr minmax(60px, 80px) 110px;
 		align-items: center;
 		grid-gap: 10px;
 		background-color: #e8e8e8;
 		padding: 1rem;
 		align-self: center;
+		border-top: 2px solid #7e8bb1;
+		border-bottom: 2px solid #7e8bb1;
 	}
 	.right {
 		display: grid;
@@ -211,13 +210,13 @@
 .footer {
 	display: flex;
 	position: fixed;
-	justify-content: space-around;
+	justify-content: space-between;
 	bottom: 0px;
-
+	padding: 0.5rem 80px 0.5rem 1rem;
 	width: 100%;
 	height: auto;
-	background-color: #ffffff;
-	border-top: 1px solid #f1f1f1;
+	background-color: #f7f9fd;
+	border-top: 1px solid #e6e6e6;
 }
 
 .enq-bottom {

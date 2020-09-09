@@ -18,7 +18,7 @@
 						tabindex="1"
 						[attr.disabled]="vendorselected?'true':null"
 					/>
-					<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+					<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
 						<mat-icon>close</mat-icon>
 					</button>
 					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setVendorInfo($event, 'click')">
@@ -50,10 +50,9 @@
 					</div>
 				</div>
 			</div>
-
-			<div>
+			<div class="vendor-left">
 				<div>
-					<mat-form-field>
+					<mat-form-field class="mat-input-wrapper">
 						<mat-label>Invoice #</mat-label>
 						<input matInput type="text" #invno formControlName="invoiceno" />
 
@@ -64,30 +63,7 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
-				<div>
-					<div>
-						<mat-form-field>
-							<mat-label>Lr #</mat-label>
-							<input matInput #lrno type="text" formControlName="lrno" />
 
-							<mat-error
-								*ngIf="(submitForm.get('lrno').hasError('required') || submitForm.get('lrno').hasError('patternInvalid'))  && submitForm.get('lrno').touched"
-							>
-								Invalid (or) Missing entry
-							</mat-error>
-						</mat-form-field>
-					</div>
-					<div>
-						<mat-form-field>
-							<mat-label>Transportation Cost</mat-label>
-							<input matInput type="number" formControlName="transport_charges" />
-							<mat-icon matSuffix (click)="openNumberPad('transport_charges')">view_comfy</mat-icon>
-						</mat-form-field>
-					</div>
-				</div>
-			</div>
-
-			<div>
 				<div>
 					<mat-form-field class="mat-input-wrapper">
 						<mat-label>Invoice date</mat-label>
@@ -109,27 +85,9 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
+
 				<div>
-					<div>
-						<mat-form-field class="mat-input-wrapper">
-							<mat-label>Lr date</mat-label>
-							<input matInput readonly [matDatepicker]="pickerlr" (focus)="pickerlr.open()" formControlName="lrdate" [max]="maxDate" />
-							<mat-datepicker-toggle matSuffix [for]="pickerlr"></mat-datepicker-toggle>
-							<mat-datepicker #pickerlr></mat-datepicker>
-						</mat-form-field>
-					</div>
-					<div>
-						<mat-form-field>
-							<mat-label>Unloading Cost</mat-label>
-							<input matInput type="number" formControlName="unloading_charges" />
-							<mat-icon matSuffix (click)="openNumberPad('unloading_charges')">view_comfy</mat-icon>
-						</mat-form-field>
-					</div>
-				</div>
-			</div>
-			<div>
-				<div>
-					<mat-form-field>
+					<mat-form-field class="mat-input-wrapper">
 						<mat-label>Order #</mat-label>
 						<input matInput #orderno type="text" formControlName="orderno" />
 
@@ -141,26 +99,6 @@
 					</mat-form-field>
 				</div>
 				<div>
-					<div>
-						<mat-form-field>
-							<mat-label>Received Date</mat-label>
-							<input matInput readonly [matDatepicker]="pickerrcvd" formControlName="orderrcvddt" (focus)="pickerrcvd.open()" [max]="maxDate" />
-							<mat-datepicker-toggle matSuffix [for]="pickerrcvd"></mat-datepicker-toggle>
-							<mat-datepicker #pickerrcvd></mat-datepicker>
-						</mat-form-field>
-					</div>
-					<div>
-						<mat-form-field>
-							<mat-label>Misc Cost</mat-label>
-							<input matInput type="number" formControlName="misc_charges" />
-							<mat-icon matSuffix (click)="openNumberPad('misc_charges')">view_comfy</mat-icon>
-						</mat-form-field>
-					</div>
-				</div>
-			</div>
-
-			<div>
-				<div>
 					<mat-form-field class="mat-input-wrapper">
 						<mat-label>Order date</mat-label>
 						<input matInput readonly [matDatepicker]="pickerod" formControlName="orderdate" (focus)="pickerod.open()" [max]="maxOrderDate" />
@@ -168,14 +106,66 @@
 						<mat-datepicker #pickerod></mat-datepicker>
 					</mat-form-field>
 				</div>
+
 				<div>
-					<div>
-						<mat-form-field>
-							<mat-label># of Boxes</mat-label>
-							<input matInput type="number" formControlName="noofboxes" />
-							<mat-icon matSuffix (click)="openNumberPad('noofboxes')">view_comfy</mat-icon>
-						</mat-form-field>
-					</div>
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label>Lr #</mat-label>
+						<input matInput #lrno type="text" formControlName="lrno" />
+
+						<mat-error
+							*ngIf="(submitForm.get('lrno').hasError('required') || submitForm.get('lrno').hasError('patternInvalid'))  && submitForm.get('lrno').touched"
+						>
+							Invalid (or) Missing entry
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label>Lr date</mat-label>
+						<input matInput readonly [matDatepicker]="pickerlr" (focus)="pickerlr.open()" formControlName="lrdate" [max]="maxDate" />
+						<mat-datepicker-toggle matSuffix [for]="pickerlr"></mat-datepicker-toggle>
+						<mat-datepicker #pickerlr></mat-datepicker>
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label>Received Date</mat-label>
+						<input matInput readonly [matDatepicker]="pickerrcvd" formControlName="orderrcvddt" (focus)="pickerrcvd.open()" [max]="maxDate" />
+						<mat-datepicker-toggle matSuffix [for]="pickerrcvd"></mat-datepicker-toggle>
+						<mat-datepicker #pickerrcvd></mat-datepicker>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label># of Boxes</mat-label>
+						<input matInput type="number" formControlName="noofboxes" />
+						<!-- <mat-icon matSuffix (click)="openNumberPad('noofboxes')">view_comfy</mat-icon> -->
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label>Transportation Cost</mat-label>
+						<input matInput type="number" formControlName="transport_charges" />
+						<!-- <mat-icon matSuffix (click)="openNumberPad('transport_charges')">view_comfy</mat-icon> -->
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label>Unloading Cost</mat-label>
+						<input matInput type="number" formControlName="unloading_charges" />
+						<!-- <mat-icon matSuffix (click)="openNumberPad('unloading_charges')">view_comfy</mat-icon> -->
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field class="mat-input-wrapper">
+						<mat-label>Misc Cost</mat-label>
+						<input matInput type="number" formControlName="misc_charges" />
+						<!-- <mat-icon matSuffix (click)="openNumberPad('misc_charges')">view_comfy</mat-icon> -->
+					</mat-form-field>
 				</div>
 			</div>
 		</div>
@@ -191,12 +181,13 @@
 			<div class="wrap">
 				<div class="acton-btns">
 					<img class="cursor" src="/assets/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
-					<span class="sub-menu cursor" *ngIf="showDelIcon" (click)="presentDeleteConfirm()">Delete</span>
+					<span class="sub-menu cursor" style="color: blue" *ngIf="showDelIcon" (click)="presentDeleteConfirm()">Delete</span>
 				</div>
 
 				<div class="acton-btns">
 					<img class="cursor" src="/assets/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editTax()" /><span
 						class="sub-menu cursor"
+						style="color: blue"
 						*ngIf="singleRowSelected"
 						(click)="editTax()"
 						>Tax</span
@@ -204,7 +195,7 @@
 				</div>
 				<div class="acton-btns">
 					<img class="cursor" src="/assets/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editMrp()" />
-					<span class="sub-menu cursor" *ngIf="singleRowSelected" (click)="editMrp()">Mrp</span>
+					<span class="sub-menu cursor" style="color: blue" *ngIf="singleRowSelected" (click)="editMrp()">Mrp</span>
 				</div>
 			</div>
 			<div class="left">
@@ -263,6 +254,7 @@
 				<div class="left">
 					<div>
 						<mat-form-field class="example-full-width">
+							<mat-label>Select Item Code</mat-label>
 							<input
 								matInput
 								[matAutocomplete]="auto1"
@@ -274,7 +266,7 @@
 								tabindex="3"
 							/>
 							<mat-hint matTooltip="Add product">Hint: Type product code</mat-hint>
-							<mat-placeholder class="placeholder">Select Item Code</mat-placeholder>
+
 							<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput()">
 								<mat-icon>close</mat-icon>
 							</button>
@@ -350,62 +342,7 @@
 				</div>
 			</div>
 
-			<div class="purchase-wrap1">
-				<!-- <div>
-					<mat-form-field>
-						<mat-label># of Boxes</mat-label>
-						<input matInput type="number" formControlName="noofboxes" />
-						<mat-icon matSuffix (click)="openNumberPad('noofboxes')">view_comfy</mat-icon>
-					</mat-form-field>
-				</div> -->
-				<!-- <div>
-					<mat-form-field>
-						<mat-label>Transportation Cost</mat-label>
-						<input matInput type="number" formControlName="transport_charges" />
-						<mat-icon matSuffix (click)="openNumberPad('transport_charges')">view_comfy</mat-icon>
-					</mat-form-field>
-				</div> -->
-				<!-- <div>
-					<mat-form-field>
-						<mat-label>Unloading Cost</mat-label>
-						<input matInput type="number" placeholder="Unloading cost" formControlName="unloading_charges" />
-						<mat-icon matSuffix (click)="openNumberPad('unloading_charges')">view_comfy</mat-icon>
-					</mat-form-field>
-				</div> -->
-				<!-- <div>
-					<mat-form-field>
-						<mat-label>Misc Cost</mat-label>
-						<input matInput type="number" formControlName="misc_charges" />
-						<mat-icon matSuffix (click)="openNumberPad('misc_charges')">view_comfy</mat-icon>
-					</mat-form-field>
-				</div> -->
-
-				<!-- <div style="display: grid; align-content: center; justify-content: center;">
-						<button
-							*ngIf="(submitForm.get('status').value !== 'C' ) "
-							appPreventDoubleClick
-							[throttleTime]="1000"
-							(throttledClick)="onSave('draft')"
-							mat-raised-button
-							color="primary"
-							style="font-size: 1rem; padding: 0px 20px;"
-						>
-							Save as Draft
-						</button>
-
-						<br />
-						<button
-							appPreventDoubleClick
-							[throttleTime]="1000"
-							(throttledClick)="onSavenSubmit('add')"
-							mat-raised-button
-							color="primary"
-							style="font-size: 1rem; padding: 0px 20px;"
-						>
-							Update Stock
-						</button>
-					</div> -->
-			</div>
+			<div class="purchase-wrap1"></div>
 		</div>
 
 		<ng-container>
@@ -455,27 +392,8 @@
 						<span *ngIf="breadmenu === 'New Sale'">Add to stock</span>
 						<span *ngIf="breadmenu !== 'New Sale'">Update to stock</span>
 					</button>
-
-					<!-- <button
-						mat-raised-button
-						color="primary"
-						type="button"
-						#ddTrigger="matMenuTrigger"
-						[matMenuTriggerFor]="dd"
-						style="border-radius: 0px; border-left: 1px solid grey; padding: 0px 8px;"
-					>
-						<mat-icon>arrow_drop_up</mat-icon>
-					</button> -->
 				</div>
 			</div>
 		</ng-container>
 	</form>
-	<!-- <mat-menu #dd="matMenu" [overlapTrigger]="false">
-		<mat-option>
-			<button mat-button type="button" (click)="onSubmit('add')">Save & Confirm</button>
-		</mat-option>
-		<mat-option>
-			<button mat-button type="button" (click)="onSubmit('print')">Save & Print</button>
-		</mat-option>
-	</mat-menu> -->
 </ion-content>
