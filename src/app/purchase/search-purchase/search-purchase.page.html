@@ -2,8 +2,8 @@
 	<div class="search-wrap">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goPurchaseAddScreen()" style="cursor: pointer;">
-					<span style="font-size: 24px; color: #333;">PURCHASE</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333;">+</span>
+				<div class="title" (click)="goPurchaseAddScreen()" style="cursor: pointer">
+					<span style="font-size: 24px; color: #333">PURCHASE</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333">+</span>
 				</div>
 				<div class="vendors">
 					<mat-form-field class="width">
@@ -28,7 +28,7 @@
 				</div>
 
 				<div>
-					<mat-form-field class="mat-input-wrapper" style="padding-top: 20px;">
+					<mat-form-field class="mat-input-wrapper" style="padding-top: 20px">
 						<mat-label>From</mat-label>
 						<input
 							matInput
@@ -44,7 +44,7 @@
 					</mat-form-field>
 				</div>
 				<div>
-					<mat-form-field class="mat-input-wrapper" style="padding-top: 20px;">
+					<mat-form-field class="mat-input-wrapper" style="padding-top: 20px">
 						<mat-label>To</mat-label>
 						<input
 							matInput
@@ -60,7 +60,7 @@
 						<mat-datepicker #todate></mat-datepicker>
 					</mat-form-field>
 				</div>
-				<div>
+				<!-- <div>
 					<mat-form-field class="mat-width-ext" style="padding-top: 20px;">
 						<mat-label>Status</mat-label>
 						<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
@@ -69,20 +69,24 @@
 							</mat-option>
 						</mat-select>
 					</mat-form-field>
-				</div>
-				<div class="search-btn" style="padding-top: 20px;">
-					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem;" (click)="search()">
-						Search
-					</button>
+				</div> -->
+				<div class="search-btn" style="padding-top: 20px">
+					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search()">Search</button>
 				</div>
 			</div>
 		</form>
-		<div style="width: 94%; margin: 0 auto; padding-top: 16px;" [@.disabled]="true">
+
+		<div style="display: flex; justify-content: space-between">
+			<div style="align-self: center; font-size: 14px; padding: 16px">All Orders ({{(purchases$| async)?.length }}) records</div>
+			<div>&nbsp;</div>
+		</div>
+
+		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-				<mat-tab label="All Orders ({{(purchases$| async)?.length }})">
+				<!-- <mat-tab label="All Orders ({{(purchases$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
+				</mat-tab> -->
 
 				<mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
@@ -111,9 +115,9 @@
 		<div class="headerRow">
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500;">&nbsp;</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500;">{{this.sumNumItems}}</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500;">{{this.sumTotalValue | number:'1.2-2'}}</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">&nbsp;</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">{{this.sumNumItems}}</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">{{this.sumTotalValue | number:'1.2-2'}}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>

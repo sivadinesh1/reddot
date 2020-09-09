@@ -67,7 +67,7 @@ export class SalesPage implements OnInit {
 
   tax_percentage: any;
   taxable_value: any;
-  center_id: any;
+  //center_id: any;
 
   stockissue = "";
 
@@ -146,6 +146,7 @@ export class SalesPage implements OnInit {
   product_lis: Product[];
 
   userdata$: Observable<User>;
+  userdata: any;
 
   // @ViewChild('stickyHeaderStart', { static: true }) stickyHeaderStart: ElementRef<HTMLElement>;
 
@@ -161,7 +162,7 @@ export class SalesPage implements OnInit {
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
 
-
+    this.basicinit();
 
 
     this.userdata$ = this._authservice.currentUser;
@@ -170,10 +171,17 @@ export class SalesPage implements OnInit {
         filter((data) => data !== null))
       .subscribe((data: any) => {
         this._authservice.setCurrentMenu("Sale");
-        this.center_id = data.center_id;
-        this.center_state_code = data.code;
-        this.ready = 1;
+        this.userdata = data;
+        //this.center_id = data.center_id;
+        // this.center_state_code = data.code;
 
+        this.submitForm.patchValue({
+          center_id: data.center_id,
+        })
+
+
+        this.ready = 1;
+        this.initialize();
         this._cdr.markForCheck();
       });
 
@@ -190,167 +198,33 @@ export class SalesPage implements OnInit {
       this.cancel()
       this.rawSalesData = data['rawsalesdata'];
 
-      this.id = this._route.snapshot.params['id'];
-      this.mode = this._route.snapshot.params['mode'];
+      //  this.id = this._route.snapshot.params['id'];
+      //  this.mode = this._route.snapshot.params['mode'];
 
-      this.initialize();
+      //  this.initialize();
+    });
+
+    this._route.params.subscribe(params => {
+      // this.center_id = params['center_id'];
+      // this.center_id = params['center_id'];
+
+      this.id = params['id'];
+      this.mode = params['mode'];
+
+
+      if (this.userdata !== undefined) {
+        this.initialize();
+      }
     });
 
 
 
   }
 
-  ngOnInit() { }
 
-  initialize() {
-
-    this.init();
-
-    if (this.id === "0") {
-      this.getInvoiceSequence(this.center_id, "gstinvoice");
-    }
-
-    if (this.mode === 'enquiry') {
-
-      this.getInvoiceSequence(this.center_id, "gstinvoice");
-
-      this.submitForm.patchValue({
-        enqref: this.id,
-        orderno: this.id,
-      })
-
-
-      this.fromEnquiry = true;
-
-      this._commonApiService.getCustomerData(this.id).subscribe((custData: any) => {
-
-        this.customerdata = custData[0];
-
-
-        this.submitForm.patchValue({
-          customerctrl: custData[0],
-        });
-
-        this.customername = custData[0].name;
-        this.iscustomerselected = true;
-
-        this.setTaxLabel(custData[0].code);
-
-        let invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
-
-        // prod details
-        this._commonApiService.getEnquiredProductData(this.center_id, this.customerdata.id, this.id, invdt).subscribe((prodData: any) => {
-          let proddata = prodData;
-
-          this.submitForm.patchValue({
-            orderdate: (proddata[0].enquiry_date !== '' || proddata[0].enquiry_date !== undefined) ? proddata[0].enquiry_date : ''
-          })
-
-          proddata.forEach(element => {
-            this.processItems(element);
-          });
-
-          this._cdr.markForCheck();
-        });
-
-        this._cdr.markForCheck();
-      });
-
-
-
-
-    }
-
-    if (this.rawSalesData !== null) {
-
-
-      if (this.rawSalesData[0] !== undefined && this.rawSalesData[0].id !== 0) {
-        this.breadmenu = "Edit Sale #" + this.rawSalesData[0].id;
-        this.selInvType = this.rawSalesData[0].sale_type;
-        this.orig_selInvType = this.rawSalesData[0].sale_type;
-        this.stock_issue_ref = this.rawSalesData[0].stock_issue_ref;
-        this.stock_issue_date_ref = this.rawSalesData[0].stock_issue_date_ref;
-
-        this.submitForm.patchValue({
-          salesid: this.rawSalesData[0].id,
-          invoiceno: this.rawSalesData[0].invoice_no,
-          invoicetype: this.rawSalesData[0].sale_type,
-          invoicedate: new Date(new NullToQuotePipe().transform(this.rawSalesData[0].invoice_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
-
-          orderdate: this.rawSalesData[0].order_date === '' ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].order_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
-
-          lrno: this.rawSalesData[0].lr_no,
-
-          lrdate: this.rawSalesData[0].lr_date === '' ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].lr_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
-          orderno: this.rawSalesData[0].order_no,
-          noofboxes: this.rawSalesData[0].no_of_boxes,
-
-          orderrcvddt: this.rawSalesData[0].received_date === '' ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].received_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
-
-
-          noofitems: this.rawSalesData[0].no_of_items,
-          totalqty: this.rawSalesData[0].total_qty,
-          value: this.rawSalesData[0].total_value,
-          totalvalue: this.rawSalesData[0].total_value,
-          igst: this.rawSalesData[0].igst,
-          cgst: this.rawSalesData[0].cgst,
-          sgst: this.rawSalesData[0].sgst,
-          transport_charges: this.rawSalesData[0].transport_charges,
-          unloading_charges: this.rawSalesData[0].unloading_charges,
-          misc_charges: this.rawSalesData[0].misc_charges,
-          net_total: this.rawSalesData[0].net_total,
-          taxable_value: this.rawSalesData[0].taxable_value,
-          status: this.rawSalesData[0].status,
-          revision: this.rawSalesData[0].revision
-
-        });
-
-        if (this.rawSalesData[0].status === 'C' || this.rawSalesData[0].status === 'D') {
-          this.editCompletedSales = true;
-        }
-
-        this._cdr.markForCheck();
-
-
-        this._commonApiService.getCustomerDetails(this.center_id, this.rawSalesData[0].customer_id).subscribe((custData: any) => {
-
-          this.customerdata = custData[0];
-
-
-          this.submitForm.patchValue({
-            customerctrl: custData[0],
-          });
-
-          this.customername = custData[0].name;
-
-          this.iscustomerselected = true;
-
-          this.setTaxLabel(custData[0].code);
-
-          this._cdr.markForCheck();
-        });
-
-
-        this._commonApiService.saleDetails(this.rawSalesData[0].id).subscribe((saleData: any) => {
-          let sData = saleData;
-
-          sData.forEach(element => {
-            this.processItems(element);
-          });
-        });
-
-
-        this._cdr.markForCheck();
-
-      }
-    }
-
-
-  }
-
-  init() {
+  basicinit() {
     this.submitForm = this._fb.group({
-      center_id: [this.center_id],
+      center_id: [null],
       salesid: new FormControl('', Validators.required),
 
       invoiceno: [null],
@@ -387,6 +261,198 @@ export class SalesPage implements OnInit {
       productarr: new FormControl(null, Validators.required)
 
     });
+  }
+
+
+
+  ngOnInit() { }
+
+  initialize() {
+
+    this.init();
+
+    if (this.id === "0") {
+      this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
+    }
+
+    if (this.mode === 'enquiry') {
+
+      this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
+
+      this.submitForm.patchValue({
+        enqref: this.id,
+        orderno: this.id,
+      })
+
+
+      this.fromEnquiry = true;
+
+      this._commonApiService.getCustomerData(this.id).subscribe((custData: any) => {
+
+        this.customerdata = custData[0];
+
+
+        this.submitForm.patchValue({
+          customerctrl: custData[0],
+        });
+
+        this.customername = custData[0].name;
+        this.iscustomerselected = true;
+
+        this.setTaxLabel(custData[0].code);
+
+        let invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+
+        // prod details
+        this._commonApiService.getEnquiredProductData(this.userdata.center_id, this.customerdata.id, this.id, invdt).subscribe((prodData: any) => {
+          let proddata = prodData;
+
+          this.submitForm.patchValue({
+            orderdate: (proddata[0].enquiry_date !== '' || proddata[0].enquiry_date !== undefined) ? proddata[0].enquiry_date : ''
+          })
+
+          proddata.forEach(element => {
+            this.processItems(element);
+          });
+
+          this._cdr.markForCheck();
+        });
+
+        this._cdr.markForCheck();
+      });
+
+
+
+
+    }
+
+    if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
+
+      if (this.rawSalesData[0] !== undefined) {
+        if (this.rawSalesData[0].id !== 0) {
+          this.breadmenu = "Edit Sale #" + this.rawSalesData[0].id;
+          this.selInvType = this.rawSalesData[0].sale_type;
+          this.orig_selInvType = this.rawSalesData[0].sale_type;
+          this.stock_issue_ref = this.rawSalesData[0].stock_issue_ref;
+          this.stock_issue_date_ref = this.rawSalesData[0].stock_issue_date_ref;
+
+          this.submitForm.patchValue({
+            salesid: this.rawSalesData[0].id,
+            invoiceno: this.rawSalesData[0].invoice_no,
+            invoicetype: this.rawSalesData[0].sale_type,
+            invoicedate: new Date(new NullToQuotePipe().transform(this.rawSalesData[0].invoice_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
+
+            orderdate: this.rawSalesData[0].order_date === '' ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].order_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
+
+            lrno: this.rawSalesData[0].lr_no,
+
+            lrdate: this.rawSalesData[0].lr_date === '' ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].lr_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
+            orderno: this.rawSalesData[0].order_no,
+            noofboxes: this.rawSalesData[0].no_of_boxes,
+
+            orderrcvddt: this.rawSalesData[0].received_date === '' ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].received_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
+
+
+            noofitems: this.rawSalesData[0].no_of_items,
+            totalqty: this.rawSalesData[0].total_qty,
+            value: this.rawSalesData[0].total_value,
+            totalvalue: this.rawSalesData[0].total_value,
+            igst: this.rawSalesData[0].igst,
+            cgst: this.rawSalesData[0].cgst,
+            sgst: this.rawSalesData[0].sgst,
+            transport_charges: this.rawSalesData[0].transport_charges,
+            unloading_charges: this.rawSalesData[0].unloading_charges,
+            misc_charges: this.rawSalesData[0].misc_charges,
+            net_total: this.rawSalesData[0].net_total,
+            taxable_value: this.rawSalesData[0].taxable_value,
+            status: this.rawSalesData[0].status,
+            revision: this.rawSalesData[0].revision
+
+          });
+
+          if (this.rawSalesData[0].status === 'C' || this.rawSalesData[0].status === 'D') {
+            this.editCompletedSales = true;
+          }
+
+          this._cdr.markForCheck();
+
+
+          this._commonApiService.getCustomerDetails(this.userdata.center_id, this.rawSalesData[0].customer_id).subscribe((custData: any) => {
+
+            this.customerdata = custData[0];
+
+
+            this.submitForm.patchValue({
+              customerctrl: custData[0],
+            });
+
+            this.customername = custData[0].name;
+
+            this.iscustomerselected = true;
+
+            this.setTaxLabel(custData[0].code);
+
+            this._cdr.markForCheck();
+          });
+
+
+          this._commonApiService.saleDetails(this.rawSalesData[0].id).subscribe((saleData: any) => {
+            let sData = saleData;
+
+            sData.forEach(element => {
+              this.processItems(element);
+            });
+          });
+
+
+          this._cdr.markForCheck();
+
+        }
+      }
+    }
+
+
+  }
+
+  init() {
+    // this.submitForm = this._fb.group({
+    //   center_id: [this.userdata.center_id],
+    //   salesid: new FormControl('', Validators.required),
+
+    //   invoiceno: [null],
+    //   invoicedate: new FormControl(this.invoicedate, Validators.required),
+    //   orderno: new FormControl(''),
+    //   orderdate: new FormControl(''),
+    //   lrno: new FormControl(''),
+    //   lrdate: new FormControl(''),
+    //   noofboxes: new FormControl(0),
+    //   orderrcvddt: new FormControl(''),
+    //   noofitems: [0],
+    //   totalqty: [0],
+    //   value: new FormControl(0),
+    //   totalvalue: new FormControl(0),
+    //   igst: new FormControl(0),
+    //   cgst: [0],
+    //   sgst: new FormControl(0),
+    //   transport_charges: [0],
+    //   unloading_charges: [0],
+    //   misc_charges: [0],
+    //   net_total: new FormControl(0),
+    //   taxable_value: new FormControl(0),
+    //   status: new FormControl(),
+    //   enqref: [0],
+    //   revision: [0],
+    //   invoicetype: ["gstinvoice", [Validators.required]],
+
+    //   customerctrl: [null, [Validators.required, RequireMatch]],
+    //   productctrl: [null, [RequireMatch]],
+    //   tempdesc: [''],
+
+    //   tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
+
+    //   productarr: new FormControl(null, Validators.required)
+
+    // });
 
     this.searchCustomers();
     this.searchProducts();
@@ -408,7 +474,7 @@ export class SalesPage implements OnInit {
       this._cdr.markForCheck();
       return false;
     } else {
-      this.getInvoiceSequence(this.center_id, event.value);
+      this.getInvoiceSequence(this.userdata.center_id, event.value);
     }
 
   }
@@ -422,7 +488,7 @@ export class SalesPage implements OnInit {
         console.log(id);
         search = id;
         if (id != null && id.length >= 2) {
-          return this._commonApiService.getCustomerInfo({ "centerid": this.center_id, "searchstr": id });
+          return this._commonApiService.getCustomerInfo({ "centerid": this.userdata.center_id, "searchstr": id });
         } else {
           return empty();
         }
@@ -559,14 +625,32 @@ export class SalesPage implements OnInit {
   }
 
 
+
+  clearInput() {
+    this.submitForm.patchValue({
+      customerctrl: null,
+    });
+
+    this.iscustomerselected = false;
+
+    // this.submitForm.patchValue({
+    //   customerid: 'all',
+    //   customer: ''
+    // });
+    this._cdr.markForCheck();
+
+  }
+
+
   sumTotalTax() {
 
 
     if (this.i_gst) {
 
       this.igstTotal = this.listArr
-        .map(item => { return item.tax_value; })
-        .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        .map(item => { return (+item.tax_value); }) // convert to number using +
+        .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+
       console.log('dines' + this.igstTotal);
       this.submitForm.patchValue({
         igst: this.igstTotal,
@@ -684,7 +768,7 @@ export class SalesPage implements OnInit {
 
   setTaxLabel(customer_state_code) {
 
-    if (customer_state_code !== this.center_state_code) {
+    if (customer_state_code !== this.userdata.code) {
       this.i_gst = true;
 
     } else {
@@ -1012,7 +1096,7 @@ export class SalesPage implements OnInit {
                 status: 'D',
               });
             }
-
+            debugger;
 
             this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('saveSaleOrder ' + JSON.stringify(data));
@@ -1028,7 +1112,7 @@ export class SalesPage implements OnInit {
 
 
                 // reinit after successful insert
-                this.getInvoiceSequence(this.center_id, "gstinvoice");
+                this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
 
                 this._cdr.markForCheck();
                 if (action === 'add') {
@@ -1161,7 +1245,7 @@ export class SalesPage implements OnInit {
     // refresh the page with latest values (invoice # and inv type)
 
     this._commonApiService.convertToSale({
-      "center_id": this.center_id, "sales_id": this.id,
+      "center_id": this.userdata.center_id, "sales_id": this.id,
       "old_invoice_no": this.submitForm.value.invoiceno, "old_stock_issued_date": this.submitForm.value.invoicedate
     })
       .subscribe((data: any) => {
@@ -1277,6 +1361,9 @@ export class SalesPage implements OnInit {
 
         this.removeRowArr = [];
 
+        this.delIconStatus();
+        this.checkIsSingleRow();
+
         this._cdr.markForCheck();
       }
 
@@ -1314,6 +1401,9 @@ export class SalesPage implements OnInit {
         });
 
         this.removeRowArr = [];
+
+        this.delIconStatus();
+        this.checkIsSingleRow();
 
         this._cdr.markForCheck();
       }
@@ -1402,18 +1492,18 @@ export class SalesPage implements OnInit {
 
 
 
-  clearInput() {
-    this.submitForm.patchValue({
-      customer: null,
-      customerctrl: null
-    });
-    this.customer_lis = null;
-    this.customerdata = null;
+  // clearInput() {
+  //   this.submitForm.patchValue({
+  //     customer: null,
+  //     customerctrl: null
+  //   });
+  //   this.customer_lis = null;
+  //   this.customerdata = null;
 
-    this.iscustomerselected = false;
-    this._cdr.markForCheck();
+  //   this.iscustomerselected = false;
+  //   this._cdr.markForCheck();
 
-  }
+  // }
 
   clearProdInput() {
 
@@ -1478,7 +1568,7 @@ export class SalesPage implements OnInit {
       switchMap(id => {
 
         if (id != null && id.length >= 2) {
-          return this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customerdata.id, "orderdate": invdt, "searchstr": id });
+          return this._commonApiService.getProductInformation({ "centerid": this.userdata.center_id, "customerid": this.customerdata.id, "orderdate": invdt, "searchstr": id });
         } else {
           return empty();
         }
@@ -1634,7 +1724,7 @@ export class SalesPage implements OnInit {
       ).subscribe((data: any) => {
         if (data !== 'close') {
 
-          this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
+          this._commonApiService.getCustomerDetails(this.userdata.center_id, data.body.id).subscribe((custData: any) => {
 
             this.customerdata = custData[0];
 

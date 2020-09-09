@@ -65,7 +65,7 @@ export class SearchPurchasePage implements OnInit {
     public alertController: AlertController,
     private _authservice: AuthenticationService) {
 
-    const dateOffset = (24 * 60 * 60 * 1000) * 3;
+    const dateOffset = (24 * 60 * 60 * 1000) * 7;
     this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
     this.submitForm = this._fb.group({
@@ -164,7 +164,10 @@ export class SearchPurchasePage implements OnInit {
     this.filteredPurchase$ = this.purchases$;
 
     // for initial load of first tab (ALL)
-    this.filteredValues = await this.filteredPurchase$.toPromise();
+    // this.filteredValues = await this.filteredPurchase$.toPromise();
+
+    let value = await this.filteredPurchase$.toPromise();
+    this.filteredValues = value.filter((data: any) => data.status === 'D');
 
 
     // to calculate the count on each status    
@@ -255,11 +258,13 @@ export class SearchPurchasePage implements OnInit {
   async tabClick($event) {
     let value = await this.filteredPurchase$.toPromise();
 
+    // if ($event.index === 0) {
+    //   this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
+    // } else 
+
     if ($event.index === 0) {
-      this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
-    } else if ($event.index === 1) {
       this.filteredValues = value.filter((data: any) => data.status === 'D');
-    } else if ($event.index === 2) {
+    } else if ($event.index === 1) {
       this.filteredValues = value.filter((data: any) => data.status === 'C');
     }
 

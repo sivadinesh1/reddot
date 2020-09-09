@@ -2,8 +2,8 @@
 	<div class="search-wrap">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer;">
-					<span style="font-size: 24px; color: #333;">SALES</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333;">+</span>
+				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer">
+					<span style="font-size: 24px; color: #333">SALES</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333">+</span>
 				</div>
 
 				<div class="customers">
@@ -28,7 +28,7 @@
 					</mat-form-field>
 				</div>
 				<div>
-					<mat-form-field class="mat-date-wrapper" style="padding-top: 20px;">
+					<mat-form-field class="mat-date-wrapper" style="padding-top: 20px">
 						<mat-label>From</mat-label>
 						<input
 							matInput
@@ -44,7 +44,7 @@
 						<mat-datepicker #fromdate></mat-datepicker>
 					</mat-form-field>
 				</div>
-				<div style="padding-top: 20px;">
+				<div style="padding-top: 20px">
 					<mat-form-field class="mat-date-wrapper">
 						<mat-label>To</mat-label>
 						<input
@@ -62,41 +62,39 @@
 					</mat-form-field>
 				</div>
 
-				<div style="padding-top: 20px;">
+				<!-- <div style="padding-top: 20px">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Status</mat-label>
 						<mat-select formControlName="status" required value="{statusFlag}">
-							<mat-option *ngFor="let item of statusList" [value]="item.id">
-								{{item.value}}
-							</mat-option>
+							<mat-option *ngFor="let item of statusList" [value]="item.id"> {{item.value}} </mat-option>
 						</mat-select>
 					</mat-form-field>
-				</div>
+				</div> -->
 
-				<div style="padding-top: 20px;">
+				<div style="padding-top: 20px">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Sale Type</mat-label>
 						<mat-select formControlName="saletype" required value="{saletypeFlag}">
-							<mat-option *ngFor="let item of saletypeList" [value]="item.id">
-								{{item.value}}
-							</mat-option>
+							<mat-option *ngFor="let item of saletypeList" [value]="item.id"> {{item.value}} </mat-option>
 						</mat-select>
 					</mat-form-field>
 				</div>
 
-				<div class="search-btn" style="padding-top: 20px;">
-					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem;" (click)="search()">
-						Search
-					</button>
+				<div class="search-btn" style="padding-top: 20px">
+					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search()">Search</button>
 				</div>
 			</div>
 		</form>
-		<div style="width: 94%; margin: 0 auto; padding-top: 16px;" [@.disabled]="true">
+		<div style="display: flex; justify-content: space-between">
+			<div style="align-self: center; font-size: 14px; padding: 16px">All Orders ({{(sales$| async)?.length }}) records</div>
+			<div>&nbsp;</div>
+		</div>
+		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-				<mat-tab label="All Orders ({{(sales$| async)?.length }})">
+				<!-- <mat-tab label="All Orders ({{(sales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
+				</mat-tab> -->
 
 				<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
@@ -121,15 +119,15 @@
 			<div class="txt-right-align">TOTAL VALUE</div>
 			<div class="txt-center-align">STATUS</div>
 			<div>&nbsp;</div>
-			<div style="text-align: center;"><span>REVISIONS</span></div>
+			<div style="text-align: center"><span>REVISIONS</span></div>
 		</div>
-		<div class="headerRow" style="background-color: #dfdfdf;">
+		<div class="headerRow" style="background-color: #dfdfdf">
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div style="font-size: 14px; font-weight: 500;">&nbsp;</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right;">{{this.sumNumItems}}</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right;">{{this.sumTotalValue | number:'1.2-2'}}</div>
+			<div style="font-size: 14px; font-weight: 500">&nbsp;</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | number:'1.2-2'}}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
@@ -142,16 +140,16 @@
 			<div class="item">{{item.invoice_date}}</div>
 			<div class="item">{{item.sale_type === "gstinvoice" ? "Invoiced" : "Stock Issued"}}</div>
 			<div class="item">{{item.customer_name}}</div>
-			<div class="item" style="text-align: right;">{{item.no_of_items}}</div>
-			<div class="item" style="text-align: right;">{{item.total_value | number:'1.2-2'}}</div>
-			<div class="item" style="text-align: center;">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
-			<div class="item cursor" style="text-align: center;">
+			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
+			<div class="item" style="text-align: right">{{item.total_value | number:'1.2-2'}}</div>
+			<div class="item" style="text-align: center">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
+			<div class="item cursor" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'blue'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
 			</div>
-			<div class="item cursor" *ngIf="item.status === 'D'" style="text-align: center;">
+			<div class="item cursor" *ngIf="item.status === 'D'" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'#ff8484'}" (click)="presentAlertConfirm(item)">delete </mat-icon>
 			</div>
-			<div style="text-align: center;">
+			<div style="text-align: center">
 				<span *ngIf="item.status === 'C'">{{item.revision}}</span>
 			</div>
 		</div>

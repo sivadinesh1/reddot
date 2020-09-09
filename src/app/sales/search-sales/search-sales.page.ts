@@ -90,7 +90,7 @@ export class SearchSalesPage implements OnInit {
         this._cdr.markForCheck();
       });
 
-    const dateOffset = (24 * 60 * 60 * 1000) * 3;
+    const dateOffset = (24 * 60 * 60 * 1000) * 7;
     this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 
@@ -183,10 +183,10 @@ export class SearchSalesPage implements OnInit {
     this.filteredSales$ = this.sales$;
 
     // for initial load of first tab (ALL)
-    this.filteredValues = await this.filteredSales$.toPromise();
+    // this.filteredValues = await this.filteredSales$.toPromise();
 
-
-
+    let value = await this.filteredSales$.toPromise();
+    this.filteredValues = value.filter((data: any) => data.status === 'D');
 
 
     // to calculate the count on each status    
@@ -276,11 +276,12 @@ export class SearchSalesPage implements OnInit {
   async tabClick($event) {
     let value = await this.filteredSales$.toPromise();
 
+    // if ($event.index === 0) {
+    //   this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
+    // } else 
     if ($event.index === 0) {
-      this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
-    } else if ($event.index === 1) {
       this.filteredValues = value.filter((data: any) => data.status === 'D');
-    } else if ($event.index === 2) {
+    } else if ($event.index === 1) {
       this.filteredValues = value.filter((data: any) => data.status === 'C');
     }
 

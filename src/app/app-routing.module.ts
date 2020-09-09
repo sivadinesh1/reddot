@@ -26,10 +26,7 @@ const routes: Routes = [
         path: 'enquiry',
         loadChildren: () => import('./enquiry/enquiry.module').then(m => m.EnquiryPageModule)
       },
-      {
-        path: 'purchase/:edit/:purchaseid',
-        loadChildren: () => import('./purchase/purchase.module').then(m => m.PurchasePageModule)
-      },
+
       {
         path: 'enquiry/open-enquiry',
         loadChildren: () => import('./enquiry/open-enquiry/open-enquiry.module').then(m => m.OpenEnquiryPageModule)
@@ -38,6 +35,10 @@ const routes: Routes = [
       {
         path: 'search-purchase',
         loadChildren: () => import('./purchase/search-purchase/search-purchase.module').then(m => m.SearchPurchasePageModule)
+      },
+      {
+        path: 'purchase/:edit/:purchaseid',
+        loadChildren: () => import('./purchase/purchase.module').then(m => m.PurchasePageModule)
       },
       {
         path: 'search-sales',
@@ -62,10 +63,10 @@ const routes: Routes = [
         path: 'enquiry',
         loadChildren: () => import('./enquiry/enquiry.module').then(m => m.EnquiryPageModule)
       },
-      {
-        path: 'purchase/:edit/:purchaseid',
-        loadChildren: () => import('./purchase/purchase.module').then(m => m.PurchasePageModule)
-      },
+      // {
+      //   path: 'purchase/:edit/:purchaseid',
+      //   loadChildren: () => import('./purchase/purchase.module').then(m => m.PurchasePageModule)
+      // },
 
 
       {

@@ -11,10 +11,7 @@ const routes: Routes = [
     resolve: { rawpurchasedata: PurchaseDataResolverService }
   },
 
-  {
-    path: 'edit-purchase',
-    loadChildren: () => import('./edit-purchase/edit-purchase.module').then(m => m.EditPurchasePageModule)
-  }
+
 ];
 
 @NgModule({

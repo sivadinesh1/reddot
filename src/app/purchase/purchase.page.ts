@@ -122,7 +122,7 @@ export class PurchasePage implements OnInit {
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
-        debugger;
+
         this._authservice.setCurrentMenu("Purchase");
         this.center_id = data.center_id;
         this.center_state_code = data.code;
@@ -297,7 +297,20 @@ export class PurchasePage implements OnInit {
 
   }
 
+  clearInput() {
+    this.submitForm.patchValue({
+      vendorctrl: null,
+    });
 
+    this.vendorselected = false;
+
+    // this.submitForm.patchValue({
+    //   customerid: 'all',
+    //   customer: ''
+    // });
+    this._cdr.markForCheck();
+
+  }
 
   searchVendors() {
     let search = "";
@@ -805,6 +818,15 @@ export class PurchasePage implements OnInit {
 
   }
 
+  getNetTotal() {
+
+    let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges || 0) +
+      parseFloat(this.submitForm.value.unloading_charges || 0) +
+      parseFloat(this.submitForm.value.misc_charges || 0);
+
+    return tmpNetTot.toFixed(2);
+  }
+
   async presentAlert(msg: string) {
     const alert = await this.alertController.create({
       header: 'Alert',
@@ -1107,6 +1129,9 @@ export class PurchasePage implements OnInit {
 
         this.removeRowArr = [];
 
+        this.delIconStatus();
+        this.checkIsSingleRow();
+
         this._cdr.markForCheck();
       }
 
@@ -1143,6 +1168,10 @@ export class PurchasePage implements OnInit {
           this.listArr[idx].mrp_change_flag = 'Y'
 
           this.qtyChange(idx);
+
+          this.delIconStatus();
+          this.checkIsSingleRow();
+
           this._cdr.markForCheck();
 
         });

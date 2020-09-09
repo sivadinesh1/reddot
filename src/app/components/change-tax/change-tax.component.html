@@ -9,9 +9,12 @@
 	<form [formGroup]="submitForm">
 		<div class="tax">
 			<mat-form-field>
-				<mat-label>Tax(%)</mat-label>
-				<input type="number" matInput placeholder="Tax(%)" min="1" max="50" formControlName="tax" required />
-				<mat-error>Missign or Tax out of range (1% - 50%)</mat-error>
+				<mat-label>Select Tax(%)</mat-label>
+				<!-- <input type="number" matInput placeholder="Tax(%)" min="1" max="50" formControlName="tax" required /> -->
+				<mat-select formControlName="tax" required>
+					<mat-option *ngFor="let item of taxList" [value]="item.id"> {{ item.value }} </mat-option>
+				</mat-select>
+				<mat-error>Required Field</mat-error>
 			</mat-form-field>
 		</div>
 

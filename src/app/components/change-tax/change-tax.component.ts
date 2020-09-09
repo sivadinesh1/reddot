@@ -25,6 +25,9 @@ export class ChangeTaxComponent implements OnInit {
 
   submitForm: FormGroup;
 
+  taxList = [{ "id": "0", "value": "0 %" }, { "id": "5", "value": "5 %" },
+  { "id": "12", "value": "12 %" }, { "id": "18", "value": "18 %" }, { "id": "28", "value": "28 %" }]
+
   constructor(private _commonApiService: CommonApiService, private _modalcontroller: ModalController,
     private _cdr: ChangeDetectorRef,
   ) {
