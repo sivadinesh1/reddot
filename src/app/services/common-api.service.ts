@@ -478,6 +478,10 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-payments-customer/${center_id}/${customer_id}`);
   }
 
+  getPymtTransactionByCustomer(center_id, customer_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-pymt-transactions-customer/${center_id}/${customer_id}`);
+  }
+
   getPaymentsByCenter(center_id) {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-payments-center/${center_id}`);
   }

@@ -59,7 +59,7 @@ export class AccountsPaymentsPage implements OnInit {
 
   // table display columns
   saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
-  paymentDisplayedColumns: string[] = ['invoiceno', 'invoicedate', 'customername', 'pymtmodename', 'pymtdate', 'paymentno', 'paidamt'];
+  paymentDisplayedColumns: string[] = ['customername', 'pymtdate', 'paymentno', 'invoiceno', 'invoicedate', 'pymtmodename', 'paidamt'];
   pymtTxnDisplayedColumns: string[] = ['custname', 'pymtno', 'pymtdate', 'paidamt', 'paymode', 'payref'];
 
   // data sources
@@ -224,7 +224,7 @@ export class AccountsPaymentsPage implements OnInit {
   reloadTransactionsByCenter(center_id) {
     this._commonApiService.getPymtTransactionsByCenter(center_id).subscribe(
       (data: any) => {
-        debugger;
+
         // DnD - code to add a "key/Value" in every object of array
         this.pymttransactionsdataSource.data = data.map(el => {
           var o = Object.assign({}, el);

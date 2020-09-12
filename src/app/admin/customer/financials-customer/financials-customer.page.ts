@@ -42,13 +42,16 @@ export class FinancialsCustomerPage implements OnInit {
 
   customerdata: any;
 
-  @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
-
-
+  @ViewChild('searchbartab1', { static: true }) searchbartab1: IonSearchbar;
+  @ViewChild('searchbartab2', { static: true }) searchbartab2: IonSearchbar;
+  @ViewChild('searchbartab3', { static: true }) searchbartab3: IonSearchbar;
+  @ViewChild('searchbartab4', { static: true }) searchbartab4: IonSearchbar;
 
   @ViewChild('InvoiceTablePaginator') invoiceTablePaginator: MatPaginator;
   @ViewChild('PaymentTablePaginator') pymtTablePaginator: MatPaginator;
   @ViewChild('LedgerTablePaginator') ledgerTablePaginator: MatPaginator;
+
+  @ViewChild('PymtTransactionTablePaginator') pymttransactionTablePaginator: MatPaginator;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild('epltable', { static: false }) epltable: ElementRef;
@@ -62,13 +65,17 @@ export class FinancialsCustomerPage implements OnInit {
   displayedColumns: string[] = ['ledgerdate', 'ledgerrefid', 'type', 'creditamt', 'debitamt', 'balamt'];
   saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
 
-  paymentDisplayedColumns: string[] = ['invoiceno', 'invoicedate', 'pymtdate', 'paymentno', 'bankref', 'pymtref', 'paidamt'];
+  paymentDisplayedColumns: string[] = ['pymtdate', 'paymentno', 'invoiceno', 'invoicedate', 'bankref', 'pymtref', 'paidamt'];
+
+  pymtTxnDisplayedColumns: string[] = ['pymtdate', 'pymtno', 'paidamt', 'paymode', 'payref'];
 
   // data sources
   ledgerdataSource = new MatTableDataSource<any>();
   saleInvoicedataSource = new MatTableDataSource<any>();
 
   paymentdataSource = new MatTableDataSource<any>();
+
+  pymttransactionsdataSource = new MatTableDataSource<any>();
 
 
   tabIndex = 0;
@@ -123,6 +130,7 @@ export class FinancialsCustomerPage implements OnInit {
       this.reloadSaleInvoiceByCustomer();
       this.reloadCustomerLedger();
       this.reloadPaymentsByCustomer();
+      this.reloadPymtTransactionByCustomer();
     }
   }
 
@@ -154,7 +162,78 @@ export class FinancialsCustomerPage implements OnInit {
     this.saleInvoicedataSource.paginator = this.invoiceTablePaginator;
     this.paymentdataSource.paginator = this.pymtTablePaginator;
     this.ledgerdataSource.paginator = this.ledgerTablePaginator;
+
+    this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
   }
+
+  applyFilter3(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.ledgerdataSource.filter = filterValue;
+
+    if (this.ledgerdataSource.filteredData.length > 0) {
+      this.isTableHasData = true;
+    } else {
+      this.isTableHasData = false;
+    }
+
+  }
+
+  applyFilter2(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.paymentdataSource.filter = filterValue;
+
+    if (this.paymentdataSource.filteredData.length > 0) {
+      this.isTableHasData = true;
+    } else {
+      this.isTableHasData = false;
+    }
+
+  }
+
+  applyFilter1(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.saleInvoicedataSource.filter = filterValue;
+
+    if (this.saleInvoicedataSource.filteredData.length > 0) {
+      this.isTableHasData = true;
+    } else {
+      this.isTableHasData = false;
+    }
+
+  }
+
+  applyFilter4(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.pymttransactionsdataSource.filter = filterValue;
+
+    if (this.pymttransactionsdataSource.filteredData.length > 0) {
+      this.isTableHasData = true;
+    } else {
+      this.isTableHasData = false;
+    }
+
+  }
+
+  resetTab4() {
+    this.searchbartab4.value = '';
+  }
+
+  resetTab2() {
+    this.searchbartab2.value = '';
+  }
+
+  resetTab3() {
+    this.searchbartab3.value = '';
+  }
+
+  resetTab1() {
+    this.searchbartab1.value = '';
+  }
+
 
   async tabClick($event) {
 
@@ -165,6 +244,8 @@ export class FinancialsCustomerPage implements OnInit {
       this.reloadPaymentsByCustomer();
     } else if ($event.index === 2) {
       this.reloadCustomerLedger();
+    } else if ($event.index === 3) {
+      this.reloadPymtTransactionByCustomer();
     }
 
     this._cdr.markForCheck();
@@ -213,6 +294,28 @@ export class FinancialsCustomerPage implements OnInit {
       });
 
   }
+
+
+  reloadPymtTransactionByCustomer() {
+
+    this._commonApiService.getPymtTransactionByCustomer(this.center_id, this.customer_id).subscribe(
+      (data: any) => {
+        // DnD - code to add a "key/Value" in every object of array
+        this.pymttransactionsdataSource.data = data.map(el => {
+          var o = Object.assign({}, el);
+          o.isExpanded = false;
+          return o;
+        })
+
+        this.pymttransactionsdataSource.sort = this.sort;
+        this.pageLength = data.length;
+
+        this._cdr.markForCheck();
+
+      });
+
+  }
+
 
   viewAllCustomers() {
     this._router.navigate([`/home/view-customers`]);
