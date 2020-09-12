@@ -48,7 +48,7 @@ export class PurchasePage implements OnInit {
 
   // test1: any;
   vendor_state_code: any;
-  center_state_code: any
+  // center_state_code: any
   i_gst: any;
   vendordata: any;
   submitForm: FormGroup;
@@ -68,7 +68,7 @@ export class PurchasePage implements OnInit {
 
   tax_percentage: any;
   taxable_value: any;
-  center_id: any;
+  // center_id: any;
 
   removeRowArr = [];
   deletedRowArr = [];
@@ -90,6 +90,8 @@ export class PurchasePage implements OnInit {
   lineItemData: any;
 
   userdata$: Observable<User>;
+  userdata: any;
+
   ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
   @ViewChild('invno', { static: false }) inputEl: ElementRef;
@@ -122,10 +124,10 @@ export class PurchasePage implements OnInit {
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
-
+        this.userdata = data;
         this._authservice.setCurrentMenu("Purchase");
-        this.center_id = data.center_id;
-        this.center_state_code = data.code;
+        //  this.center_id = data.center_id;
+        // this.center_state_code = data.code;
         this.ready = 1;
 
         this._cdr.markForCheck();
@@ -193,7 +195,7 @@ export class PurchasePage implements OnInit {
 
       this._cdr.markForCheck();
 
-      this._commonApiService.getVendorDetails(this.center_id, this.rawPurchaseData[0].vendor_id).subscribe((vendData: any) => {
+      this._commonApiService.getVendorDetails(this.userdata.center_id, this.rawPurchaseData[0].vendor_id).subscribe((vendData: any) => {
 
         this.vendordata = vendData[0];
         this.vendor_state_code = vendData[0].code;
@@ -228,7 +230,7 @@ export class PurchasePage implements OnInit {
 
   init() {
     this.submitForm = this._fb.group({
-      centerid: new FormControl(this.center_id),
+      centerid: new FormControl(this.userdata.center_id),
       purchaseid: new FormControl('', Validators.required),
       vendor: new FormControl(null, Validators.required),
       invoiceno: new FormControl(null, Validators.required),
@@ -317,7 +319,7 @@ export class PurchasePage implements OnInit {
         console.log(id);
         search = id;
         if (id != null && id.length >= 2) {
-          return this._commonApiService.getVendorInfo({ "centerid": this.center_id, "searchstr": id });
+          return this._commonApiService.getVendorInfo({ "centerid": this.userdata.center_id, "searchstr": id });
         } else {
           return empty();
         }
@@ -354,7 +356,7 @@ export class PurchasePage implements OnInit {
       switchMap(id => {
 
         if (id != null && id.length >= 2) {
-          return this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstr": id });
+          return this._commonApiService.getProductInfo({ "centerid": this.userdata.center_id, "searchstr": id });
         } else {
           return empty();
         }
@@ -592,7 +594,7 @@ export class PurchasePage implements OnInit {
 
   setTaxSegment(taxrate: number) {
 
-    if (this.vendor_state_code !== this.center_state_code) {
+    if (this.vendor_state_code !== this.userdata.code) {
       this.i_gst = true;
       this.igst = taxrate;
       this.cgst = 0;
@@ -606,7 +608,7 @@ export class PurchasePage implements OnInit {
   }
 
   setTaxLabel() {
-    if (this.vendor_state_code !== this.center_state_code) {
+    if (this.vendor_state_code !== this.userdata.code) {
       this.i_gst = true;
 
     } else {
@@ -1191,7 +1193,7 @@ export class PurchasePage implements OnInit {
       ).subscribe((data: any) => {
 
         if (data !== 'close') {
-          this._commonApiService.getVendorDetails(this.center_id, data.body.id).subscribe((vendData: any) => {
+          this._commonApiService.getVendorDetails(this.userdata.center_id, data.body.id).subscribe((vendData: any) => {
 
             this.vendordata = vendData[0];
 
