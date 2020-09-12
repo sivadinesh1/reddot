@@ -12,7 +12,6 @@
 						formControlName="vendorctrl"
 						[readOnly]="vendorselected"
 						#typehead1
-						autofocus
 						required
 						matTooltipPosition="after"
 						tabindex="1"
@@ -301,14 +300,14 @@
 							<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')"> Invalid product code </mat-error>
 						</mat-form-field>
 					</div>
-					<!-- <div>
+					<div>
 						<mat-form-field class="example-full-width">
-							<mat-label>Price</mat-label>
+							<mat-label>Purchase Price</mat-label>
 							<input matInput type="number" min="1" max="100000" formControlName="temppurchaseprice" required />
-							<mat-hint matTooltip="Info about the action">Hint: Max 1000</mat-hint>
+
 							<mat-error *ngIf="submitForm.controls['temppurchaseprice'].hasError('required')"> Required feild </mat-error>
 						</mat-form-field>
-					</div> -->
+					</div>
 					<div>
 						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>

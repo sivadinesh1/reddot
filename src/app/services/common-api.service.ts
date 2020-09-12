@@ -483,6 +483,11 @@ export class CommonApiService {
   }
 
 
+  getPymtTransactionsByCenter(center_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-pymt-transactions-center/${center_id}`);
+  }
+
+
   getSaleInvoiceByCenter(center_id) {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-sale-invoice-center/${center_id}`);
   }

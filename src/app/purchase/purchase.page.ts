@@ -1243,7 +1243,7 @@ export class PurchasePage implements OnInit {
 
       return false;
     }
-
+    debugger;
     if (this.submitForm.value.temppurchaseprice === '' || this.submitForm.value.temppurchaseprice === '0' ||
       this.submitForm.value.temppurchaseprice === null) {
       this.submitForm.controls['temppurchaseprice'].setErrors({ 'required': true });

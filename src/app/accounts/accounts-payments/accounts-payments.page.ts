@@ -45,10 +45,12 @@ export class AccountsPaymentsPage implements OnInit {
 
   @ViewChild('searchbartab2', { static: true }) searchbartab2: IonSearchbar;
   @ViewChild('searchbartab1', { static: true }) searchbartab1: IonSearchbar;
+  @ViewChild('searchbartab3', { static: true }) searchbartab3: IonSearchbar;
 
 
   @ViewChild('InvoiceTablePaginator') invoiceTablePaginator: MatPaginator;
   @ViewChild('PaymentTablePaginator') pymtTablePaginator: MatPaginator;
+  @ViewChild('PymtTransactionTablePaginator') pymttransactionTablePaginator: MatPaginator;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -56,11 +58,13 @@ export class AccountsPaymentsPage implements OnInit {
 
 
   // table display columns
-  saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paymentstatus', 'pymtmodename', 'paidamt', 'balamt', 'paybtn'];
+  saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
   paymentDisplayedColumns: string[] = ['invoiceno', 'invoicedate', 'customername', 'pymtmodename', 'pymtdate', 'paymentno', 'paidamt'];
+  pymtTxnDisplayedColumns: string[] = ['custname', 'pymtno', 'pymtdate', 'paidamt', 'paymode', 'payref'];
 
   // data sources
   paymentdataSource = new MatTableDataSource<any>();
+  pymttransactionsdataSource = new MatTableDataSource<any>();
   saleInvoicedataSource = new MatTableDataSource<any>();
 
   tabIndex = 0;
@@ -105,6 +109,7 @@ export class AccountsPaymentsPage implements OnInit {
 
       this.reloadSaleInvoiceByCenter(this.userdata.center_id);
       this.reloadPaymentsByCenter(this.userdata.center_id);
+      this.reloadTransactionsByCenter(this.userdata.center_id);
     }
   }
 
@@ -117,6 +122,7 @@ export class AccountsPaymentsPage implements OnInit {
   ngAfterViewInit() {
     this.saleInvoicedataSource.paginator = this.invoiceTablePaginator;
     this.paymentdataSource.paginator = this.pymtTablePaginator;
+    this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
   }
 
 
@@ -127,6 +133,8 @@ export class AccountsPaymentsPage implements OnInit {
       this.reloadSaleInvoiceByCenter(this.userdata.center_id);
     } else if ($event.index === 1) {
       this.reloadPaymentsByCenter(this.userdata.center_id);
+    } else if ($event.index === 2) {
+      this.reloadTransactionsByCenter(this.userdata.center_id);
     }
 
     this._cdr.markForCheck();
@@ -136,6 +144,12 @@ export class AccountsPaymentsPage implements OnInit {
 
   resetTab2() {
     this.searchbartab2.value = '';
+
+
+  }
+
+  resetTab3() {
+    this.searchbartab3.value = '';
 
 
   }
@@ -159,13 +173,26 @@ export class AccountsPaymentsPage implements OnInit {
 
   }
 
+  applyFilter3(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.pymttransactionsdataSource.filter = filterValue;
+
+    if (this.pymttransactionsdataSource.filteredData.length > 0) {
+      this.isTableHasData = true;
+    } else {
+      this.isTableHasData = false;
+    }
+
+  }
+
 
   applyFilterTab1(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     this.saleInvoicedataSource.filter = filterValue;
 
-    if (this.paymentdataSource.filteredData.length > 0) {
+    if (this.saleInvoicedataSource.filteredData.length > 0) {
       this.isTableHasData = true;
     } else {
       this.isTableHasData = false;
@@ -192,6 +219,25 @@ export class AccountsPaymentsPage implements OnInit {
 
       });
 
+  }
+
+  reloadTransactionsByCenter(center_id) {
+    this._commonApiService.getPymtTransactionsByCenter(center_id).subscribe(
+      (data: any) => {
+        debugger;
+        // DnD - code to add a "key/Value" in every object of array
+        this.pymttransactionsdataSource.data = data.map(el => {
+          var o = Object.assign({}, el);
+          o.isExpanded = false;
+          return o;
+        })
+
+        this.pymttransactionsdataSource.sort = this.sort;
+        this.pageLength = data.length;
+
+        this._cdr.markForCheck();
+
+      });
   }
 
 

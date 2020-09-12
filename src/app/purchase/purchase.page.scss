@@ -201,13 +201,13 @@
 
 .main-add {
 	display: grid;
-	grid-template-columns: 2fr minmax(350px, 450px);
+	grid-template-columns: 2fr minmax(300px, 350px);
 
 	background-color: #7e8bb1;
 
 	.left {
 		display: grid;
-		grid-template-columns: 1fr minmax(80px, 100px) 150px;
+		grid-template-columns: 1fr 120px minmax(80px, 100px) 150px;
 		align-items: center;
 		grid-gap: 10px;
 		background-color: #e8e8e8;
