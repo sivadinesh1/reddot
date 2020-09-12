@@ -98,11 +98,11 @@ export class LeftMenuComponent implements OnInit {
   routeToDashboard() {
 
     if (this.userdata.role === 'ADMIN') {
-      this.clickedItem = name;
+      this.clickedItem = "dashboard";
       this._router.navigateByUrl("/home/admin-dashboard");
       this._cdr.markForCheck();
     } else {
-      this.clickedItem = name;
+      this.clickedItem = "dashboard";
       this._router.navigateByUrl("home/dashboard");
       this._cdr.markForCheck();
     }

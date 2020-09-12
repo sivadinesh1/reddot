@@ -283,9 +283,14 @@ export class AccountsReceivablesComponent implements OnInit {
   }
 
   getPosts(event) {
+
+    const control = <FormArray>this.submitForm.controls['accountarr'];
+    control.removeAt(0);
+
+
     this.submitForm.patchValue({
       customerid: event.option.value.id,
-      customer: event.option.value.name
+      customer: event.option.value.name,
     });
 
     this.customer = event.option.value;
