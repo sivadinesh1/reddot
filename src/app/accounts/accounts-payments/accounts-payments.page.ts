@@ -56,7 +56,7 @@ export class AccountsPaymentsPage implements OnInit {
 
 
   // table display columns
-  saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
+  saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paymentstatus', 'pymtmodename', 'paidamt', 'balamt', 'paybtn'];
   paymentDisplayedColumns: string[] = ['invoiceno', 'invoicedate', 'customername', 'pymtmodename', 'pymtdate', 'paymentno', 'paidamt'];
 
   // data sources

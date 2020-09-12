@@ -134,7 +134,7 @@ export class SalesPage implements OnInit {
   // TAB navigation for product list
   @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
 
-  @ViewChild('plist', { static: true }) plist: any;
+  @ViewChild('plist') plist: any;
   @ViewChild('newrow', { static: true }) newrow: any;
 
   // TAB navigation for customer list
@@ -1711,11 +1711,11 @@ export class SalesPage implements OnInit {
 
 
   logScrolling(event) {
-    if (this.autoTrigger1.panelOpen) {
+    if (this.autoTrigger1 && this.autoTrigger1.panelOpen) {
       this.autoTrigger1.closePanel();
     }
 
-    if (this.autoTrigger.panelOpen) {
+    if (this.autoTrigger && this.autoTrigger.panelOpen) {
       this.autoTrigger.closePanel();
     }
 

@@ -16,7 +16,7 @@
 							matTooltip="Type to filter the Vendor list"
 							matTooltipPosition="after"
 						/>
-						<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+						<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
 							<mat-icon>close</mat-icon>
 						</button>
 						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
@@ -130,7 +130,7 @@
 			<div class="item">{{item.invoice_date}}</div>
 			<div class="item">{{item.vendor_name}}</div>
 			<div class="item txt-right-align">{{item.no_of_items}}</div>
-			<div class="item txt-right-align">{{item.total_value | number:'1.2-2'}}</div>
+			<div class="item txt-right-align">{{item.net_total | number:'1.2-2'}}</div>
 			<div class="item txt-center-align">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
 			<div class="item cursor txt-center-align">
 				<mat-icon [ngStyle]="{'color':'blue'}" (click)="goPurchaseEditScreen(item)">edit </mat-icon>

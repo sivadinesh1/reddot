@@ -16,7 +16,7 @@
 							matTooltip="Type to filter the Customer list"
 							matTooltipPosition="after"
 						/>
-						<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+						<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
 							<mat-icon>close</mat-icon>
 						</button>
 						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">

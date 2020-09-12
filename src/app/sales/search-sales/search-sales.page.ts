@@ -295,7 +295,7 @@ export class SearchSalesPage implements OnInit {
     this.sumNumItems = 0;
 
     this.sumTotalValue = this.filteredValues.map(item => {
-      return item.total_value;
+      return item.net_total;
     })
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 

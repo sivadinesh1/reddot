@@ -16,8 +16,7 @@ export class BrandAddDialogComponent implements OnInit {
 
   center_id: any;
   submitForm: any;
-  bexists: any;
-
+  errmsg: any;
 
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
@@ -41,21 +40,34 @@ export class BrandAddDialogComponent implements OnInit {
 
 
   onSubmit() {
-
+    this.errmsg = "";
     if (!this.submitForm.valid) {
       return false;
     }
 
-    if (this.bexists) {
-      return false;
+    if (this.submitForm.value.name.length > 0) {
+      this._commonApiService.isBrandExists(this.submitForm.value.name).subscribe((data: any) => {
+
+        if (data.result.length > 0) {
+          if (data.result[0].id > 0) {
+            this.errmsg = "Brand already exists!"
+          }
+        } else {
+          this._commonApiService.addBrand(this.submitForm.value).subscribe((data: any) => {
+
+            if (data.body.result === 'success') {
+              this.dialogRef.close('success');
+            }
+          });
+        }
+
+        this._cdr.markForCheck();
+      });
     }
 
-    this._commonApiService.addBrand(this.submitForm.value).subscribe((data: any) => {
 
-      if (data.body.result === 'success') {
-        this.dialogRef.close('success');
-      }
-    });
+
+
 
   }
 
@@ -76,24 +88,6 @@ export class BrandAddDialogComponent implements OnInit {
   }
 
 
-  isBrandExists() {
-
-    if (this.submitForm.value.name.length > 0) {
-      this._commonApiService.isBrandExists(this.submitForm.value.name).subscribe((data: any) => {
-
-        if (data.result.length > 0) {
-          if (data.result[0].id > 0) {
-            this.bexists = true;
-          }
-        } else {
-          this.bexists = false;
-        }
-
-        this._cdr.markForCheck();
-      });
-    }
-
-  }
 
 
 }

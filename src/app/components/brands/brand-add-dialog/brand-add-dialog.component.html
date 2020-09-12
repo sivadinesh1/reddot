@@ -11,12 +11,12 @@
 			<div class="name">
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Name</mat-label>
-					<input matInput (blur)="isBrandExists()" formControlName="name" required />
+					<input matInput formControlName="name" required />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
-				<div *ngIf="bexists" class="error">Already Exists</div>
 			</div>
 		</div>
+		<div *ngIf="errmsg" class="error">Already Exists</div>
 
 		<div style="text-align: center; padding: 16px">
 			<button mat-raised-button color="primary" type="submit">+ Add New Brand</button>

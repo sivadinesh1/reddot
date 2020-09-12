@@ -238,7 +238,7 @@ export class AccountsReceivablesComponent implements OnInit {
   }
 
   getBalanceDue() {
-    this.balancedue = this.invoiceamount - (this.paidamount + this.customer.credit_amt + this.summed);
+    this.balancedue = (this.invoiceamount - (this.paidamount + this.customer.credit_amt + this.summed)).toFixed(2);
 
     if (this.balancedue < 0) {
       this.errmsg = "Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit."
@@ -299,9 +299,9 @@ export class AccountsReceivablesComponent implements OnInit {
 
     this.origCustomerUnpaidInvoices = JSON.parse(JSON.stringify(this.customerUnpaidInvoices));
 
-    this.invoiceamount = this.customerUnpaidInvoices.reduce(function (acc, curr) {
+    this.invoiceamount = (this.customerUnpaidInvoices.reduce(function (acc, curr) {
       return acc + curr.invoice_amt;
-    }, 0);
+    }, 0)).toFixed(2);
 
     this.paidamount = this.customerUnpaidInvoices.reduce(function (acc, curr) {
       return acc + curr.paid_amount;

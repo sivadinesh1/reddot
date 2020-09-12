@@ -17,7 +17,7 @@
 							matTooltip="Type to filter the Customer list"
 							matTooltipPosition="after"
 						/>
-						<button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+						<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
 							<mat-icon>close</mat-icon>
 						</button>
 						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
@@ -141,7 +141,7 @@
 			<div class="item">{{item.sale_type === "gstinvoice" ? "Invoiced" : "Stock Issued"}}</div>
 			<div class="item">{{item.customer_name}}</div>
 			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
-			<div class="item" style="text-align: right">{{item.total_value | number:'1.2-2'}}</div>
+			<div class="item" style="text-align: right">{{item.net_total | number:'1.2-2'}}</div>
 			<div class="item" style="text-align: center">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
 			<div class="item cursor" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'blue'}" (click)="goSalesEditScreen(item)">edit </mat-icon>

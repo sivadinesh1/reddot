@@ -60,7 +60,7 @@ export class ProcessEnquiryPage implements OnInit {
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
-  displayedColumns: string[] = ['edit', 'prodinfo', 'avlstock', 'rackno', 'alotqty', 'notes', 'reqqty', 'processed'];
+  displayedColumns: string[] = ['prodinfo', 'avlstock', 'rackno', 'alotqty', 'notes', 'reqqty', 'processed'];
   dataSource = new MatTableDataSource<any>();
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;

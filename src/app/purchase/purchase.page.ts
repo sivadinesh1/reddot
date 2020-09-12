@@ -1125,11 +1125,11 @@ export class PurchasePage implements OnInit {
   }
 
   logScrolling(event) {
-    if (this.autoTrigger1.panelOpen) {
+    if (this.autoTrigger1 && this.autoTrigger1.panelOpen) {
       this.autoTrigger1.closePanel();
     }
 
-    if (this.autoTrigger.panelOpen) {
+    if (this.autoTrigger && this.autoTrigger.panelOpen) {
       this.autoTrigger.closePanel();
     }
 
