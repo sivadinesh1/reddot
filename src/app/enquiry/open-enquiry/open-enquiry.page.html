@@ -2,9 +2,7 @@
 	<div class="content">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goEnquiryScreen()" style="cursor: pointer">
-					<span style="font-size: 24px; color: #333">INQUIRIES</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333">+</span>
-				</div>
+				<div class="title" (click)="goEnquiryScreen()" style="cursor: pointer">INQUIRIES&nbsp;&nbsp;&nbsp;+</div>
 				<div class="customers" style="padding-top: 20px; text-align: right">
 					<mat-form-field class="width">
 						<mat-label>Search</mat-label>
@@ -76,7 +74,9 @@
 		</form>
 
 		<div style="display: flex; justify-content: space-between">
-			<div style="align-self: center; font-size: 14px; padding-left: 16px">All Inquiries ({{(enquiries$| async)?.length }}) records</div>
+			<div style="align-self: center; font-size: 16px; padding: 16px 16px 0px 32px; color: darkblue">
+				All Inquiries ({{(enquiries$| async)?.length }}) records
+			</div>
 			<div>
 				<button mat-button color="accent" (click)="openBackOrder()">Backorder Report</button>
 			</div>
@@ -157,7 +157,7 @@
 				</div>
 
 				<div *ngIf="item.estatus === 'D' ">
-					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="processEnquiry(item)">
+					<div style="display: flex; justify-content: space-between; cursor: pointer">
 						<div style="color: blue; cursor: pointer">In Progress</div>
 						<div style="display: flex">
 							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="delete(item)"

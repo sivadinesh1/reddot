@@ -78,23 +78,4 @@ export class AppComponent implements OnInit {
   }
 
 
-  // @HostListener('window:beforeunload', ['$event'])
-  // beforeUnloadHander($event) {
-  //   $event.returnValue = 'Your changes will not be saved';
-
-  //   return true;
-
-  // }
-
-  @HostListener('window:popstate', ['$event'])
-  onPopState($event) {
-    console.log('Back button pressed');
-    //Here you can handle your modal
-    // issue: Modal cancel button does not stop navigation back.
-    // let feedback = this._loadingservice.confirm("Your Data will be lost.");
-    // console.log('feedback ' + feedback);
-
-    $event.returnValue = true;
-  }
-
 }

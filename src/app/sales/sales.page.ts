@@ -1720,7 +1720,12 @@ export class SalesPage implements OnInit {
     }
 
   }
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHander($event) {
+    $event.returnValue = 'Your changes will not be saved';
 
+    return true;
 
+  }
 
 }

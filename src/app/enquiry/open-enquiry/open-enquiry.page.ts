@@ -298,7 +298,7 @@ export class OpenEnquiryPage implements OnInit {
           dialogConfigSuccess.autoFocus = true;
           dialogConfigSuccess.width = "25%";
           dialogConfigSuccess.height = "25%";
-          dialogConfigSuccess.data = "Inquiry deleted successfully";
+          dialogConfigSuccess.data = "Inquiry deleted and moved to cancelled status";
 
           const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 

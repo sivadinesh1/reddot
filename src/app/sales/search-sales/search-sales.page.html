@@ -2,9 +2,7 @@
 	<div class="search-wrap">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer">
-					<span style="font-size: 24px; color: #333">SALES</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333">+</span>
-				</div>
+				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer">SALES&nbsp;&nbsp;&nbsp;+</div>
 
 				<div class="customers">
 					<mat-form-field class="mat-auto-width">
@@ -86,7 +84,9 @@
 			</div>
 		</form>
 		<div style="display: flex; justify-content: space-between">
-			<div style="align-self: center; font-size: 14px; padding: 16px">All Orders ({{(sales$| async)?.length }}) records</div>
+			<div style="align-self: center; font-size: 16px; padding: 16px 16px 0px 32px; color: darkblue">
+				All Orders ({{(sales$| async)?.length }}) records
+			</div>
 			<div>&nbsp;</div>
 		</div>
 		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
@@ -97,7 +97,7 @@
 				</mat-tab> -->
 
 				<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 
@@ -109,15 +109,40 @@
 		</div>
 	</div>
 
-	<ng-template #MsgRef>
+	<ng-template #draftMsgRef>
 		<div class="header header-style">
+			<div>CUSTOMER NAME</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
 			<div>SALE TYPE</div>
-			<div>CUSTOMER NAME</div>
+
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
 			<div class="txt-center-align">STATUS</div>
+			<div>&nbsp;</div>
+		</div>
+		<div class="headerRow" style="background-color: #dfdfdf">
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div style="font-size: 14px; font-weight: 500">&nbsp;</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+		</div>
+	</ng-template>
+
+	<ng-template #MsgRef>
+		<div class="header header-style">
+			<div>CUSTOMER NAME</div>
+			<div>INVOICE #</div>
+			<div>INV DATE</div>
+			<div>SALE TYPE</div>
+
+			<div class="txt-right-align"># ITEMS</div>
+			<div class="txt-right-align">TOTAL VALUE</div>
+			<!-- <div class="txt-center-align">STATUS</div> -->
 			<div>&nbsp;</div>
 			<div style="text-align: center"><span>REVISIONS</span></div>
 		</div>
@@ -127,8 +152,8 @@
 			<div>&nbsp;</div>
 			<div style="font-size: 14px; font-weight: 500">&nbsp;</div>
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | number:'1.2-2'}}</div>
-			<div>&nbsp;</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
+			<!-- <div>&nbsp;</div> -->
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 		</div>
@@ -136,13 +161,14 @@
 
 	<ng-template #MsgRef1>
 		<div *ngFor="let item of filteredValues  " class="listItem">
+			<div class="item">{{item.customer_name}}</div>
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>
-			<div class="item">{{item.sale_type === "gstinvoice" ? "Invoiced" : "Stock Issued"}}</div>
-			<div class="item">{{item.customer_name}}</div>
+			<div class="item">{{item.sale_type === "gstinvoice" ? "Invoice" : "Stock Issue"}}</div>
+
 			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
-			<div class="item" style="text-align: right">{{item.net_total | number:'1.2-2'}}</div>
-			<div class="item" style="text-align: center">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div>
+			<div class="item" style="text-align: right">{{item.net_total | currency: "INR"}}</div>
+			<!-- <div class="item" style="text-align: center">{{item.status === 'D' ? 'Draft' : 'Fullfilled'}}</div> -->
 			<div class="item cursor" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'blue'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
 			</div>

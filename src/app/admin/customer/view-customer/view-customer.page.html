@@ -46,11 +46,21 @@
 						</ng-container>
 
 						<ng-container matColumnDef="financial">
-							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+							<th mat-header-cell *matHeaderCellDef style="text-align: left">Financials</th>
 							<td mat-cell *matCellDef="let element" class="m-card-sub-title" data-label="Form type">
-								<div (click)="goCustomerFinancials(element)" style="display: flex; line-height: 24px; cursor: pointer">
-									<img src="/assets/svg/money.svg" width="22px" height="22px" />&nbsp;
-									<span style="color: blue"> Financials</span>
+								<div
+									(click)="goCustomerFinancials(element)"
+									style="display: grid; grid-template-columns: 50px 1fr; line-height: 24px; cursor: pointer"
+								>
+									<div style="place-self: center"><img src="/assets/svg/money.svg" width="22px" height="22px" />&nbsp;</div>
+									<div>
+										<div>
+											<span style="color: grey; font-size: 13px"> Credit</span>
+										</div>
+										<div>
+											<span style="color: blue"> {{element.credit_amt | nullzero | currency: "INR"}}</span>
+										</div>
+									</div>
 								</div>
 							</td>
 						</ng-container>

@@ -41,6 +41,9 @@ export class FinancialsCustomerPage implements OnInit {
   customersOriglist: any;
 
   customerdata: any;
+  totalOutstandingBalance = 0;
+
+  customer_credit_amount = 0;
 
   @ViewChild('searchbartab1', { static: true }) searchbartab1: IonSearchbar;
   @ViewChild('searchbartab2', { static: true }) searchbartab2: IonSearchbar;
@@ -65,7 +68,7 @@ export class FinancialsCustomerPage implements OnInit {
   displayedColumns: string[] = ['ledgerdate', 'ledgerrefid', 'type', 'creditamt', 'debitamt', 'balamt'];
   saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
 
-  paymentDisplayedColumns: string[] = ['pymtdate', 'paymentno', 'invoiceno', 'invoicedate', 'bankref', 'pymtref', 'paidamt'];
+  paymentDisplayedColumns: string[] = ['pymtdate', 'paymentno', 'invoiceno', 'invoicedate', 'bankref', 'pymtref', 'invoiceamt', 'nowpaid', 'paidamt'];
 
   pymtTxnDisplayedColumns: string[] = ['pymtdate', 'pymtno', 'paidamt', 'paymode', 'payref'];
 
@@ -104,6 +107,7 @@ export class FinancialsCustomerPage implements OnInit {
     this._route.data.subscribe(data => {
       this.customerdata = data['customerdata'][0];
       this.customer_id = this.customerdata.id;
+      this.customer_credit_amount = this.customerdata.credit_amt;
 
     });
 
@@ -131,13 +135,14 @@ export class FinancialsCustomerPage implements OnInit {
       this.reloadCustomerLedger();
       this.reloadPaymentsByCustomer();
       this.reloadPymtTransactionByCustomer();
+      this.updateCustomerCreditBalance();
     }
   }
 
   reloadCustomerLedger() {
     this._commonApiService.getLedgerCustomer(this.center_id, this.customer_id).subscribe(
       (data: any) => {
-
+        this.totalOutstandingBalance = data[0].balance_amt;
         // DnD - code to add a "key/Value" in every object of array
         this.ledgerdataSource.data = data.map(el => {
           var o = Object.assign({}, el);
@@ -361,6 +366,15 @@ export class FinancialsCustomerPage implements OnInit {
       });
 
 
+  }
+
+
+  updateCustomerCreditBalance() {
+    this._commonApiService
+      .getCustomerDetails(this.center_id, this.customer_id).subscribe((data: any) => {
+        this.customer_credit_amount = data.credit_amt;
+        this._cdr.markForCheck();
+      });
   }
 
 

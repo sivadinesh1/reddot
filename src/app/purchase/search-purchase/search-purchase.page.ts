@@ -139,7 +139,19 @@ export class SearchPurchasePage implements OnInit {
     this.tabIndex = 0;
     this._cdr.markForCheck();
 
-    this.search();
+
+  }
+
+
+  async presentAlert(msg: string) {
+    const alert = await this.alertController.create({
+      header: 'Alert',
+
+      message: msg,
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
 
@@ -149,7 +161,7 @@ export class SearchPurchasePage implements OnInit {
       vendorctrl: 'All Customers'
     });
     this._cdr.markForCheck();
-    this.search();
+
   }
 
   async search() {
@@ -209,18 +221,16 @@ export class SearchPurchasePage implements OnInit {
     this.fromdate = $event.target.value;
   }
 
-  // delete(item) {
-  //   this._commonApiService.deletePurchaseData(item.id).subscribe((data: any) => {
-  //     this.init();
-
-  //   })
-  // }
-
   delete(item) {
     this._commonApiService.deletePurchaseData(item.id).subscribe((data: any) => {
 
       if (data.result === 'success') {
         this._commonApiService.deletePurchaseMaster(item.id).subscribe((data1: any) => {
+
+          if (data1.result === 'success') {
+            this.presentAlert('Draft Purchase Deleted!');
+          }
+
           this.init();
         });
       }

@@ -2,9 +2,7 @@
 	<div class="search-wrap">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goPurchaseAddScreen()" style="cursor: pointer">
-					<span style="font-size: 24px; color: #333">PURCHASE</span>&nbsp;&nbsp;&nbsp;<span style="font-size: 24px; color: #333">+</span>
-				</div>
+				<div class="title" (click)="goPurchaseAddScreen()" style="cursor: pointer">PURCHASE&nbsp;&nbsp;&nbsp;+</div>
 				<div class="vendors">
 					<mat-form-field class="width">
 						<mat-label>Search</mat-label>
@@ -77,7 +75,9 @@
 		</form>
 
 		<div style="display: flex; justify-content: space-between">
-			<div style="align-self: center; font-size: 14px; padding: 16px">All Orders ({{(purchases$| async)?.length }}) records</div>
+			<div style="align-self: center; font-size: 16px; padding: 16px 16px 0px 32px; color: darkblue">
+				All Orders ({{(purchases$| async)?.length }}) records
+			</div>
 			<div>&nbsp;</div>
 		</div>
 
@@ -110,7 +110,7 @@
 			<div class="txt-right-align">TOTAL VALUE</div>
 			<div class="txt-center-align">STATUS</div>
 			<div>&nbsp;</div>
-			<div class="txt-center-align">REVISIONS</div>
+			<div class="txt-center-align">&nbsp;</div>
 		</div>
 		<div class="headerRow">
 			<div>&nbsp;</div>

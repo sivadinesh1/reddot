@@ -66,10 +66,16 @@
 
 .title {
 	font-size: 24px;
-	color: #222222;
-	background-color: #e2e2e2;
+	background-color: #6b82b5;
+	color: #fff;
+	opacity: 0.6;
 	text-align: center;
 	line-height: 73px;
+}
+.title:hover {
+	background-color: #6b82b5;
+	opacity: 1;
+	transition: 0.3s;
 }
 
 .vendors {

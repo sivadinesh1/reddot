@@ -18,8 +18,9 @@
 .listItem,
 .headerRow {
 	display: grid;
-	grid-template-columns: 180px 150px 1fr 2fr 1fr 1fr 1fr 1fr 80px;
+	grid-template-columns: 2fr 180px 150px 1fr 1fr 1fr 1fr 80px;
 	padding: 5px;
+	align-items: center;
 }
 
 .header-style {
@@ -53,10 +54,16 @@
 
 .title {
 	font-size: 24px;
-	color: #222222;
-	background-color: #e2e2e2;
+	background-color: #6b82b5;
+	color: #fff;
+	opacity: 0.6;
 	text-align: center;
 	line-height: 73px;
+}
+.title:hover {
+	background-color: #6b82b5;
+	opacity: 1;
+	transition: 0.3s;
 }
 
 .mat-width-ext {

@@ -55,11 +55,11 @@ export class SearchSalesPage implements OnInit {
   userdata$: Observable<User>;
 
   statusList = [{ "id": "all", "value": "All" }, { "id": "D", "value": "Draft" },
-  { "id": "C", "value": "Completed" }
+  { "id": "C", "value": "Fullfilled" }
   ]
 
-  saletypeList = [{ "id": "all", "value": "All" }, { "id": "GI", "value": "Invoiced" },
-  { "id": "SI", "value": "Stock Issued" }]
+  saletypeList = [{ "id": "all", "value": "All" }, { "id": "GI", "value": "Invoice" },
+  { "id": "SI", "value": "Stock Issue" }]
 
   sumTotalValue = 0.00;
   sumNumItems = 0;
