@@ -287,9 +287,10 @@
 												<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ product.description }}</div>
 											</div>
 											<div>
-												<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right">In Stock</div>
+												<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right; color: grey">{{ product.name }}</div>
 												<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
-													{{ product.available_stock }}
+													<span> <img src="/assets/svg/sales.svg" width="18px" height="18px" /></span>
+													<span> &nbsp;{{ product.available_stock }} </span>
 												</div>
 											</div>
 										</div>
