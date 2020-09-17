@@ -238,10 +238,13 @@ export class AccountsReceivablesComponent implements OnInit {
   }
 
   getBalanceDue() {
-    this.balancedue = (this.invoiceamount - (this.paidamount + this.customer.credit_amt + this.summed)).toFixed(2);
+    this.balancedue = (+this.invoiceamount - (+this.paidamount + this.customer.credit_amt + this.summed)).toFixed(2);
 
-    if (this.balancedue < 0) {
+    if (+this.balancedue < 0) {
       this.errmsg = "Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit."
+      this._cdr.markForCheck();
+    } else {
+      this.errmsg = "";
       this._cdr.markForCheck();
     }
   }
