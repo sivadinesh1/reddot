@@ -131,14 +131,14 @@ export class CommonApiService {
   //   return this.httpClient.post<any>(this.restApiUrl + '/api/enquiry/update-giveqty-enquiry-details', body, { observe: 'response' });
   // }
 
-  updateStatusEnquiryDetails(status, enqdetailid) {
+  // updateStatusEnquiryDetails(status, enqdetailid) {
 
-    let body: HttpParams = new HttpParams();
-    body = body.append('status', status);
-    body = body.append('enqdetailid', enqdetailid);
+  //   let body: HttpParams = new HttpParams();
+  //   body = body.append('status', status);
+  //   body = body.append('enqdetailid', enqdetailid);
 
-    return this.httpClient.post<any>(this.restApiUrl + '/api/enquiry/update-status-enquiry-details', body, { observe: 'response' });
-  }
+  //   return this.httpClient.post<any>(this.restApiUrl + '/api/enquiry/update-status-enquiry-details', body, { observe: 'response' });
+  // }
 
 
   draftEnquiry(prodArr) {

@@ -310,7 +310,7 @@ export class AccountsReceivablesComponent implements OnInit {
 
     this.paidamount = this.customerUnpaidInvoices.reduce(function (acc, curr) {
       return acc + curr.paid_amount;
-    }, 0);
+    }, 0).toFixed(2);
 
 
     this.iscustomerselected = true;
