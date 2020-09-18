@@ -92,21 +92,21 @@ export class SalesPage implements OnInit {
   id: string;
   fromEnquiry: any;
 
-  GST_18_sub_total: any;
-  GST_18_total_value: any;
-  GST_18_disc: any;
-  GST_18_cgst: any;
-  GST_18_sgst: any;
-  GST_18_igst: any;
-  GST_18_gst: any;
+  // GST_18_sub_total: any;
+  // GST_18_total_value: any;
+  // GST_18_disc: any;
+  // GST_18_cgst: any;
+  // GST_18_sgst: any;
+  // GST_18_igst: any;
+  // GST_18_gst: any;
 
-  GST_28_sub_total: any;
-  GST_28_total_value: any;
-  GST_28_disc: any;
-  GST_28_cgst: any;
-  GST_28_sgst: any;
-  GST_28_igst: any;
-  GST_28_gst: any;
+  // GST_28_sub_total: any;
+  // GST_28_total_value: any;
+  // GST_28_disc: any;
+  // GST_28_cgst: any;
+  // GST_28_sgst: any;
+  // GST_28_igst: any;
+  // GST_28_gst: any;
 
   testTotal: any;
   invoiceid: any;
