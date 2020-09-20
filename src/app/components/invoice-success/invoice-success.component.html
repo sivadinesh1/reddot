@@ -1,14 +1,12 @@
 <div class="content">
 	<div class="header">
-		<div>
-			Invoice Success!
-		</div>
+		<div>Invoice Success!</div>
 		<div>
 			<img src="/assets/images/svg/close.svg" (click)="cancel()" width="20px" height="20px" />
 		</div>
 	</div>
 	<div class="invoice-details">
-		<div class="inv-det-heading">Invoice Receipt</div>
+		<!-- <div class="inv-det-heading">Invoice Receipt</div>
 		<div>
 			<div>Invoice #</div>
 			<div>abcd</div>
@@ -16,7 +14,7 @@
 		<div>
 			<div>Invoice Date</div>
 			<div>01/01/2001</div>
-		</div>
+		</div> -->
 
 		<div><button mat-stroked-button color="primary">Close</button></div>
 		<div>
@@ -24,7 +22,7 @@
 			<button *ngIf="isPrint" (click)="printActn()" mat-raised-button color="primary">Print Needed?</button>
 		</div>
 
-		<div>
+		<!-- <div>
 			<label id="example-radio-group-label">Pick your favorite season</label>
 			<mat-radio-group class="example-radio-group">
 				<mat-radio-button class="example-radio-button" *ngFor="let season of seasons" [value]="season">
@@ -32,6 +30,6 @@
 				</mat-radio-button>
 			</mat-radio-group>
 			<div>Your favorite season is: {{ favoriteSeason }}</div>
-		</div>
+		</div> -->
 	</div>
 </div>
