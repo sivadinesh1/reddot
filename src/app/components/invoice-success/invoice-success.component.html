@@ -3,7 +3,7 @@
 		<div>Invoice Success!</div>
 		<div>
 			&nbsp;
-			<!-- <img src="/assets/images/svg/close.svg" (click)="cancel()" width="20px" height="20px" /> -->
+			<img src="/assets/images/svg/close.svg" (click)="cancel()" width="20px" height="20px" />
 		</div>
 	</div>
 	<div class="invoice-details">
@@ -17,7 +17,7 @@
 			<div>01/01/2001</div>
 		</div> -->
 
-		<div><button mat-stroked-button color="primary">Close</button></div>
+		<div><button mat-stroked-button color="primary" (click)="cancel()">Close</button></div>
 		<div>
 			<button *ngIf="!isPrint" (click)="printActn()" mat-stroked-button color="primary">Print Needed?</button>
 			<button *ngIf="isPrint" (click)="printActn()" mat-raised-button color="primary">Print Needed?</button>
