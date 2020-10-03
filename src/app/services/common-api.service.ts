@@ -13,6 +13,7 @@ import { Vendor } from '../models/Vendor';
 import { EnquiryDetail } from '../models/EnquiryDetail';
 import { Enquiry } from '../models/Enquiry';
 import { Brand } from '../models/Brand';
+import { DashboardPage } from '../dashboard/dashboard.page';
 
 
 @Injectable({
@@ -495,6 +496,38 @@ export class CommonApiService {
   getSaleInvoiceByCenter(center_id) {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-sale-invoice-center/${center_id}`);
   }
+
+  // DashboardPage
+
+  fetchInquirySummary(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/dashboard/inquiry-summary', submitForm, { observe: 'response' });
+  }
+
+  fetchSalesSummary(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/dashboard/sales-summary', submitForm, { observe: 'response' });
+  }
+
+  fetchPurchaseSummary(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/dashboard/purchase-summary', submitForm, { observe: 'response' });
+  }
+
+  fetchSalesTotal(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/dashboard/sales-total', submitForm, { observe: 'response' });
+  }
+
+  fetchCenterSummary(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/dashboard/center-summary', submitForm, { observe: 'response' });
+  }
+
+  fetchCenterReceivablesSummary(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/dashboard/center-receivables-summary', submitForm, { observe: 'response' });
+  }
+
+  fetchPaymentsByCustomer(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/dashboard/payments-customers', submitForm, { observe: 'response' });
+  }
+
+
 
 }
 

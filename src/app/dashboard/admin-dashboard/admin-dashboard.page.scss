@@ -1,0 +1,61 @@
+.content {
+	display: grid;
+	width: 100%;
+	background-color: #fcfdff;
+}
+
+.card {
+	width: 200px;
+	height: 220px;
+	border: 1px solid blue;
+	border-radius: 10px;
+}
+
+.section1 {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 16px;
+	justify-items: center;
+}
+
+.canvas {
+	display: grid;
+	grid-template-columns: 3fr 1fr;
+}
+
+.rectangle {
+	width: 36px;
+	height: 36px;
+	border-radius: 50px;
+	margin: 10px;
+	background: #fff;
+	display: grid;
+	align-self: center;
+	align-content: center;
+	justify-content: center;
+	opacity: 0.9;
+}
+
+.section2 {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: 16px;
+	justify-items: center;
+	padding: 0px 32px 32px 32px;
+}
+
+.timeline {
+	padding: 10px;
+	font-size: 14px;
+	color: grey;
+	text-align: center;
+}
+
+.selected {
+	color: blue;
+	border-bottom: 1px solid blue;
+}
+
+.horizontal-spacer {
+	padding: 32px;
+}

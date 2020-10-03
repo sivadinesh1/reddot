@@ -1,8 +1,134 @@
 <ion-content>
-	<ion-fab vertical="bottom" horizontal="end" slot="fixed">
-		<ion-fab-button (click)="goEnquiryScreen()">
-			<ion-icon name="add"></ion-icon>
-		</ion-fab-button>
-	</ion-fab>
-	<div>I am a admin dashboard !!!</div>
+	<div class="content">
+		<div style="padding: 16px">Welcome back !!!</div>
+
+		<div class="canvas">
+			<div class="left">
+				<div style="display: flex; justify-content: flex-end; padding: 16px">
+					<div class="timeline">This year</div>
+					<div class="timeline">This month</div>
+					<div class="timeline">This week</div>
+					<div class="timeline selected">Today</div>
+					<div style="text-align: center; padding: 0px 16px; align-self: flex-end"><span class="material-icons"> date_range </span></div>
+				</div>
+				<div class="section1">
+					<div class="card" style="background-color: #094bca">
+						<div style="display: grid; grid-template-columns: 60px 1fr">
+							<div class="rectangle">
+								<img src="/assets/svg/enquiry.svg" width="22px" height="22px" />
+							</div>
+							<div style="color: #fff; font-size: 18px; font-weight: 400; display: grid; align-content: center">Inquiry</div>
+						</div>
+						<div style="display: grid; grid-template-columns: 1fr 1fr">
+							<div style="padding: 10px">
+								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.enquirySummary?.new}}</div>
+								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">New</div>
+							</div>
+
+							<div style="padding: 10px">
+								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.enquirySummary?.draft}}</div>
+								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Draft</div>
+							</div>
+						</div>
+
+						<div style="display: grid; grid-template-columns: 1fr 1fr">
+							<div style="padding: 10px">
+								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.enquirySummary?.executed}}</div>
+								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">New</div>
+							</div>
+
+							<div style="padding: 10px">
+								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.enquirySummary?.invoiceready}}</div>
+								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Draft</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="card" style="background-color: #094bca">
+						<div style="display: grid; grid-template-columns: 60px 1fr">
+							<div class="rectangle">
+								<img src="/assets/svg/sales.svg" width="22px" height="22px" />
+							</div>
+							<div style="color: #fff; font-size: 18px; font-weight: 400; display: grid; align-content: center">Sales</div>
+						</div>
+						<div style="display: grid; grid-template-columns: 1fr 1fr">
+							<div style="padding: 10px">
+								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.salesSummary?.draft}}</div>
+								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Draft</div>
+							</div>
+
+							<div style="padding: 10px">
+								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.salesSummary?.completed}}</div>
+								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Completed</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="card" style="background-color: #094bca">
+						<div style="display: grid; grid-template-columns: 60px 1fr">
+							<div class="rectangle">
+								<img src="/assets/svg/purchase.svg" width="22px" height="22px" />
+							</div>
+							<div style="color: #fff; font-size: 18px; font-weight: 400; display: grid; align-content: center">Purchase</div>
+						</div>
+						<div style="display: grid; grid-template-columns: 1fr 1fr">
+							<div style="padding: 10px">
+								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.purchaseSummary?.draft}}</div>
+								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Draft</div>
+							</div>
+
+							<div style="padding: 10px">
+								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.purchaseSummary?.completed}}</div>
+								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Completed</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="horizontal-spacer">&nbsp;</div>
+				<div style="display: flex; justify-content: flex-end; padding: 16px">
+					<div class="timeline selected">Overview</div>
+					<div class="timeline">Clients</div>
+					<div class="timeline">Account</div>
+					<div class="timeline">Payments</div>
+					<div style="text-align: center; padding: 0px 16px; align-self: flex-end"><span class="material-icons"> date_range </span></div>
+				</div>
+				<div class="section2">
+					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 200px; width: 100%">
+						<div style="background-color: #3246d3; display: grid; align-content: center">
+							<div style="color: #fff; opacity: 0.9; font-size: 24px; text-align: center">{{this?.yearly_turnover | currency: "INR"}}</div>
+							<div style="width: 100px; height: 60px; color: #fff; opacity: 0.9; padding: 10px">Yearly Turnover</div>
+						</div>
+						<div style="background-color: dodgerblue; display: grid; align-content: center">
+							<div style="color: #fff; opacity: 0.9; font-size: 24px; text-align: left; padding: 0px 10px">
+								{{this.centerSummary?.active_customers}}
+							</div>
+							<div style="width: 100px; height: 60px; color: #fff; opacity: 0.9; padding: 10px">Enterprise Clients</div>
+							<div style="color: #fff; opacity: 0.9; font-size: 24px; text-align: left; padding: 0px 10px">
+								{{this.centerSummary?.active_vendors}}
+							</div>
+							<div style="width: 100px; height: 60px; color: #fff; opacity: 0.9; padding: 10px">Suppliers</div>
+						</div>
+					</div>
+					<div style="display: grid; background-color: #fff; width: 100%">
+						<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; justify-items: center; background-color: #fff">
+							<div>
+								<div style="font-size: larger">{{this.salesTotal | currency: "INR"}}</div>
+								<div style="font-size: medium; opacity: 0.9">Today Sales</div>
+							</div>
+							<div>
+								<div style="font-size: larger">{{this.centerReceivablesTotal | currency: "INR"}}</div>
+								<div style="font-size: medium; opacity: 0.9">Receivables Total</div>
+							</div>
+							<div>
+								<div style="font-size: larger">{{this.paymentsTotal | currency: "INR"}}</div>
+								<div style="font-size: medium; opacity: 0.9">Payments Total</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="right; background-color: #f2f2f2">&nbsp;</div>
+		</div>
+	</div>
 </ion-content>
