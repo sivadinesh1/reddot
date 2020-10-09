@@ -172,6 +172,9 @@
 			<div class="item cursor" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'blue'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
 			</div>
+			<div class="item cursor" style="text-align: center">
+				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="goPrintInvoice(item)">print </mat-icon>
+			</div>
 			<div class="item cursor" *ngIf="item.status === 'D'" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'#ff8484'}" (click)="presentAlertConfirm(item)">delete </mat-icon>
 			</div>

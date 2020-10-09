@@ -191,13 +191,13 @@ export class CommonApiService {
 
   }
 
-  printInvoice(id) {
+  printInvoice(id, printoption) {
 
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
 
     return this.httpClient
-      .get(`${this.restApiUrl}/api/print/invoice-pdf/${id}`, { headers: headers, responseType: 'blob' as 'json' });
+      .get(`${this.restApiUrl}/api/print/invoice-pdf/${id}/${printoption}`, { headers: headers, responseType: 'blob' as 'json' });
 
   }
 

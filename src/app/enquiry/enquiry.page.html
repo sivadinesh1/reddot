@@ -52,7 +52,7 @@
 				<div style="color: #666666">Quickly select or create a customer to proceed</div>
 			</div>
 		</ng-container>
-		<div class="enq-wrap" *ngIf="iscustomerselected">
+		<div class="enq-wrap" [hidden]="!iscustomerselected">
 			<div class="row">
 				<div class="row1">
 					<div>&nbsp;</div>

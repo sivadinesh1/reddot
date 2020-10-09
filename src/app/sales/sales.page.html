@@ -138,7 +138,7 @@
 			</div>
 		</ng-container>
 
-		<div class="purchase-wrap" *ngIf="iscustomerselected">
+		<div class="purchase-wrap" [hidden]="!iscustomerselected">
 			<div class="wrap">
 				<div class="acton-btns">
 					<img class="cursor" src="/assets/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
@@ -237,11 +237,10 @@
 								<mat-label>Select Item Code</mat-label>
 								<input
 									matInput
-									[matAutocomplete]="auto1"
+									[matAutocomplete]="auto2"
 									[readonly]="!iscustomerselected"
 									formControlName="productctrl"
-									#typehead
-									#plist
+									#typehead2
 									matTooltipPosition="after"
 									tabindex="3"
 								/>
@@ -251,7 +250,7 @@
 									<mat-icon>close</mat-icon>
 								</button>
 
-								<mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayProdFn" (optionSelected)="setItemDesc($event, 'click')">
+								<mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayProdFn" (optionSelected)="setItemDesc($event, 'click')">
 									<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 									<ng-container *ngIf="!isLoading">
 										<mat-option

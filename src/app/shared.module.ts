@@ -15,6 +15,7 @@ import { EscapeHtmlPipe } from './util/pipes/keep-html.pipe';
 import { DayWeekPipe } from './util/pipes/day-week.pipe';
 import { ZeroToValPipe } from './util/pipes/zerotoval.pipe';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -220,6 +221,7 @@ const matcomponents = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     IonicModule,
     RouterModule,
     ...matcomponents,

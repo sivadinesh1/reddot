@@ -1,36 +1,27 @@
 <div class="content">
-	<div class="header">
+	<div class="header" style="display: flex; color: blue; font-size: 18px">
 		<div>Invoice Success!</div>
 		<div>
 			&nbsp;
 			<img src="/assets/images/svg/close.svg" (click)="cancel()" width="20px" height="20px" />
 		</div>
 	</div>
+
+	<div style="padding: 0px 8px 10px 10px">
+		<label id="example-radio-group-label">Choose your Print Options</label>
+		<mat-radio-group class="example-radio-group" [(ngModel)]="selectedoption">
+			<mat-radio-button class="example-radio-button" *ngFor="let option of options" [value]="option">
+				{{ option }}
+			</mat-radio-button>
+		</mat-radio-group>
+		<!-- <div>Your favorite season is: {{ favoriteSeason }}</div> -->
+	</div>
+
 	<div class="invoice-details">
-		<!-- <div class="inv-det-heading">Invoice Receipt</div>
-		<div>
-			<div>Invoice #</div>
-			<div>abcd</div>
-		</div>
-		<div>
-			<div>Invoice Date</div>
-			<div>01/01/2001</div>
-		</div> -->
-
 		<div><button mat-stroked-button color="primary" (click)="cancel()">Close</button></div>
+		&nbsp;&nbsp;
 		<div>
-			<button *ngIf="!isPrint" (click)="printActn()" mat-stroked-button color="primary">Print Needed?</button>
-			<button *ngIf="isPrint" (click)="printActn()" mat-raised-button color="primary">Print Needed?</button>
+			<button *ngIf="isPrint" (click)="printActn()" mat-raised-button color="primary">Print</button>
 		</div>
-
-		<!-- <div>
-			<label id="example-radio-group-label">Pick your favorite season</label>
-			<mat-radio-group class="example-radio-group">
-				<mat-radio-button class="example-radio-button" *ngFor="let season of seasons" [value]="season">
-					{{ season }}
-				</mat-radio-button>
-			</mat-radio-group>
-			<div>Your favorite season is: {{ favoriteSeason }}</div>
-		</div> -->
 	</div>
 </div>

@@ -10,6 +10,8 @@ import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
 import { filter, map, startWith } from 'rxjs/operators';
 import { User } from 'src/app/models/User';
+import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
+import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 
 
 @Component({
@@ -67,7 +69,7 @@ export class SearchSalesPage implements OnInit {
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
-    public alertController: AlertController,
+    public alertController: AlertController, public dialog: MatDialog,
     private _authservice: AuthenticationService) {
 
     this.submitForm = this._fb.group({
@@ -207,6 +209,22 @@ export class SearchSalesPage implements OnInit {
 
 
   }
+
+
+  goPrintInvoice(row) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "400px";
+
+    dialogConfig.data = row.id;
+
+    const dialogRef = this.dialog.open(InvoiceSuccessComponent, dialogConfig);
+
+    dialogRef.afterClosed();
+  }
+
 
   goSalesAddScreen() {
     this._router.navigateByUrl(`/home/sales/edit/0`);

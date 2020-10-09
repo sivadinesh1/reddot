@@ -9,11 +9,11 @@ import { CommonApiService } from 'src/app/services/common-api.service';
 })
 export class InvoiceSuccessComponent implements OnInit {
   paletteColour: any;
-  isPrint = false;
+  isPrint = true;
   data: any;
 
-  favoriteSeason: string;
-  seasons: string[] = ['Winter', 'Spring', 'Summer', 'Autumn'];
+  selectedoption = 'Original for Buyer';
+  options: string[] = ['Original for Buyer', 'Duplicate For Transporter', 'Triplicate for Assessee', 'Duplicate'];
 
   constructor(private dialogRef: MatDialogRef<InvoiceSuccessComponent>,
     @Inject(MAT_DIALOG_DATA) public invoice_id: any,
@@ -21,7 +21,9 @@ export class InvoiceSuccessComponent implements OnInit {
     this.data = invoice_id;
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.selectedoption = 'Original for Buyer';
+  }
 
   cancel() {
     this.dialogRef.close();
@@ -32,7 +34,7 @@ export class InvoiceSuccessComponent implements OnInit {
 
   printActn() {
     this.isPrint = true;
-    this._commonApiService.printInvoice(this.invoice_id).subscribe((data: any) => {
+    this._commonApiService.printInvoice(this.invoice_id, this.selectedoption).subscribe((data: any) => {
       console.log('object...PRINTED');
 
 

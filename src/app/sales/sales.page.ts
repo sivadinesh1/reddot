@@ -92,22 +92,6 @@ export class SalesPage implements OnInit {
   id: string;
   fromEnquiry: any;
 
-  // GST_18_sub_total: any;
-  // GST_18_total_value: any;
-  // GST_18_disc: any;
-  // GST_18_cgst: any;
-  // GST_18_sgst: any;
-  // GST_18_igst: any;
-  // GST_18_gst: any;
-
-  // GST_28_sub_total: any;
-  // GST_28_total_value: any;
-  // GST_28_disc: any;
-  // GST_28_cgst: any;
-  // GST_28_sgst: any;
-  // GST_28_igst: any;
-  // GST_28_gst: any;
-
   testTotal: any;
   invoiceid: any;
   invoicedate = new Date();
@@ -116,7 +100,7 @@ export class SalesPage implements OnInit {
   isLoading = false;
   isCLoading = false;
 
-  iscustomerselected = false;
+  iscustomerselected = true;
 
   lineItemData: any;
   selInvType: any;
@@ -132,14 +116,17 @@ export class SalesPage implements OnInit {
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
 
   // TAB navigation for product list
-  @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
+  // @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
 
-  @ViewChild('plist') plist: any;
+  // @ViewChild('plist') plist: any;
   @ViewChild('newrow', { static: true }) newrow: any;
 
   // TAB navigation for customer list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
+
   @ViewChild(FormGroupDirective) formRef: FormGroupDirective;
+
+  @ViewChild('typehead2', { static: false, read: MatAutocompleteTrigger }) autoTrigger2: MatAutocompleteTrigger;
 
 
   customer_lis: Customer[];
@@ -637,24 +624,26 @@ export class SalesPage implements OnInit {
 
 
   ngAfterViewInit() {
-    this.autoTrigger && this.autoTrigger.panelClosingActions.subscribe(x => {
-      if (this.autoTrigger.activeOption) {
-
-        this.submitForm.patchValue({
-          productctrl: this.autoTrigger.activeOption.value
-        });
-        this.setItemDesc(this.autoTrigger.activeOption.value, "tab");
-
-      }
-    })
 
     this.autoTrigger1 && this.autoTrigger1.panelClosingActions.subscribe(x => {
+
       if (this.autoTrigger1.activeOption) {
 
         this.submitForm.patchValue({
           customerctrl: this.autoTrigger1.activeOption.value
         });
         this.setCustomerInfo(this.autoTrigger1.activeOption.value, "tab");
+      }
+    })
+
+    this.autoTrigger2 && this.autoTrigger2.panelClosingActions.subscribe(x => {
+
+      if (this.autoTrigger2.activeOption) {
+
+        this.submitForm.patchValue({
+          productctrl: this.autoTrigger2.activeOption.value
+        });
+        this.setItemDesc(this.autoTrigger2.activeOption.value, "tab");
       }
     })
 
@@ -858,7 +847,7 @@ export class SalesPage implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = "400px";
-    dialogConfig.height = "80%";
+
     dialogConfig.data = this.invoiceid;
 
     const dialogRef = this.dialog.open(InvoiceSuccessComponent, dialogConfig);
@@ -1585,7 +1574,7 @@ export class SalesPage implements OnInit {
     this.submitForm.controls['tempdesc'].setErrors(null);
     this.submitForm.controls['tempqty'].setErrors(null);
     this.submitForm.controls['productctrl'].setErrors(null);
-    this.plist.nativeElement.focus();
+    // this.plist.nativeElement.focus();
 
 
     this._cdr.markForCheck();
@@ -1715,9 +1704,11 @@ export class SalesPage implements OnInit {
       this.autoTrigger1.closePanel();
     }
 
-    if (this.autoTrigger && this.autoTrigger.panelOpen) {
-      this.autoTrigger.closePanel();
+    if (this.autoTrigger2 && this.autoTrigger2.panelOpen) {
+      this.autoTrigger2.closePanel();
     }
+
+
 
   }
   @HostListener('window:beforeunload', ['$event'])

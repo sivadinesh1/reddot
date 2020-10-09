@@ -177,7 +177,7 @@
 			</div>
 		</ng-container>
 
-		<div class="purchase-wrap" *ngIf="vendorselected">
+		<div class="purchase-wrap" [hidden]="!vendorselected">
 			<div class="wrap">
 				<div class="acton-btns">
 					<img class="cursor" src="/assets/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />

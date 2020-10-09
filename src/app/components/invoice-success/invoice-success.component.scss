@@ -11,12 +11,8 @@
 }
 
 .invoice-details {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-
-	.inv-det-heading {
-		grid-column: 1/-1;
-	}
+	display: flex;
+	justify-content: space-evenly;
 }
 
 .example-radio-group {
