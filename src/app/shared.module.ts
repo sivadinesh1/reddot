@@ -76,6 +76,9 @@ import { CustomerEditDialogComponent } from './components/customers/customer-edi
 import { CustomerAddDialogComponent } from './components/customers/customer-add-dialog/customer-add-dialog.component';
 import { CustomerViewDialogComponent } from './components/customers/customer-view-dialog/customer-view-dialog.component';
 
+
+
+
 import { LoadingComponent } from './components/loading/loading.component';
 import { MessagesComponent } from './components/messages/messages.component';
 import { InvoiceSuccessComponent } from './components/invoice-success/invoice-success.component';
@@ -100,6 +103,8 @@ import { SuccessMessageDialogComponent } from './components/success-message-dial
 import { DeleteBrandDialogComponent } from './components/delete-brand-dialog/delete-brand-dialog.component';
 import { DeleteVendorDialogComponent } from './components/delete-vendor-dialog/delete-vendor-dialog.component';
 import { DeleteEnquiryDialogComponent } from './components/delete-enquiry-dialog/delete-enquiry-dialog.component';
+import { SalesInvoiceDialogComponent } from './components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
+import { PurchaseEntryDialogComponent } from './components/purchase/purchase-entry-dialog/purchase-entry-dialog.component';
 
 const components = [
 
@@ -125,6 +130,9 @@ const components = [
   CustomerAddDialogComponent,
   CustomerEditDialogComponent,
   CustomerPaymentDialogComponent,
+
+  SalesInvoiceDialogComponent,
+  PurchaseEntryDialogComponent,
 
   DeleteBrandDialogComponent,
   DeleteVendorDialogComponent,
@@ -238,7 +246,8 @@ const matcomponents = [
     BrandDiscountsComponent, DeleteEnquiryDialogComponent,
     CustomerAddDialogComponent, CustomerEditDialogComponent, CustomerAddDialogComponent, AccountsReceivablesComponent,
     SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
-    CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent
+    CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent,
+    SalesInvoiceDialogComponent, PurchaseEntryDialogComponent
   ]
 })
 export class SharedModule { }

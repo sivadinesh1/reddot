@@ -116,7 +116,7 @@ export class PurchasePage implements OnInit {
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef) {
 
-
+    this.init();
 
 
     this.userdata$ = this._authservice.currentUser;
@@ -124,10 +124,13 @@ export class PurchasePage implements OnInit {
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
-        this.userdata = data;
         this._authservice.setCurrentMenu("Purchase");
-        //  this.center_id = data.center_id;
-        // this.center_state_code = data.code;
+        this.userdata = data;
+
+        this.submitForm.patchValue({
+          center_id: data.center_id,
+        })
+
         this.ready = 1;
 
         this._cdr.markForCheck();
@@ -137,12 +140,14 @@ export class PurchasePage implements OnInit {
 
 
     this._route.data.subscribe(data => {
-
+      this._authservice.setCurrentMenu("Purchase");
       this.listArr = [];
       this.rawPurchaseData = data['rawpurchasedata'];
 
+      if (this.userdata !== undefined) {
+        this.initialize();
+      }
 
-      this.initialize();
     });
 
 
@@ -152,7 +157,7 @@ export class PurchasePage implements OnInit {
   }
   initialize() {
 
-    this.init();
+    // this.init();
 
     this.vendorselected = false;
 
@@ -230,7 +235,7 @@ export class PurchasePage implements OnInit {
 
   init() {
     this.submitForm = this._fb.group({
-      centerid: new FormControl(this.userdata.center_id),
+      centerid: [null],
       purchaseid: new FormControl('', Validators.required),
       vendor: new FormControl(null, Validators.required),
       invoiceno: new FormControl(null, Validators.required),
@@ -375,18 +380,18 @@ export class PurchasePage implements OnInit {
 
   // type/search product code
   setItemDesc(event, from) {
-
+    debugger;
     if (from === 'tab') {
       this.submitForm.patchValue({
         tempdesc: event.description,
-        tempqty: event.qty,
+        tempqty: event.qty === 0 ? 1 : event.qty,
         temppurchaseprice: (event.purchase_price === 'null') ? '0' : (event.purchase_price === '0.00') ? '0' : event.purchase_price
       });
       this.lineItemData = event;
     } else {
       this.submitForm.patchValue({
         tempdesc: event.option.value.description,
-        tempqty: event.option.value.qty,
+        tempqty: event.option.value.qty === 0 ? 1 : event.option.value.qty,
         temppurchaseprice: (event.option.value.purchase_price === 'null') ? '0' : (event.option.value.purchase_price === '0.00') ? '0' : event.option.value.purchase_price
       });
       this.lineItemData = event.option.value;

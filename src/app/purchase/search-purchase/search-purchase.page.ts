@@ -11,6 +11,8 @@ import { AlertController } from '@ionic/angular';
 
 import { filter, map, startWith } from 'rxjs/operators';
 import { User } from 'src/app/models/User';
+import { PurchaseEntryDialogComponent } from '../../components/purchase/purchase-entry-dialog/purchase-entry-dialog.component';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 
 @Component({
@@ -62,7 +64,7 @@ export class SearchPurchasePage implements OnInit {
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
-    public alertController: AlertController,
+    public alertController: AlertController, private _dialog: MatDialog,
     private _authservice: AuthenticationService) {
 
     const dateOffset = (24 * 60 * 60 * 1000) * 7;
@@ -333,6 +335,23 @@ export class SearchPurchasePage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  openDialog(row): void {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "50%";
+    dialogConfig.height = "100%";
+    dialogConfig.data = row;
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(PurchaseEntryDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
 

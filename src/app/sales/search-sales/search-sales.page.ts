@@ -12,6 +12,7 @@ import { filter, map, startWith } from 'rxjs/operators';
 import { User } from 'src/app/models/User';
 import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
+import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 
 
 @Component({
@@ -69,7 +70,7 @@ export class SearchSalesPage implements OnInit {
 
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
-    public alertController: AlertController, public dialog: MatDialog,
+    public alertController: AlertController, public _dialog: MatDialog,
     private _authservice: AuthenticationService) {
 
     this.submitForm = this._fb.group({
@@ -220,7 +221,7 @@ export class SearchSalesPage implements OnInit {
 
     dialogConfig.data = row.id;
 
-    const dialogRef = this.dialog.open(InvoiceSuccessComponent, dialogConfig);
+    const dialogRef = this._dialog.open(InvoiceSuccessComponent, dialogConfig);
 
     dialogRef.afterClosed();
   }
@@ -352,5 +353,21 @@ export class SearchSalesPage implements OnInit {
     await alert.present();
   }
 
+  openDialog(row): void {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "50%";
+    dialogConfig.height = "100%";
+    dialogConfig.data = row;
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(SalesInvoiceDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
 
 }

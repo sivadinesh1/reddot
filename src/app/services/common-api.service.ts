@@ -475,6 +475,16 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-sale-invoice-customer/${center_id}/${customer_id}`);
   }
 
+  getSaleMasterData(sale_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/sale/get-sale-master/${sale_id}`);
+  }
+
+  getSaleDetailsData(sale_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/sale/get-sale-details/${sale_id}`);
+  }
+
+
+
   getPaymentsByCustomer(center_id, customer_id) {
     return this.httpClient.get(`${this.restApiUrl}/api/accounts/get-payments-customer/${center_id}/${customer_id}`);
   }

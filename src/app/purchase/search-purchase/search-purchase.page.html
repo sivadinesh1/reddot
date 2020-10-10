@@ -135,6 +135,9 @@
 			<div class="item cursor txt-center-align">
 				<mat-icon [ngStyle]="{'color':'blue'}" (click)="goPurchaseEditScreen(item)">edit </mat-icon>
 			</div>
+			<div class="item cursor" style="text-align: center">
+				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="openDialog(item)">remove_red_eye </mat-icon>
+			</div>
 			<div class="item cursor txt-center-align" *ngIf="item.status === 'D'">
 				<mat-icon [ngStyle]="{'color':'#ff8484'}" (click)="presentAlertConfirm(item)">delete </mat-icon>
 			</div>

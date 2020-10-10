@@ -144,7 +144,10 @@
 			<div class="txt-right-align">TOTAL VALUE</div>
 			<!-- <div class="txt-center-align">STATUS</div> -->
 			<div>&nbsp;</div>
-			<div style="text-align: center"><span>REVISIONS</span></div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div style="text-align: center"><span>Version</span></div>
 		</div>
 		<div class="headerRow" style="background-color: #dfdfdf">
 			<div>&nbsp;</div>
@@ -153,14 +156,15 @@
 			<div style="font-size: 14px; font-weight: 500">&nbsp;</div>
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
-			<!-- <div>&nbsp;</div> -->
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 		</div>
 	</ng-template>
 
 	<ng-template #MsgRef1>
-		<div *ngFor="let item of filteredValues  " class="listItem">
+		<div *ngFor="let item of filteredValues" class="listItem">
 			<div class="item">{{item.customer_name}}</div>
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>
@@ -168,9 +172,13 @@
 
 			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
 			<div class="item" style="text-align: right">{{item.net_total | currency: "INR"}}</div>
-			<!-- <div class="item" style="text-align: center">{{item.status === 'D' ? 'Draft' : 'Fullfilled'}}</div> -->
+			<div>&nbsp;</div>
 			<div class="item cursor" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'blue'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
+				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
+			</div>
+
+			<div class="item cursor" style="text-align: center">
+				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="openDialog(item)">remove_red_eye </mat-icon>
 			</div>
 			<div class="item cursor" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="goPrintInvoice(item)">print </mat-icon>
