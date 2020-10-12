@@ -3,7 +3,7 @@
 	font-weight: 400;
 
 	padding: 10px;
-	//	background-color: #fafafa;
+
 	width: 100%;
 	font-size: 14px;
 }
@@ -30,73 +30,6 @@
 		display: grid;
 		padding: 10px 5px;
 		grid-template-columns: 1fr 1fr 1fr 1fr;
-	}
-}
-
-.container {
-	display: grid;
-	grid-template-rows: auto 1fr 60px;
-	width: 90%;
-	margin: 0 auto;
-	//	min-height: calc(100vh - 120px);
-
-	.process-enq-wrap {
-		display: grid;
-		width: 100%;
-		align-content: flex-start;
-	}
-
-	.list-items {
-		display: grid;
-		max-height: 70vh;
-		//	min-height: 70vh;
-		overflow-y: auto;
-		align-content: start;
-	}
-
-	.process-enq-list {
-		display: grid;
-		grid-template-columns: 60px 1fr 120px 80px 1fr 80px 60px;
-
-		width: 100%;
-
-		.left {
-			display: grid;
-			grid-template-columns: 30px 1fr 100px;
-			padding: 10px;
-		}
-		.right {
-			display: grid;
-			grid-template-columns: 1fr 100px;
-			padding: 10px;
-			align-content: center;
-			background-color: #f1f1f1;
-		}
-	}
-
-	.process-prep-enq-heading {
-		display: grid;
-		grid-template-columns: 60px 1fr 120px 80px 1fr 80px 60px;
-		padding: 10px;
-		width: 100%;
-		background-color: #e8e8e8;
-		align-self: center;
-	}
-	.pdetails {
-		display: grid;
-		width: 100%;
-		grid-template-rows: 1fr 1fr;
-		padding: 5px;
-
-		.pcode {
-			color: #222222;
-			font-size: 16px;
-			font-weight: 500;
-		}
-		.pdesc {
-			color: #222222;
-			font-size: 14px;
-		}
 	}
 }
 
@@ -302,7 +235,68 @@ td.mat-column-actions {
 
 .example-full-width {
 	width: 100%;
+	padding: 0px;
 }
 .qty-width {
 	width: 80px;
+}
+
+// New Table CSS
+
+.content {
+	display: grid;
+	width: 90%;
+	grid-template-columns: 100px 1fr 80px 80px 100px 1fr 100px 100px;
+	align-items: center;
+	border-bottom: 2px solid rgb(173, 173, 173);
+	color: #666666;
+	background-color: #f5f5f5;
+	margin: 0 auto;
+	padding: 8px 5px 8px 5px;
+	gap: 10px;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.list-item {
+	display: grid;
+	width: 90%;
+	grid-template-columns: 100px 1fr 80px 80px 100px 1fr 100px 100px;
+	align-self: center;
+	border-bottom: 1px solid #e0d9d9;
+	font-size: 13px;
+	padding: 5px 5px 10px 5px;
+	margin: 0 auto;
+	align-items: end;
+	gap: 10px;
+}
+
+.txt-pad {
+	padding: 8px;
+}
+
+.headstyl-left {
+	text-align: left;
+	font-size: 16px;
+	font-weight: 500;
+	color: #666666;
+}
+
+.headstyl-right {
+	text-align: right;
+	font-size: 16px;
+	font-weight: 500;
+	color: #666666;
+}
+
+.headstyl-center {
+	text-align: center;
+	font-size: 16px;
+	font-weight: 500;
+	color: #666666;
+}
+
+.num-format-cell-style {
+	padding-right: 10px;
+	align-self: center;
 }

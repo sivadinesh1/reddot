@@ -91,7 +91,7 @@ export class AdminDashboardPage implements OnInit {
       "from_date": from_date,
       "to_date": moment().format('DD-MM-YYYY')
     }
-    debugger;
+
     this._commonApiService.fetchInquirySummary(obj).subscribe((data: any) => {
       this.enquirySummary = data.body[0];
       this._cdr.markForCheck();

@@ -167,7 +167,7 @@ export class SalesPage implements OnInit {
 
 
         this.ready = 1;
-        //    this.initialize();
+
         this._cdr.markForCheck();
       });
 
@@ -192,6 +192,9 @@ export class SalesPage implements OnInit {
 
       if (this.userdata !== undefined) {
         this.initialize();
+        this.submitForm.patchValue({
+          center_id: this.userdata.center_id,
+        });
       }
     });
 
@@ -764,6 +767,11 @@ export class SalesPage implements OnInit {
     if (this.listArr.length == 0) {
       return this.presentAlert('No products added to save!');
     }
+
+    if (!this.submitForm.valid) {
+      return false;
+    }
+
 
     if (this.listArr.length > 0) {
 
@@ -1461,13 +1469,13 @@ export class SalesPage implements OnInit {
     if (from === 'tab') {
       this.submitForm.patchValue({
         tempdesc: event.description,
-        tempqty: event.qty
+        tempqty: event.qty === 0 ? 1 : event.qty
       });
       this.lineItemData = event;
     } else {
       this.submitForm.patchValue({
         tempdesc: event.option.value.description,
-        tempqty: event.option.value.qty
+        tempqty: event.option.value.qty === 0 ? 1 : event.option.value.qty
       });
       this.lineItemData = event.option.value;
     }
@@ -1545,7 +1553,7 @@ export class SalesPage implements OnInit {
       return false;
     }
 
-    if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null) {
+    if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null || this.submitForm.value.tempqty === 0) {
       this.submitForm.controls['tempqty'].setErrors({ 'required': true });
       this.submitForm.controls['tempqty'].markAsTouched();
 

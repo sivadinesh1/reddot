@@ -683,7 +683,7 @@ export class PurchasePage implements OnInit {
   onSubmit(action) {
 
 
-    debugger;
+
     if (this.listArr.length == 0) {
       return this.presentAlert('No products added to save!');
 
@@ -691,7 +691,7 @@ export class PurchasePage implements OnInit {
 
     if (this.listArr.length > 0) {
 
-      debugger;
+
       if (this.validateForms()) {
 
         if (action === 'add') {
@@ -885,7 +885,7 @@ export class PurchasePage implements OnInit {
                 status: 'D',
               });
             }
-            debugger;
+
             this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('savePurchaseOrder ' + JSON.stringify(data));
 

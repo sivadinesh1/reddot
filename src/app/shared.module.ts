@@ -105,6 +105,7 @@ import { DeleteVendorDialogComponent } from './components/delete-vendor-dialog/d
 import { DeleteEnquiryDialogComponent } from './components/delete-enquiry-dialog/delete-enquiry-dialog.component';
 import { SalesInvoiceDialogComponent } from './components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { PurchaseEntryDialogComponent } from './components/purchase/purchase-entry-dialog/purchase-entry-dialog.component';
+import { FilterPipe } from './util/pipes/filter.pipe';
 
 const components = [
 
@@ -122,6 +123,8 @@ const components = [
   EscapeHtmlPipe,
   DayWeekPipe,
   ZeroToValPipe,
+
+  FilterPipe,
 
   AddProductComponent,
   VendorEditDialogComponent,

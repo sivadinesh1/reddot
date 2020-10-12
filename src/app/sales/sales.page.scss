@@ -29,9 +29,7 @@
 
 		.row2 {
 			align-items: center;
-			//	overflow-y: auto;
-			//	overflow-x: hidden;
-			//	max-height: 500px;
+
 			.list-item {
 				display: grid;
 				grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px 110px 110px;
@@ -57,33 +55,6 @@
 				border-bottom: 1px solid #e2e2e2;
 			}
 		}
-
-		// .row3 {
-		// 	display: flex;
-		// 	justify-content: space-around;
-		// 	border-top: 2px solid #acacac;
-		// 	border-bottom: 2px solid #acacac;
-		// 	padding: 5px;
-
-		// 	.item {
-		// 		text-align: center;
-		// 	}
-		// 	.label {
-		// 	}
-		// }
-
-		// .row4 {
-		// 	display: grid;
-		// 	grid-template-columns: 1fr 1fr 1.5fr;
-		// 	padding: 10px;
-		// 	border-top: 1px solid grey;
-		// 	border-bottom: 1px solid grey;
-
-		// 	.item {
-		// 		display: grid;
-		// 		grid-template-columns: 1fr 1.5fr;
-		// 	}
-		// }
 	}
 
 	.row2 {
@@ -266,7 +237,7 @@
 
 .customer {
 	display: grid;
-	
+
 	grid-template-columns: 1fr 1fr;
 	gap: 100px;
 	padding: 3rem 1rem;

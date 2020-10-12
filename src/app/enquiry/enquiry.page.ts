@@ -38,7 +38,7 @@ export class EnquiryPage {
 
   removeRowArr = [];
   showDelIcon = false;
-  center_id: any;
+  // center_id: any;
   tabIndex = 0;
 
   userdata$: Observable<User>;
@@ -80,9 +80,40 @@ export class EnquiryPage {
     private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService, private _dialog: MatDialog,
     private _authservice: AuthenticationService,
   ) {
-    this._authservice.setCurrentMenu("Enquiry");
-    this.userdata$ = this._authservice.currentUser;
 
+    this.basicinit();
+    this.userdata$ = this._authservice.currentUser;
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this._authservice.setCurrentMenu("Enquiry");
+        this.userdata = data;
+
+        this.submitForm.patchValue({
+          center_id: data.center_id,
+        });
+
+
+        this.init();
+        this._cdr.markForCheck();
+      });
+
+
+    this._route.params.subscribe(params => {
+      if (this.userdata !== undefined) {
+        this.basicinit();
+        this.init();
+        this.submitForm.patchValue({
+          center_id: this.userdata.center_id,
+        });
+      }
+      this._cdr.markForCheck();
+    });
+
+  }
+
+  basicinit() {
     this.submitForm = this._fb.group({
 
       customerctrl: [null, [Validators.required, RequireMatch]],
@@ -100,27 +131,6 @@ export class EnquiryPage {
 
     });
 
-    this.userdata$
-      .pipe(
-        filter((data) => data !== null))
-      .subscribe((data: any) => {
-        this.userdata = data;
-        this.center_id = this.userdata.center_id;
-
-        this.submitForm.patchValue({
-          center_id: this.userdata.center_id,
-        });
-
-
-        this.init();
-        this._cdr.markForCheck();
-      });
-
-
-    this._route.params.subscribe(params => {
-      this._cdr.markForCheck();
-    });
-
   }
 
   get productarr(): FormGroup {
@@ -129,10 +139,6 @@ export class EnquiryPage {
 
 
   async init() {
-
-
-
-
     this.searchCustomers();
     this.searchProducts();
     this._cdr.markForCheck();
@@ -147,7 +153,7 @@ export class EnquiryPage {
 
         search = id;
         if (id != null && id.length >= 2) {
-          return this._commonApiService.getCustomerInfo({ "centerid": this.center_id, "searchstr": id });
+          return this._commonApiService.getCustomerInfo({ "centerid": this.userdata.center_id, "searchstr": id });
         } else {
           return empty();
         }
@@ -221,7 +227,7 @@ export class EnquiryPage {
         )
       ).subscribe((data: any) => {
         if (data !== 'close') {
-          this._commonApiService.getCustomerDetails(this.center_id, data.body.id).subscribe((custData: any) => {
+          this._commonApiService.getCustomerDetails(this.userdata.center_id, data.body.id).subscribe((custData: any) => {
 
             this.customerdata = custData[0];
 
@@ -271,7 +277,7 @@ export class EnquiryPage {
         console.log(id);
         search = id;
         if (id != null && id.length >= 2) {
-          return this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": id });
+          return this._commonApiService.getProductInfo({ "centerid": this.userdata.center_id, "searchstring": id });
         } else {
           return empty();
         }
@@ -300,6 +306,11 @@ export class EnquiryPage {
 
 
   ngAfterViewInit() {
+
+    this.searchCustomers();
+    this.searchProducts();
+
+
     this.autoTrigger && this.autoTrigger.panelClosingActions.subscribe(x => {
       if (this.autoTrigger.activeOption) {
 
@@ -521,6 +532,10 @@ export class EnquiryPage {
 
         this.submitForm.reset();
         this.myForm.resetForm();
+
+        this.submitForm.patchValue({
+          center_id: data.center_id,
+        });
 
         this._router.navigate([`/home/enquiry/open-enquiry`]);
 
