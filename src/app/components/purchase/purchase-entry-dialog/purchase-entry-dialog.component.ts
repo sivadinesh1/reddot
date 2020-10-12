@@ -52,7 +52,7 @@ export class PurchaseEntryDialogComponent implements OnInit {
       this._cdr.markForCheck();
     })
 
-    this._commonApiService.getCustomerDetails(this.data.center_id, this.data.customer_id).subscribe((data: any) => {
+    this._commonApiService.getVendorDetails(this.data.center_id, this.data.vendor_id).subscribe((data: any) => {
 
       this.customerdata = data[0];
 

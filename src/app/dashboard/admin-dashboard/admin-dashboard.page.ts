@@ -30,6 +30,9 @@ export class AdminDashboardPage implements OnInit {
   receivablesByCustomers: any;
   paymentsTotal: any;
   yearly_turnover: any;
+  selectedOption = "today";
+
+  iscustomenquiry = false;
 
   constructor(private _authservice: AuthenticationService, private _cdr: ChangeDetectorRef,
     private _commonApiService: CommonApiService, private _dialog: MatDialog,
@@ -43,7 +46,7 @@ export class AdminDashboardPage implements OnInit {
       .subscribe((data: any) => {
         this._authservice.setCurrentMenu("Dashboard");
         this.userdata = data;
-        this.reloadInquirySummary();
+        this.reloadInquirySummary("today");
         this.reloadSalesSummary();
         this.reloadPurchaseSummary();
         this.reloadSalesTotal(moment().format('DD-MM-YYYY'), moment().format('DD-MM-YYYY'), "today");
@@ -60,17 +63,39 @@ export class AdminDashboardPage implements OnInit {
     this.userid = this._route.snapshot.params['userid'];
   }
 
-  reloadInquirySummary() {
+  customEnquiry() {
+    this.iscustomenquiry = !this.iscustomenquiry;
+  }
 
-    this._commonApiService.fetchInquirySummary(
-      { "center_id": this.userdata.center_id, "from_date": moment().format('DD-MM-YYYY'), "to_date": moment().format('DD-MM-YYYY') })
-      .subscribe((data: any) => {
+  reloadInquirySummary(param) {
+
+    let from_date = "";
+
+    if (param === "weekly") {
+      from_date = moment().startOf('isoWeek').format('DD-MM-YYYY');
+      this.selectedOption = "weekly";
+    } else if (param === "monthly") {
+      from_date = moment().startOf('month').format('DD-MM-YYYY');
+      this.selectedOption = "monthly";
+    } else if (param === "yearly") {
+      from_date = moment().startOf('year').format('DD-MM-YYYY');
+      this.selectedOption = "yearly";
+    } else if (param === "today") {
+      from_date = moment().format('DD-MM-YYYY');
+      this.selectedOption = "today";
+    }
 
 
-
-        this.enquirySummary = data.body[0];
-        this._cdr.markForCheck();
-      });
+    let obj = {
+      "center_id": this.userdata.center_id,
+      "from_date": from_date,
+      "to_date": moment().format('DD-MM-YYYY')
+    }
+    debugger;
+    this._commonApiService.fetchInquirySummary(obj).subscribe((data: any) => {
+      this.enquirySummary = data.body[0];
+      this._cdr.markForCheck();
+    });
 
     this._cdr.markForCheck();
   }

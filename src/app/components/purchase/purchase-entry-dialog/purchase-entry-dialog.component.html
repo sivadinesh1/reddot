@@ -8,11 +8,8 @@
 	</div>
 
 	<div class="action-row">
-		<div>SALES ORDER</div>
+		<div>PURCHASE ORDER</div>
 		<div>
-			<span style="padding: 0px 6px" class="cursor">
-				<mat-icon [ngStyle]="{ color: '#6d78d2' }" (click)="goPrintInvoice(this.purchasemasterdata)">print </mat-icon>
-			</span>
 			<span style="padding: 0px 6px"
 				><img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="24px" height="24px" (click)="exportToExcel()"
 			/></span>
@@ -35,10 +32,6 @@
 			<div style="padding: 5px">
 				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Status</div>
 				<div style="font-size: 14px; font-weight: 400">{{ this.purchasemasterdata?.status === "C" ? "Completed" : "" }}</div>
-			</div>
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">GST</div>
-				<div style="font-size: 14px; font-weight: 400">{{ this.customerdata?.gst }}</div>
 			</div>
 		</div>
 		<div>

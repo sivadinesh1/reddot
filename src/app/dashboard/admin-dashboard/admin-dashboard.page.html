@@ -5,11 +5,29 @@
 		<div class="canvas">
 			<div class="left">
 				<div style="display: flex; justify-content: flex-end; padding: 16px">
-					<div class="timeline">This year</div>
-					<div class="timeline">This month</div>
-					<div class="timeline">This week</div>
-					<div class="timeline selected">Today</div>
-					<div style="text-align: center; padding: 0px 16px; align-self: flex-end"><span class="material-icons"> date_range </span></div>
+					<div class="timeline selected" [ngClass]="{ selected: selectedOption == 'today' }" (click)="customEnquiry()">Custom</div>
+					<ng-container *ngIf="!iscustomenquiry">
+						<div class="timeline" [ngClass]="{ selected: selectedOption == 'yearly' }" (click)="reloadInquirySummary('yearly')">This year</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOption == 'monthly' }" (click)="reloadInquirySummary('monthly')">This month</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOption == 'weekly' }" (click)="reloadInquirySummary('weekly')">This week</div>
+						<div class="timeline selected" [ngClass]="{ selected: selectedOption == 'today' }" (click)="reloadInquirySummary('today')">Today</div>
+					</ng-container>
+					<ng-container *ngIf="iscustomenquiry">
+						<div>
+							<span style="text-align: center; padding: 0px 16px; align-self: flex-end"><span class="material-icons"> date_range </span></span>
+							<!-- <span>
+								<mat-form-field>
+									<mat-label>Enter a date range</mat-label>
+									<mat-date-range-input [rangePicker]="picker">
+									  <input matStartDate matInput placeholder="Start date">
+									  <input matEndDate matInput placeholder="End date">
+									</mat-date-range-input>
+									<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+									<mat-date-range-picker #picker></mat-date-range-picker>
+								  </mat-form-field>
+							</span> -->
+						</div>
+					</ng-container>
 				</div>
 				<div class="section1">
 					<div class="card" style="background-color: #094bca">

@@ -128,7 +128,7 @@ export class PurchasePage implements OnInit {
         this.userdata = data;
 
         this.submitForm.patchValue({
-          center_id: data.center_id,
+          centerid: data.center_id,
         })
 
         this.ready = 1;
@@ -380,7 +380,7 @@ export class PurchasePage implements OnInit {
 
   // type/search product code
   setItemDesc(event, from) {
-    debugger;
+
     if (from === 'tab') {
       this.submitForm.patchValue({
         tempdesc: event.description,
@@ -683,7 +683,7 @@ export class PurchasePage implements OnInit {
   onSubmit(action) {
 
 
-
+    debugger;
     if (this.listArr.length == 0) {
       return this.presentAlert('No products added to save!');
 
@@ -691,7 +691,7 @@ export class PurchasePage implements OnInit {
 
     if (this.listArr.length > 0) {
 
-
+      debugger;
       if (this.validateForms()) {
 
         if (action === 'add') {
@@ -849,16 +849,15 @@ export class PurchasePage implements OnInit {
 
   }
 
-  // clearAll() {
-  //   this.listArr = [];
-  //   this.total = "0.00";
 
-  //   this.igstTotal = "0.00";
-  //   this.cgstTotal = "0.00";
-  //   this.sgstTotal = "0.00";
-  // }
 
   async presentAlertConfirm(action) {
+
+
+    this.submitForm.patchValue({
+      centerid: this.userdata.center_id,
+    })
+
     const alert = await this.alertController.create({
       header: 'Confirm!',
       message: 'Do You want to save!!!',
@@ -886,7 +885,7 @@ export class PurchasePage implements OnInit {
                 status: 'D',
               });
             }
-
+            debugger;
             this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
               console.log('savePurchaseOrder ' + JSON.stringify(data));
 
