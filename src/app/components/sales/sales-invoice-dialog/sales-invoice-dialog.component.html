@@ -11,6 +11,9 @@
 		<div>SALES ORDER</div>
 		<div>
 			<span style="padding: 0px 6px" class="cursor">
+				<img src="/assets/images/svg/whatsapp.svg" style="cursor: pointer" width="24px" height="24px" (click)="openShareDialog()" />
+			</span>
+			<span style="padding: 0px 6px" class="cursor">
 				<mat-icon [ngStyle]="{ color: '#6d78d2' }" (click)="goPrintInvoice(this.salemasterdata)">print </mat-icon>
 			</span>
 			<span style="padding: 0px 6px"
@@ -66,7 +69,7 @@
 	</div>
 
 	<div #epltable>
-		<table>
+		<table style="width: 100%">
 			<thead>
 				<tr class="header">
 					<th style="text-align: left">SNo</th>

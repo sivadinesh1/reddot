@@ -115,6 +115,7 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   reloadEnqDetails() {
+
     this._commonApiService.getEnquiryDetails(this.enqid).subscribe((data: any) => {
       this.enqDetailsOrig = data;
 
@@ -229,6 +230,17 @@ export class ProcessEnquiryPage implements OnInit {
 
   }
 
+  clearInput() {
+    this.submitForm.patchValue({
+      customerctrl: null,
+    });
+
+    this.iscustomerselected = false;
+
+    this._cdr.markForCheck();
+
+  }
+
   openCurrencyPad(idx) {
 
     const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
@@ -283,11 +295,27 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
 
+  async presentAlert(msg: string) {
+    const alert = await this.alertController.create({
+      header: 'Alert',
+
+      message: msg,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
 
 
   save(param) {
 
     // todo - if customer is not selected throw error
+
+    if (!this.iscustomerselected) {
+      this.presentAlert('Select customer to proceed !!!');
+      return false;
+    }
 
     if (this.enqDetailsOrig[0].customer_id !== this.customerdata.id) {
       this.updateCustomerDetailsinEnquiry();
@@ -342,6 +370,11 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   moveToSale() {
+
+    if (!this.iscustomerselected) {
+      this.presentAlert('Select customer to proceed !!!');
+      return false;
+    }
 
     if (this.enqDetailsOrig[0].customer_id !== this.customerdata.id) {
       this.updateCustomerDetailsinEnquiry();

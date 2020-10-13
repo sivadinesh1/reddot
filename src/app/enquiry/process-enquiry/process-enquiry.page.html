@@ -13,6 +13,9 @@
 					<div>
 						<mat-form-field class="example-full-width" style="padding-right: 10px">
 							<input matInput [matAutocomplete]="auto" formControlName="customerctrl" #typehead1 required matTooltipPosition="after" />
+							<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
+								<mat-icon>close</mat-icon>
+							</button>
 							<mat-placeholder class="placeholder">Select or Add Customer</mat-placeholder>
 
 							<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
@@ -87,6 +90,7 @@
 		<table>
 			<thead>
 				<tr class="content">
+					<th style="text-align: left; padding-left: 5px; font-weight: 500">SNo</th>
 					<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Code</th>
 					<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Description</th>
 					<th style="text-align: right; padding-right: 5px; font-weight: 500">In Stock</th>
@@ -104,6 +108,7 @@
 					[ngClass]="{'make-gold': item.processed === 'YS' }"
 					class="list-item"
 				>
+					<td style="text-align: left; padding-left: 5px">{{idx + 1}}</td>
 					<td style="text-align: left; padding-left: 5px">{{item.product_code}}</td>
 					<td style="text-align: left; padding-left: 5px">{{item.product_desc}}</td>
 					<td style="text-align: right; padding-right: 5px">{{item.available_stock}}</td>
@@ -125,7 +130,7 @@
 			</tbody>
 		</table>
 	</div>
-
+	<div class="empty-add">&nbsp;</div>
 	<div>
 		<div class="footer" *ngIf="status !== 'E'">
 			<div style="display: flex">

@@ -13,6 +13,8 @@ import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 import { DeleteEnquiryDialogComponent } from 'src/app/components/delete-enquiry-dialog/delete-enquiry-dialog.component';
+import { EnquiryViewDialogComponent } from '../../components/enquiry/enquiry-view-dialog/enquiry-view-dialog.component';
+import { User } from 'src/app/models/User';
 
 @Component({
   selector: 'app-open-enquiry',
@@ -28,7 +30,10 @@ export class OpenEnquiryPage implements OnInit {
 
   readyforsale: any;
   center_name: string;
-  center_id: any;
+  // center_id: any;
+
+  userdata$: Observable<User>;
+  userdata: any;
 
   statusFlag = 'O';
   selectedCust = 'all';
@@ -73,15 +78,26 @@ export class OpenEnquiryPage implements OnInit {
 
   ) {
 
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
+    this.userdata$ = this._authservice.currentUser;
+
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+        this.init();
+        this._cdr.markForCheck();
+      });
 
     const dateOffset = (24 * 60 * 60 * 1000) * 7;
     this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
     this._route.params.subscribe(params => {
       this.tabIndex = 0;
-      this.init();
+      if (this.userdata !== undefined) {
+        this.init();
+      }
+
     });
 
   }
@@ -112,7 +128,7 @@ export class OpenEnquiryPage implements OnInit {
       status: new FormControl('all'),
     })
 
-    this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
+    this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
       this.customer_lis = data;
 
       this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges
@@ -158,7 +174,7 @@ export class OpenEnquiryPage implements OnInit {
   async search() {
 
     this.enquiries$ = this._commonApiService
-      .searchEnquiries(this.center_id, this.submitForm.value.customerid,
+      .searchEnquiries(this.userdata.center_id, this.submitForm.value.customerid,
         this.submitForm.value.status,
         this.submitForm.value.fromdate,
         this.submitForm.value.todate,
@@ -311,6 +327,22 @@ export class OpenEnquiryPage implements OnInit {
 
   }
 
+  openDialog(row): void {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "50%";
+    dialogConfig.height = "100%";
+    dialogConfig.data = row;
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(EnquiryViewDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
 
 
 }

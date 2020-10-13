@@ -106,6 +106,8 @@ import { DeleteEnquiryDialogComponent } from './components/delete-enquiry-dialog
 import { SalesInvoiceDialogComponent } from './components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { PurchaseEntryDialogComponent } from './components/purchase/purchase-entry-dialog/purchase-entry-dialog.component';
 import { FilterPipe } from './util/pipes/filter.pipe';
+import { EnquiryViewDialogComponent } from './components/enquiry/enquiry-view-dialog/enquiry-view-dialog.component';
+import { WhatsappDialogComponent } from './components/social/whatsapp/whatsapp-dialog/whatsapp-dialog.component';
 
 const components = [
 
@@ -136,6 +138,9 @@ const components = [
 
   SalesInvoiceDialogComponent,
   PurchaseEntryDialogComponent,
+  EnquiryViewDialogComponent,
+
+  WhatsappDialogComponent,
 
   DeleteBrandDialogComponent,
   DeleteVendorDialogComponent,
@@ -250,7 +255,7 @@ const matcomponents = [
     CustomerAddDialogComponent, CustomerEditDialogComponent, CustomerAddDialogComponent, AccountsReceivablesComponent,
     SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent,
-    SalesInvoiceDialogComponent, PurchaseEntryDialogComponent
+    SalesInvoiceDialogComponent, PurchaseEntryDialogComponent, EnquiryViewDialogComponent, WhatsappDialogComponent
   ]
 })
 export class SharedModule { }

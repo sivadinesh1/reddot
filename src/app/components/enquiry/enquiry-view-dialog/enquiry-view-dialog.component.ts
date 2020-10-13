@@ -11,17 +11,17 @@ import { InvoiceSuccessComponent } from '../../invoice-success/invoice-success.c
 import { WhatsappDialogComponent } from '../../social/whatsapp/whatsapp-dialog/whatsapp-dialog.component';
 
 @Component({
-  selector: 'app-sales-invoice-dialog',
-  templateUrl: './sales-invoice-dialog.component.html',
-  styleUrls: ['./sales-invoice-dialog.component.scss'],
+  selector: 'app-enquiry-view-dialog',
+  templateUrl: './enquiry-view-dialog.component.html',
+  styleUrls: ['./enquiry-view-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 
 })
-export class SalesInvoiceDialogComponent implements OnInit {
+export class EnquiryViewDialogComponent implements OnInit {
 
-  salemasterdata: any;
-  saledetailsdata: any;
-  customerdata: any;
+  enquirymasterdata: any;
+  enquirydetailsdata: any;
+
   centerdata: any;
 
   data: any;
@@ -29,7 +29,7 @@ export class SalesInvoiceDialogComponent implements OnInit {
   @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
-    private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<SalesInvoiceDialogComponent>,
+    private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<EnquiryViewDialogComponent>,
     private _route: ActivatedRoute, private _authservice: AuthenticationService,
     @Inject(MAT_DIALOG_DATA) data: any, public _dialog: MatDialog,
     private _commonApiService: CommonApiService) {
@@ -39,31 +39,18 @@ export class SalesInvoiceDialogComponent implements OnInit {
 
   ngOnInit() {
 
-    this._commonApiService.getSaleMasterData(this.data.id).subscribe((data: any) => {
-
-      this.salemasterdata = data[0];
-
+    this._commonApiService.getEnquiryMaster(this.data.id).subscribe((data: any) => {
+      this.enquirymasterdata = data[0];
       this._cdr.markForCheck();
     })
 
-    this._commonApiService.getSaleDetailsData(this.data.id).subscribe((data: any) => {
-
-      this.saledetailsdata = data;
-
+    this._commonApiService.getEnquiryDetails(this.data.id).subscribe((data: any) => {
+      this.enquirydetailsdata = data;
       this._cdr.markForCheck();
-    })
-
-    this._commonApiService.getCustomerDetails(this.data.center_id, this.data.customer_id).subscribe((data: any) => {
-
-      this.customerdata = data[0];
-
-      this._cdr.markForCheck();
-    })
-
-
-
+    });
 
   }
+
 
 
   close() {
@@ -71,38 +58,29 @@ export class SalesInvoiceDialogComponent implements OnInit {
   }
 
 
+
   exportToExcel() {
     const ws: xlsx.WorkSheet =
       xlsx.utils.table_to_sheet(this.epltable.nativeElement);
     ws['!cols'] = [];
     ws['!cols'][1] = { hidden: true };
+    ws['!cols'][4] = { hidden: true };
+
     const wb: xlsx.WorkBook = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(wb, 'epltable.xlsx');
   }
 
 
-  goPrintInvoice(row) {
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "400px";
-
-    dialogConfig.data = row.id;
-
-    const dialogRef = this._dialog.open(InvoiceSuccessComponent, dialogConfig);
-
-    dialogRef.afterClosed();
-  }
-
-
-
+  // socialShare() {
+  //   // let url = `https://api.whatsapp.com/send?phone=${this.customerdata.mobile}&text=Dear Sir, Your order of ${this.saledetailsdata.length} items, Invoice value ${this.salemasterdata.net_total} is ready for shipping.}`;
+  //   // window.open(url, "_blank");
+  // }
 
   openShareDialog(): void {
     const dialogRef = this._dialog.open(WhatsappDialogComponent, {
       width: '250px',
-      data: { whatsapp: this.customerdata.mobile }
+      data: { whatsapp: this.enquirymasterdata.mobile }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -111,5 +89,6 @@ export class SalesInvoiceDialogComponent implements OnInit {
     });
   }
 
-
 }
+
+

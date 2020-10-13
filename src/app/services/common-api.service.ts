@@ -92,6 +92,10 @@ export class CommonApiService {
     return this.httpClient.get(this.restApiUrl + '/api/enquiry/get-enquiry-details/' + enqid);
   }
 
+  getEnquiryMaster(enqid: string) {
+    return this.httpClient.get(this.restApiUrl + '/api/enquiry/get-enquiry-master/' + enqid);
+  }
+
 
 
 

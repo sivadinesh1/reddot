@@ -180,12 +180,12 @@
 		<div class="purchase-wrap" [hidden]="!vendorselected">
 			<div class="wrap">
 				<div class="acton-btns">
-					<img class="cursor" src="/assets/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
+					<img class="cursor" src="/assets/images/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
 					<span class="sub-menu cursor" style="color: blue" *ngIf="showDelIcon" (click)="presentDeleteConfirm()">Delete</span>
 				</div>
 
 				<div class="acton-btns">
-					<img class="cursor" src="/assets/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editTax()" /><span
+					<img class="cursor" src="/assets/images/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editTax()" /><span
 						class="sub-menu cursor"
 						style="color: blue"
 						*ngIf="singleRowSelected"
@@ -194,7 +194,7 @@
 					>
 				</div>
 				<div class="acton-btns">
-					<img class="cursor" src="/assets/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editMrp()" />
+					<img class="cursor" src="/assets/images/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editMrp()" />
 					<span class="sub-menu cursor" style="color: blue" *ngIf="singleRowSelected" (click)="editMrp()">Mrp</span>
 				</div>
 			</div>
@@ -289,7 +289,7 @@
 											<div>
 												<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right; color: grey">{{ product.name }}</div>
 												<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
-													<span> <img src="/assets/svg/sales.svg" width="18px" height="18px" /></span>
+													<span> <img src="/assets/images/svg/sales.svg" width="18px" height="18px" /></span>
 													<span> &nbsp;{{ product.available_stock }} </span>
 												</div>
 											</div>

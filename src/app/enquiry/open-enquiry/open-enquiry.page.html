@@ -148,6 +148,9 @@
 							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="processEnquiry(item)"
 								><mat-icon>edit </mat-icon></span
 							>
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="openDialog(item)"
+								><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
+							>
 						</div>
 					</div>
 
@@ -165,6 +168,10 @@
 							>
 							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="processEnquiry(item)"
 								><mat-icon>edit </mat-icon></span
+							>
+
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="openDialog(item)"
+								><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
 							>
 						</div>
 					</div>
@@ -184,6 +191,9 @@
 							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="moveToSale(item)"
 								><mat-icon>edit </mat-icon></span
 							>
+							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="openDialog(item)"
+								><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
+							>
 						</div>
 					</div>
 
@@ -195,7 +205,9 @@
 				<div *ngIf="item.estatus === 'E' ">
 					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="processEnquiry(item)">
 						<div style="color: blue; cursor: pointer">Closed Inquiry</div>
-						<div class="extra" style="color: blue; cursor: pointer"><mat-icon>remove_red_eye </mat-icon></div>
+						<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="openDialog(item)"
+							><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
+						>
 					</div>
 
 					<div>
