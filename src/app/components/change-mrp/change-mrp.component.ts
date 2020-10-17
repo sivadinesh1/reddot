@@ -30,7 +30,7 @@ export class ChangeMrpComponent implements OnInit {
     private _cdr: ChangeDetectorRef,
   ) {
 
-
+    console.log('print RARRAY' + this.rArry);
 
     this.submitForm = new FormGroup({
       mrp: new FormControl('', Validators.compose([Validators.required])),

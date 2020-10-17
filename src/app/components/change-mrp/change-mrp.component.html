@@ -7,17 +7,38 @@
 	</div>
 
 	<form [formGroup]="submitForm" (ngSubmit)="onSubmit()">
-		<div class="element">
-			<mat-form-field>
-				<mat-label>mrp</mat-label>
-				<input type="number" matInput min="1" max="99999" formControlName="mrp" required />
-				<mat-error>This field is required</mat-error>
-			</mat-form-field>
-		</div>
-		<div class="error" style="text-align: center; padding: 10px">{{ this.msg }}</div>
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+			<div style="padding: 5px 0px">
+				<div style="font-size: 12px; color: #777777">Item</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.product_code }}
+				</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.product_desc }}
+				</div>
+			</div>
+			<div style="padding: 5px 0px">
+				<div style="font-size: 12px; color: #777777">Current MRP</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.mrp }}
+				</div>
+			</div>
 
-		<div class="save">
-			<button mat-raised-button color="primary" type="submit" style="font-size: 1rem; padding: 0px 20px">Create New MRP</button>
+			<div style="padding: 5px 0px">
+				<mat-form-field>
+					<mat-label>New MRP</mat-label>
+					<input type="number" matInput min="1" max="99999" formControlName="mrp" required />
+					<mat-error>This field is required</mat-error>
+				</mat-form-field>
+			</div>
+			<div style="padding: 5px 0px">&nbsp;</div>
+			<div class="error" style="text-align: center; grid-column: 1/-1">{{ this.msg }}&nbsp;</div>
+			<div class="save">
+				<button mat-stroked-button color="primary" (click)="closeModal()" type="button">Close</button>
+			</div>
+			<div class="save">
+				<button mat-raised-button color="primary" type="submit" style="font-size: 1rem; padding: 0px 20px">Create New MRP</button>
+			</div>
 		</div>
 	</form>
 </div>
