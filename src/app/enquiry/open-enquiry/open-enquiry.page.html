@@ -89,7 +89,7 @@
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab> -->
 
-				<mat-tab label="New Inquiry ({{(newEnquiries$| async)?.length }})">
+				<mat-tab class="tab-label" label="New Inquiry ({{(newEnquiries$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
@@ -182,7 +182,7 @@
 				</div>
 
 				<div *ngIf="item.estatus === 'P' ">
-					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="moveToSale(item)">
+					<div style="display: flex; justify-content: space-between; cursor: pointer">
 						<div style="color: blue; cursor: pointer">Ready to Invoice</div>
 						<div style="display: flex">
 							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="delete(item)"
@@ -203,9 +203,9 @@
 				</div>
 
 				<div *ngIf="item.estatus === 'E' ">
-					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="processEnquiry(item)">
+					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="openDialog(item)">
 						<div style="color: blue; cursor: pointer">Closed Inquiry</div>
-						<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="openDialog(item)"
+						<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px"
 							><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
 						>
 					</div>
@@ -216,5 +216,12 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- <div *ngIf="(enquiries$| async)?.length === 0">No records found, try other search combinations!!!</div> -->
+		<div class="no-records" *ngIf="tabIndex === 0 && (newEnquiries$| async)?.length === 0">No item in status "New Inquiry"</div>
+		<div class="no-records" *ngIf="tabIndex === 1 && (draftEnquiries$| async)?.length === 0">No item in status "In Progress"</div>
+		<div class="no-records" *ngIf="tabIndex === 2 && (invoiceReadyEnquiries$| async)?.length === 0">No item in status "Ready to Invoice"</div>
+		<div class="no-records" *ngIf="tabIndex === 3 && (fullfilledEnquiries$| async)?.length === 0">No item in status "Closed Inquiry"</div>
+		<div class="no-records" *ngIf="tabIndex === 4 && (cancelledEnquiries$| async)?.length === 0">No item in status "Cancelled Inquiry"</div>
 	</ng-template>
 </ion-content>

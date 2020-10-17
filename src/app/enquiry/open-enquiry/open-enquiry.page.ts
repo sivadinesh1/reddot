@@ -15,6 +15,7 @@ import { SuccessMessageDialogComponent } from 'src/app/components/success-messag
 import { DeleteEnquiryDialogComponent } from 'src/app/components/delete-enquiry-dialog/delete-enquiry-dialog.component';
 import { EnquiryViewDialogComponent } from '../../components/enquiry/enquiry-view-dialog/enquiry-view-dialog.component';
 import { User } from 'src/app/models/User';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-open-enquiry',
@@ -47,6 +48,7 @@ export class OpenEnquiryPage implements OnInit {
   todate = new Date();
 
   filteredValues: any;
+  timeline: any;
 
   statusList = [{ "id": "all", "value": "All" }, { "id": "O", "value": "New Inquiry" }, { "id": "D", "value": "In Progress" },
   { "id": "P", "value": "Ready to Invoice" },
@@ -72,11 +74,52 @@ export class OpenEnquiryPage implements OnInit {
   filteredCustomer: Observable<any[]>;
   customer_lis: Customer[];
 
+  status: any;
+
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
     private _dialog: MatDialog, private _authservice: AuthenticationService,
 
   ) {
+    const weekOffset = (24 * 60 * 60 * 1000) * 7;
+    const monthOffset = (24 * 60 * 60 * 1000) * 30;
+    const yearOffset = (24 * 60 * 60 * 1000) * 365;
+
+    this._route.params.subscribe(params => {
+      this.status = params['status'];
+      this.timeline = params['timeline'];
+
+      if (this.timeline === 'today') {
+        this.fromdate = new Date();
+        this.todate = new Date();
+      } else if (this.timeline === 'weekly') {
+        this.fromdate.setTime(this.minDate.getTime() - weekOffset);
+        this.todate = new Date();
+      } else if (this.timeline === 'monthly') {
+        this.fromdate.setTime(this.minDate.getTime() - monthOffset);
+        this.todate = new Date();
+      } else if (this.timeline === 'yearly') {
+        this.fromdate.setTime(this.minDate.getTime() - yearOffset);
+        this.todate = new Date();
+      }
+
+      if (this.status === 'O') {
+        this.tabClick(0);
+        this.tabIndex = 0;
+      } else if (this.status === 'D') {
+        this.tabClick(1);
+        this.tabIndex = 1;
+      } else if (this.status === 'P') {
+        this.tabClick(2);
+        this.tabIndex = 2;
+      } else if (this.status === 'E') {
+        this.tabClick(3);
+        this.tabIndex = 3;
+      }
+
+      this._cdr.markForCheck();
+    });
+
 
     this.userdata$ = this._authservice.currentUser;
 
@@ -93,12 +136,14 @@ export class OpenEnquiryPage implements OnInit {
     this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
     this._route.params.subscribe(params => {
-      this.tabIndex = 0;
+      // this.tabIndex = 0;
       if (this.userdata !== undefined) {
         this.init();
       }
 
     });
+
+
 
   }
 
@@ -262,21 +307,16 @@ export class OpenEnquiryPage implements OnInit {
   async tabClick($event) {
     let value = await this.filteredEnquiries$.toPromise();
 
-    // commented all status as it is not making sense, future, if its confirmed, remove below line
-    // if ($event.index === 0) {
-    //   this.filteredValues = value.filter((data: any) =>
-    //     (data.estatus === 'O' || data.estatus === 'D') || (data.estatus === 'P' || data.estatus === 'E' || data.estatus === 'X'));
-    // } else 
 
-    if ($event.index === 0) {
+    if ($event.index === 0 || $event === 0) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'O');
-    } else if ($event.index === 1) {
+    } else if ($event.index === 1 || $event === 1) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'D');
-    } else if ($event.index === 2) {
+    } else if ($event.index === 2 || $event === 2) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'P');
-    } else if ($event.index === 3) {
+    } else if ($event.index === 3 || $event === 3) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'E');
-    } else if ($event.index === 4) {
+    } else if ($event.index === 4 || $event === 4) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'X');
     }
 

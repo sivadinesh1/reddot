@@ -7,6 +7,7 @@ import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { User } from '../../models/User';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -30,13 +31,19 @@ export class AdminDashboardPage implements OnInit {
   receivablesByCustomers: any;
   paymentsTotal: any;
   yearly_turnover: any;
-  selectedOption = "today";
+  selectedOpsOption = "today";
 
   iscustomenquiry = false;
 
+  opsfromdate: any;
+  opstodate: any;
+  today = moment();
+
+  dateF: any = new Date();
+
   constructor(private _authservice: AuthenticationService, private _cdr: ChangeDetectorRef,
     private _commonApiService: CommonApiService, private _dialog: MatDialog,
-    private _route: ActivatedRoute,
+    private _route: ActivatedRoute, private formBuilder: FormBuilder,
     private _router: Router,) {
 
     this.userdata$ = this._authservice.currentUser;
@@ -46,7 +53,7 @@ export class AdminDashboardPage implements OnInit {
       .subscribe((data: any) => {
         this._authservice.setCurrentMenu("Dashboard");
         this.userdata = data;
-        this.reloadInquirySummary("today");
+        this.reloadOpsSummary("today");
         this.reloadSalesSummary();
         this.reloadPurchaseSummary();
         this.reloadSalesTotal(moment().format('DD-MM-YYYY'), moment().format('DD-MM-YYYY'), "today");
@@ -61,28 +68,49 @@ export class AdminDashboardPage implements OnInit {
 
   ngOnInit() {
     this.userid = this._route.snapshot.params['userid'];
+
+
+
   }
+
+
 
   customEnquiry() {
     this.iscustomenquiry = !this.iscustomenquiry;
+
+    if (this.iscustomenquiry) {
+      this.selectedOpsOption = "custom";
+    } else {
+      this.selectedOpsOption = "today";
+    }
   }
 
-  reloadInquirySummary(param) {
+  reloadOpsSummary(param) {
 
     let from_date = "";
+    let to_date = "";
 
     if (param === "weekly") {
       from_date = moment().startOf('isoWeek').format('DD-MM-YYYY');
-      this.selectedOption = "weekly";
+      this.selectedOpsOption = "weekly";
     } else if (param === "monthly") {
       from_date = moment().startOf('month').format('DD-MM-YYYY');
-      this.selectedOption = "monthly";
+      this.selectedOpsOption = "monthly";
     } else if (param === "yearly") {
       from_date = moment().startOf('year').format('DD-MM-YYYY');
-      this.selectedOption = "yearly";
+      this.selectedOpsOption = "yearly";
     } else if (param === "today") {
       from_date = moment().format('DD-MM-YYYY');
-      this.selectedOption = "today";
+      this.selectedOpsOption = "today";
+    } else if (param === "custom") {
+      from_date = this.opsfromdate;
+
+      if (this.opstodate !== null || this.opstodate !== undefined) {
+        to_date = this.opstodate;
+      }
+
+
+      this.customEnquiry();
     }
 
 
@@ -219,7 +247,23 @@ export class AdminDashboardPage implements OnInit {
   }
 
 
+  opsFromDateEvent(type, event) {
 
+    this.opsfromdate = moment(event.target.value).format("DD-MM-YYYY");
+    this.reloadOpsSummary("custom");
+
+  }
+
+
+  opsToDateEvent(type, event) {
+    this.opstodate = moment(event.target.value).format("DD-MM-YYYY");
+    this.reloadOpsSummary("custom");
+  }
+
+
+  navigateToInquiry(param) {
+    this._router.navigate([`/home/enquiry/open-enquiry/${param}/${this.selectedOpsOption}`]);
+  }
 
 
 }

@@ -99,6 +99,10 @@ export class HeaderComponent implements OnInit {
     this._router.navigate(['home/reports/inventory-reports']);
   }
 
+  viewProductSummaryReports() {
+    this._router.navigate(['home/reports/product-summary-reports']);
+  }
+
   async showAddProductComp() {
 
 

@@ -162,6 +162,7 @@
 					mat-stroked-button
 					color="primary"
 					type="button"
+					[disabled]="clicked"
 				>
 					Cancel</button
 				>&nbsp;
@@ -173,6 +174,7 @@
 					mat-stroked-button
 					color="primary"
 					type="button"
+					[disabled]="clicked"
 				>
 					Ready for Invoice</button
 				>&nbsp;
@@ -185,12 +187,14 @@
 					mat-raised-button
 					type="button"
 					color="primary"
+					[disabled]="clicked"
 				>
 					Save Draft
 				</button>
 			</div>
 		</div>
 	</div>
+	<ngx-spinner size="medium"></ngx-spinner>
 </ion-content>
 
 <!-- <div [hidden]="isTableHasData" class="center-message">No Data available.</div> -->

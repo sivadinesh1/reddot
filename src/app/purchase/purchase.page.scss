@@ -36,7 +36,7 @@
 
 		.row1 {
 			display: grid;
-			grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px;
+			grid-template-columns: 40px minmax(250px, 600px) 90px 90px 90px 90px 90px;
 			align-items: center;
 			border-bottom: 2px solid rgb(173, 173, 173);
 			color: "#a5a5a6";
@@ -50,7 +50,7 @@
 			// max-height: 500px;
 			.list-item {
 				display: grid;
-				grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px;
+				grid-template-columns: 40px minmax(250px, 600px) 90px 90px 90px 90px 90px;
 				align-self: center;
 				border-bottom: 1px solid #e0d9d9;
 				font-size: 14px;

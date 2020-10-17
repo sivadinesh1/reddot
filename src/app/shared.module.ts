@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NullToQuotePipe } from './util/pipes/null-quote.pipe';
 import { NullToZeroPipe } from './util/pipes/null-zero.pipe';
@@ -108,6 +108,7 @@ import { PurchaseEntryDialogComponent } from './components/purchase/purchase-ent
 import { FilterPipe } from './util/pipes/filter.pipe';
 import { EnquiryViewDialogComponent } from './components/enquiry/enquiry-view-dialog/enquiry-view-dialog.component';
 import { WhatsappDialogComponent } from './components/social/whatsapp/whatsapp-dialog/whatsapp-dialog.component';
+import { NgxSpinnerModule } from "ngx-spinner";
 
 const components = [
 
@@ -241,10 +242,10 @@ const matcomponents = [
     IonicModule,
     RouterModule,
     ...matcomponents,
-
+    NgxSpinnerModule
   ],
   exports: [
-    ...matcomponents, ...components, IonicModule
+    ...matcomponents, ...components, IonicModule, NgxSpinnerModule
   ],
   entryComponents: [
     AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
@@ -256,6 +257,7 @@ const matcomponents = [
     SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent,
     SalesInvoiceDialogComponent, PurchaseEntryDialogComponent, EnquiryViewDialogComponent, WhatsappDialogComponent
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SharedModule { }

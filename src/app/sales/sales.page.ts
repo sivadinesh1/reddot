@@ -14,7 +14,7 @@ import { Route, ActivatedRoute, Router } from '@angular/router';
 import { NullToQuotePipe } from '../util/pipes/null-quote.pipe';
 import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
-
+import { NgxSpinnerService } from "ngx-spinner";
 
 import { SaleApiService } from '../services/sale-api.service';
 
@@ -109,7 +109,7 @@ export class SalesPage implements OnInit {
 
   stock_issue_date_ref: any;
   stock_issue_ref: any;
-
+  clicked = false;
 
 
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
@@ -147,6 +147,7 @@ export class SalesPage implements OnInit {
     private _route: ActivatedRoute, private _dialog: MatDialog,
     private _authservice: AuthenticationService, private _saleApiService: SaleApiService,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
+    private spinner: NgxSpinnerService,
     private _cdr: ChangeDetectorRef) {
 
     this.basicinit();
@@ -172,7 +173,7 @@ export class SalesPage implements OnInit {
       });
 
 
-
+    // data change
     this._route.data.subscribe(data => {
       this._authservice.setCurrentMenu("Sale");
       this.selInvType = "gstinvoice";
@@ -182,9 +183,9 @@ export class SalesPage implements OnInit {
 
 
     });
-
+    // param change
     this._route.params.subscribe(params => {
-
+      this.clicked = false;
 
       this.id = params['id'];
       this.mode = params['mode'];
@@ -206,7 +207,7 @@ export class SalesPage implements OnInit {
   basicinit() {
     this.submitForm = this._fb.group({
       center_id: [null],
-      salesid: new FormControl('', Validators.required),
+      salesid: new FormControl(''),
 
       invoiceno: [null],
       invoicedate: new FormControl(this.invoicedate, Validators.required),
@@ -239,14 +240,17 @@ export class SalesPage implements OnInit {
 
       tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
-      productarr: new FormControl(null, Validators.required)
+      productarr: new FormControl(null),
+      roundoff: [0]
 
     });
   }
 
 
 
-  ngOnInit() { }
+  ngOnInit() {
+
+  }
 
   initialize() {
 
@@ -268,6 +272,7 @@ export class SalesPage implements OnInit {
 
       this.fromEnquiry = true;
 
+      this.spinner.show();
       this._commonApiService.getCustomerData(this.id).subscribe((custData: any) => {
 
         this.customerdata = custData[0];
@@ -286,6 +291,7 @@ export class SalesPage implements OnInit {
 
         // prod details
         this._commonApiService.getEnquiredProductData(this.userdata.center_id, this.customerdata.id, this.id, invdt).subscribe((prodData: any) => {
+          this.spinner.hide();
           let proddata = prodData;
 
           this.submitForm.patchValue({
@@ -296,8 +302,10 @@ export class SalesPage implements OnInit {
             this.processItems(element);
           });
 
+
           this._cdr.markForCheck();
         });
+
 
         this._cdr.markForCheck();
       });
@@ -308,6 +316,7 @@ export class SalesPage implements OnInit {
     }
 
     if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
+
 
       if (this.rawSalesData[0] !== undefined) {
         if (this.rawSalesData[0].id !== 0) {
@@ -331,7 +340,7 @@ export class SalesPage implements OnInit {
             orderno: this.rawSalesData[0].order_no,
             noofboxes: this.rawSalesData[0].no_of_boxes,
 
-            orderrcvddt: this.rawSalesData[0].received_date === '' ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].received_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
+            orderrcvddt: (this.rawSalesData[0].received_date === '' || this.rawSalesData[0].received_date === null) ? '' : new Date(new NullToQuotePipe().transform(this.rawSalesData[0].received_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 
 
             noofitems: this.rawSalesData[0].no_of_items,
@@ -380,6 +389,7 @@ export class SalesPage implements OnInit {
           this._commonApiService.saleDetails(this.rawSalesData[0].id).subscribe((saleData: any) => {
             let sData = saleData;
 
+
             sData.forEach(element => {
               this.processItems(element);
             });
@@ -396,7 +406,8 @@ export class SalesPage implements OnInit {
   }
 
   init() {
-
+    this.clearInput();
+    this.clearProdInput();
     this.searchCustomers();
     this.searchProducts();
 
@@ -489,7 +500,8 @@ export class SalesPage implements OnInit {
 
       subtotal = (temp.qty * temp.mrp);
       taxableval = ((temp.qty * temp.mrp) * (100 - this.cust_discount_prcnt)) / (100 + temp.taxrate);
-      discval = ((temp.qty * temp.mrp) * (this.cust_discount_prcnt)) / (100 + temp.taxrate);
+      discval = ((temp.qty * temp.mrp) * (this.cust_discount_prcnt / 100));
+
       totalval = (temp.qty * temp.mrp) * (100 - this.cust_discount_prcnt) / 100;
 
     } else if (this.cust_discount_type === 'GROSS') {
@@ -768,6 +780,7 @@ export class SalesPage implements OnInit {
       return this.presentAlert('No products added to save!');
     }
 
+
     if (!this.submitForm.valid) {
       return false;
     }
@@ -810,14 +823,9 @@ export class SalesPage implements OnInit {
           totalvalue: this.total
         })
 
-        let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges) +
-          parseFloat(this.submitForm.value.unloading_charges) +
-          parseFloat(this.submitForm.value.misc_charges);
-
-
-
         this.submitForm.patchValue({
-          net_total: tmpNetTot
+          net_total: this.getNetTotal("rounding"),
+          roundoff: (this.getNetTotal("rounding") - this.getNetTotal("withoutrounding")).toFixed(2)
         })
 
 
@@ -828,12 +836,16 @@ export class SalesPage implements OnInit {
 
   }
 
-  getNetTotal() {
-
+  getNetTotal(param) {
     let tmp = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges || 0) +
       parseFloat(this.submitForm.value.unloading_charges || 0) +
       parseFloat(this.submitForm.value.misc_charges || 0);
-    return tmp.toFixed(2);
+    if (param === "rounding") {
+      return Math.round(+tmp.toFixed(2));
+    } else if (param === "withoutrounding") {
+      return +tmp.toFixed(2);
+    }
+
   }
 
   async presentAlert(msg: string) {
@@ -952,6 +964,7 @@ export class SalesPage implements OnInit {
 
       this.listArr[idx].total_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent) / 100).toFixed(2);
       this.listArr[idx].disc_value = ((this.listArr[idx].qty * this.listArr[idx].mrp) * (this.listArr[idx].disc_percent) / 100).toFixed(2);
+
       this.listArr[idx].taxable_value = (((this.listArr[idx].qty * this.listArr[idx].mrp) * (100 - this.listArr[idx].disc_percent)) / (100 + this.listArr[idx].taxrate)).toFixed(2);
       this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
 
@@ -1044,7 +1057,13 @@ export class SalesPage implements OnInit {
             }
 
 
+            //main submit
+            this.clicked = true;  // disable all buttons after submission
+            this._cdr.markForCheck();
+            this.spinner.show();
+
             this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
+              this.spinner.hide();
               console.log('saveSaleOrder ' + JSON.stringify(data));
 
               if (data.body.result === 'success') {
@@ -1288,6 +1307,7 @@ export class SalesPage implements OnInit {
 
     });
 
+    // after permanent or tax change reload the igst,sgst,cgst as per new tax slab
     modalTax.onDidDismiss().then((result) => {
       console.log('The result:', result);
 
@@ -1296,7 +1316,18 @@ export class SalesPage implements OnInit {
 
         this.removeRowArr.forEach((idx) => {
 
-          this.listArr[idx].taxrate = result.data;
+          this.listArr[idx].taxrate = +result.data;
+
+          if (this.igst) {
+            this.listArr[idx].igst = +result.data;
+          } else {
+            this.listArr[idx].sgst = (+result.data) / 2;
+            this.listArr[idx].cgst = (+result.data) / 2;
+          }
+
+
+
+
           this.listArr[idx].checkbox = false;
           myCheckboxes[idx].checked = false;
 

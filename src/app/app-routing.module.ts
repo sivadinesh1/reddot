@@ -28,7 +28,7 @@ const routes: Routes = [
       },
 
       {
-        path: 'enquiry/open-enquiry',
+        path: 'enquiry/open-enquiry/:status/:timeline',
         loadChildren: () => import('./enquiry/open-enquiry/open-enquiry.module').then(m => m.OpenEnquiryPageModule)
       },
 
@@ -146,6 +146,11 @@ const routes: Routes = [
             path: 'inventory-reports',
             loadChildren: () => import('./reports/inventory-reports/inventory-reports.module').then(m => m.InventoryReportsPageModule)
           },
+          {
+            path: 'product-summary-reports',
+            loadChildren: () => import('./reports/product-summary-reports/product-summary-reports.module').then(m => m.ProductSummaryReportsPageModule)
+          },
+
         ]
       },
 
@@ -174,6 +179,10 @@ const routes: Routes = [
     path: 'financials-customer',
     loadChildren: () => import('./admin/customer/financials-customer/financials-customer.module').then(m => m.FinancialsCustomerPageModule)
   },
+  // {
+  //   path: 'product-summary-reports',
+  //   loadChildren: () => import('./reports/product-summary-reports/product-summary-reports.module').then( m => m.ProductSummaryReportsPageModule)
+  // },
 
 
 ];

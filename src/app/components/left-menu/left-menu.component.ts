@@ -33,7 +33,7 @@ export class LeftMenuComponent implements OnInit {
   userdata: any;
 
   pages: Page[] = [
-    { name: 'Enquiry', link: '/home/enquiry/open-enquiry', icon: '/assets/images/svg/enquiry.svg' },
+    { name: 'Enquiry', link: '/home/enquiry/open-enquiry/O/weekly', icon: '/assets/images/svg/enquiry.svg' },
     { name: 'Sale', link: '/home/search-sales', icon: '/assets/images/svg/sales.svg' },
     { name: 'Purchase', link: '/home/search-purchase', icon: '/assets/images/svg/purchase.svg' },
     { name: 'Payments', link: '/home/payments', icon: '/assets/images/svg/money.svg' },

@@ -14,7 +14,7 @@ import { ChangeMrpComponent } from '../components/change-mrp/change-mrp.componen
 import { Route, ActivatedRoute, Router } from '@angular/router';
 import { NullToQuotePipe } from '../util/pipes/null-quote.pipe';
 import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
-
+import { NgxSpinnerService } from "ngx-spinner";
 
 import { Product } from '../models/Product';
 import { empty } from 'rxjs';
@@ -91,6 +91,7 @@ export class PurchasePage implements OnInit {
 
   userdata$: Observable<User>;
   userdata: any;
+  clicked = false;
 
   ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
@@ -114,6 +115,7 @@ export class PurchasePage implements OnInit {
     private _route: ActivatedRoute, private _router: Router, private _dialog: MatDialog,
     private _authservice: AuthenticationService,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
+    private spinner: NgxSpinnerService,
     private _cdr: ChangeDetectorRef) {
 
     this.init();
@@ -138,8 +140,9 @@ export class PurchasePage implements OnInit {
 
 
 
-
+    // data change
     this._route.data.subscribe(data => {
+      this.clicked = false;
       this._authservice.setCurrentMenu("Purchase");
       this.listArr = [];
       this.rawPurchaseData = data['rawpurchasedata'];
@@ -150,10 +153,16 @@ export class PurchasePage implements OnInit {
 
     });
 
+    // param change
+    this._route.params.subscribe(params => {
+      this.clicked = false;
+    });
+
 
   }
 
   ngOnInit() {
+
   }
   initialize() {
 
@@ -163,6 +172,7 @@ export class PurchasePage implements OnInit {
 
     // navigating from list purchase page
     if (this.rawPurchaseData[0] !== undefined && this.rawPurchaseData[0].id !== 0) {
+      this.spinner.show();
       this.breadmenu = "Edit Purchase #" + this.rawPurchaseData[0].id;
 
       this.submitForm.patchValue({
@@ -220,11 +230,13 @@ export class PurchasePage implements OnInit {
 
 
       this._commonApiService.purchaseDetails(this.rawPurchaseData[0].id).subscribe((purchaseData: any) => {
+        this.spinner.hide();
         let pData = purchaseData;
 
         pData.forEach(element => {
           this.processItems(element);
         });
+
       });
 
 
@@ -267,7 +279,8 @@ export class PurchasePage implements OnInit {
       temppurchaseprice: [''],
       tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
-      productarr: new FormControl(null, Validators.required)
+      productarr: new FormControl(null, Validators.required),
+      roundoff: [0]
 
     });
 
@@ -723,14 +736,19 @@ export class PurchasePage implements OnInit {
           totalvalue: this.total
         })
 
-        let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges) +
-          parseFloat(this.submitForm.value.unloading_charges) +
-          parseFloat(this.submitForm.value.misc_charges);
+        // let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges) +
+        //   parseFloat(this.submitForm.value.unloading_charges) +
+        //   parseFloat(this.submitForm.value.misc_charges);
 
 
+
+        // this.submitForm.patchValue({
+        //   net_total: tmpNetTot
+        // })
 
         this.submitForm.patchValue({
-          net_total: tmpNetTot
+          net_total: this.getNetTotal("rounding"),
+          roundoff: (this.getNetTotal("rounding") - this.getNetTotal("withoutrounding")).toFixed(2)
         })
 
 
@@ -744,13 +762,25 @@ export class PurchasePage implements OnInit {
 
   }
 
-  getNetTotal() {
+  // getNetTotal() {
 
-    let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges || 0) +
+  //   let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges || 0) +
+  //     parseFloat(this.submitForm.value.unloading_charges || 0) +
+  //     parseFloat(this.submitForm.value.misc_charges || 0);
+
+  //   return tmpNetTot.toFixed(2);
+  // }
+
+  getNetTotal(param) {
+    let tmp = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges || 0) +
       parseFloat(this.submitForm.value.unloading_charges || 0) +
       parseFloat(this.submitForm.value.misc_charges || 0);
+    if (param === "rounding") {
+      return Math.round(+tmp.toFixed(2));
+    } else if (param === "withoutrounding") {
+      return +tmp.toFixed(2);
+    }
 
-    return tmpNetTot.toFixed(2);
   }
 
   async presentAlert(msg: string) {
@@ -886,7 +916,13 @@ export class PurchasePage implements OnInit {
               });
             }
 
+
+            //main submit
+            this.clicked = true;  // disable all buttons after submission
+            this._cdr.markForCheck();
+            this.spinner.show();
             this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
+              this.spinner.hide();
               console.log('savePurchaseOrder ' + JSON.stringify(data));
 
               if (data.body.result === 'success') {
@@ -1314,6 +1350,9 @@ export class PurchasePage implements OnInit {
           handler: () => {
             console.log('Confirm Okay');
             // this.cancel();
+            //main submit
+            this.clicked = true;  // disable all buttons after submission
+            this._cdr.markForCheck();
             this._router.navigateByUrl('/home/search-purchase');
 
           }
@@ -1323,6 +1362,18 @@ export class PurchasePage implements OnInit {
 
     await alert.present();
   }
+
+
+  roundingFn(value, param) {
+
+    if (param === "rounding") {
+      return Math.round(+value.toFixed(2));
+    } else if (param === "withoutrounding") {
+      return +value.toFixed(2);
+    }
+
+  }
+
 
 
 }

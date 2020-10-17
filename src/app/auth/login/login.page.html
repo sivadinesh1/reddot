@@ -4,7 +4,7 @@
 	<div class="login-content">
 		<div class="left">
 			<h2 class="auth-title">
-				Welcome!
+				Welcome!!!!! Raj
 				<br />
 				One Cloud, Business Management Software
 			</h2>
@@ -26,18 +26,12 @@
 					<mat-error *ngIf="loginForm.get('password').hasError('required')"> Password is <strong>required</strong> </mat-error>
 				</mat-form-field>
 
-				<div class="error">
-					{{ responsemsg }}
-				</div>
+				<div class="error">{{ responsemsg }}</div>
 
 				<ion-button class="login-btn" type="submit" expand="block" [disabled]="!loginForm.valid">Log In</ion-button>
 				<ion-row class="other-auth-options-row">
-					<ion-button class="forgot-btn" fill="clear" [routerLink]="['/auth/forgot-password']">
-						Forgot Password?
-					</ion-button>
-					<ion-button class="signup-btn" fill="clear" [routerLink]="['/auth/signup']">
-						Sign Up!
-					</ion-button>
+					<ion-button class="forgot-btn" fill="clear" [routerLink]="['/auth/forgot-password']"> Forgot Password? </ion-button>
+					<ion-button class="signup-btn" fill="clear" [routerLink]="['/auth/signup']"> Sign Up! </ion-button>
 				</ion-row>
 			</form>
 		</div>

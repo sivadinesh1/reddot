@@ -13,6 +13,7 @@ import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invo
 import { AddMoreEnquiryComponent } from 'src/app/components/add-more-enquiry/add-more-enquiry.component';
 import { filter, tap, catchError, debounceTime, switchMap } from 'rxjs/operators';
 import * as xlsx from 'xlsx';
+import { NgxSpinnerService } from "ngx-spinner";
 
 import { MatSort } from '@angular/material/sort';
 import { Observable, empty } from 'rxjs';
@@ -64,10 +65,13 @@ export class ProcessEnquiryPage implements OnInit {
   userdata: any;
   ready = 0;
 
+  clicked = false;
+
   constructor(private _route: ActivatedRoute, private _router: Router,
     private dialog: MatDialog, private _modalcontroller: ModalController,
     private _authservice: AuthenticationService, public alertController: AlertController,
     private _commonApiService: CommonApiService, private _dialog: MatDialog, private _fb: FormBuilder,
+    private spinner: NgxSpinnerService,
     private _cdr: ChangeDetectorRef) {
     const currentUser = this._authservice.currentUserValue;
     // this.center_id = currentUser.center_id;
@@ -109,6 +113,7 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   ngOnInit() {
+    this.spinner.show();
     // this.dataSource.paginator = this.paginator;
 
 
@@ -135,7 +140,7 @@ export class ProcessEnquiryPage implements OnInit {
       this.status = this.enqDetailsOrig[0].estatus;
 
       this.init(this.enqDetailsOrig);
-
+      this.spinner.hide();
 
       this._cdr.markForCheck();
     });
@@ -321,13 +326,17 @@ export class ProcessEnquiryPage implements OnInit {
       this.updateCustomerDetailsinEnquiry();
     }
 
+    //main submit
+    this.clicked = true;  // disable all buttons after submission
+    this._cdr.markForCheck();
+    this.spinner.show();
     this._commonApiService.draftEnquiry(this.productArr).subscribe((data: any) => {
-
+      this.spinner.hide();
       if (data.body.result === 'success') {
         if (param === 'additem') {
           this.openAddItem();
         } else {
-          this._router.navigate([`/home/enquiry/open-enquiry`]);
+          this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
         }
 
 
@@ -380,10 +389,14 @@ export class ProcessEnquiryPage implements OnInit {
       this.updateCustomerDetailsinEnquiry();
     }
 
-
+    //main (2) secondary button submit
+    this.clicked = true;  // disable all buttons after submission
+    this._cdr.markForCheck();
+    this.spinner.show();
     this._commonApiService.moveToSale(this.productArr).subscribe((data: any) => {
+      this.spinner.hide();
       if (data.body.result === 'success') {
-        this._router.navigate([`/home/enquiry/open-enquiry`]);
+        this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
       } else {
 
       }
@@ -406,7 +419,7 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   openEnquiry() {
-    this._router.navigateByUrl(`/home/enquiry/open-enquiry`);
+    this._router.navigateByUrl(`/home/enquiry/open-enquiry/O/weekly`);
   }
 
 
@@ -616,7 +629,10 @@ export class ProcessEnquiryPage implements OnInit {
           handler: () => {
             console.log('Confirm Okay');
             // this.cancel();
-            this._router.navigateByUrl('/home/enquiry/open-enquiry');
+            //main cancel
+            this.clicked = true;  // disable all buttons after submission
+            this._cdr.markForCheck();
+            this._router.navigateByUrl('/home/enquiry/open-enquiry/O/weekly');
 
           }
         }

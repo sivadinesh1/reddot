@@ -195,13 +195,13 @@ export class CommonApiService {
 
   }
 
-  printInvoice(id, printoption) {
+  printInvoice(submitForm) {
 
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
 
     return this.httpClient
-      .get(`${this.restApiUrl}/api/print/invoice-pdf/${id}/${printoption}`, { headers: headers, responseType: 'blob' as 'json' });
+      .post(`${this.restApiUrl}/api/print/invoice-pdf`, submitForm, { headers: headers, responseType: 'blob' as 'json' });
 
   }
 
@@ -466,6 +466,11 @@ export class CommonApiService {
   // REPORTS SECTION
   fetchProductInventoryReports(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/reports/inventory-report', submitForm, { observe: 'response' });
+  }
+
+  fetchProductSummaryReports(submitForm) {
+
+    return this.httpClient.post<any>(this.restApiUrl + '/api/reports/product-summary-report', submitForm, { observe: 'response' });
   }
 
   // /get-ledger-customer/:centerid/:customerid

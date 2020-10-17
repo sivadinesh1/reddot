@@ -5,99 +5,108 @@
 		<div class="canvas">
 			<div class="left">
 				<div style="display: flex; justify-content: flex-end; padding: 16px">
-					<div class="timeline selected" [ngClass]="{ selected: selectedOption == 'today' }" (click)="customEnquiry()">Custom</div>
-					<ng-container *ngIf="!iscustomenquiry">
-						<div class="timeline" [ngClass]="{ selected: selectedOption == 'yearly' }" (click)="reloadInquirySummary('yearly')">This year</div>
-						<div class="timeline" [ngClass]="{ selected: selectedOption == 'monthly' }" (click)="reloadInquirySummary('monthly')">This month</div>
-						<div class="timeline" [ngClass]="{ selected: selectedOption == 'weekly' }" (click)="reloadInquirySummary('weekly')">This week</div>
-						<div class="timeline selected" [ngClass]="{ selected: selectedOption == 'today' }" (click)="reloadInquirySummary('today')">Today</div>
-					</ng-container>
 					<ng-container *ngIf="iscustomenquiry">
-						<div>
-							<span style="text-align: center; padding: 0px 16px; align-self: flex-end"><span class="material-icons"> date_range </span></span>
-							<!-- <span>
-								<mat-form-field>
+						<div style="display: flex">
+							<div>
+								<mat-form-field style="margin-bottom: -1.25em">
 									<mat-label>Enter a date range</mat-label>
 									<mat-date-range-input [rangePicker]="picker">
-									  <input matStartDate matInput placeholder="Start date">
-									  <input matEndDate matInput placeholder="End date">
+										<input
+											matStartDate
+											matInput
+											readonly
+											placeholder="Start date"
+											[ngModel]="dateF"
+											(dateChange)="opsFromDateEvent('change', $event)"
+										/>
+										<input matEndDate matInput readonly placeholder="End date" [ngModel]="dateF" (dateChange)="opsToDateEvent('change', $event)" />
 									</mat-date-range-input>
 									<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 									<mat-date-range-picker #picker></mat-date-range-picker>
-								  </mat-form-field>
-							</span> -->
+								</mat-form-field>
+							</div>
 						</div>
 					</ng-container>
+
+					<ng-container *ngIf="!iscustomenquiry">
+						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'yearly' }" (click)="reloadOpsSummary('yearly')">This year</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'monthly' }" (click)="reloadOpsSummary('monthly')">This month</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'weekly' }" (click)="reloadOpsSummary('weekly')">This week</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'today' }" (click)="reloadOpsSummary('today')">Today</div>
+					</ng-container>
+					<div style="padding: 0px 0px 0px 10px" *ngIf="!iscustomenquiry" (click)="reloadOpsSummary('custom')">
+						<img class="cursor" src="/assets/images/svg/filter.svg" width="28px" height="28px" />
+					</div>
+					<div style="padding: 0px 0px 0px 10px" *ngIf="iscustomenquiry" (click)="reloadOpsSummary('custom')">
+						<img class="cursor" src="/assets/images/svg/filter-orange.svg" width="28px" height="28px" />
+					</div>
 				</div>
 				<div class="section1">
-					<div class="card" style="background-color: #094bca">
+					<div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
 								<img src="/assets/images/svg/enquiry.svg" width="22px" height="22px" />
 							</div>
-							<div style="color: #fff; font-size: 18px; font-weight: 400; display: grid; align-content: center">Inquiry</div>
+							<div class="card-head">Inquiry</div>
 						</div>
-						<div style="display: grid; grid-template-columns: 1fr 1fr">
-							<div style="padding: 10px">
-								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.enquirySummary?.new}}</div>
-								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">New</div>
+						<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr">
+							<div (click)="navigateToInquiry('O')">
+								<div class="card-sub-head">{{this.enquirySummary?.new}}</div>
+								<div class="card-sub-data">New</div>
 							</div>
 
-							<div style="padding: 10px">
-								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.enquirySummary?.draft}}</div>
-								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Draft</div>
+							<div (click)="navigateToInquiry('D')">
+								<div class="card-sub-head">{{this.enquirySummary?.draft}}</div>
+								<div class="card-sub-data">In Progress</div>
 							</div>
-						</div>
-
-						<div style="display: grid; grid-template-columns: 1fr 1fr">
-							<div style="padding: 10px">
-								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.enquirySummary?.executed}}</div>
-								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">New</div>
+							<div (click)="navigateToInquiry('P')">
+								<div class="card-sub-head">{{this.enquirySummary?.executed}}</div>
+								<div class="card-sub-data">Ready</div>
 							</div>
 
-							<div style="padding: 10px">
-								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.enquirySummary?.invoiceready}}</div>
-								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Draft</div>
+							<div (click)="navigateToInquiry('E')">
+								<div class="card-sub-head">{{this.enquirySummary?.invoiceready}}</div>
+								<div class="card-sub-data">Closed</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="card" style="background-color: #094bca">
+					<div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
 								<img src="/assets/images/svg/sales.svg" width="22px" height="22px" />
 							</div>
-							<div style="color: #fff; font-size: 18px; font-weight: 400; display: grid; align-content: center">Sales</div>
+							<div class="card-head">Sales</div>
 						</div>
 						<div style="display: grid; grid-template-columns: 1fr 1fr">
-							<div style="padding: 10px">
-								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.salesSummary?.draft}}</div>
-								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Draft</div>
+							<div>
+								<div class="card-sub-head">{{this.salesSummary?.draft}}</div>
+								<div class="card-sub-data">Draft</div>
 							</div>
 
-							<div style="padding: 10px">
-								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.salesSummary?.completed}}</div>
-								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Completed</div>
+							<div>
+								<div class="card-sub-head">{{this.salesSummary?.completed}}</div>
+								<div class="card-sub-data">Completed</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="card" style="background-color: #094bca">
+					<div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
 								<img src="/assets/images/svg/purchase.svg" width="22px" height="22px" />
 							</div>
-							<div style="color: #fff; font-size: 18px; font-weight: 400; display: grid; align-content: center">Purchase</div>
+							<div class="card-head">Purchase</div>
 						</div>
 						<div style="display: grid; grid-template-columns: 1fr 1fr">
-							<div style="padding: 10px">
-								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.purchaseSummary?.draft}}</div>
-								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Draft</div>
+							<div>
+								<div class="card-sub-head">{{this.purchaseSummary?.draft}}</div>
+								<div class="card-sub-data">Draft</div>
 							</div>
 
-							<div style="padding: 10px">
-								<div style="font-size: 32px; color: #fff; padding-left: 16px">{{this.purchaseSummary?.completed}}</div>
-								<div style="color: #fff; opacity: 0.8; font-size: 14px; padding-left: 16px">Completed</div>
+							<div>
+								<div class="card-sub-head">{{this.purchaseSummary?.completed}}</div>
+								<div class="card-sub-data">Completed</div>
 							</div>
 						</div>
 					</div>

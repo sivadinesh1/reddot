@@ -55,6 +55,7 @@ export class EnquiryPage {
   whatsapp: any;
 
   iscustomerselected = false;
+  clicked = false;
 
   @ViewChild('myForm', { static: true }) myForm: NgForm;
   filteredCustomers: Observable<any[]>;
@@ -101,6 +102,7 @@ export class EnquiryPage {
 
 
     this._route.params.subscribe(params => {
+      this.clicked = false;
       if (this.userdata !== undefined) {
         this.basicinit();
         this.init();
@@ -518,7 +520,9 @@ export class EnquiryPage {
       return false;
     }
 
-
+    //main submit
+    this.clicked = true;  // disable all buttons after submission
+    this._cdr.markForCheck();
     this._commonApiService.saveEnquiry(this.submitForm.value).subscribe((data: any) => {
       console.log('object.SAVE ENQ. ' + JSON.stringify(data));
 
@@ -537,7 +541,7 @@ export class EnquiryPage {
           center_id: data.center_id,
         });
 
-        this._router.navigate([`/home/enquiry/open-enquiry`]);
+        this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
 
       } else {
 
@@ -580,6 +584,7 @@ export class EnquiryPage {
           text: 'Yes, Proceed',
           handler: () => {
             console.log('Confirm Okay');
+
             this.reset();
 
           }
@@ -592,7 +597,7 @@ export class EnquiryPage {
 
 
   openEnquiry() {
-    this._router.navigateByUrl('/home/enquiry/open-enquiry');
+    this._router.navigateByUrl('/home/enquiry/open-enquiry/O/weekly');
   }
 
   openBackOrder() {

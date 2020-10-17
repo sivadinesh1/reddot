@@ -12,17 +12,41 @@ export class InvoiceSuccessComponent implements OnInit {
   isPrint = true;
   data: any;
 
-  selectedoption = 'Original for Buyer';
-  options: string[] = ['Original for Buyer', 'Duplicate For Transporter', 'Triplicate for Assessee', 'Duplicate'];
+  selectedoptionArr = ["Original for Buyer", "Duplicate For Transporter"];
+
+  checkbox_list = [
+    {
+      name: "Original for Buyer",
+      disabled: false,
+      checked: true,
+      labelPosition: "after"
+    }, {
+      name: "Duplicate For Transporter",
+      disabled: false,
+      checked: true,
+      labelPosition: "after"
+    }, {
+      name: "Triplicate for Assessee",
+      disabled: false,
+      checked: false,
+      labelPosition: "after"
+    }, {
+      name: "Duplicate",
+      disabled: false,
+      checked: false,
+      labelPosition: "after"
+    }
+  ]
 
   constructor(private dialogRef: MatDialogRef<InvoiceSuccessComponent>,
     @Inject(MAT_DIALOG_DATA) public invoice_id: any,
     private _commonApiService: CommonApiService) {
     this.data = invoice_id;
+
   }
 
   ngOnInit() {
-    this.selectedoption = 'Original for Buyer';
+
   }
 
   cancel() {
@@ -30,11 +54,29 @@ export class InvoiceSuccessComponent implements OnInit {
   }
 
 
+  list_change() {
+    this.selectedoptionArr = [];
 
+    //Get total checked items
+    for (let value of Object.values(this.checkbox_list)) {
+      if (value.checked) {
+        this.selectedoptionArr.push(value.name)
+      }
+
+    }
+
+
+  }
 
   printActn() {
     this.isPrint = true;
-    this._commonApiService.printInvoice(this.invoice_id, this.selectedoption).subscribe((data: any) => {
+
+    let submitForm = {
+      sale_id: this.invoice_id,
+      print_type: this.selectedoptionArr
+    }
+
+    this._commonApiService.printInvoice(submitForm).subscribe((data: any) => {
       console.log('object...PRINTED');
 
 
