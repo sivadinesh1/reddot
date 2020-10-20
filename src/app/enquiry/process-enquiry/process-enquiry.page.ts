@@ -53,6 +53,8 @@ export class ProcessEnquiryPage implements OnInit {
   customerdata: any;
 
   searchText = '';
+  singleRowSelected = false;
+  showDelIcon = false;
 
   iscustomerselected = false;
 
@@ -66,6 +68,8 @@ export class ProcessEnquiryPage implements OnInit {
   ready = 0;
 
   clicked = false;
+  removeRowArr = [];
+  deletedRowArr = [];
 
   constructor(private _route: ActivatedRoute, private _router: Router,
     private dialog: MatDialog, private _modalcontroller: ModalController,
@@ -90,6 +94,7 @@ export class ProcessEnquiryPage implements OnInit {
       });
 
     this._route.params.subscribe(params => {
+      this.clicked = false;
       this.enqid = params['enqid'];
       if (this.userdata !== undefined) {
         this.reloadEnqDetails();
@@ -322,6 +327,8 @@ export class ProcessEnquiryPage implements OnInit {
       return false;
     }
 
+    this.executeDeletes();
+
     if (this.enqDetailsOrig[0].customer_id !== this.customerdata.id) {
       this.updateCustomerDetailsinEnquiry();
     }
@@ -375,6 +382,22 @@ export class ProcessEnquiryPage implements OnInit {
 
       this._cdr.detectChanges();
     }, 10);
+  }
+
+
+  checkedDelRow(idx: number) {
+
+    if (!this.productArr[idx].checkbox) {
+      this.productArr[idx].checkbox = true;
+      this.removeRowArr.push(idx);
+
+    } else if (this.productArr[idx].checkbox) {
+      this.productArr[idx].checkbox = false;
+      this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
+    }
+    this.delIconStatus();
+    this.checkIsSingleRow();
+
   }
 
 
@@ -443,6 +466,7 @@ export class ProcessEnquiryPage implements OnInit {
           text: 'Yes, Move to Sale',
           handler: () => {
             console.log('Confirm Okay');
+            this.executeDeletes();
             this.moveToSale();
 
           }
@@ -451,6 +475,117 @@ export class ProcessEnquiryPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async presentDeleteConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'Are You sure to delete!!!',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Okay',
+          handler: () => {
+            console.log('Confirm Okay');
+            this.onRemoveRows();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+
+  executeDeletes() {
+
+
+
+
+    this.deletedRowArr.sort().reverse();
+    this.deletedRowArr.forEach((e) => {
+      this.executeDeleteProduct(e);
+    });
+
+  }
+
+
+
+  executeDeleteProduct(elem) {
+    debugger;
+    this._commonApiService.deleteEnquiryDetails({
+      id: elem.id, enquiry_id: elem.enquiry_id, qty: elem.askqty,
+      product_id: elem.product_id, notes: elem.notes,
+      autidneeded: true
+    }).subscribe((data: any) => {
+      if (data.body.result === 'success') {
+        console.log('object >>> execute delete product ...')
+      } else {
+        this.spinner.hide();
+        this.presentAlert('Error: Something went wrong Contact Admin!');
+      }
+
+      this._cdr.markForCheck();
+    });
+
+
+
+
+    this._cdr.markForCheck();
+  }
+
+  onRemoveRows() {
+
+    this.removeRowArr.sort().reverse();
+
+    this.removeRowArr.forEach((e) => {
+      this.deleteProduct(e);
+    });
+  }
+
+
+  deleteProduct(idx) {
+    let test = this.productArr[idx];
+
+
+    if (this.productArr[idx].id != '') {
+
+      this.deletedRowArr.push(this.productArr[idx]);
+    }
+
+    this.productArr.splice(idx, 1);
+    this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
+
+    this.delIconStatus();
+    this.checkIsSingleRow();
+
+
+    this._cdr.markForCheck();
+  }
+
+
+  checkIsSingleRow() {
+    if (this.removeRowArr.length === 1) {
+      this.singleRowSelected = true;
+    } else {
+      this.singleRowSelected = false;
+    }
+  }
+
+
+  delIconStatus() {
+
+    if (this.removeRowArr.length > 0) {
+      this.showDelIcon = true;
+    } else {
+      this.showDelIcon = false;
+    }
   }
 
   async beforeAddItemConfirm() {

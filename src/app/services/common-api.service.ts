@@ -348,6 +348,14 @@ export class CommonApiService {
     return this.httpClient.post<any>(this.restApiUrl + '/api/stock/delete-purchase-details', submitForm, { observe: 'response' });
   }
 
+  deleteEnquiryDetails(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + '/api/enquiry/delete-enquiry-details', submitForm, { observe: 'response' });
+  }
+
+
+
+
+
   deleteSalesDetails(submitForm) {
     return this.httpClient.post<any>(this.restApiUrl + '/api/sale/delete-sales-details', submitForm, { observe: 'response' });
   }

@@ -86,38 +86,39 @@ export class OpenEnquiryPage implements OnInit {
     const yearOffset = (24 * 60 * 60 * 1000) * 365;
 
     this._route.params.subscribe(params => {
-      this.status = params['status'];
-      this.timeline = params['timeline'];
+      // this.status = params['status'];
+      // this.timeline = params['timeline'];
 
-      if (this.timeline === 'today') {
-        this.fromdate = new Date();
-        this.todate = new Date();
-      } else if (this.timeline === 'weekly') {
-        this.fromdate.setTime(this.minDate.getTime() - weekOffset);
-        this.todate = new Date();
-      } else if (this.timeline === 'monthly') {
-        this.fromdate.setTime(this.minDate.getTime() - monthOffset);
-        this.todate = new Date();
-      } else if (this.timeline === 'yearly') {
-        this.fromdate.setTime(this.minDate.getTime() - yearOffset);
-        this.todate = new Date();
-      }
+      // if (this.timeline === 'today') {
+      //   this.fromdate = new Date();
+      //   this.todate = new Date();
+      // } else if (this.timeline === 'weekly') {
+      //   this.fromdate.setTime(this.minDate.getTime() - weekOffset);
+      //   this.todate = new Date();
+      // } else if (this.timeline === 'monthly') {
+      //   this.fromdate.setTime(this.minDate.getTime() - monthOffset);
+      //   this.todate = new Date();
+      // } else if (this.timeline === 'yearly') {
+      //   this.fromdate.setTime(this.minDate.getTime() - yearOffset);
+      //   this.todate = new Date();
+      // }
 
-      if (this.status === 'O') {
-        this.tabClick(0);
-        this.tabIndex = 0;
-      } else if (this.status === 'D') {
-        this.tabClick(1);
-        this.tabIndex = 1;
-      } else if (this.status === 'P') {
-        this.tabClick(2);
-        this.tabIndex = 2;
-      } else if (this.status === 'E') {
-        this.tabClick(3);
-        this.tabIndex = 3;
-      }
+      // if (this.status === 'O') {
+      //   this.tabClick(0);
+      //   this.tabIndex = 0;
+      // } else if (this.status === 'D') {
+      //   this.search();
+      //   this.tabClick(1);
+      //   this.tabIndex = 1;
+      // } else if (this.status === 'P') {
+      //   this.tabClick(2);
+      //   this.tabIndex = 2;
+      // } else if (this.status === 'E') {
+      //   this.tabClick(3);
+      //   this.tabIndex = 3;
+      // }
 
-      this._cdr.markForCheck();
+      // this._cdr.markForCheck();
     });
 
 
@@ -140,6 +141,40 @@ export class OpenEnquiryPage implements OnInit {
       if (this.userdata !== undefined) {
         this.init();
       }
+
+      this.status = params['status'];
+      this.timeline = params['timeline'];
+
+      if (this.timeline === 'today') {
+        this.fromdate = new Date();
+        this.todate = new Date();
+      } else if (this.timeline === 'weekly') {
+        this.fromdate.setTime(this.minDate.getTime() - weekOffset);
+        this.todate = new Date();
+      } else if (this.timeline === 'monthly') {
+        this.fromdate.setTime(this.minDate.getTime() - monthOffset);
+        this.todate = new Date();
+      } else if (this.timeline === 'yearly') {
+        this.fromdate.setTime(this.minDate.getTime() - yearOffset);
+        this.todate = new Date();
+      }
+
+      if (this.status === 'O') {
+        this.tabClick(0);
+        this.tabIndex = 0;
+      } else if (this.status === 'D') {
+        this.search();
+        this.tabClick(1);
+        this.tabIndex = 1;
+      } else if (this.status === 'P') {
+        this.tabClick(2);
+        this.tabIndex = 2;
+      } else if (this.status === 'E') {
+        this.tabClick(3);
+        this.tabIndex = 3;
+      }
+
+      this._cdr.markForCheck();
 
     });
 
@@ -218,6 +253,7 @@ export class OpenEnquiryPage implements OnInit {
 
   async search() {
 
+    //main search
     this.enquiries$ = this._commonApiService
       .searchEnquiries(this.userdata.center_id, this.submitForm.value.customerid,
         this.submitForm.value.status,

@@ -210,7 +210,7 @@ td.mat-column-actions {
 }
 
 .make-gold {
-	background-color: rgb(251, 229, 101);
+	background-color: #d6e3f3;
 }
 
 .footer {
@@ -246,7 +246,7 @@ td.mat-column-actions {
 .content {
 	display: grid;
 	width: 90%;
-	grid-template-columns: 80px 100px 1fr 80px 80px 100px 1fr 100px 100px;
+	grid-template-columns: 30px 40px 120px 1fr 80px 80px 100px 1fr 100px 100px;
 	align-items: center;
 	border-bottom: 2px solid rgb(173, 173, 173);
 	color: #666666;
@@ -261,7 +261,7 @@ td.mat-column-actions {
 .list-item {
 	display: grid;
 	width: 90%;
-	grid-template-columns: 80px 100px 1fr 80px 80px 100px 1fr 100px 100px;
+	grid-template-columns: 30px 40px 120px 1fr 80px 80px 100px 1fr 100px 100px;
 	align-self: center;
 	border-bottom: 1px solid #e0d9d9;
 	font-size: 13px;

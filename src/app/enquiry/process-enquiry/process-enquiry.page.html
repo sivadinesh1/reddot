@@ -90,7 +90,10 @@
 		<table>
 			<thead>
 				<tr class="content">
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">SNo</th>
+					<th style="text-align: left; padding-left: 5px; font-weight: 500">
+						<img class="cursor" src="/assets/images/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
+					</th>
+					<th>&nbsp;</th>
 					<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Code</th>
 					<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Description</th>
 					<th style="text-align: right; padding-right: 5px; font-weight: 500">In Stock</th>
@@ -108,8 +111,30 @@
 					[ngClass]="{'make-gold': item.processed === 'YS' }"
 					class="list-item"
 				>
-					<td style="text-align: left; padding-left: 5px">{{idx + 1}}</td>
-					<td style="text-align: left; padding-left: 5px">{{item.product_code}}</td>
+					<td style="text-align: left; padding-left: 5px">
+						<div class="txt-align">
+							<span>
+								<mat-checkbox #myCheckbox (click)="checkedDelRow(idx)"></mat-checkbox>
+							</span>
+						</div>
+					</td>
+
+					<td style="text-align: left; padding-left: 5px">
+						<div class="txt-align">
+							<span>
+								<mat-icon *ngIf="item.product_code" (click)="showAddProductComp(idx)" style="cursor: pointer">edit </mat-icon>
+							</span>
+						</div>
+					</td>
+
+					<td style="text-align: left; padding-left: 5px">
+						{{item.product_code}}
+						<div *ngIf="!item.product_code" class="left-align" style="cursor: pointer">
+							<div class="" *ngIf="!item.product_code" (click)="showAddProductComp(idx)">
+								<div><img src="/assets/images/svg/more.svg" width="18px" height="18px" /> Item Code</div>
+							</div>
+						</div>
+					</td>
 					<td style="text-align: left; padding-left: 5px">{{item.product_desc}}</td>
 					<td style="text-align: right; padding-right: 5px">{{item.available_stock}}</td>
 					<td style="text-align: left">{{item.rackno}}</td>
@@ -124,7 +149,7 @@
 					<td style="text-align: left; padding-left: 5px">{{item.notes}}</td>
 					<td style="text-align: right; padding-right: 5px">{{item.askqty}}</td>
 					<td style="text-align: center">
-						<mat-checkbox *ngIf="status !== 'E'" [checked]="item.processed === 'YS'? true : false" (click)="checkedRow(idx)"></mat-checkbox>
+						<mat-slide-toggle *ngIf="status !== 'E'" [checked]="item.processed === 'YS'? true : false" (click)="checkedRow(idx)"></mat-slide-toggle>
 					</td>
 				</tr>
 			</tbody>
