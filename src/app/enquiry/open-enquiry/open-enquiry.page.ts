@@ -81,46 +81,11 @@ export class OpenEnquiryPage implements OnInit {
     private _dialog: MatDialog, private _authservice: AuthenticationService,
 
   ) {
+
+    // dnd in future, if logic changes to current date minus, use this
     const weekOffset = (24 * 60 * 60 * 1000) * 7;
     const monthOffset = (24 * 60 * 60 * 1000) * 30;
     const yearOffset = (24 * 60 * 60 * 1000) * 365;
-
-    this._route.params.subscribe(params => {
-      // this.status = params['status'];
-      // this.timeline = params['timeline'];
-
-      // if (this.timeline === 'today') {
-      //   this.fromdate = new Date();
-      //   this.todate = new Date();
-      // } else if (this.timeline === 'weekly') {
-      //   this.fromdate.setTime(this.minDate.getTime() - weekOffset);
-      //   this.todate = new Date();
-      // } else if (this.timeline === 'monthly') {
-      //   this.fromdate.setTime(this.minDate.getTime() - monthOffset);
-      //   this.todate = new Date();
-      // } else if (this.timeline === 'yearly') {
-      //   this.fromdate.setTime(this.minDate.getTime() - yearOffset);
-      //   this.todate = new Date();
-      // }
-
-      // if (this.status === 'O') {
-      //   this.tabClick(0);
-      //   this.tabIndex = 0;
-      // } else if (this.status === 'D') {
-      //   this.search();
-      //   this.tabClick(1);
-      //   this.tabIndex = 1;
-      // } else if (this.status === 'P') {
-      //   this.tabClick(2);
-      //   this.tabIndex = 2;
-      // } else if (this.status === 'E') {
-      //   this.tabClick(3);
-      //   this.tabIndex = 3;
-      // }
-
-      // this._cdr.markForCheck();
-    });
-
 
     this.userdata$ = this._authservice.currentUser;
 
@@ -146,24 +111,26 @@ export class OpenEnquiryPage implements OnInit {
       this.timeline = params['timeline'];
 
       if (this.timeline === 'today') {
-        this.fromdate = new Date();
-        this.todate = new Date();
+        this.fromdate.setTime(new Date().getTime());
+        this.todate.setTime(new Date().getTime());
       } else if (this.timeline === 'weekly') {
-        this.fromdate.setTime(this.minDate.getTime() - weekOffset);
-        this.todate = new Date();
+        //this.fromdate.setTime(this.minDate.getTime() - weekOffset);
+        this.fromdate.setTime(moment().startOf('isoWeek').toDate().getTime());
+        this.todate.setTime(new Date().getTime());
       } else if (this.timeline === 'monthly') {
-        this.fromdate.setTime(this.minDate.getTime() - monthOffset);
-        this.todate = new Date();
+        //this.fromdate.setTime(this.minDate.getTime() - monthOffset);
+        this.fromdate.setTime(moment().startOf('month').toDate().getTime());
+        this.todate.setTime(new Date().getTime());
       } else if (this.timeline === 'yearly') {
-        this.fromdate.setTime(this.minDate.getTime() - yearOffset);
-        this.todate = new Date();
+        //this.fromdate.setTime(this.minDate.getTime() - yearOffset);
+        this.fromdate.setTime(moment().toDate().getTime());
+        this.todate.setTime(new Date().getTime());
       }
 
       if (this.status === 'O') {
         this.tabClick(0);
         this.tabIndex = 0;
       } else if (this.status === 'D') {
-        this.search();
         this.tabClick(1);
         this.tabIndex = 1;
       } else if (this.status === 'P') {
@@ -174,6 +141,7 @@ export class OpenEnquiryPage implements OnInit {
         this.tabIndex = 3;
       }
 
+      this.search();
       this._cdr.markForCheck();
 
     });

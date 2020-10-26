@@ -20,11 +20,12 @@
 
 		.row1 {
 			display: grid;
-			grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px 110px 110px;
+			grid-template-columns: 40px 130px minmax(250px, 600px) 110px 110px 110px 110px 110px 110px;
 			align-items: center;
 			border-bottom: 2px solid rgb(173, 173, 173);
 			color: "#a5a5a6";
 			background-color: #f5f5f5;
+			gap: 10px;
 		}
 
 		.row2 {
@@ -32,11 +33,14 @@
 
 			.list-item {
 				display: grid;
-				grid-template-columns: 40px minmax(250px, 600px) 110px 110px 110px 110px 110px 110px;
+				grid-template-columns: 40px 130px minmax(250px, 600px) 110px 110px 110px 110px 110px 110px;
+
 				align-self: center;
 				border-bottom: 1px solid #e0d9d9;
-				font-size: 14px;
-				padding-top: 14px;
+				font-size: 13px;
+				padding: 5px 5px 10px 5px;
+				align-items: end;
+				gap: 10px;
 			}
 
 			.extra {

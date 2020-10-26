@@ -5,6 +5,9 @@ import { CommonApiService } from '../../../services/common-api.service';
 import { Validators, FormBuilder } from '@angular/forms';
 
 import { MatDialogRef } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { User } from 'src/app/models/User';
 
 @Component({
   selector: 'app-brand-add-dialog',
@@ -18,19 +21,42 @@ export class BrandAddDialogComponent implements OnInit {
   submitForm: any;
   errmsg: any;
 
+  userdata$: Observable<User>;
+  userdata: any;
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
     private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<BrandAddDialogComponent>,
     private _route: ActivatedRoute, private _authservice: AuthenticationService,
     private _commonApiService: CommonApiService) {
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
-
+    // const currentUser = this._authservice.currentUserValue;
+    // this.center_id = currentUser.center_id;
 
     this.submitForm = this._formBuilder.group({
-      center_id: [this.center_id],
+      center_id: [],
       name: [null, Validators.required],
     });
+
+    this.userdata$ = this._authservice.currentUser;
+    this.userdata$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.userdata = data;
+
+        this.submitForm.patchValue({
+          center_id: data.center_id,
+        })
+
+        this._cdr.markForCheck();
+      });
+
+
+    if (this.userdata !== undefined) {
+      this.submitForm.patchValue({
+        center_id: this.userdata.center_id,
+      });
+    }
+
 
   }
 
@@ -46,7 +72,7 @@ export class BrandAddDialogComponent implements OnInit {
     }
 
     if (this.submitForm.value.name.length > 0) {
-      this._commonApiService.isBrandExists(this.submitForm.value.name).subscribe((data: any) => {
+      this._commonApiService.isBrandExists(this.submitForm.value.name, this.userdata.center_id).subscribe((data: any) => {
 
         if (data.result.length > 0) {
           if (data.result[0].id > 0) {

@@ -49,7 +49,7 @@ export class ProductEditDialogComponent implements OnInit {
     this.currentStep = 0;
     this.product = product;
 
-
+    debugger;
 
 
     this.brands$ = this._commonApiService.getAllActiveBrands(this.center_id, "A");
@@ -67,13 +67,13 @@ export class ProductEditDialogComponent implements OnInit {
       packetsize: [this.product.packetsize, Validators.required],
       hsncode: [this.product.hsncode, [patternValidator(HSNCODE_REGEX)]],
       taxrate: [this.product.taxrate, Validators.required],
-      minqty: [this.product.minqty, Validators.required],
+      minqty: [this.product.minqty === null ? 0 : this.product.minqty, Validators.required],
 
       unit_price: [this.product.unit_price, Validators.required],
       mrp: [this.product.mrp, Validators.required],
       purchase_price: [this.product.purchase_price, Validators.required],
       salesprice: [this.product.salesprice, Validators.required],
-      maxdiscount: ['', [patternValidator(DISC_REGEX)]],
+      maxdiscount: [this.product.maxdiscount, [patternValidator(DISC_REGEX)]],
 
       currentstock: [this.product.currentstock],
       rackno: [this.product.rackno],

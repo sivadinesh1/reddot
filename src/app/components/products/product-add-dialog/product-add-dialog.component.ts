@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { throwError, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CommonApiService } from 'src/app/services/common-api.service';
-import { HSNCODE_REGEX, DISC_REGEX } from 'src/app/util/helper/patterns';
+import { HSNCODE_REGEX, DISC_REGEX, TWO_DECIMAL_REGEX } from 'src/app/util/helper/patterns';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 
 import { MessagesService } from '../../../components/messages/messages.service';
@@ -39,6 +39,15 @@ export class ProductAddDialogComponent implements OnInit {
     { key: 'Ltrs', viewValue: 'Ltrs' }
   ];
 
+  tax = [
+    { key: '0', viewValue: '0' },
+    { key: '5', viewValue: '5' },
+    { key: '12', viewValue: '12' },
+    { key: '18', viewValue: '18' },
+    { key: '28', viewValue: '28' },
+
+  ];
+
   constructor(private _formBuilder: FormBuilder, private _commonApiService: CommonApiService,
     private _cdr: ChangeDetectorRef, private dialogRef: MatDialogRef<ProductAddDialogComponent>,
     private _router: Router,
@@ -60,9 +69,9 @@ export class ProductAddDialogComponent implements OnInit {
 
       unit_price: ['', Validators.required],
       mrp: ['', Validators.required],
-      purchase_price: ['', Validators.required],
-      maxdiscount: ['', [patternValidator(DISC_REGEX)]],
-      salesprice: ['',],
+      purchase_price: ['', Validators.required,],
+      maxdiscount: ['',],
+      salesprice: [''],
 
       currentstock: [0],
       rackno: [''],
@@ -139,7 +148,8 @@ export class ProductAddDialogComponent implements OnInit {
       console.log('successfullly inserted product >>>')
 
       if (data.body.result === 'success') {
-        this.searchProducts();
+        //   this.searchProducts();
+        this.dialogRef.close('success');
       } else if (data.body.result === 'error') {
 
         if (data.body.statusCode === '555') {
@@ -152,11 +162,11 @@ export class ProductAddDialogComponent implements OnInit {
 
   }
 
-  searchProducts() {
-    this.dialogRef.close();
-    this._router.navigate([`/home/view-products`]);
+  // searchProducts() {
+  //   this.dialogRef.close();
+  //   this._router.navigate([`/home/view-products`]);
 
-  }
+  // }
 
   goProdEdit() {
 

@@ -73,7 +73,7 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Primary contact</mat-label>
-						<input type="number" matInput formControlName="mobile" required />
+						<input type="number" matInput formControlName="mobile" required numeric />
 						<mat-error *ngIf="submitForm.get('mobile').hasError('required')"> This field is <strong>required</strong> </mat-error>
 						<mat-error *ngIf="submitForm.controls['mobile'].hasError('invalidCountryPhone')"> Invalid mobile number </mat-error>
 					</mat-form-field>
@@ -82,24 +82,26 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Secondary contact</mat-label>
-						<input type="number" matInput formControlName="mobile2" />
+						<input type="number" matInput formControlName="mobile2" numeric />
 					</mat-form-field>
 				</div>
 
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Whatsapp</mat-label>
-						<input type="number" matInput formControlName="whatsapp" required />
+						<input type="number" matInput formControlName="whatsapp" required numeric />
 
 						<mat-error *ngIf="submitForm.get('whatsapp').hasError('required')"> This field is <strong>required</strong> </mat-error>
-						<mat-error *ngIf="submitForm.controls['whatsapp'].hasError('invalidCountryPhone')"> Invalid mobile number </mat-error>
+						<mat-error *ngIf="!submitForm.get('whatsapp').hasError('required') && submitForm.controls['whatsapp'].hasError('invalidCountryPhone')">
+							Invalid mobile number
+						</mat-error>
 					</mat-form-field>
 				</div>
 
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Landline</mat-label>
-						<input type="number" matInput formControlName="phone" />
+						<input type="number" matInput formControlName="phone" min="0" numeric />
 					</mat-form-field>
 				</div>
 

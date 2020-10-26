@@ -110,6 +110,9 @@ import { EnquiryViewDialogComponent } from './components/enquiry/enquiry-view-di
 import { WhatsappDialogComponent } from './components/social/whatsapp/whatsapp-dialog/whatsapp-dialog.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 
+import { NumericDirective } from './util/directives/numeric.directive';
+
+
 const components = [
 
   NullToQuotePipe,
@@ -179,6 +182,8 @@ const components = [
   AutoFocusDirective,
   FocusedDirective,
   PreventDoubleClickDirective,
+
+  NumericDirective,
 
   ShowHidePasswordComponent,
 

@@ -171,7 +171,20 @@ export class ViewProductsPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Product added successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
 
 
   }
@@ -205,7 +218,7 @@ export class ViewProductsPage implements OnInit {
           dialogConfigSuccess.disableClose = false;
           dialogConfigSuccess.autoFocus = true;
           dialogConfigSuccess.width = "25%";
-          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.height = "30%";
           dialogConfigSuccess.data = "Product details updated successfully";
 
           const dialogRef1 = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);

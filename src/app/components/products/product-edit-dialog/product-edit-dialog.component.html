@@ -1,8 +1,6 @@
 <div class="content">
 	<div class="screen-header">
-		<div>
-			Edit Product
-		</div>
+		<div>Edit Product</div>
 		<div>
 			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
 		</div>
@@ -109,12 +107,11 @@
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Rack #</mat-label>
-					<input type="number" matInput formControlName="rackno" placeholder="Rack #" />
+					<input type="text" matInput formControlName="rackno" placeholder="Rack #" />
 				</mat-form-field>
 			</div>
 		</div>
-		<div style="text-align: center;">
-			<button mat-stroked-button type="button">Clear</button>&nbsp;&nbsp;
+		<div style="text-align: center">
 			<button mat-raised-button color="primary" (click)="submit()" type="button">+ Update Product</button>
 		</div>
 	</form>

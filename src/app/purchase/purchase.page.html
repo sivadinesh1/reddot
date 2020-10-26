@@ -204,7 +204,8 @@
 			<div class="left">
 				<div class="row1">
 					<div class="item1 headstyl-left txt-center-align">#</div>
-					<div class="item2 headstyl-left">Item Information</div>
+					<div class="item2 headstyl-left">Item Code</div>
+					<div class="item2 headstyl-left">Item Description</div>
 					<div class="item3 headstyl-right">Qty</div>
 					<div class="item3 headstyl-right">MRP</div>
 					<div class="item3 headstyl-right">Purchase Price</div>
@@ -232,13 +233,12 @@
 								<!-- {{idx + 1}} -->
 								<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
 							</div>
-							<div class="item2">
-								{{item.product_code}}
-								<div class="desc">{{item.product_desc}}</div>
-							</div>
+							<div class="item2">{{item.product_code}}</div>
+
+							<div class="item2">{{item.product_desc}}</div>
 
 							<div class="item4">
-								<mat-form-field (click)="openCurrencyPad(idx)" class="example-full-width">
+								<mat-form-field (click)="openCurrencyPad(idx)" class="example-full-width" style="margin-bottom: -1.25em">
 									<input matInput type="number" value="{{item.qty}}" class="cursor" readonly />
 									<mat-icon matSuffix>view_comfy</mat-icon>
 								</mat-form-field>
@@ -309,7 +309,7 @@
 					<div>
 						<mat-form-field class="example-full-width">
 							<mat-label>Purchase Price</mat-label>
-							<input matInput type="number" min="1" max="100000" formControlName="temppurchaseprice" required />
+							<input matInput type="number" min="1" max="100000" tabindex="4" formControlName="temppurchaseprice" required />
 
 							<mat-error *ngIf="submitForm.controls['temppurchaseprice'].hasError('required')"> Required feild </mat-error>
 						</mat-form-field>
@@ -317,12 +317,12 @@
 					<div>
 						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>
-							<input matInput type="number" min="1" max="1000" formControlName="tempqty" required />
-							<mat-hint matTooltip="Info about the action">Hint: Max 1000</mat-hint>
+							<input matInput type="number" min="1" max="9999" tabindex="5" formControlName="tempqty" required />
+							<mat-hint matTooltip="Info about the action">Hint: Max 9999</mat-hint>
 						</mat-form-field>
 					</div>
 					<div>
-						<button mat-stroked-button color="primary" tabindex="4" #newrow [disabled]="!vendorselected" type="button" (click)="add()">
+						<button mat-stroked-button color="primary" tabindex="6" #newrow [disabled]="!vendorselected" type="button" (click)="add()">
 							+ New Row
 						</button>
 					</div>

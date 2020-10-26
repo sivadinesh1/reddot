@@ -9,6 +9,8 @@ export const HSNCODE_REGEX = /^\d{6}$/;
 
 export const DISC_REGEX = /^[1-9]$|^[1-9][0-9]$|^(100)$/;
 
+export const TWO_DECIMAL_REGEX = /^\d*(?:[.,]\d{1,2})?$/;
+
 export const country = new FormControl(new CountryPhone('IN', 'India'), Validators.required);
 
 

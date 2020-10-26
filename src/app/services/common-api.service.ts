@@ -420,8 +420,8 @@ export class CommonApiService {
   }
 
   // end
-  isBrandExists(name) {
-    return this.httpClient.get(`${this.restApiUrl}/api/brand-exists/${name}`);
+  isBrandExists(name, center_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/brand-exists/${name}/${center_id}`);
   }
 
   isVendorExists(name) {
