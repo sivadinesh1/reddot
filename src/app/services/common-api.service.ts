@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { errorApiUrl } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import * as FileSaver from 'file-saver';
@@ -41,13 +41,37 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/admin/view-products-count/${center_id}`);
   }
 
-  // getProductInfo(center_id: string, searchstr: string) {
-  //   return this.httpClient.get(`${this.restApiUrl}/api/search-product/${center_id}/${searchstr}`);
-  // }
 
   getProductInfo(submitForm) {
     return this.httpClient.post(`${this.restApiUrl}/api/search-product`, submitForm, { observe: 'response' });
   }
+  // map(heroes => heroes[0])
+  getProductInfo1(submitForm): Observable<any> {
+    return this.httpClient.post(`${this.restApiUrl}/api/search-product`, submitForm, { observe: 'response' })
+      .pipe(
+        map(res => {
+
+          return res.body;
+        }))
+
+
+  }
+
+  search_Products(name: string): Observable<any> {
+    name = name.toLowerCase()
+    return of(states.filter(x => x && x.toLowerCase().indexOf(name) >= 0)).pipe(map(result => {
+      return result.map(x => ({ state: x, name: x }))
+    }))
+  }
+
+
+  // search_Products(name: string): Observable<any> {
+  //     name=name.toLowerCase()
+  //     return of(states.filter(x=>x && x.toLowerCase().indexOf(name)>=0)).pipe(map(result=>
+  //     {
+  //       return result.map(x=>({state:x,name:x}))
+  //     }))
+  //   }
 
   getProductInformation(submitForm) {
     return this.httpClient.post(`${this.restApiUrl}/api/search-product-information`, submitForm, { observe: 'response' });
@@ -559,3 +583,20 @@ export class CommonApiService {
 }
 
 
+
+export const states = ['Alabama', 'Alaska', 'American Samoa', 'Arizona', 'Arkansas', 'California', 'Colorado',
+  'Connecticut', 'Delaware', 'District Of Columbia', 'Federated States Of Micronesia', 'Florida', 'Georgia',
+  'Guam', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine',
+  'Marshall Islands', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana',
+  'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+  'Northern Mariana Islands', 'Ohio', 'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico', 'Rhode Island',
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virgin Islands', 'Virginia',
+  'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+
+interface SearchItem {
+
+  product_code: string,
+  description: string,
+
+
+}

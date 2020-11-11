@@ -49,8 +49,6 @@ export class ProductEditDialogComponent implements OnInit {
     this.currentStep = 0;
     this.product = product;
 
-    debugger;
-
 
     this.brands$ = this._commonApiService.getAllActiveBrands(this.center_id, "A");
 

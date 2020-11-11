@@ -6,17 +6,17 @@
 		</div>
 		<div>&nbsp;</div>
 	</div>
-	<div class="topcontainer">
-		<div *ngIf="enqDetailsOrig">
-			<form [formGroup]="submitForm" #myForm="ngForm">
+	<form [formGroup]="submitForm" #myForm="ngForm">
+		<div class="topcontainer">
+			<div>
 				<div class="cust-header">
 					<div>
-						<mat-form-field class="example-full-width" style="padding-right: 10px">
+						<mat-form-field style="width: 320px; padding-right: 10px">
 							<input matInput [matAutocomplete]="auto" formControlName="customerctrl" #typehead1 required matTooltipPosition="after" />
 							<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
 								<mat-icon>close</mat-icon>
 							</button>
-							<mat-placeholder class="placeholder">Select or Add Customer</mat-placeholder>
+							<mat-label class="placeholder">Select or Add Customer</mat-label>
 
 							<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
 								<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
@@ -54,171 +54,226 @@
 					</div>
 					<div *ngIf="iscustomerselected" style="padding: 0.5rem 0.5rem 0.5rem 0px; font-size: 12px; color: #666666">
 						<div style="font-weight: 500; font-size: 14px">Remarks</div>
-						<div>{{enqDetailsOrig[0].remarks}}</div>
+						<div>{{enqDetailsOrig.customerDetails[0].remarks}}</div>
 					</div>
 				</div>
-			</form>
 
-			<div></div>
-		</div>
-	</div>
-
-	<div class="row1">
-		<div class="search_box">
-			<mat-form-field style="width: 320px">
-				<mat-icon matPrefix>search</mat-icon>
-				<input type="text" matInput [(ngModel)]="searchText" placeholder="Search by Item code / description" />
-			</mat-form-field>
-		</div>
-		<div class="actions">
-			<button
-				appPreventDoubleClick
-				(throttledClick)="beforeAddItemConfirm()"
-				*ngIf="status !== 'E'"
-				[throttleTime]="500"
-				mat-raised-button
-				color="primary"
-			>
-				+ Add Item
-			</button>
-		</div>
-		<div style="text-align: center; align-self: center">
-			<span><img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportToExcel()" /></span>
-		</div>
-	</div>
-	<div #epltable>
-		<table>
-			<thead>
-				<tr class="content">
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">
-						<img class="cursor" src="/assets/images/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
-					</th>
-					<th>&nbsp;</th>
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Code</th>
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Description</th>
-					<th style="text-align: right; padding-right: 5px; font-weight: 500">In Stock</th>
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">Rack #</th>
-					<th style="text-align: right; padding-right: 5px; font-weight: 500">Alloted Qty</th>
-					<th [hidden]="true" style="text-align: right; padding-right: 5px; font-weight: 500">Alloted Qty</th>
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">Notes</th>
-					<th style="text-align: right; padding-right: 5px; font-weight: 500">Required Qty</th>
-					<th>&nbsp;</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr
-					*ngFor="let item of productArr | appFilter: searchText; let idx = index"
-					[ngClass]="{'make-gold': item.processed === 'YS' }"
-					class="list-item"
-				>
-					<td style="text-align: left; padding-left: 5px">
-						<div class="txt-align">
-							<span>
-								<mat-checkbox #myCheckbox (click)="checkedDelRow(idx)"></mat-checkbox>
-							</span>
-						</div>
-					</td>
-
-					<td style="text-align: left; padding-left: 5px">
-						<div class="txt-align">
-							<span>
-								<mat-icon *ngIf="item.product_code" (click)="showAddProductComp(idx)" style="cursor: pointer">edit </mat-icon>
-							</span>
-						</div>
-					</td>
-
-					<td style="text-align: left; padding-left: 5px">
-						{{item.product_code}}
-						<div *ngIf="!item.product_code" class="left-align" style="cursor: pointer">
-							<div class="" *ngIf="!item.product_code" (click)="showAddProductComp(idx)">
-								<div><img src="/assets/images/svg/more.svg" width="18px" height="18px" /> Item Code</div>
-							</div>
-						</div>
-					</td>
-					<td style="text-align: left; padding-left: 5px">{{item.product_desc}}</td>
-					<td style="text-align: right; padding-right: 5px">{{item.available_stock}}</td>
-					<td style="text-align: left">{{item.rackno}}</td>
-					<td style="text-align: right; padding-right: 5px">
-						<mat-form-field class="qty-width" style="margin-bottom: -1.25em" (click)="openCurrencyPad(idx)">
-							<input matInput type="number" value="{{item.giveqty}}" class="cursor" readonly />
-							<mat-icon *ngIf="status !== 'E'" matSuffix style="cursor: pointer" matSuffix>view_comfy</mat-icon>
-						</mat-form-field>
-					</td>
-
-					<td [hidden]="true">{{item.giveqty}}</td>
-					<td style="text-align: left; padding-left: 5px">{{item.notes}}</td>
-					<td style="text-align: right; padding-right: 5px">{{item.askqty}}</td>
-					<td style="text-align: center">
-						<mat-slide-toggle *ngIf="status !== 'E'" [checked]="item.processed === 'YS'? true : false" (click)="checkedRow(idx)"></mat-slide-toggle>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<div class="empty-add">&nbsp;</div>
-	<div>
-		<div class="footer" *ngIf="status !== 'E'">
-			<div style="display: flex">
-				<span style="padding: 0px 10px">
-					<div *ngIf="status === 'E'">
-						<div style="font-size: 12px; color: #797979">Status:</div>
-						<div style="font-size: 24px">Executed</div>
-					</div>
-					<div *ngIf="status === 'D'">
-						<div style="font-size: 12px; color: #797979">Status:</div>
-						<div style="font-size: 24px">Draft</div>
-					</div>
-					<div *ngIf="status === 'O'">
-						<div style="font-size: 12px; color: #797979">Status:</div>
-						<div style="font-size: 24px">New</div>
-					</div>
-				</span>
-				<span style="padding: 0px 10px">
-					<div style="font-size: 12px; color: #797979"># Items</div>
-					<div style="font-size: 24px">{{productArr.length || 0 }}</div>
-				</span>
+				<div></div>
 			</div>
-			<div class="submit">
+		</div>
+
+		<div class="row1">
+			<div class="search_box">
+				<!-- <mat-form-field style="width: 320px">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input type="text" matInput [(ngModel)]="searchText" placeholder="Search by Item code / description" />
+                </mat-form-field> -->
+			</div>
+			<div class="actions">
 				<button
 					appPreventDoubleClick
-					class="cursor"
-					(click)="presentCancelConfirm()"
-					[throttleTime]="500"
-					mat-stroked-button
-					color="primary"
-					type="button"
-					[disabled]="clicked"
-				>
-					Cancel</button
-				>&nbsp;
-				<button
-					appPreventDoubleClick
-					class="cursor"
-					(throttledClick)="presentAlertConfirm()"
-					[throttleTime]="500"
-					mat-stroked-button
-					color="primary"
-					type="button"
-					[disabled]="clicked"
-				>
-					Ready for Invoice</button
-				>&nbsp;
-				<button
-					appPreventDoubleClick
-					class="cursor"
-					(throttledClick)="save('draft')"
-					type="button"
+					(throttledClick)="beforeAddItemConfirm()"
+					*ngIf="status !== 'E'"
 					[throttleTime]="500"
 					mat-raised-button
-					type="button"
 					color="primary"
-					[disabled]="clicked"
 				>
-					Save Draft
+					+ Add Item
 				</button>
 			</div>
+			<div style="text-align: center; align-self: center">
+				<span><img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportToExcel()" /></span>
+			</div>
 		</div>
-	</div>
+		<div #epltable>
+			<table>
+				<thead>
+					<tr class="content">
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">
+							<img
+								class="cursor"
+								src="/assets/images/svg/trash.svg"
+								width="16px"
+								height="16px"
+								*ngIf="showDelIcon"
+								(click)="presentDeleteConfirm()"
+							/>
+						</th>
+
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Code</th>
+						<th style="text-align: left; padding-left: 10px; font-weight: 500">Item Description</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">In Stock</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">Rack #</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">Alloted Qty</th>
+						<th [hidden]="true" style="text-align: right; padding-right: 5px; font-weight: 500">Alloted Qty</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">Notes</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">Required Qty</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<div formArrayName="enquiries">
+						<!-- <div *ngFor="let item of submitForm.controls.enquiry?.value;  let idx = index" [ngClass]="{'make-gold': item.processed === 'YS' }"> -->
+						<div *ngFor="let item of enquiries.controls;  let idx = index">
+							<tr [formGroupName]="idx" class="list-item">
+								<td style="text-align: left; padding-left: 5px">
+									<div class="txt-align">
+										<span>
+											<mat-checkbox #myCheckbox formControlName="check_box" (click)="checkedDelRow(idx)"></mat-checkbox>
+										</span>
+									</div>
+								</td>
+
+								<td style="text-align: left; padding-left: 5px">
+									<div class="left-align" style="cursor: pointer">
+										<div>
+											<mat-form-field floatLabel="never" class="example-full-width" style="margin-bottom: -1.25em">
+												<input
+													matInput
+													[matAutocomplete]="auto1"
+													formControlName="product_code"
+													#typehead
+													#plist
+													matTooltipPosition="after"
+													placeholder="Item Code"
+												/>
+
+												<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput(idx)">
+													<mat-icon>close</mat-icon>
+												</button>
+
+												<mat-autocomplete
+													#auto1="matAutocomplete"
+													[displayWith]="displayProdFn"
+													panelWidth="auto"
+													(optionSelected)="setItemDesc($event, idx, 'click')"
+												>
+													<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+													<!-- <ng-container *ngIf="!isLoading"> -->
+													<ng-container *ngIf="productList$[idx] |async as results">
+														<mat-option
+															*ngFor="let product of results"
+															[value]="product"
+															style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px"
+														>
+															<div style="display: grid; grid-template-columns: 1fr 80px">
+																<div>
+																	<div style="font-size: 15px; padding: 2px; line-height: 1em">
+																		{{ product.product_code }} &nbsp;&nbsp; <span style="color: blue">MRP: {{ product.mrp | currency: "INR"}}</span>
+																	</div>
+																	<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ product.description }}</div>
+																</div>
+																<div>
+																	<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right; color: grey">
+																		{{ product.name }}
+																	</div>
+																	<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
+																		<span> <img src="/assets/images/svg/sales.svg" width="18px" height="18px" /></span>
+																		<span> &nbsp;{{ product.available_stock }} </span>
+																	</div>
+																</div>
+															</div>
+														</mat-option>
+													</ng-container>
+													<!-- </ng-container> -->
+												</mat-autocomplete>
+											</mat-form-field>
+										</div>
+									</div>
+								</td>
+
+								<td style="text-align: left; padding-left: 10px">{{item.value.product_desc}}</td>
+								<td style="text-align: right">{{item.value.available_stock}}</td>
+								<td style="text-align: right; padding-right: 5px">{{item.value.rackno}}</td>
+
+								<td style="text-align: right; padding-right: 5px">
+									<mat-form-field class="qty-width" style="margin-bottom: -1.25em">
+										<input matInput type="number" formControlName="giveqty" [readOnly]="status !== 'E'" class="cursor" required numeric />
+										<!-- <mat-icon *ngIf="status !== 'E'" matSuffix style="cursor: pointer" (click)="openCurrencyPad(idx)" matSuffix>view_comfy</mat-icon> -->
+									</mat-form-field>
+								</td>
+
+								<td style="text-align: left; padding-left: 5px">{{item.value.notes}}</td>
+								<td style="text-align: right; padding-right: 5px">{{item.value.askqty}}</td>
+								<td style="text-align: center">
+									<mat-slide-toggle
+										*ngIf="status !== 'E'"
+										[checked]="item.value.processed === 'YS'? true : false"
+										(click)="checkedRow(idx)"
+									></mat-slide-toggle>
+								</td>
+							</tr>
+						</div>
+					</div>
+				</tbody>
+			</table>
+		</div>
+		<div class="empty-add">&nbsp;</div>
+		<div>
+			<div class="footer" *ngIf="status !== 'E'">
+				<div style="display: flex">
+					<span style="padding: 0px 10px">
+						<div *ngIf="status === 'E'">
+							<div style="font-size: 12px; color: #797979">Status:</div>
+							<div style="font-size: 24px">Executed</div>
+						</div>
+						<div *ngIf="status === 'D'">
+							<div style="font-size: 12px; color: #797979">Status:</div>
+							<div style="font-size: 24px">Draft</div>
+						</div>
+						<div *ngIf="status === 'O'">
+							<div style="font-size: 12px; color: #797979">Status:</div>
+							<div style="font-size: 24px">New</div>
+						</div>
+					</span>
+					<span style="padding: 0px 10px">
+						<div style="font-size: 12px; color: #797979"># Items</div>
+						<div style="font-size: 24px">{{this.submitForm.value.enquiries.length || 0 }}</div>
+					</span>
+				</div>
+				<div class="submit">
+					<button
+						appPreventDoubleClick
+						class="cursor"
+						(click)="presentCancelConfirm()"
+						[throttleTime]="500"
+						mat-stroked-button
+						color="primary"
+						type="button"
+						[disabled]="clicked"
+					>
+						Cancel</button
+					>&nbsp;
+					<button
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="presentAlertConfirm()"
+						[throttleTime]="500"
+						mat-stroked-button
+						color="primary"
+						type="button"
+						[disabled]="clicked"
+					>
+						Ready for Invoice</button
+					>&nbsp;
+					<button
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="save('draft')"
+						type="button"
+						[throttleTime]="500"
+						mat-raised-button
+						type="button"
+						color="primary"
+						[disabled]="clicked"
+					>
+						Save Draft
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
 	<ngx-spinner size="medium"></ngx-spinner>
 </ion-content>
 

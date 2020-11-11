@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
@@ -16,8 +16,8 @@ import * as xlsx from 'xlsx';
 import { NgxSpinnerService } from "ngx-spinner";
 
 import { MatSort } from '@angular/material/sort';
-import { Observable, empty } from 'rxjs';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Observable, empty, of } from 'rxjs';
+import { FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { Customer } from 'src/app/models/Customer';
 import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
 import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
@@ -39,7 +39,7 @@ export class ProcessEnquiryPage implements OnInit {
 
   pageLength: any;
 
-  productArr = [];
+
   customer_lis: Customer[];
 
   enqid: any;
@@ -53,15 +53,21 @@ export class ProcessEnquiryPage implements OnInit {
   customerdata: any;
 
   searchText = '';
-  singleRowSelected = false;
+
   showDelIcon = false;
 
   iscustomerselected = false;
+  productList$: Observable<any>[] = [];
 
   @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
   // TAB navigation for customer list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
+
+  @ViewChildren('typehead', { read: MatAutocompleteTrigger }) autoTriggerList: QueryList<MatAutocompleteTrigger>
+
+
+  @ViewChildren(MatAutocompleteTrigger) autocompletes: QueryList<MatAutocompleteTrigger>
 
   userdata$: Observable<User>;
   userdata: any;
@@ -77,8 +83,7 @@ export class ProcessEnquiryPage implements OnInit {
     private _commonApiService: CommonApiService, private _dialog: MatDialog, private _fb: FormBuilder,
     private spinner: NgxSpinnerService,
     private _cdr: ChangeDetectorRef) {
-    const currentUser = this._authservice.currentUserValue;
-    // this.center_id = currentUser.center_id;
+    this.init();
 
 
 
@@ -94,14 +99,12 @@ export class ProcessEnquiryPage implements OnInit {
       });
 
     this._route.params.subscribe(params => {
+      this.init();
       this.clicked = false;
       this.enqid = params['enqid'];
       if (this.userdata !== undefined) {
         this.reloadEnqDetails();
-        // on reload. use this section 
-        // this.submitForm.patchValue({
-        //   center_id: this.userdata.center_id,
-        // });
+
       }
 
 
@@ -109,19 +112,26 @@ export class ProcessEnquiryPage implements OnInit {
 
 
 
-    this.submitForm = this._fb.group({
 
-      customerctrl: [null, [Validators.required, RequireMatch]],
 
-    });
+  }
 
+  get enquiries(): FormArray {
+    return this.submitForm.get('enquiries') as FormArray;
   }
 
   ngOnInit() {
     this.spinner.show();
-    // this.dataSource.paginator = this.paginator;
+  }
+
+  init() {
+    this.submitForm = this._fb.group({
+
+      customerctrl: [null, [Validators.required, RequireMatch]],
+      enquiries: this._fb.array([]),
 
 
+    });
   }
 
   reloadEnqDetails() {
@@ -129,7 +139,7 @@ export class ProcessEnquiryPage implements OnInit {
     this._commonApiService.getEnquiryDetails(this.enqid).subscribe((data: any) => {
       this.enqDetailsOrig = data;
 
-      this._commonApiService.getCustomerDetails(this.userdata.center_id, this.enqDetailsOrig[0].customer_id).subscribe((custData: any) => {
+      this._commonApiService.getCustomerDetails(this.userdata.center_id, this.enqDetailsOrig.customerDetails[0].customer_id).subscribe((custData: any) => {
         this.customerdata = custData[0];
 
 
@@ -142,19 +152,21 @@ export class ProcessEnquiryPage implements OnInit {
       });
 
 
-      this.status = this.enqDetailsOrig[0].estatus;
+      this.status = this.enqDetailsOrig.customerDetails[0].estatus;
 
-      this.init(this.enqDetailsOrig);
+
+      this.populateEnquiry(this.enqDetailsOrig.enquiryDetails);
+
       this.spinner.hide();
 
       this._cdr.markForCheck();
     });
   }
 
+  populateEnquiry(enqList) {
 
-  init(enqList) {
-    this.productArr = [];
-    enqList.forEach(element => {
+    enqList.forEach((element, index) => {
+
       let tmpGiveqty = 0;
       if (element.status === 'D') {
         tmpGiveqty = element.giveqty === 0 ? 0 : element.giveqty;
@@ -162,7 +174,31 @@ export class ProcessEnquiryPage implements OnInit {
         tmpGiveqty = element.askqty;
       }
 
-      this.productArr.push({
+      this.enquiries.push(this.addProductGroup(element, tmpGiveqty, index));
+      this._cdr.detectChanges();
+
+
+    });
+
+
+    this.autoTriggerList && this.autoTriggerList.forEach((e, idx) => {
+      e.panelClosingActions.subscribe(x => {
+
+        if (this.autoTriggerList.toArray()[idx].activeOption) {
+          this.setItemDesc(this.autoTriggerList.toArray()[idx].activeOption.value, idx, "tab");
+        }
+        console.log('is it calling..' + JSON.stringify(x));
+
+
+      });
+    })
+
+  }
+
+  addProductGroup(element, tmpGiveqty, index) {
+
+    const group = this._fb.group(
+      {
         "id": element.id, "enquiry_id": element.enquiry_id, "notes": element.notes,
         "askqty": element.askqty, "giveqty": tmpGiveqty,
         "status": "P", "invoiceno": element.invoiceno, "center_id": this.userdata.center_id,
@@ -177,12 +213,20 @@ export class ProcessEnquiryPage implements OnInit {
         "mrp": element.mrp,
         "available_stock": element.available_stock,
         "stockid": element.stock_pk,
-        "processed": element.processed
-      });
-    });
+        "processed": element.processed,
+        "check_box": false
+      }
+    );
 
-    this._cdr.markForCheck();
-    this.searchCustomers();
+    this.productList$[index] = group.get("product_code").valueChanges.pipe(
+      debounceTime(300),
+
+      switchMap(value => {
+        return this._commonApiService.getProductInfo1({ "centerid": this.userdata.center_id, "searchstring": value })
+      }
+      )
+    );
+    return group;
   }
 
 
@@ -251,59 +295,22 @@ export class ProcessEnquiryPage implements OnInit {
 
   }
 
-  openCurrencyPad(idx) {
+  clearProdInput(index) {
 
-    const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
-
-    dialogRef.afterClosed().subscribe(
-      data => {
-
-        if (data != undefined && data.length > 0) {
-
-          this.productArr[idx].giveqty = +data;
-
-          this._cdr.markForCheck();
-        }
-
-
-      }
-    );
-  }
-
-  async showAddProductComp(idx) {
-
-    const modal = await this._modalcontroller.create({
-      component: AddProductComponent,
-      componentProps: { center_id: this.userdata.center_id, customer_id: 0, },
-      cssClass: 'select-modal'
+    this.enquiries.controls[index].patchValue({
+      product_id: null,
+      product_code: null,
+      product_desc: null,
+      available_stock: null,
+      giveqty: 0
 
     });
 
-    modal.onDidDismiss().then((result) => {
 
-      if (result.data !== undefined) {
-        let temp = result.data;
 
-        this.productArr[idx].product_id = temp.product_id;
-        this.productArr[idx].product_code = temp.product_code;
-        this.productArr[idx].product_desc = temp.description;
-        this.productArr[idx].qty = temp.packetsize;
-        this.productArr[idx].packetsize = temp.packetsize;
-        this.productArr[idx].unit_price = temp.unit_price;
-        this.productArr[idx].mrp = temp.mrp;
-        this.productArr[idx].status = 'P';
-        this.productArr[idx].stockid = temp.stock_pk;
-        this.productArr[idx].available_stock = temp.available_stock;
-        this.productArr[idx].rackno = temp.rackno;
-      }
-
-      this._cdr.markForCheck();
-    });
-
-    await modal.present();
+    this._cdr.markForCheck();
 
   }
-
 
   async presentAlert(msg: string) {
     const alert = await this.alertController.create({
@@ -316,11 +323,7 @@ export class ProcessEnquiryPage implements OnInit {
     await alert.present();
   }
 
-
-
   save(param) {
-
-    // todo - if customer is not selected throw error
 
     if (!this.iscustomerselected) {
       this.presentAlert('Select customer to proceed !!!');
@@ -329,18 +332,31 @@ export class ProcessEnquiryPage implements OnInit {
 
     this.executeDeletes();
 
-    if (this.enqDetailsOrig[0].customer_id !== this.customerdata.id) {
+    if (this.enqDetailsOrig.customerDetails[0].customer_id !== this.customerdata.id) {
       this.updateCustomerDetailsinEnquiry();
+    }
+
+    if (!this.submitForm.valid) {
+      this.presentAlert('Form incomplete, Verify if any missing entries !!!');
+      return false;
     }
 
     //main submit
     this.clicked = true;  // disable all buttons after submission
     this._cdr.markForCheck();
     this.spinner.show();
-    this._commonApiService.draftEnquiry(this.productArr).subscribe((data: any) => {
+
+    if (this.submitForm.value.enquiries.length === 0) {
+      this.presentAlert('Nothing to save, add cart before saving!');
+      this.spinner.hide();
+      return false;
+    }
+
+    this._commonApiService.draftEnquiry(this.submitForm.value.enquiries).subscribe((data: any) => {
       this.spinner.hide();
       if (data.body.result === 'success') {
         if (param === 'additem') {
+          this.clicked = false;
           this.openAddItem();
         } else {
           this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
@@ -357,6 +373,10 @@ export class ProcessEnquiryPage implements OnInit {
 
   }
 
+  displayProdFn(obj: any): string | undefined | any {
+    return obj && obj.product_code ? obj.product_code : obj;
+
+  }
 
   onClick(selItem) {
     this.selectedEnq = selItem.id;
@@ -369,12 +389,24 @@ export class ProcessEnquiryPage implements OnInit {
     }
   }
 
+
+
+
+
   checkedRow(idx) {
     setTimeout(() => {
-      if (this.productArr[idx].processed === 'YS') {
-        this.productArr[idx].processed = 'NO';
-      } else if (this.productArr[idx].processed === 'NO') {
-        this.productArr[idx].processed = 'YS';
+
+      if (this.enquiries.controls[idx].value.processed === 'YS') {
+        this.enquiries.controls[idx].patchValue({
+          processed: 'NO',
+        })
+
+      } else if (this.enquiries.controls[idx].value.processed === 'NO') {
+
+        this.enquiries.controls[idx].patchValue({
+          processed: 'YS',
+        })
+
       }
 
 
@@ -387,16 +419,16 @@ export class ProcessEnquiryPage implements OnInit {
 
   checkedDelRow(idx: number) {
 
-    if (!this.productArr[idx].checkbox) {
-      this.productArr[idx].checkbox = true;
+    if (!this.enquiries.controls[idx].value.check_box) {
+      this.enquiries.controls[idx].value.check_box = true;
       this.removeRowArr.push(idx);
 
-    } else if (this.productArr[idx].checkbox) {
-      this.productArr[idx].checkbox = false;
+    } else if (this.enquiries.controls[idx].value.check_box) {
+      this.enquiries.controls[idx].value.check_box = false;
       this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
     }
     this.delIconStatus();
-    this.checkIsSingleRow();
+
 
   }
 
@@ -408,7 +440,7 @@ export class ProcessEnquiryPage implements OnInit {
       return false;
     }
 
-    if (this.enqDetailsOrig[0].customer_id !== this.customerdata.id) {
+    if (this.enqDetailsOrig.customerDetails[0].customer_id !== this.customerdata.id) {
       this.updateCustomerDetailsinEnquiry();
     }
 
@@ -416,7 +448,7 @@ export class ProcessEnquiryPage implements OnInit {
     this.clicked = true;  // disable all buttons after submission
     this._cdr.markForCheck();
     this.spinner.show();
-    this._commonApiService.moveToSale(this.productArr).subscribe((data: any) => {
+    this._commonApiService.moveToSale(this.submitForm.value.enquiries).subscribe((data: any) => {
       this.spinner.hide();
       if (data.body.result === 'success') {
         this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
@@ -518,7 +550,7 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   executeDeleteProduct(elem) {
-    debugger;
+
     this._commonApiService.deleteEnquiryDetails({
       id: elem.id, enquiry_id: elem.enquiry_id, qty: elem.askqty,
       product_id: elem.product_id, notes: elem.notes,
@@ -551,32 +583,22 @@ export class ProcessEnquiryPage implements OnInit {
 
 
   deleteProduct(idx) {
-    let test = this.productArr[idx];
 
-
-    if (this.productArr[idx].id != '') {
-
-      this.deletedRowArr.push(this.productArr[idx]);
+    if (this.enquiries.controls[idx].value.id !== '') {
+      this.deletedRowArr.push(this.enquiries.controls[idx].value);
     }
 
-    this.productArr.splice(idx, 1);
+    this.enquiries.removeAt(idx);
+
     this.removeRowArr = this.removeRowArr.filter(e => e !== idx);
 
     this.delIconStatus();
-    this.checkIsSingleRow();
+
 
 
     this._cdr.markForCheck();
   }
 
-
-  checkIsSingleRow() {
-    if (this.removeRowArr.length === 1) {
-      this.singleRowSelected = true;
-    } else {
-      this.singleRowSelected = false;
-    }
-  }
 
 
   delIconStatus() {
@@ -622,7 +644,7 @@ export class ProcessEnquiryPage implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = "80%";
     dialogConfig.height = "80%";
-    dialogConfig.data = { enquiry_id: this.enqid, center_id: this.userdata.center_id, customer_id: this.enqDetailsOrig[0].customer_id };
+    dialogConfig.data = { enquiry_id: this.enqid, center_id: this.userdata.center_id, customer_id: this.enqDetailsOrig.customerDetails[0].customer_id };
 
     const dialogRef = this.dialog.open(AddMoreEnquiryComponent, dialogConfig);
 
@@ -632,9 +654,10 @@ export class ProcessEnquiryPage implements OnInit {
       .pipe(
         filter(val => !!val),
         tap((val) => {
-
+          this.init();
           this.reloadEnqDetails();
           this._cdr.markForCheck();
+          this.clicked = false;
         }
         )
       ).subscribe();
@@ -723,6 +746,22 @@ export class ProcessEnquiryPage implements OnInit {
 
   }
 
+  ngAfterViewInit() {
+
+    this.autoTrigger1 && this.autoTrigger1.panelClosingActions.subscribe(x => {
+      if (this.autoTrigger1.activeOption) {
+
+        this.submitForm.patchValue({
+          customerctrl: this.autoTrigger1.activeOption.value
+        });
+        this.setCustomerInfo(this.autoTrigger1.activeOption.value, "tab");
+      }
+    })
+
+
+
+
+  }
 
   exportToExcel() {
     const ws: xlsx.WorkSheet =
@@ -778,8 +817,39 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
 
+  setItemDesc(event, index, from) {
+
+    if (from === 'click') {
+      this.populateFormValues(index, event.option.value);
+    } else {
+      this.populateFormValues(index, event);
+    }
+
+    this._cdr.markForCheck();
+    this._cdr.detectChanges();
+  }
+
+
+  populateFormValues(index, formObject) {
+
+    this.enquiries.controls[index].patchValue({
+      product_id: formObject.product_id,
+      product_code: formObject.product_code,
+      product_desc: formObject.description,
+      qty: formObject.packetsize,
+      packetsize: formObject.packetsize,
+      unit_price: formObject.unit_price,
+      mrp: formObject.mrp,
+      status: 'P',
+      stockid: formObject.stock_pk,
+      available_stock: formObject.available_stock,
+      rackno: formObject.rackno
+
+    })
+
+
+  }
+
 
 }
-
-
 

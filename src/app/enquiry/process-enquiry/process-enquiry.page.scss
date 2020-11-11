@@ -83,7 +83,7 @@
 }
 
 .example-full-width {
-	width: 80px;
+	width: 180px;
 }
 
 tr.example-element-row:not(.example-expanded-row):hover {
@@ -224,6 +224,7 @@ td.mat-column-actions {
 	background-color: #ffffff;
 	border-top: 1px solid #f1f1f1;
 	padding: 8px;
+	z-index: 999;
 }
 .customer {
 	display: grid;
@@ -234,7 +235,7 @@ td.mat-column-actions {
 }
 
 .example-full-width {
-	width: 100%;
+	width: 130px;
 	padding: 0px;
 }
 .qty-width {
@@ -246,7 +247,7 @@ td.mat-column-actions {
 .content {
 	display: grid;
 	width: 90%;
-	grid-template-columns: 30px 40px 120px 1fr 80px 80px 100px 1fr 100px 100px;
+	grid-template-columns: 30px 130px 200px 80px 80px 100px 1fr 100px 100px;
 	align-items: center;
 	border-bottom: 2px solid rgb(173, 173, 173);
 	color: #666666;
@@ -261,7 +262,7 @@ td.mat-column-actions {
 .list-item {
 	display: grid;
 	width: 90%;
-	grid-template-columns: 30px 40px 120px 1fr 80px 80px 100px 1fr 100px 100px;
+	grid-template-columns: 30px 130px 200px 80px 80px 100px 1fr 100px 100px;
 	align-self: center;
 	border-bottom: 1px solid #e0d9d9;
 	font-size: 13px;
