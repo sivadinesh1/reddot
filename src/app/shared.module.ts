@@ -111,7 +111,8 @@ import { WhatsappDialogComponent } from './components/social/whatsapp/whatsapp-d
 import { NgxSpinnerModule } from "ngx-spinner";
 
 import { NumericDirective } from './util/directives/numeric.directive';
-
+import { DisableControlDirective } from './util/directives/disable-control.directive';
+import { SalesReturnDialogComponent } from './components/sales/sales-return-dialog/sales-return-dialog.component';
 
 const components = [
 
@@ -141,6 +142,7 @@ const components = [
   CustomerPaymentDialogComponent,
 
   SalesInvoiceDialogComponent,
+  SalesReturnDialogComponent,
   PurchaseEntryDialogComponent,
   EnquiryViewDialogComponent,
 
@@ -184,6 +186,7 @@ const components = [
   PreventDoubleClickDirective,
 
   NumericDirective,
+  DisableControlDirective,
 
   ShowHidePasswordComponent,
 
@@ -261,7 +264,8 @@ const matcomponents = [
     CustomerAddDialogComponent, CustomerEditDialogComponent, CustomerAddDialogComponent, AccountsReceivablesComponent,
     SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent,
-    SalesInvoiceDialogComponent, PurchaseEntryDialogComponent, EnquiryViewDialogComponent, WhatsappDialogComponent
+    SalesInvoiceDialogComponent, PurchaseEntryDialogComponent, EnquiryViewDialogComponent, WhatsappDialogComponent,
+    SalesReturnDialogComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

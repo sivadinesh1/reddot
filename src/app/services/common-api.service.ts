@@ -322,8 +322,8 @@ export class CommonApiService {
       .pipe(shareReplay());
   }
 
-  searchSales(centerid, customerid, status, fromdate, todate, saletype): Observable<Sales[]> {
-    return this.httpClient.get<Sales[]>(`${this.restApiUrl}/api/stock/search-sales/${centerid}/${customerid}/${status}/${fromdate}/${todate}/${saletype}`)
+  searchSales(submitForm): Observable<Sales[]> {
+    return this.httpClient.post<Sales[]>(`${this.restApiUrl}/api/stock/search-sales`, submitForm)
       .pipe(shareReplay());
   }
 
@@ -333,15 +333,6 @@ export class CommonApiService {
       .pipe(shareReplay());
   }
 
-
-
-  // searchAllDraftPurchases(centerid): Observable<Purchase[]> {
-  //   // return this.httpClient.get(`${this.restApiUrl}/api/stock/search-all-draft-purchase/${centerid}`);
-  //   return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-all-draft-purchase/${centerid}`)
-  //     .pipe(
-  //       map(res => res["data"])
-  //     );
-  // }
 
   searchAllDraftPurchases(centerid): Observable<Purchase[]> {
     return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-all-draft-purchase/${centerid}`)

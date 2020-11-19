@@ -130,18 +130,22 @@ export class OpenEnquiryPage implements OnInit {
       if (this.status === 'O') {
         this.tabClick(0);
         this.tabIndex = 0;
+        this.search('O');
       } else if (this.status === 'D') {
         this.tabClick(1);
         this.tabIndex = 1;
+        this.search('D');
       } else if (this.status === 'P') {
         this.tabClick(2);
         this.tabIndex = 2;
+        this.search('P');
       } else if (this.status === 'E') {
         this.tabClick(3);
         this.tabIndex = 3;
+        this.search('E');
       }
 
-      this.search();
+
       this._cdr.markForCheck();
 
     });
@@ -192,7 +196,7 @@ export class OpenEnquiryPage implements OnInit {
 
 
 
-    this.search();
+    this.search('O');
     this._cdr.markForCheck();
 
   }
@@ -203,7 +207,7 @@ export class OpenEnquiryPage implements OnInit {
       customerctrl: 'All Customers'
     });
     this._cdr.markForCheck();
-    this.search();
+    this.search('O');
   }
 
   getPosts(event) {
@@ -219,7 +223,7 @@ export class OpenEnquiryPage implements OnInit {
   }
 
 
-  async search() {
+  async search(param) {
 
     //main search
     this.enquiries$ = this._commonApiService
@@ -235,7 +239,7 @@ export class OpenEnquiryPage implements OnInit {
     // for initial load of first tab (ALL)
     let value = await this.filteredEnquiries$.toPromise();
 
-    this.filteredValues = value.filter((data: any) => data.estatus === 'O');
+    this.filteredValues = value.filter((data: any) => data.estatus === param);
 
     // to calculate the count on each status    
     this.newEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter(f => f.estatus === 'O')));
@@ -318,6 +322,7 @@ export class OpenEnquiryPage implements OnInit {
       this.filteredValues = value.filter((data: any) => data.estatus === 'D');
     } else if ($event.index === 2 || $event === 2) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'P');
+
     } else if ($event.index === 3 || $event === 3) {
       this.filteredValues = value.filter((data: any) => data.estatus === 'E');
     } else if ($event.index === 4 || $event === 4) {

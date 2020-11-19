@@ -64,10 +64,17 @@ export class SearchSalesPage implements OnInit {
   saletypeList = [{ "id": "all", "value": "All" }, { "id": "GI", "value": "Invoice" },
   { "id": "SI", "value": "Stock Issue" }]
 
+  searchType =
+    [
+      { "name": "All", "id": "all", "checked": true },
+      { "name": "Invoice Only", "id": "invonly", "checked": false }
+    ]
+
+
   sumTotalValue = 0.00;
   sumNumItems = 0;
 
-
+  // new FormControl({value: '', disabled: true});
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
     public alertController: AlertController, public _dialog: MatDialog,
@@ -75,11 +82,14 @@ export class SearchSalesPage implements OnInit {
 
     this.submitForm = this._fb.group({
       customerid: ['all'],
-      customerctrl: ['All Customers'],
+      customerctrl: new FormControl({ value: 'All Customers', disabled: false }),
+      //customerctrl: [{ value: 'All Customers', disabled: false }],
       todate: [this.todate, Validators.required],
       fromdate: [this.fromdate, Validators.required],
       status: new FormControl('all'),
-      saletype: new FormControl('all')
+      saletype: new FormControl('all'),
+      invoiceno: [''],
+      searchtype: ['all']
     })
 
     this.userdata$ = this._authservice.currentUser;
@@ -150,6 +160,20 @@ export class SearchSalesPage implements OnInit {
   ngOnInit() {
 
   }
+  // this.form.get('controlname').disable();
+  // this.variable.disable()
+  radioClickHandle() {
+
+    if (this.submitForm.value.searchtype === 'invonly') {
+      this.submitForm.get('customerctrl').disable();
+    } else {
+      this.submitForm.value.invoiceno = "";
+      this.submitForm.get('customerctrl').enable();
+      this.submitForm.controls['invoiceno'].setErrors(null);
+      this.submitForm.controls['invoiceno'].markAsTouched();
+    }
+  }
+  // this.yourFormName.controls.formFieldName.enable();
 
   clearInput() {
     this.submitForm.patchValue({
@@ -172,15 +196,27 @@ export class SearchSalesPage implements OnInit {
     this.search();
   }
 
-
   async search() {
 
+
+    if (this.submitForm.value.searchtype !== 'all' && this.submitForm.value.invoiceno.trim().length === 0) {
+      console.log('invoice number is mandatory');
+      this.submitForm.controls['invoiceno'].setErrors({ 'required': true });
+      this.submitForm.controls['invoiceno'].markAsTouched();
+      return false;
+
+    }
+
     this.sales$ = this._commonApiService
-      .searchSales(this.userdata.center_id, this.submitForm.value.customerid,
-        this.submitForm.value.status,
-        this.submitForm.value.fromdate,
-        this.submitForm.value.todate,
-        this.submitForm.value.saletype
+      .searchSales({
+        "centerid": this.userdata.center_id, "customerid": this.submitForm.value.customerid,
+        "status": this.submitForm.value.status,
+        "fromdate": this.submitForm.value.fromdate,
+        "todate": this.submitForm.value.todate,
+        "saletype": this.submitForm.value.saletype,
+        "searchtype": this.submitForm.value.searchtype,
+        "invoiceno": this.submitForm.value.invoiceno
+      }
       );
 
     this.filteredSales$ = this.sales$;
@@ -230,14 +266,6 @@ export class SearchSalesPage implements OnInit {
   goSalesAddScreen() {
     this._router.navigateByUrl(`/home/sales/edit/0`);
   }
-
-  // statusChange($event) {
-  //   this.statusChange = $event.source.value;
-  // }
-
-  // saletypeChange($event) {
-  //   this.saletypeChange = $event.source.value;
-  // }
 
   toDateSelected($event) {
     this.todate = $event.target.value;
@@ -355,6 +383,23 @@ export class SearchSalesPage implements OnInit {
 
   openDialog(row): void {
 
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "50%";
+    dialogConfig.height = "100%";
+    dialogConfig.data = row;
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(SalesInvoiceDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+  salesReturn(row): void {
+    debugger;
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;

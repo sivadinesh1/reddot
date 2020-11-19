@@ -68,7 +68,7 @@
 					</mat-form-field>
 				</div> -->
 				<div class="search-btn" style="padding-top: 20px">
-					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search()">Search</button>
+					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search('O')">Search</button>
 				</div>
 			</div>
 		</form>
@@ -225,3 +225,5 @@
 		<div class="no-records" *ngIf="tabIndex === 4 && (cancelledEnquiries$| async)?.length === 0">No item in status "Cancelled Inquiry"</div>
 	</ng-template>
 </ion-content>
+
+<!-- return to customer, replace items, scrapt return  -->

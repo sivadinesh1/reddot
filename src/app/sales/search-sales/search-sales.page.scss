@@ -5,7 +5,7 @@
 
 .form-wrap {
 	display: grid;
-	grid-template-columns: 200px 1fr 130px 130px 150px 150px 120px;
+	grid-template-columns: 200px 1fr 1fr 130px 130px 150px 150px 120px;
 	gap: 10px;
 	background-color: #f6f6ff;
 }
@@ -18,7 +18,7 @@
 .listItem,
 .headerRow {
 	display: grid;
-	grid-template-columns: 2fr 180px 150px 1fr 1fr 1fr 100px 60px 60px 60px 60px;
+	grid-template-columns: 2fr 180px 150px 1fr 1fr 1fr 100px 60px 60px 60px 60px 60px;
 	padding: 5px;
 	align-items: center;
 }
@@ -73,4 +73,16 @@
 .customers {
 	padding-top: 20px;
 	text-align: right;
+}
+
+.example-radio-group {
+	display: flex;
+	flex-direction: column;
+	/* display: inline-grid; */
+	/* display: grid; */
+	margin: 15px 0;
+}
+
+.radio-button {
+	margin-bottom: 2px;
 }

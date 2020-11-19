@@ -4,8 +4,16 @@
 			<div class="form-wrap">
 				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer">SALES&nbsp;&nbsp;&nbsp;+</div>
 
+				<div style="justify-self: end">
+					<mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
+						<mat-radio-button class="radio-button" value="{{op.id}}" *ngFor="let op of searchType" [checked]="op.checked"
+							>{{op.name}}</mat-radio-button
+						>
+					</mat-radio-group>
+				</div>
+
 				<div class="customers">
-					<mat-form-field class="mat-auto-width">
+					<mat-form-field style="width: 200px">
 						<mat-label>Search</mat-label>
 						<input
 							matInput
@@ -15,10 +23,18 @@
 							matTooltip="Type to filter the Customer list"
 							matTooltipPosition="after"
 						/>
-						<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
+						<button
+							mat-button
+							matSuffix
+							mat-icon-button
+							aria-label="Clear"
+							*ngIf="this.submitForm.value.searchtype === 'all'"
+							type="button"
+							(click)="clearInput()"
+						>
 							<mat-icon>close</mat-icon>
 						</button>
-						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
+						<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
 							<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
 								<span>{{ customer.name }} </span>
 							</mat-option>
@@ -31,6 +47,7 @@
 						<input
 							matInput
 							readonly
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
 							[max]="maxDate"
 							[matDatepicker]="fromdate"
 							formControlName="fromdate"
@@ -48,6 +65,7 @@
 						<input
 							matInput
 							readonly
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
 							[matDatepicker]="todate"
 							[max]="maxDate"
 							formControlName="todate"
@@ -60,21 +78,20 @@
 					</mat-form-field>
 				</div>
 
-				<!-- <div style="padding-top: 20px">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Status</mat-label>
-						<mat-select formControlName="status" required value="{statusFlag}">
-							<mat-option *ngFor="let item of statusList" [value]="item.id"> {{item.value}} </mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div> -->
-
 				<div style="padding-top: 20px">
-					<mat-form-field class="mat-width-ext">
+					<mat-form-field style="width: 100%" class="readonly-wrapper">
 						<mat-label>Sale Type</mat-label>
-						<mat-select formControlName="saletype" required value="{saletypeFlag}">
+						<mat-select formControlName="saletype" required value="{saletypeFlag}" [disableControl]="this.submitForm.value.searchtype !== 'all'">
 							<mat-option *ngFor="let item of saletypeList" [value]="item.id"> {{item.value}} </mat-option>
 						</mat-select>
+					</mat-form-field>
+				</div>
+
+				<div style="padding-top: 20px">
+					<mat-form-field style="width: 100%">
+						<mat-label>Invoice #</mat-label>
+						<input matInput type="text" #invno formControlName="invoiceno" />
+						<mat-error *ngIf="submitForm.controls['invoiceno'].hasError('required')"> Please enter a value </mat-error>
 					</mat-form-field>
 				</div>
 
@@ -91,11 +108,6 @@
 		</div>
 		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-				<!-- <mat-tab label="All Orders ({{(sales$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab> -->
-
 				<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
@@ -172,7 +184,7 @@
 
 			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
 			<div class="item" style="text-align: right">{{item.net_total | currency: "INR"}}</div>
-			<div>&nbsp;</div>
+
 			<div class="item cursor" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
 			</div>
@@ -189,6 +201,31 @@
 			<div style="text-align: center">
 				<span *ngIf="item.status === 'C'">{{item.revision}}</span>
 			</div>
+			<div>
+				<button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: item}">
+					<mat-icon>more_vert</mat-icon>
+				</button>
+			</div>
 		</div>
+
+		<div class="no-records" *ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0">No item in status "Draft"</div>
+		<div class="no-records" *ngIf="tabIndex === 1 && (fullfilledSales$| async)?.length === 0">No item in status "Fullfilled"</div>
 	</ng-template>
 </ion-content>
+
+<mat-menu #menu="matMenu">
+	<ng-template matMenuContent let-aliasMenuItems="item">
+		<button mat-menu-item (click)="salesReturn(aliasMenuItems)">
+			<mat-icon>dialpad</mat-icon>
+			<span>Sales Return</span>
+		</button>
+		<button mat-menu-item disabled>
+			<mat-icon>voicemail</mat-icon>
+			<span>Check voice mail</span>
+		</button>
+		<button mat-menu-item>
+			<mat-icon>notifications_off</mat-icon>
+			<span>Disable alerts</span>
+		</button>
+	</ng-template>
+</mat-menu>
