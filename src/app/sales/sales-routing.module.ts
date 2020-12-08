@@ -12,6 +12,12 @@ const routes: Routes = [
   },
 
 
+  {
+    path: 'search-return-sales',
+    loadChildren: () => import('./return-sale/search-return-sales/search-return-sales.module').then(m => m.SearchReturnSalesPageModule)
+  },
+
+
 ];
 
 @NgModule({

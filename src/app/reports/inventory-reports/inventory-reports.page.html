@@ -12,7 +12,7 @@
 				<ion-searchbar
 					autofocus
 					debounce="300"
-					placeholder="Search from product inventory"
+					placeholder="Search by product(item) code"
 					#mySearchbar
 					show-cancel-button="focus"
 					(ionClear)="reset()"
@@ -51,34 +51,37 @@
 
 						<ng-container matColumnDef="invoiceno">
 							<th mat-header-cell *matHeaderCellDef>Invoice #</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.invoice_no}}</td>
-						</ng-container>
-
-						<ng-container matColumnDef="actntype">
-							<th mat-header-cell *matHeaderCellDef>Txn Mode</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.action_type}}</td>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-link"
+								(click)="openDialog(element.module, element.invoice_no, element.sale_id, element.purchase_id, element.customer_id, element.vendor_id)"
+								data-label="Name"
+							>
+								{{element.invoice_no}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="txnqty">
-							<th mat-header-cell *matHeaderCellDef>Txn Qty</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.txn_qty}}</td>
+							<th mat-header-cell *matHeaderCellDef class="m-center-align">Txn Qty</th>
+							<td mat-cell *matCellDef="let element" class="m-right-align" data-label="Name">{{element.txn_qty}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="stocklevel">
-							<th mat-header-cell *matHeaderCellDef>Stock Level</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.stock_level}}</td>
+							<th mat-header-cell *matHeaderCellDef class="m-center-align">Stock Level</th>
+							<td mat-cell *matCellDef="let element" class="m-right-align" data-label="Name">{{element.stock_level}}</td>
 						</ng-container>
 
 						<ng-container matColumnDef="txndate">
-							<th mat-header-cell *matHeaderCellDef>Stock Level</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.txn_date}}</td>
+							<th mat-header-cell *matHeaderCellDef class="m-center-align">Txn Date</th>
+							<td mat-cell *matCellDef="let element" class="m-right-align" data-label="Name">{{element.txn_date}}</td>
 						</ng-container>
 
 						<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
 						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
+					<div class="no-records center-message" [hidden]="isTableHasData">No Data available.</div>
 				</div>
 				<mat-paginator [pageSizeOptions]="[100, 200]" showFirstLastButtons></mat-paginator>
 			</div>

@@ -44,6 +44,10 @@ const routes: Routes = [
         path: 'search-sales',
         loadChildren: () => import('./sales/search-sales/search-sales.module').then(m => m.SearchSalesPageModule)
       },
+      {
+        path: 'search-return-sales',
+        loadChildren: () => import('./sales/return-sale/search-return-sales/search-return-sales.module').then(m => m.SearchReturnSalesPageModule)
+      },
 
       {
         path: 'view-products', pathMatch: 'full',

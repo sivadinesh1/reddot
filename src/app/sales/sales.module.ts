@@ -9,6 +9,7 @@ import { SalesPageRoutingModule } from './sales-routing.module';
 import { SalesPage } from './sales.page';
 import { SharedModule } from '../shared.module';
 
+
 @NgModule({
   imports: [
     CommonModule,

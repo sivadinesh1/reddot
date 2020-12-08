@@ -327,6 +327,20 @@ export class CommonApiService {
       .pipe(shareReplay());
   }
 
+
+  searchSaleReturn(submitForm): Observable<any> {
+    return this.httpClient.post<any>(`${this.restApiUrl}/api/returns/search-sale-return`, submitForm)
+      .pipe(shareReplay());
+  }
+
+  updateSaleReturnReceived(submitForm) {
+    return this.httpClient.post<any>(`${this.restApiUrl}/api/returns/update-sale-returns-received`, submitForm);
+  }
+
+  showReceiveButton(centerid, sale_return_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/returns/show-receive-button/${centerid}/${sale_return_id}`);
+  }
+
   // Using share replay prevents, multiple backend calls because of observables | async
   searchEnquiries(centerid, customerid, status, fromdate, todate): Observable<Enquiry[]> {
     return this.httpClient.get<Enquiry[]>(`${this.restApiUrl}/api/enquiry/search-enquiries/${centerid}/${customerid}/${status}/${fromdate}/${todate}`)
@@ -515,6 +529,14 @@ export class CommonApiService {
     return this.httpClient.get(`${this.restApiUrl}/api/sale/get-sale-details/${sale_id}`);
   }
 
+  getSaleReturnDetailsData(center_id, sale_return_id) {
+    return this.httpClient.get(`${this.restApiUrl}/api/returns/get-sale-return-details/${center_id}/${sale_return_id}`);
+  }
+
+
+  addSaleReturn(submitForm) {
+    return this.httpClient.post<any>(this.restApiUrl + `/api/returns/add-sale-return`, submitForm, { observe: 'response' });
+  }
 
 
   getPaymentsByCustomer(center_id, customer_id) {

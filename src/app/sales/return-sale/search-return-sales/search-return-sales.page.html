@@ -2,7 +2,7 @@
 	<div class="search-wrap">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer">SALES&nbsp;&nbsp;&nbsp;+</div>
+				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer">SALE RETURNS</div>
 
 				<div style="justify-self: end">
 					<mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
@@ -79,15 +79,6 @@
 				</div>
 
 				<div style="padding-top: 20px">
-					<mat-form-field style="width: 100%" class="readonly-wrapper">
-						<mat-label>Sale Type</mat-label>
-						<mat-select formControlName="saletype" required value="{saletypeFlag}" [disableControl]="this.submitForm.value.searchtype !== 'all'">
-							<mat-option *ngFor="let item of saletypeList" [value]="item.id"> {{item.value}} </mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div>
-
-				<div style="padding-top: 20px">
 					<mat-form-field style="width: 100%">
 						<mat-label>Invoice #</mat-label>
 						<input matInput type="text" #invno formControlName="invoiceno" />
@@ -102,18 +93,18 @@
 		</form>
 		<div style="display: flex; justify-content: space-between">
 			<div style="align-self: center; font-size: 16px; padding: 16px 16px 0px 32px; color: darkblue">
-				All Orders ({{(sales$| async)?.length }}) records
+				All Returns ({{(sales$| async)?.length }}) records
 			</div>
 			<div>&nbsp;</div>
 		</div>
 		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-				<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
+				<mat-tab label="Approved ({{(draftSales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 
-				<mat-tab label="Fullfilled  ({{(fullfilledSales$| async)?.length }})">
+				<mat-tab label="Closed  ({{(fullfilledSales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
@@ -126,11 +117,12 @@
 			<div>CUSTOMER NAME</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
-			<div>SALE TYPE</div>
+			<div>RETURN DATE</div>
 
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
-			<div class="txt-center-align">STATUS</div>
+			<div class="txt-right-align">RECEIVE STATUS</div>
+			<div class="txt-right-align">REFUND STATUS</div>
 			<div>&nbsp;</div>
 		</div>
 		<div class="headerRow" style="background-color: #dfdfdf">
@@ -150,13 +142,13 @@
 			<div>CUSTOMER NAME</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
-			<div>SALE TYPE</div>
+			<div>RETURN DATE</div>
 
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
-			<!-- <div class="txt-center-align">STATUS</div> -->
-			<div>&nbsp;</div>
-			<div>&nbsp;</div>
+
+			<div class="txt-right-align">RECEIVE STATUS</div>
+			<div class="txt-right-align">REFUND STATUS</div>
 			<div>&nbsp;</div>
 		</div>
 		<div class="headerRow" style="background-color: #dfdfdf">
@@ -168,50 +160,30 @@
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
 		</div>
 	</ng-template>
 
 	<ng-template #MsgRef1>
 		<div *ngFor="let item of filteredValues" class="listItem">
-			<div class="item">{{item.customer_name}}</div>
+			<div class="item">{{item.name}}</div>
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>
-			<div class="item">{{item.sale_type === "gstinvoice" ? "Invoice" : "Stock Issue"}}</div>
 
-			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
-			<div class="item" style="text-align: right">{{item.net_total | currency: "INR"}}</div>
+			<div class="item">{{item.return_date}}</div>
+
+			<div class="item" style="text-align: right">{{item.to_receive_items}}</div>
+			<div class="item" style="text-align: right">{{item.to_return_amount | currency: "INR"}}</div>
+			<div class="item" style="text-align: right">{{item.receive_status_x}}</div>
+			<div class="item" style="text-align: right">{{item.refund_status_x}}</div>
 
 			<div class="item cursor" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
-			</div>
-
-			<div class="item cursor" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="openDialog(item)">remove_red_eye </mat-icon>
-			</div>
-			<div class="item cursor" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="goPrintInvoice(item)">print </mat-icon>
-			</div>
-			<div class="item cursor" *ngIf="item.status === 'D'" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#ff8484'}" (click)="presentAlertConfirm(item)">delete </mat-icon>
-			</div>
-
-			<div>
-				<button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: item}">
-					<mat-icon>more_vert</mat-icon>
-				</button>
+				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="salesReturn(item)">remove_red_eye </mat-icon>
 			</div>
 		</div>
 
-		<div class="no-records" *ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0">No item in status "Draft"</div>
-		<div class="no-records" *ngIf="tabIndex === 1 && (fullfilledSales$| async)?.length === 0">No item in status "Fullfilled"</div>
+		<div class="no-records" *ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0">No item in status "Approved"</div>
+		<div class="no-records" *ngIf="tabIndex === 1 && (fullfilledSales$| async)?.length === 0">No item in status "Closed"</div>
 	</ng-template>
 </ion-content>
-
-<mat-menu #menu="matMenu">
-	<ng-template matMenuContent let-aliasMenuItems="item">
-		<button mat-menu-item (click)="salesReturn(aliasMenuItems)">
-			<mat-icon>keyboard_return</mat-icon>
-			<span>Sales Return</span>
-		</button>
-	</ng-template>
-</mat-menu>

@@ -1,11 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonApiService } from '../../services/common-api.service';
-import { AuthenticationService } from '../../services/authentication.service';
+import { CommonApiService } from '../../../services/common-api.service';
+import { AuthenticationService } from '../../../services/authentication.service';
 import * as moment from 'moment';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Sales } from '../../models/Sales';
+import { Sales } from '../../../models/Sales';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
 import { filter, map, startWith } from 'rxjs/operators';
@@ -13,16 +13,17 @@ import { User } from 'src/app/models/User';
 import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
-import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
+import { SaleReturnViewComponent } from 'src/app/components/returns/sale-return-view/sale-return-view.component';
+
 
 
 @Component({
-  selector: 'app-search-sales',
-  templateUrl: './search-sales.page.html',
-  styleUrls: ['./search-sales.page.scss'],
+  selector: 'app-search-return-sales',
+  templateUrl: './search-return-sales.page.html',
+  styleUrls: ['./search-return-sales.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchSalesPage implements OnInit {
+export class SearchReturnSalesPage implements OnInit {
 
   sales$: Observable<Sales[]>;
 
@@ -209,12 +210,12 @@ export class SearchSalesPage implements OnInit {
     }
 
     this.sales$ = this._commonApiService
-      .searchSales({
+      .searchSaleReturn({
         "centerid": this.userdata.center_id, "customerid": this.submitForm.value.customerid,
-        "status": this.submitForm.value.status,
+
         "fromdate": this.submitForm.value.fromdate,
         "todate": this.submitForm.value.todate,
-        "saletype": this.submitForm.value.saletype,
+
         "searchtype": this.submitForm.value.searchtype,
         "invoiceno": this.submitForm.value.invoiceno
       }
@@ -226,12 +227,12 @@ export class SearchSalesPage implements OnInit {
     // this.filteredValues = await this.filteredSales$.toPromise();
 
     let value = await this.filteredSales$.toPromise();
-    this.filteredValues = value.filter((data: any) => data.status === 'D');
+    this.filteredValues = value.filter((data: any) => data.return_status === 'A');
 
 
     // to calculate the count on each status    
-    this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'D')));
-    this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'C')));
+    this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.return_status === 'A')));
+    this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.return_status === 'C')));
     this.calculateSumTotals();
     this.tabIndex = 0;
     this._cdr.markForCheck();
@@ -324,17 +325,14 @@ export class SearchSalesPage implements OnInit {
   async tabClick($event) {
     let value = await this.filteredSales$.toPromise();
 
-    // if ($event.index === 0) {
-    //   this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
-    // } else 
     if ($event.index === 0) {
-      this.filteredValues = value.filter((data: any) => data.status === 'D');
+      this.filteredValues = value.filter((data: any) => data.return_status === 'A');
     } else if ($event.index === 1) {
-      this.filteredValues = value.filter((data: any) => data.status === 'C');
+      this.filteredValues = value.filter((data: any) => data.return_status === 'C');
     }
 
     this.calculateSumTotals();
-    this._cdr.markForCheck();
+    this._cdr.detectChanges();
 
   }
 
@@ -343,13 +341,13 @@ export class SearchSalesPage implements OnInit {
     this.sumNumItems = 0;
 
     this.sumTotalValue = this.filteredValues.map(item => {
-      return item.net_total;
+      return item.to_return_amount;
     })
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
 
     this.sumNumItems = this.filteredValues.map(item => {
-      return item.no_of_items;
+      return item.to_receive_items;
     })
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
   }
@@ -382,22 +380,7 @@ export class SearchSalesPage implements OnInit {
     await alert.present();
   }
 
-  openDialog(row): void {
 
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "50%";
-    dialogConfig.height = "100%";
-    dialogConfig.data = row;
-    dialogConfig.position = { top: '0', right: '0' };
-
-    const dialogRef = this._dialog.open(SalesInvoiceDialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
-  }
 
   salesReturn(row): void {
 
@@ -409,17 +392,17 @@ export class SearchSalesPage implements OnInit {
     dialogConfig.data = row;
     dialogConfig.position = { top: '0', right: '0' };
 
-    const dialogRef = this._dialog.open(SalesReturnDialogComponent, dialogConfig);
+    const dialogRef = this._dialog.open(SaleReturnViewComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
-      debugger;
+      console.log('The dialog was closed');
       if (result === 'success') {
-        // throw success alert 
-        this.presentAlert('Return Recorded succcessfully!');
+        this.presentAlert('Received Items succcessfully!');
       }
 
     });
   }
+
 
   async presentAlert(msg: string) {
     const alert = await this.alertController.create({

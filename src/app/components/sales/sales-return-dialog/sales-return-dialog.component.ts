@@ -1,14 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Customer } from 'src/app/models/Customer';
+
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from 'src/app/services/common-api.service';
-import { CustomerViewDialogComponent } from '../../customers/customer-view-dialog/customer-view-dialog.component';
-import * as xlsx from 'xlsx';
-import { InvoiceSuccessComponent } from '../../invoice-success/invoice-success.component';
-import { WhatsappDialogComponent } from '../../social/whatsapp/whatsapp-dialog/whatsapp-dialog.component';
 
 @Component({
   selector: 'app-sales-return-dialog',
@@ -25,16 +21,18 @@ export class SalesReturnDialogComponent implements OnInit {
   centerdata: any;
 
   data: any;
+  returnArr = [];
 
-  @ViewChild('epltable', { static: false }) epltable: ElementRef;
+  nothingToReturnMsg = "";
+  submitForm = [];
 
-  constructor(private _cdr: ChangeDetectorRef, private _router: Router,
-    private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<SalesReturnDialogComponent>,
-    private _route: ActivatedRoute, private _authservice: AuthenticationService,
+  filteredArr: any;
+
+  constructor(private _cdr: ChangeDetectorRef,
+    private dialogRef: MatDialogRef<SalesReturnDialogComponent>,
     @Inject(MAT_DIALOG_DATA) data: any, public _dialog: MatDialog,
     private _commonApiService: CommonApiService) {
     this.data = data;
-
   }
 
   ngOnInit() {
@@ -47,21 +45,58 @@ export class SalesReturnDialogComponent implements OnInit {
     })
 
     this._commonApiService.getSaleDetailsData(this.data.id).subscribe((data: any) => {
-      debugger;
+
       this.saledetailsdata = data;
 
+
+
+      if (Array.isArray(this.saledetailsdata)) {
+        this.saledetailsdata.forEach((element, idx) => {
+          this.processItems(element);
+        }
+
+        )
+      }
+
       this._cdr.markForCheck();
     })
 
-    this._commonApiService.getCustomerDetails(this.data.center_id, this.data.customer_id).subscribe((data: any) => {
+  }
 
-      this.customerdata = data[0];
+  processItems(element) {
+    this.returnArr.push(
+      {
+        "description": element.description,
+        "disc_percent": element.disc_percent,
+        "disc_type": element.disc_type,
+        "disc_value": element.disc_value,
 
-      this._cdr.markForCheck();
-    })
+        "id": element.id,
+        "igst": element.igst,
+        "mrp": element.mrp,
+        "packetsize": element.packetsize,
+        "product_code": element.product_code,
+        "product_id": element.product_id,
+        "qty": element.qty,
+        "returned": element.returned || 0,
+        "sale_id": element.sale_id,
+        "sgst": element.sgst,
+        "cgst": element.cgst,
 
+        "tax": element.tax,
+        "tax_value": element.tax_value,
+        "taxable_value": element.taxable_value,
+        "taxrate": element.taxrate,
+        "total_value": 0,
+        "unit_price": element.unit_price,
+        "received_now": 0,
+        "error": ""
+      });
 
+    this.calculate();
+  }
 
+  calculate() {
 
   }
 
@@ -71,45 +106,95 @@ export class SalesReturnDialogComponent implements OnInit {
   }
 
 
-  exportToExcel() {
-    const ws: xlsx.WorkSheet =
-      xlsx.utils.table_to_sheet(this.epltable.nativeElement);
-    ws['!cols'] = [];
-    ws['!cols'][1] = { hidden: true };
-    const wb: xlsx.WorkBook = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'epltable.xlsx');
+  update_change(event$, idx) {
+
+    if (+event$.target.value > (this.returnArr[idx].qty + this.returnArr[idx].returned)) {
+      this.returnArr[idx].error = "mismatch";
+      this._cdr.detectChanges();
+      return false;
+    } else {
+      this.returnArr[idx].error = "";
+    }
+
+    this.returnArr[idx].received_now = +event$.target.value;
+    this.returnArr[idx].total_value = +((event$.target.value * this.returnArr[idx].mrp) * (100 - this.returnArr[idx].disc_percent) / 100).toFixed(2);
+    this.returnArr[idx].tax_value = +(this.returnArr[idx].total_value - this.returnArr[idx].taxable_value).toFixed(2);
+
+    if (this.returnArr[idx].igst !== 0.00) {
+      this.returnArr[idx].igst = this.returnArr[idx].tax;
+    } else {
+      this.returnArr[idx].cgst = this.returnArr[idx].tax / 2;
+      this.returnArr[idx].sgst = this.returnArr[idx].tax / 2;
+    }
   }
 
-
-  goPrintInvoice(row) {
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "400px";
-
-    dialogConfig.data = row.id;
-
-    const dialogRef = this._dialog.open(InvoiceSuccessComponent, dialogConfig);
-
-    dialogRef.afterClosed();
+  update_disc_value(event$, idx) {
+    this.returnArr[idx].disc_percent = +event$.target.value;
+    this.returnArr[idx].total_value = +((this.returnArr[idx].received_now * this.returnArr[idx].mrp) * (100 - +event$.target.value) / 100).toFixed(2);
+    this.returnArr[idx].tax_value = +(this.returnArr[idx].total_value - this.returnArr[idx].taxable_value).toFixed(2);
   }
 
+  async return() {
 
-
-
-  openShareDialog(): void {
-    const dialogRef = this._dialog.open(WhatsappDialogComponent, {
-      width: '250px',
-      data: { whatsapp: this.customerdata.mobile }
+    let isItemsToReturn = this.returnArr.some((e) => {
+      return e.received_now > 0;
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
 
+    let isItemsToReturn1 = this.returnArr.some((e) => {
+      return ((e.received_now > (e.qty + e.returned)) || e.error !== "");
     });
+
+    if (isItemsToReturn && !isItemsToReturn1) {
+      console.log('object/... su bit ');
+
+      this.filteredArr = this.returnArr.filter((element) => {
+        return element.received_now > 0;
+      })
+
+      const sum_to_return_amount = this.returnArr.reduce((accumulator, currentValue) => accumulator + currentValue.total_value, 0).toFixed(2);
+      const sum_to_return_items = this.returnArr.reduce((accumulator, currentValue) => accumulator + currentValue.received_now, 0);
+
+      this.submitForm.push(this.filteredArr);
+      this.submitForm.push({
+        'sale_id': this.salemasterdata.id,
+        'center_id': this.salemasterdata.center_id,
+        'to_return_amount': sum_to_return_amount,
+        'to_receive_items': sum_to_return_items,
+      });
+
+      console.log('dinesh ....@@.** ' + JSON.stringify(this.submitForm));
+
+      this._commonApiService.addSaleReturn(this.submitForm).subscribe((data: any) => {
+        console.log('dinesh ..... ' + data);
+
+        if (data.body === 'success') {
+          this.dialogRef.close('success');
+        } else {
+          // error scenario
+        }
+
+
+        this._cdr.markForCheck();
+      })
+
+
+
+
+
+
+    } else {
+      this.nothingToReturnMsg = "Nothing to return (or) returns not matching";
+    }
+
+
   }
 
+
+
+  cancel() {
+    this.close();
+  }
 
 }
+

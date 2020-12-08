@@ -204,7 +204,7 @@ export class PurchasePage implements OnInit {
         net_total: this.rawPurchaseData[0].net_total,
         taxable_value: this.rawPurchaseData[0].taxable_value,
         status: this.rawPurchaseData[0].status,
-
+        revision: this.rawPurchaseData[0].revision
 
       });
 
@@ -280,7 +280,8 @@ export class PurchasePage implements OnInit {
       tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
       productarr: new FormControl(null, Validators.required),
-      roundoff: [0]
+      roundoff: [0],
+      revision: new FormControl(0)
 
     });
 
@@ -921,6 +922,7 @@ export class PurchasePage implements OnInit {
             this.clicked = true;  // disable all buttons after submission
             this._cdr.markForCheck();
             this.spinner.show();
+
             this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
               this.spinner.hide();
               console.log('savePurchaseOrder ' + JSON.stringify(data));

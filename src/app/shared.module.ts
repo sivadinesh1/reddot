@@ -113,6 +113,8 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { NumericDirective } from './util/directives/numeric.directive';
 import { DisableControlDirective } from './util/directives/disable-control.directive';
 import { SalesReturnDialogComponent } from './components/sales/sales-return-dialog/sales-return-dialog.component';
+import { SaleReturnViewComponent } from './components/returns/sale-return-view/sale-return-view.component';
+import { SaleReturnReceiveComponent } from './components/returns/sale-return-receive/sale-return-receive.component';
 
 const components = [
 
@@ -143,6 +145,8 @@ const components = [
 
   SalesInvoiceDialogComponent,
   SalesReturnDialogComponent,
+  SaleReturnViewComponent,
+  SaleReturnReceiveComponent,
   PurchaseEntryDialogComponent,
   EnquiryViewDialogComponent,
 
@@ -265,7 +269,7 @@ const matcomponents = [
     SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent,
     SalesInvoiceDialogComponent, PurchaseEntryDialogComponent, EnquiryViewDialogComponent, WhatsappDialogComponent,
-    SalesReturnDialogComponent,
+    SalesReturnDialogComponent, SaleReturnViewComponent, SaleReturnReceiveComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
