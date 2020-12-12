@@ -88,12 +88,12 @@ export class LoadingService {
     toast.present();
   }
 
-  confirm(message?: string) {
-    const confirmation = window.confirm(message || 'Are you sure?');
-    console.log('confirm ' + confirmation);
-    return (confirmation) ? true : false;
+  // confirm(message?: string) {
+  //   const confirmation = window.confirm(message || 'Are you sure?');
+  //   console.log('confirm ' + confirmation);
+  //   return (confirmation) ? true : false;
 
-  }
+  // }
 
   async showAlert() {
     let alert = await this.alertctrl.create({

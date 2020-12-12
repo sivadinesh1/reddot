@@ -93,6 +93,9 @@ export class PurchasePage implements OnInit {
   userdata: any;
   clicked = false;
 
+  selected_description = "";
+  selected_mrp = "";
+
   ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
   @ViewChild('invno', { static: false }) inputEl: ElementRef;
@@ -402,6 +405,8 @@ export class PurchasePage implements OnInit {
         temppurchaseprice: (event.purchase_price === 'null') ? '0' : (event.purchase_price === '0.00') ? '0' : event.purchase_price
       });
       this.lineItemData = event;
+      this.selected_description = event.description;
+      this.selected_mrp = event.mrp;
     } else {
       this.submitForm.patchValue({
         tempdesc: event.option.value.description,
@@ -409,6 +414,8 @@ export class PurchasePage implements OnInit {
         temppurchaseprice: (event.option.value.purchase_price === 'null') ? '0' : (event.option.value.purchase_price === '0.00') ? '0' : event.option.value.purchase_price
       });
       this.lineItemData = event.option.value;
+      this.selected_description = event.option.value.description;
+      this.selected_mrp = event.option.value.mrp;
     }
 
 
@@ -462,7 +469,9 @@ export class PurchasePage implements OnInit {
         "cgst": this.cgst,
         "sgst": this.sgst,
         "old_val": oldval,
-        "stock_pk": temp.stock_pk
+        "stock_pk": temp.stock_pk,
+        "qtyerror": "",
+        "pperror": ""
       });
 
     const tempArr = this.listArr.map(arrItem => {
@@ -510,6 +519,8 @@ export class PurchasePage implements OnInit {
       tempqty: 1
     });
     this.product_lis = null;
+    this.selected_description = "";
+    this.selected_mrp = "";
     this._cdr.markForCheck();
 
   }
@@ -690,8 +701,25 @@ export class PurchasePage implements OnInit {
 
     }
 
+
     return true;
 
+  }
+
+  checkerrors() {
+    return this.listArr.some((e) => {
+      if (e.qtyerror !== "") {
+        return true;
+      }
+    });
+  }
+
+  chcekpperrors() {
+    return this.listArr.some((e) => {
+      if (e.pperror !== "") {
+        return true;
+      }
+    });
   }
 
   onSubmit(action) {
@@ -704,6 +732,16 @@ export class PurchasePage implements OnInit {
     }
 
     if (this.listArr.length > 0) {
+      console.log('check ' + this.checkerrors());
+
+      if (this.checkerrors()) {
+        return this.presentAlert('Fix errors in products quantity !');
+      }
+
+      if (this.chcekpperrors()) {
+        return this.presentAlert('Fix errors in purchase price !');
+      }
+
 
 
       if (this.validateForms()) {
@@ -1184,17 +1222,17 @@ export class PurchasePage implements OnInit {
   }
 
 
-  ScrollToBottom() {
-    this.content.scrollToBottom(1500);
-  }
+  // ScrollToBottom() {
+  //   this.content.scrollToBottom(1500);
+  // }
 
-  ScrollToTop() {
-    this.content.scrollToTop(1500);
-  }
+  // ScrollToTop() {
+  //   this.content.scrollToTop(1500);
+  // }
 
-  ScrollToPoint(X, Y) {
-    this.content.scrollToPoint(X, Y, 300);
-  }
+  // ScrollToPoint(X, Y) {
+  //   this.content.scrollToPoint(X, Y, 300);
+  // }
 
   openDialog(event): void {
     const dialogConfig = new MatDialogConfig();
@@ -1329,6 +1367,8 @@ export class PurchasePage implements OnInit {
     this.submitForm.controls['productctrl'].setErrors(null);
     this.plist && this.plist.nativeElement.focus();
 
+    this.selected_description = "";
+    this.selected_mrp = "";
 
     this._cdr.markForCheck();
 
@@ -1376,6 +1416,41 @@ export class PurchasePage implements OnInit {
 
   }
 
+
+  handleQtyChange($event, idx) {
+    let qtyval = $event.target.value;
+
+    if (qtyval > 0) {
+      this.listArr[idx].qty = $event.target.value;
+      this.qtyChange(idx);
+      this.listArr[idx].qtyerror = ""
+      this._cdr.detectChanges();
+    } else {
+      this.listArr[idx].qtyerror = "error"
+      this._cdr.detectChanges();
+
+    }
+
+  }
+
+
+
+
+  handlePPChange($event, idx) {
+    let val = $event.target.value;
+
+    if (val > 0) {
+      this.listArr[idx].purchase_price = $event.target.value;
+      this.qtyChange(idx);
+      this.listArr[idx].pperror = ""
+      this._cdr.detectChanges();
+    } else {
+      this.listArr[idx].pperror = "error"
+      this._cdr.detectChanges();
+
+    }
+
+  }
 
 
 }

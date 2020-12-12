@@ -1,5 +1,5 @@
-.sidenav_container {
-	min-width: 60px;
+.sidenav-container {
+	min-width: 70px;
 	height: calc(100vh - 200px);
 }
 
@@ -14,9 +14,9 @@
 	--color_fill: yellow;
 }
 
-.mat-list-item:hover {
-	background-color: #f2f2f2;
-}
+// .mat-list-item:hover {
+// 	background-color: #f2f2f2;
+// }
 
 .is-active {
 	background-color: red;

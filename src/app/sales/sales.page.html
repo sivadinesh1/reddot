@@ -24,8 +24,14 @@
 					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
 						<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 						<ng-container *ngIf="!isCLoading">
-							<mat-option *ngFor="let customer of customer_lis" [value]="customer">
-								<span>{{ customer.name }} </span>
+							<mat-option *ngFor="let customer of customer_lis" [value]="customer" style="height: 60px; border-bottom: 1px solid lightsteelblue">
+								<div style="display: grid; grid-template-columns: 1fr">
+									<div>
+										<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
+										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address1 }}</div>
+										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address3 }}</div>
+									</div>
+								</div>
 							</mat-option>
 							<mat-option style="background-color: #f2f2f2" value="new">+ New Customer</mat-option>
 						</ng-container>
@@ -36,27 +42,8 @@
 						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Customer Details</span>
 					</mat-hint>
 				</mat-form-field>
-
-				<div *ngIf="iscustomerselected" style="display: grid; grid-template-columns: 1fr 1fr; font-size: 12px; color: #666666">
-					<div style="padding: 0.5rem 0.5rem 0.5rem 0px">
-						<div style="font-weight: 500; font-size: 14px">BILLING ADDRESS</div>
-						<div>{{customerdata.address1 | nullquote}}</div>
-						<div>{{customerdata.address2 | nullquote}}</div>
-
-						<div>{{customerdata.state | nullquote}}</div>
-						<div>{{customerdata.pin | nullquote}}</div>
-					</div>
-					<div style="padding: 0.5rem 0.5rem 0.5rem 0px">
-						<div style="font-weight: 500; font-size: 14px">SHIPPING ADDRESS</div>
-						<div>{{customerdata.address1 | nullquote}}</div>
-						<div>{{customerdata.address2 | nullquote}}</div>
-
-						<div>{{customerdata.state | nullquote}}</div>
-						<div>{{customerdata.pin | nullquote}}</div>
-					</div>
-				</div>
 			</div>
-			<!-- <mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}"> -->
+
 			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
 				<div style="justify-content: left; align-self: flex-start; padding-left: 1rem">
 					<div>
@@ -79,9 +66,9 @@
 							</mat-form-field>
 						</div>
 
-						<div *ngIf="mode === 'enquiry'">
+						<div *ngIf="mode === 'enquiry' || this.submitForm.value.orderdate !== '' ">
 							<mat-form-field>
-								<mat-label>Order #</mat-label>
+								<mat-label>Enquiry #</mat-label>
 								<input matInput #orderno type="text" formControlName="orderno" />
 
 								<mat-error
@@ -107,7 +94,6 @@
 								type="text"
 								(focus)="picker1.open()"
 								[max]="maxDate"
-								(dateChange)="invoiceDateSelected($event)"
 							/>
 							<mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
 							<mat-datepicker #picker1></mat-datepicker>
@@ -119,10 +105,10 @@
 							</mat-error>
 						</mat-form-field>
 					</div>
-					<div *ngIf="mode === 'enquiry'">
-						<mat-form-field class="mat-input-wrapper">
-							<mat-label>Order Date</mat-label>
-							<input matInput readonly [matDatepicker]="pickerod" formControlName="orderdate" (focus)="pickerod.open()" [max]="maxOrderDate" />
+					<div *ngIf="mode === 'enquiry' || this.submitForm.value.orderdate !== '' ">
+						<mat-form-field>
+							<mat-label>Enquiry Date</mat-label>
+							<input matInput readonly [matDatepicker]="pickerod" formControlName="orderdate" (focus)="pickerod.open()" />
 							<mat-datepicker-toggle matSuffix [for]="pickerod"></mat-datepicker-toggle>
 							<mat-datepicker #pickerod></mat-datepicker>
 						</mat-form-field>
@@ -184,13 +170,6 @@
 						</div>
 					</ng-container>
 
-					<!-- <ng-container *ngIf="!iscustomerselected">
-						<div style="display: grid; place-items: center; padding: 2rem 2rem">
-							<div style="color: #333333"><h4>Customer not selected</h4></div>
-							<div style="color: #666666">Select customer & start adding items to sales cart</div>
-						</div>
-					</ng-container> -->
-
 					<div *ngFor="let item of listArr ? listArr : []; let idx = index" class="list-item">
 						<div class="txt-align">
 							<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
@@ -199,28 +178,29 @@
 
 						<div class="item2">{{item.product_desc}}</div>
 
-						<div class="item4 txt-right-align num-format-cell-style">
-							<mat-form-field class="example-full-width cursor" (click)="openCurrencyPad(idx)" style="margin-bottom: -1.25em">
-								<input matInput type="number" value="{{item.qty}}" class="cursor" readonly />
-								<mat-icon matSuffix>view_comfy</mat-icon>
+						<div style="text-align: right" class="num-format-cell-style">
+							<mat-form-field style="margin-bottom: -1.25em; width: 80px; text-align: right">
+								<input matInput value="{{item.qty}}" (keyup)="handleQtyChange($event, idx)" required numeric maxlength="7" min="0" max="999999" />
+								<mat-hint *ngIf="item.qtyerror!== '' " style="color: red; font-size: 12px; margin-top: -4px">{{item.qtyerror}}</mat-hint>
 							</mat-form-field>
 						</div>
 
 						<div class="item4 txt-right-align num-format-cell-style">{{item.mrp | number:'1.2-2'}}</div>
 
-						<div class="item4 txt-right-align num-format-cell-style">
-							<input
-								matInput
-								value="{{item.disc_percent | number:'1.2-2'}}"
-								type="number"
-								maxlength="3"
-								min="0"
-								max="100"
-								class="styl-txt-box-small txt-pad"
-								(click)="openRowNumberPad(idx,'discount')"
-								appPreventCutCopyPaste
-								readonly
-							/>
+						<div style="text-align: right" class="num-format-cell-style">
+							<mat-form-field style="margin-bottom: -1.25em; width: 80px; text-align: right">
+								<input
+									matInput
+									value="{{item.disc_percent | number:'1.2-2'}}"
+									(keyup)="handleDiscountChange($event, idx)"
+									required
+									numeric
+									maxlength="7"
+									min="0"
+									max="100"
+								/>
+								<mat-hint *ngIf="item.discerror!== '' " style="color: red; font-size: 12px; margin-top: -4px">{{item.discerror}}</mat-hint>
+							</mat-form-field>
 						</div>
 
 						<div class="item4 txt-right-align num-format-cell-style">{{item.taxrate}}</div>
@@ -243,10 +223,11 @@
 									[readonly]="!iscustomerselected"
 									formControlName="productctrl"
 									#typehead2
+									#plist
 									matTooltipPosition="after"
 									tabindex="3"
 								/>
-								<mat-hint matTooltip="Add product">Hint: Type product code</mat-hint>
+								<mat-hint *ngIf="selected_description" matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
 
 								<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput()">
 									<mat-icon>close</mat-icon>
@@ -352,7 +333,6 @@
 						<mat-form-field class="mat-input-wrapper cursor">
 							<mat-label># of boxes</mat-label>
 							<input matInput type="number" formControlName="noofboxes" />
-							<!-- <mat-icon matSuffix (click)="openNumberPad('noofboxes')">view_comfy</mat-icon> -->
 						</mat-form-field>
 					</div>
 				</div>
@@ -363,7 +343,6 @@
 						<mat-form-field class="mat-input-wrapper cursor">
 							<mat-label>Transport Cost</mat-label>
 							<input matInput type="number" formControlName="transport_charges" />
-							<!-- <mat-icon matSuffix (click)="openNumberPad('transport_charges')">view_comfy</mat-icon> -->
 						</mat-form-field>
 					</div>
 					<div>

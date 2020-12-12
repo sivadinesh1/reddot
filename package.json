@@ -33,7 +33,6 @@
 		"@ionic/cli": "^6.12.2",
 		"@ionic/storage": "^2.3.1",
 		"@types/jest": "^26.0.15",
-		"angular-disable-browser-back-button": "^1.0.2",
 		"ansi-colors": "^4.1.1",
 		"cordova-open-native-settings": "^1.5.2",
 		"cordova-plugin-nativestorage": "^2.3.2",

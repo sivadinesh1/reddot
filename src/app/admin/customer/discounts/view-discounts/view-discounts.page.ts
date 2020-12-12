@@ -43,7 +43,7 @@ export class ViewDiscountsPage implements OnInit {
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
-  displayedColumns: string[] = ['name', 'type', 'gstzero', 'gstfive', 'gsttwelve', 'gsteighteen', 'gsttwentyeight', 'actions'];
+  displayedColumns: string[] = ['name', 'type', 'effdate', 'gstzero', 'gstfive', 'gsttwelve', 'gsteighteen', 'gsttwentyeight', 'actions'];
   dataSource = new MatTableDataSource<Brand>();
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -128,7 +128,22 @@ export class ViewDiscountsPage implements OnInit {
           this._cdr.markForCheck();
         }
         )
-      ).subscribe();
+      ).subscribe((data: any) => {
+
+        if (data.body === 1) {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Discount updated successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+
+        }
+      });
 
 
   }
@@ -153,6 +168,7 @@ export class ViewDiscountsPage implements OnInit {
         }
         )
       ).subscribe((data: any) => {
+
         if (data === 'success') {
 
           const dialogConfigSuccess = new MatDialogConfig();
@@ -193,7 +209,8 @@ export class ViewDiscountsPage implements OnInit {
         }
         )
       ).subscribe((data: any) => {
-        if (data === 'success') {
+
+        if (data.result === 'success') {
 
           const dialogConfigSuccess = new MatDialogConfig();
           dialogConfigSuccess.disableClose = false;

@@ -324,9 +324,6 @@ export class SearchSalesPage implements OnInit {
   async tabClick($event) {
     let value = await this.filteredSales$.toPromise();
 
-    // if ($event.index === 0) {
-    //   this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
-    // } else 
     if ($event.index === 0) {
       this.filteredValues = value.filter((data: any) => data.status === 'D');
     } else if ($event.index === 1) {
@@ -412,7 +409,7 @@ export class SearchSalesPage implements OnInit {
     const dialogRef = this._dialog.open(SalesReturnDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
-      debugger;
+
       if (result === 'success') {
         // throw success alert 
         this.presentAlert('Return Recorded succcessfully!');

@@ -52,7 +52,7 @@ export class HeaderComponent implements OnInit {
 
   toggle() {
     this.sidenav.toggle();
-    this._cdr.markForCheck();
+    this._cdr.detectChanges();
   }
 
 

@@ -36,7 +36,7 @@ export class InventoryReportsPage implements OnInit {
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
-  displayedColumns: string[] = ['brandname', 'code', 'description', 'module', 'invoiceno', 'txnqty', 'stocklevel', 'txndate'];
+  displayedColumns: string[] = ['brandname', 'code', 'description', 'module', 'invoiceno', 'customername', 'txnqty', 'stocklevel', 'txndate'];
   dataSource = new MatTableDataSource<any>();
 
 

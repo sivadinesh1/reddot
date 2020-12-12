@@ -111,6 +111,8 @@ export class SalesPage implements OnInit {
   stock_issue_ref: any;
   clicked = false;
 
+  selected_description = "";
+  selected_mrp = "";
 
   @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
   @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
@@ -127,7 +129,7 @@ export class SalesPage implements OnInit {
   @ViewChild(FormGroupDirective) formRef: FormGroupDirective;
 
   @ViewChild('typehead2', { static: false, read: MatAutocompleteTrigger }) autoTrigger2: MatAutocompleteTrigger;
-
+  @ViewChild('plist', { static: true }) plist: any;
 
   customer_lis: Customer[];
   product_lis: Product[];
@@ -175,6 +177,7 @@ export class SalesPage implements OnInit {
 
     // data change
     this._route.data.subscribe(data => {
+
       this._authservice.setCurrentMenu("Sale");
       this.selInvType = "gstinvoice";
       this.listArr = [];
@@ -470,7 +473,7 @@ export class SalesPage implements OnInit {
     let discval = 0;
 
     let sid = '';
-    if (this.rawSalesData !== null) {
+    if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
       if (this.rawSalesData[0] !== undefined) {
         sid = new NullToQuotePipe().transform(this.rawSalesData[0].id);
       }
@@ -545,7 +548,9 @@ export class SalesPage implements OnInit {
         "old_val": oldval,
         "stock_pk": temp.stock_pk,
         "del_flag": 'N',
-        "margin": ((totalval / temp.qty) - temp.unit_price) < 0 ? "marginNeg" : ""
+        "margin": ((totalval / temp.qty) - temp.unit_price) < 0 ? "marginNeg" : "",
+        "qtyerror": "",
+        "discerror": ""
       });
 
     const tempArr = this.listArr.map(arrItem => {
@@ -570,9 +575,9 @@ export class SalesPage implements OnInit {
 
     this.sumTotalTax();
 
-    let v1 = document.documentElement.clientHeight + 70;
+    // let v1 = document.documentElement.clientHeight + 70;
 
-    this.ScrollToPoint(0, v1);
+    // this.ScrollToPoint(0, v1);
 
 
     this._cdr.markForCheck();
@@ -744,14 +749,14 @@ export class SalesPage implements OnInit {
     if (this.submitForm.value.invoicedate !== null && (this.submitForm.value.orderdate !== "" && this.submitForm.value.orderdate != null)) {
       if ((this.submitForm.value.orderno === "") && this.submitForm.value.orderdate != null) {
         this.orderNoEl.nativeElement.focus();
-        this.presentAlert('Order Date without Order # not allowed');
+        this.presentAlert('Enquiry Date without Enquiry # not allowed');
         return false;
       }
 
 
       if (moment(this.submitForm.value.orderdate).format('DD-MM-YYYY') >
         moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY')) {
-        this.presentAlert('Order date should be less than Invoice date');
+        this.presentAlert('Invoice date should be after Enquiry date');
         return false;
       }
 
@@ -774,6 +779,33 @@ export class SalesPage implements OnInit {
 
   }
 
+  checkerrors() {
+    return this.listArr.some((e) => {
+      if (e.qtyerror !== "") {
+        return true;
+      }
+    });
+  }
+
+  checkdiscerrors() {
+    return this.listArr.some((e) => {
+      if (e.discerror !== "") {
+        return true;
+      }
+    });
+  }
+
+  public findInvalidControls() {
+    const invalid = [];
+    const controls = this.submitForm.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
+    return invalid;
+  }
+
   onSubmit(action) {
 
     if (this.listArr.length == 0) {
@@ -782,12 +814,21 @@ export class SalesPage implements OnInit {
 
 
     if (!this.submitForm.valid) {
+      console.log('invalid field ' + this.findInvalidControls());
+
       return false;
     }
 
 
     if (this.listArr.length > 0) {
 
+      if (this.checkerrors()) {
+        return this.presentAlert('Fix errors in products quantity !');
+      }
+
+      if (this.checkdiscerrors()) {
+        return this.presentAlert('Fix errors in products discount !');
+      }
 
       if (this.validateForms()) {
 
@@ -893,28 +934,6 @@ export class SalesPage implements OnInit {
     });
   }
 
-  openCurrencyPad(idx) {
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "400px";
-
-
-    const dialogRef = this.dialog.open(CurrencyPadComponent, dialogConfig);
-
-    dialogRef.afterClosed()
-      .pipe(
-        filter(val => !!val),
-        tap(val => {
-          this.listArr[idx].qty = val;
-          this.qtyChange(idx);
-        })
-      ).subscribe();
-
-
-  }
-
 
   openNumberPad(field) {
 
@@ -933,29 +952,37 @@ export class SalesPage implements OnInit {
 
   }
 
+  handleDiscountChange($event, idx) {
+    let discVal = $event.target.value;
 
-  openRowNumberPad(idx, field) {
-
-    const dialogRef = this.dialog.open(CurrencyPadComponent, { width: '400px' });
-
-    dialogRef.afterClosed()
-      .pipe(
-        filter(val => !!val),
-        tap((val) => {
-
-          if (val <= 100) {
-            this.listArr[idx].disc_percent = val;
-            this.qtyChange(idx);
-          } else {
-            return false;
-          }
-          this._cdr.markForCheck();
-        }
-        )
-      ).subscribe();
-
+    if (+discVal <= 100 && discVal !== "") {
+      this.listArr[idx].disc_percent = $event.target.value;
+      this.qtyChange(idx);
+      this.listArr[idx].discerror = ""
+      this._cdr.detectChanges();
+    } else {
+      this.listArr[idx].discerror = "error"
+      this._cdr.detectChanges();
+    }
 
   }
+
+  handleQtyChange($event, idx) {
+    let qtyval = $event.target.value;
+
+    if (qtyval > 0) {
+      this.listArr[idx].qty = $event.target.value;
+      this.qtyChange(idx);
+      this.listArr[idx].qtyerror = ""
+      this._cdr.detectChanges();
+    } else {
+      this.listArr[idx].qtyerror = "error"
+      this._cdr.detectChanges();
+
+    }
+
+  }
+
 
   qtyChange(idx) {
 
@@ -1491,6 +1518,8 @@ export class SalesPage implements OnInit {
       tempqty: 1
     });
     this.product_lis = null;
+    this.selected_description = "";
+    this.selected_mrp = "";
     this._cdr.markForCheck();
 
   }
@@ -1503,12 +1532,16 @@ export class SalesPage implements OnInit {
         tempqty: event.qty === 0 ? 1 : event.qty
       });
       this.lineItemData = event;
+      this.selected_description = event.description;
+      this.selected_mrp = event.mrp;
     } else {
       this.submitForm.patchValue({
         tempdesc: event.option.value.description,
         tempqty: event.option.value.qty === 0 ? 1 : event.option.value.qty
       });
       this.lineItemData = event.option.value;
+      this.selected_description = event.option.value.description;
+      this.selected_mrp = event.option.value.mrp;
     }
 
     this._cdr.markForCheck();
@@ -1614,7 +1647,10 @@ export class SalesPage implements OnInit {
     this.submitForm.controls['tempqty'].setErrors(null);
     this.submitForm.controls['productctrl'].setErrors(null);
     // this.plist.nativeElement.focus();
+    this.plist && this.plist.nativeElement.focus();
 
+    this.selected_description = "";
+    this.selected_mrp = "";
 
     this._cdr.markForCheck();
 
@@ -1652,17 +1688,7 @@ export class SalesPage implements OnInit {
   }
 
 
-  ScrollToBottom() {
-    this.content.scrollToBottom(1500);
-  }
 
-  ScrollToTop() {
-    this.content.scrollToTop(1500);
-  }
-
-  ScrollToPoint(X, Y) {
-    this.content.scrollToPoint(X, Y, 300);
-  }
 
   openDialog(event): void {
     const dialogConfig = new MatDialogConfig();
@@ -1747,15 +1773,14 @@ export class SalesPage implements OnInit {
       this.autoTrigger2.closePanel();
     }
 
-
-
   }
-  @HostListener('window:beforeunload', ['$event'])
-  beforeUnloadHander($event) {
-    $event.returnValue = 'Your changes will not be saved';
 
-    return true;
+  // @HostListener('window:beforeunload', ['$event'])
+  // beforeUnloadHander($event) {
+  //   $event.returnValue = 'Your changes will not be saved';
 
-  }
+  //   return true;
+
+  // }
 
 }

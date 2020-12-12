@@ -19,6 +19,11 @@
 					<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{ element.type }}</td>
 				</ng-container>
 
+				<ng-container matColumnDef="effdate">
+					<th mat-header-cell *matHeaderCellDef>Effective Date</th>
+					<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{ element.startdate }}</td>
+				</ng-container>
+
 				<ng-container matColumnDef="gstzero">
 					<th mat-header-cell *matHeaderCellDef>GST (0%)</th>
 					<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{ element.gstzero }}</td>
@@ -43,7 +48,7 @@
 				<ng-container matColumnDef="actions">
 					<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
 					<td mat-cell *matCellDef="let element">
-						<mat-icon style="cursor: pointer;" (click)="internalEdit(element)">edit</mat-icon>
+						<mat-icon style="cursor: pointer" (click)="internalEdit(element)">edit</mat-icon>
 					</td>
 				</ng-container>
 
@@ -57,19 +62,17 @@
 					*matRowDef="let row; columns: displayedColumns"
 				></tr>
 			</table>
-			<div [hidden]="isTableHasData" class="center-message">
-				No Data available.
-			</div>
+			<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
 		</div>
 		<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 	</div>
 </ng-container>
 
 <br /><br />
-<div style="font-size: 14px; color: #333333; display: grid; width: 80%; margin: 0 auto;">Choose brand to add discount</div>
+<div style="font-size: 14px; color: #333333; display: grid; width: 80%; margin: 0 auto">Choose brand to add discount</div>
 
 <form [formGroup]="submitForm" #myForm="ngForm">
-	<div style="display: grid; width: 80%; margin: 0 auto; grid-template-columns: 1fr 1fr; padding: 1rem 0rem;">
+	<div style="display: grid; width: 80%; margin: 0 auto; grid-template-columns: 1fr 1fr; padding: 1rem 0rem">
 		<span *ngIf="mode === 'add'">
 			<mat-form-field class="mat-width-brand">
 				<mat-label>Brands</mat-label>
@@ -85,9 +88,7 @@
 
 		<span *ngIf="mode === 'update'"> Brand: {{ brandname }} </span>
 
-		<span style="text-align: right; font-size: 13px; color: #666666;">
-			Populated with default values
-		</span>
+		<span style="text-align: right; font-size: 13px; color: #666666"> Populated with default values </span>
 	</div>
 
 	<div class="form-wrap">
@@ -152,18 +153,18 @@
 			</mat-form-field>
 		</div>
 	</div>
-	<div style="display: grid; grid-column: 1 / span 5; text-align: left; width: 80%; margin: 0 auto;" class="error">
+	<div style="display: grid; grid-column: 1 / span 5; text-align: left; width: 80%; margin: 0 auto" class="error">
 		{{ responsemsg }}
 	</div>
 
-	<div *ngIf="mode === 'add'" style="display: grid; width: 80%; margin: 0 auto; grid-column: 1 / span 5;">
-		<div style="text-align: center;">
+	<div *ngIf="mode === 'add'" style="display: grid; width: 80%; margin: 0 auto; grid-column: 1 / span 5">
+		<div style="text-align: center">
 			<button mat-raised-button color="primary" type="button" (click)="submit('add')">Add Discount</button>
 		</div>
 	</div>
 
-	<div *ngIf="mode === 'update'" style="display: grid; width: 80%; margin: 0 auto; grid-column: 1 / span 5;">
-		<div style="text-align: center;">
+	<div *ngIf="mode === 'update'" style="display: grid; width: 80%; margin: 0 auto; grid-column: 1 / span 5">
+		<div style="text-align: center">
 			<button mat-raised-button color="primary" type="button" (click)="submit('update')">Update Discount</button>
 		</div>
 	</div>

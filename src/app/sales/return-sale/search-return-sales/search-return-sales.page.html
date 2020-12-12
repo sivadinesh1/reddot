@@ -4,12 +4,22 @@
 			<div class="form-wrap">
 				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer">SALE RETURNS</div>
 
-				<div style="justify-self: end">
-					<mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
+				<!-- <div style="justify-self: end"> -->
+				<!-- <mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
 						<mat-radio-button class="radio-button" value="{{op.id}}" *ngFor="let op of searchType" [checked]="op.checked"
 							>{{op.name}}</mat-radio-button
 						>
-					</mat-radio-group>
+					</mat-radio-group> -->
+
+				<!-- </div> -->
+
+				<div style="justify-self: end; padding-top: 20px">
+					<mat-form-field style="width: 140px">
+						<mat-label>Search Type</mat-label>
+						<mat-select formControlName="searchtype" required value="{selectedSearchType}" (selectionChange)="searchTypeHandle()">
+							<mat-option *ngFor="let op of searchType" [value]="op.id"> {{op.name}} </mat-option>
+						</mat-select>
+					</mat-form-field>
 				</div>
 
 				<div class="customers">
@@ -80,9 +90,9 @@
 
 				<div style="padding-top: 20px">
 					<mat-form-field style="width: 100%">
-						<mat-label>Invoice #</mat-label>
-						<input matInput type="text" #invno formControlName="invoiceno" />
-						<mat-error *ngIf="submitForm.controls['invoiceno'].hasError('required')"> Please enter a value </mat-error>
+						<mat-label>Inv / Cr Note #</mat-label>
+						<input matInput type="text" #invno formControlName="searchby" />
+						<mat-error *ngIf="submitForm.controls['searchby'].hasError('required')"> Please enter a value </mat-error>
 					</mat-form-field>
 				</div>
 
@@ -104,7 +114,7 @@
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 
-				<mat-tab label="Closed  ({{(fullfilledSales$| async)?.length }})">
+				<mat-tab label="Received Items ({{(fullfilledSales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
@@ -115,6 +125,7 @@
 	<ng-template #draftMsgRef>
 		<div class="header header-style">
 			<div>CUSTOMER NAME</div>
+			<div>CREDIT NOTE</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
 			<div>RETURN DATE</div>
@@ -140,6 +151,7 @@
 	<ng-template #MsgRef>
 		<div class="header header-style">
 			<div>CUSTOMER NAME</div>
+			<div>CREDIT NOTE</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
 			<div>RETURN DATE</div>
@@ -168,6 +180,7 @@
 	<ng-template #MsgRef1>
 		<div *ngFor="let item of filteredValues" class="listItem">
 			<div class="item">{{item.name}}</div>
+			<div class="item">{{item.credit_note_no}}</div>
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>
 

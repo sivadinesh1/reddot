@@ -21,6 +21,7 @@ import * as xlsx from 'xlsx';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 import { DeleteBrandDialogComponent } from '../../../components/delete-brand-dialog/delete-brand-dialog.component';
 
+
 @Component({
   selector: 'app-view-brands',
   templateUrl: './view-brands.page.html',
@@ -180,12 +181,15 @@ export class ViewBrandsPage implements OnInit {
 
           const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 
+
         }
       });
 
 
 
   }
+
+
 
   add() {
 

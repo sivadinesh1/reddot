@@ -98,7 +98,7 @@ export class SaleReturnReceiveComponent implements OnInit {
 
     this._commonApiService.updateSaleReturnReceived(this.returnArr).subscribe((data: any) => {
       console.log('object...' + data);
-      debugger;
+
       if (data.result === 'success') {
         this.dialogRef.close("success");
       }

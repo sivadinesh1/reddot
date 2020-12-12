@@ -25,7 +25,7 @@ import { registerLocaleData, CurrencyPipe } from '@angular/common';
 import localeIn from '@angular/common/locales/en-IN';
 import { HomePageModule } from './home/home.module';
 registerLocaleData(localeIn);
-import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
+// import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
 
 
 @NgModule({
@@ -39,9 +39,9 @@ import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
     HomePageModule,
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
-    BackButtonDisableModule.forRoot({
-      preserveScrollPosition: true
-    }),
+    // BackButtonDisableModule.forRoot({
+    //   preserveScrollPosition: true
+    // }),
     AppRoutingModule, BrowserAnimationsModule],
   exports: [BrowserModule],
   providers: [

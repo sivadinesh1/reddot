@@ -69,12 +69,15 @@ export class SearchReturnSalesPage implements OnInit {
   searchType =
     [
       { "name": "All", "id": "all", "checked": true },
-      { "name": "Invoice Only", "id": "invonly", "checked": false }
+      { "name": "By Invoice", "id": "byinvoice", "checked": false },
+      { "name": "By CreditNote", "id": "bycreditnote", "checked": false }
     ]
 
 
   sumTotalValue = 0.00;
   sumNumItems = 0;
+
+  selectedSearchType = "all";
 
   // new FormControl({value: '', disabled: true});
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
@@ -90,7 +93,7 @@ export class SearchReturnSalesPage implements OnInit {
       fromdate: [this.fromdate, Validators.required],
       status: new FormControl('all'),
       saletype: new FormControl('all'),
-      invoiceno: [''],
+      searchby: [''],
       searchtype: ['all']
     })
 
@@ -164,16 +167,17 @@ export class SearchReturnSalesPage implements OnInit {
   }
   // this.form.get('controlname').disable();
   // this.variable.disable()
-  radioClickHandle() {
+  searchTypeHandle() {
 
-    if (this.submitForm.value.searchtype === 'invonly') {
+    if (this.submitForm.value.searchtype !== 'all') {
       this.submitForm.get('customerctrl').disable();
     } else {
-      this.submitForm.value.invoiceno = "";
+      this.submitForm.value.searchby = "";
       this.submitForm.get('customerctrl').enable();
-      this.submitForm.controls['invoiceno'].setErrors(null);
-      this.submitForm.controls['invoiceno'].markAsTouched();
+      this.submitForm.controls['searchby'].setErrors(null);
+      this.submitForm.controls['searchby'].markAsTouched();
     }
+    this.selectedSearchType = this.submitForm.value.searchtype;
   }
   // this.yourFormName.controls.formFieldName.enable();
 
@@ -201,10 +205,10 @@ export class SearchReturnSalesPage implements OnInit {
   async search() {
 
 
-    if (this.submitForm.value.searchtype !== 'all' && this.submitForm.value.invoiceno.trim().length === 0) {
+    if (this.submitForm.value.searchtype !== 'all' && this.submitForm.value.searchby.trim().length === 0) {
       console.log('invoice number is mandatory');
-      this.submitForm.controls['invoiceno'].setErrors({ 'required': true });
-      this.submitForm.controls['invoiceno'].markAsTouched();
+      this.submitForm.controls['searchby'].setErrors({ 'required': true });
+      this.submitForm.controls['searchby'].markAsTouched();
       return false;
 
     }
@@ -217,7 +221,7 @@ export class SearchReturnSalesPage implements OnInit {
         "todate": this.submitForm.value.todate,
 
         "searchtype": this.submitForm.value.searchtype,
-        "invoiceno": this.submitForm.value.invoiceno
+        "searchby": this.submitForm.value.searchby
       }
       );
 

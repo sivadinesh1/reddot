@@ -173,17 +173,17 @@ export class EnquiryPage {
   }
 
 
-  ScrollToBottom() {
-    this.content.scrollToBottom(1500);
-  }
+  // ScrollToBottom() {
+  //   this.content.scrollToBottom(1500);
+  // }
 
-  ScrollToTop() {
-    this.content.scrollToTop(1500);
-  }
+  // ScrollToTop() {
+  //   this.content.scrollToTop(1500);
+  // }
 
-  ScrollToPoint(X, Y) {
-    this.content.scrollToPoint(X, Y, 300);
-  }
+  // ScrollToPoint(X, Y) {
+  //   this.content.scrollToPoint(X, Y, 300);
+  // }
 
   setCustomerInfo(event, from) {
 
@@ -396,11 +396,11 @@ export class EnquiryPage {
     this.submitForm.controls['tempqty'].setErrors(null);
     this.submitForm.controls['productctrl'].setErrors(null);
     this.plist && this.plist.nativeElement.focus();
-    let v1 = (document.documentElement.clientHeight - 250) + 70;
-    console.log('clinet height ' + document.documentElement.clientHeight);
-    console.log('clinet height ' + v1);
+    // let v1 = (document.documentElement.clientHeight - 250) + 70;
+    // console.log('clinet height ' + document.documentElement.clientHeight);
+    // console.log('clinet height ' + v1);
 
-    this.ScrollToPoint(0, v1);
+    // this.ScrollToPoint(0, v1);
 
     this._cdr.markForCheck();
 

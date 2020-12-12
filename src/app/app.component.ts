@@ -1,15 +1,12 @@
-import { Component, ChangeDetectorRef, ChangeDetectionStrategy, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ViewChild } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { NetworkService } from './services/network.service';
-import { AuthenticationService } from './services/authentication.service';
-
 import { LoadingService } from './services/loading.service';
-import { filter } from 'rxjs/operators';
-import { RouterOutlet, Router, ActivationStart, NavigationStart } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 
 @Component({
@@ -23,35 +20,15 @@ export class AppComponent implements OnInit {
 
   isConnected; any;
 
-  appPages = [];
-  accountPages = [];
-  adminmenu = [
-    {
-      title: 'Member Tutorial',
-      url: '/walkthrough',
-      icon: './assets/sample-icons/side-menu/tutorial.svg'
-    }
-  ];
-  isBackUrl: boolean;
 
   constructor(
-    private platform: Platform, private _cdr: ChangeDetectorRef,
-    private splashScreen: SplashScreen, private _authservice: AuthenticationService,
+    private platform: Platform,
+    private splashScreen: SplashScreen,
     private statusBar: StatusBar, private _loadingservice: LoadingService,
-    private networkService: NetworkService, private _router: Router,
+    private networkService: NetworkService,
   ) {
-    this._router.events
-      .pipe(filter((event) => event instanceof NavigationStart))
-      .subscribe((event: NavigationStart) => {
-        if (event.restoredState) {
-          this.isBackUrl = true;
-        }
-      });
     this.initializeApp();
   }
-
-
-
 
   initializeApp() {
     this.platform.ready().then(() => {
@@ -60,10 +37,9 @@ export class AppComponent implements OnInit {
 
       this.networkService.getNetworkStatus().subscribe((connected: boolean) => {
         this.isConnected = connected;
-        console.log('network value' + connected);
+
         if (!connected) {
-          // this._loadingservice.presentToastWithOptions('Oops !!! Internet Connection Lost.', 'bottom', false, '');
-          // this._loadingservice.confirm
+          this._loadingservice.presentToastWithOptions('Oops !!! Internet Connection Lost.', 'bottom', false, '');
           this.networkService.openNetworkSettings();
         }
 

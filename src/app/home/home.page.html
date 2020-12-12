@@ -1,11 +1,9 @@
-<!-- @format -->
-
 <ion-content>
 	<div>
 		<app-header [sidenav]="leftSidenav"></app-header>
 
-		<mat-sidenav-container>
-			<mat-sidenav #leftSidenav mode="side" opened>
+		<mat-sidenav-container class="sidenav-container" style="min-width: 72px">
+			<mat-sidenav #leftSidenav mode="side" opened style="min-width: 72px">
 				<app-left-menu></app-left-menu>
 			</mat-sidenav>
 			<mat-sidenav-content [@onMainContentChange]="onSideNavChange ? 'open': 'close'">

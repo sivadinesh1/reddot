@@ -64,7 +64,7 @@ export class BrandDiscountsComponent implements OnInit {
 
   @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
-  displayedColumns: string[] = ['brandname', 'type', 'gstzero', 'gstfive', 'gsttwelve', 'gsteighteen', 'gsttwentyeight', 'actions'];
+  displayedColumns: string[] = ['brandname', 'type', 'effdate', 'gstzero', 'gstfive', 'gsttwelve', 'gsteighteen', 'gsttwentyeight', 'actions'];
   dataSource = new MatTableDataSource<Brand>();
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -207,7 +207,7 @@ export class BrandDiscountsComponent implements OnInit {
               this.brandsList = data;
               this._cdr.markForCheck();
             })
-          this.dialogRef.close(data);
+          this.dialogRef.close("success");
         }
 
       });
@@ -219,7 +219,7 @@ export class BrandDiscountsComponent implements OnInit {
 
         // if successfully update
         if (data.body === 1) {
-          this.dialogRef.close(data);
+          this.dialogRef.close("success");
         }
 
       });
