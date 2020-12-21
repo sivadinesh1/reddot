@@ -8,25 +8,19 @@
 			{{ userdata?.center_name }}
 		</div>
 		<div>
-			<span style="font-size: 0.8rem">{{ today | date: "dd LLLL yyyy" }} </span> <span style="font-size: 0.8rem">VER: 1.003</span>
+			<span style="font-size: 0.8rem; color: #0007ff">{{ userdata?.plan_name }} </span>
 		</div>
 	</span>
 	<span class="spacer"></span>
 	<span style="align-self: center">
-		<a mat-stroked-button routerLink="/home/sales/edit/0">
-			<img src="../../assets/images/svg/sales-white.svg" width="20px" height="20px" class="img cursor" />
-		</a>
+		<img src="../../assets/images/svg/sales-white.svg" (click)="showNewSales()" width="26px" height="26px" class="img cursor" />
 	</span>
-	<span style="align-self: center">
-		<a mat-stroked-button routerLink="/home/enquiry">
-			<img src="../../assets/images/svg/enquiry-white.svg" width="20px" height="20px" class="img cursor" />
-		</a>
+	<span style="align-self: center; padding: 0px 40px">
+		<img src="../../assets/images/svg/enquiry-white.svg" (click)="showNewEnquiry()" width="26px" height="26px" class="img cursor" />
 	</span>
 	&nbsp;&nbsp;
 	<span style="align-self: center">
-		<a mat-stroked-button [routerLink]="" (click)="showAddProductComp()">
-			<img src="../../assets/images/svg/search.svg" width="20px" height="20px" class="img cursor" />
-		</a>
+		<img src="../../assets/images/svg/search.svg" (click)="showAddProductComp()" width="26px" height="26px" class="img cursor" />
 	</span>
 	&nbsp;&nbsp;
 	<span style="align-self: center">
@@ -48,7 +42,7 @@
 	</button>
 	<button mat-menu-item [matMenuTriggerFor]="admin">
 		<span style="padding-right: 16px; vertical-align: middle">
-			<img src="../../assets/images/svg/manager.svg" width="24px" height="24px" style="vertical-align: middle" />
+			<img src="../../assets/images/svg/manager.svg" width="26px" height="26px" style="vertical-align: middle" />
 		</span>
 		Admin
 	</button>

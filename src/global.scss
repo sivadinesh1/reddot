@@ -200,3 +200,7 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
 	-moz-appearance: textfield;
 }
+
+.mat-option.mat-active {
+	border-left: 2px solid cadetblue;
+}

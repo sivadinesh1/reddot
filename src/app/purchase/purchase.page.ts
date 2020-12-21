@@ -106,6 +106,7 @@ export class PurchasePage implements OnInit {
   @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
 
   @ViewChild('plist', { static: true }) plist: any;
+  @ViewChild('vlist', { static: true }) vlist: any;
   @ViewChild('newrow', { static: true }) newrow: any;
 
   // TAB navigation for vendor list
@@ -316,7 +317,10 @@ export class PurchasePage implements OnInit {
       }
     })
 
-
+    setTimeout(() => {
+      this.vlist && this.vlist.nativeElement.focus();
+      this._cdr.detectChanges();
+    });
 
 
   }
@@ -532,17 +536,19 @@ export class PurchasePage implements OnInit {
     if (from === 'click' && event.option.value === 'new') {
       this.addVendor();
     }
-
+    this.vendorselected = true;
     if (from === 'tab') {
       this.vendordata = event;
       this.vendor_state_code = this.vendordata.code;
-      this.vendorselected = true;
+
     } else {
       this.vendordata = event.option.value;
       this.vendor_state_code = this.vendordata.code;
-      this.vendorselected = true;
+
     }
     this.setTaxLabel();
+    this.plist && this.plist.nativeElement.focus();
+    this._cdr.detectChanges();
     this._cdr.markForCheck();
 
   }

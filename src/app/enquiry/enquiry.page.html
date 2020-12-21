@@ -13,6 +13,8 @@
 						[readOnly]="iscustomerselected"
 						#typehead1
 						required
+						#clist
+						tabindex="1"
 						matTooltipPosition="after"
 						[attr.disabled]="iscustomerselected?'true':null"
 					/>
@@ -21,10 +23,15 @@
 						<mat-icon>close</mat-icon>
 					</button>
 
-					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
+					<mat-autocomplete
+						#auto="matAutocomplete"
+						autoActiveFirstOption
+						[displayWith]="displayFn"
+						(optionSelected)="setCustomerInfo($event, 'click')"
+					>
 						<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 						<ng-container *ngIf="!isCLoading">
-							<mat-option *ngFor="let customer of customer_lis" [value]="customer" style="height: 60px; border-bottom: 1px solid lightsteelblue">
+							<mat-option *ngFor="let customer of customer_lis" [value]="customer" style="height: 70px; border-bottom: 1px solid lightsteelblue">
 								<div style="display: grid; grid-template-columns: 1fr">
 									<div>
 										<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
@@ -33,16 +40,19 @@
 									</div>
 								</div>
 							</mat-option>
-							<mat-option style="background-color: #f2f2f2" value="new">+ New Customer</mat-option>
 						</ng-container>
 					</mat-autocomplete>
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')"> Please enter a value </mat-error>
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"> Customer does not exist </mat-error>
+					<mat-hint *ngIf="!iscustomerselected">
+						<span (click)="addCustomer()" style="font-size: 12px; color: #310ac0; cursor: pointer">+ New Customer</span>
+					</mat-hint>
 					<mat-hint *ngIf="iscustomerselected">
 						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Customer Details</span>
 					</mat-hint>
 				</mat-form-field>
 			</div>
+
 			<div>
 				<div *ngIf="iscustomerselected">
 					<mat-form-field style="width: 400px">
@@ -125,13 +135,18 @@
 								<mat-icon>close</mat-icon>
 							</button>
 
-							<mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayProdFn" (optionSelected)="setItemDesc($event, 'click')">
+							<mat-autocomplete
+								#auto1="matAutocomplete"
+								autoActiveFirstOption
+								[displayWith]="displayProdFn"
+								(optionSelected)="setItemDesc($event, 'click')"
+							>
 								<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 								<ng-container *ngIf="!isLoading">
 									<mat-option
 										*ngFor="let product of product_lis"
 										[value]="product"
-										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px"
+										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px; border-bottom: 1px solid lightsteelblue"
 									>
 										<div style="display: grid; grid-template-columns: 1fr 80px">
 											<div>

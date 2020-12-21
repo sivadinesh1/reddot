@@ -91,6 +91,10 @@ export class HeaderComponent implements OnInit {
     this._router.navigate([`/home/enquiry`]);
   }
 
+  showNewSales() {
+    this._router.navigate([`home/sales/edit/0`]);
+  }
+
   viewDiscounts() {
     this._router.navigate(['/home/view-discounts']);
   }

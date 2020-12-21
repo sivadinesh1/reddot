@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList, Inject, HostListener } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList, Inject, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, PickerController, AlertController } from '@ionic/angular';
 
 import { CommonApiService } from '../services/common-api.service';
@@ -24,7 +24,7 @@ import { Customer } from 'src/app/models/Customer';
 import { Product } from '../models/Product';
 import { empty } from 'rxjs';
 import { RequireMatch } from '../util/directives/requireMatch';
-import { MatAutocompleteTrigger, } from '@angular/material/autocomplete';
+import { MatAutocomplete, MatAutocompleteTrigger, } from '@angular/material/autocomplete';
 import { IonContent } from '@ionic/angular';
 import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
 import { CustomerAddDialogComponent } from '../components/customers/customer-add-dialog/customer-add-dialog.component';
@@ -36,8 +36,9 @@ import { User } from '../models/User';
   selector: 'app-sales',
   templateUrl: './sales.page.html',
   styleUrls: ['./sales.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SalesPage implements OnInit {
+export class SalesPage {
   breadmenu = "New Sale";
 
   listArr = [];
@@ -130,6 +131,9 @@ export class SalesPage implements OnInit {
 
   @ViewChild('typehead2', { static: false, read: MatAutocompleteTrigger }) autoTrigger2: MatAutocompleteTrigger;
   @ViewChild('plist', { static: true }) plist: any;
+  @ViewChild('clist', { static: true }) clist: any;
+
+
 
   customer_lis: Customer[];
   product_lis: Product[];
@@ -247,13 +251,11 @@ export class SalesPage implements OnInit {
       roundoff: [0]
 
     });
-  }
-
-
-
-  ngOnInit() {
 
   }
+
+
+
 
   initialize() {
 
@@ -263,6 +265,7 @@ export class SalesPage implements OnInit {
       this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
     }
 
+    // comes from MOVE TO SALE: Enquiry -> sale process
     if (this.mode === 'enquiry') {
 
       this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
@@ -298,7 +301,8 @@ export class SalesPage implements OnInit {
           let proddata = prodData;
 
           this.submitForm.patchValue({
-            orderdate: (proddata[0].enquiry_date !== '' || proddata[0].enquiry_date !== undefined) ? proddata[0].enquiry_date : ''
+            orderdate: proddata[0].enquiry_date === '' ? '' : new Date(new NullToQuotePipe().transform(proddata[0].enquiry_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
+            //  orderdate: (proddata[0].enquiry_date !== '' || proddata[0].enquiry_date !== undefined) ? proddata[0].enquiry_date : ''
           })
 
           proddata.forEach(element => {
@@ -318,6 +322,8 @@ export class SalesPage implements OnInit {
 
     }
 
+
+    // raw sales data : which comes from regular sale screen and not from enquiry screen
     if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
 
 
@@ -667,6 +673,10 @@ export class SalesPage implements OnInit {
       }
     })
 
+    setTimeout(() => {
+      this.clist && this.clist.nativeElement.focus();
+      this._cdr.detectChanges();
+    });
 
     // const stickyHeaderOptions = {
     //   rootMargin: "0px 0px -20px 0px"
@@ -746,20 +756,21 @@ export class SalesPage implements OnInit {
       return false;
     }
 
-    if (this.submitForm.value.invoicedate !== null && (this.submitForm.value.orderdate !== "" && this.submitForm.value.orderdate != null)) {
-      if ((this.submitForm.value.orderno === "") && this.submitForm.value.orderdate != null) {
-        this.orderNoEl.nativeElement.focus();
-        this.presentAlert('Enquiry Date without Enquiry # not allowed');
-        return false;
+    if (this.mode === "enquiry") {
+      if (this.submitForm.value.invoicedate !== null && (this.submitForm.value.orderdate !== "" && this.submitForm.value.orderdate != null)) {
+        if ((this.submitForm.value.orderno === "") && this.submitForm.value.orderdate != null) {
+          this.orderNoEl && this.orderNoEl.nativeElement.focus();
+          this.presentAlert('Enquiry Date without Enquiry # not allowed');
+          return false;
+        }
+
+        if (moment(this.submitForm.value.orderdate).format('DD-MM-YYYY') >
+          moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY')) {
+          this.presentAlert('Invoice date should be after Enquiry date');
+          return false;
+        }
+
       }
-
-
-      if (moment(this.submitForm.value.orderdate).format('DD-MM-YYYY') >
-        moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY')) {
-        this.presentAlert('Invoice date should be after Enquiry date');
-        return false;
-      }
-
     }
 
     if (this.submitForm.value.invoicedate !== null && (this.submitForm.value.lrdate !== "" && this.submitForm.value.lrdate !== null)) {
@@ -815,7 +826,7 @@ export class SalesPage implements OnInit {
 
     if (!this.submitForm.valid) {
       console.log('invalid field ' + this.findInvalidControls());
-
+      this.presentAlert('Validation Failure Error!');
       return false;
     }
 
@@ -1577,7 +1588,7 @@ export class SalesPage implements OnInit {
       tap(() => this.isLoading = true),
       switchMap(id => {
 
-        if (id != null && id.length >= 2) {
+        if (id != null && id.length >= 1) {
           return this._commonApiService.getProductInformation({ "centerid": this.userdata.center_id, "customerid": this.customerdata.id, "orderdate": invdt, "searchstr": id });
         } else {
           return empty();
@@ -1661,29 +1672,22 @@ export class SalesPage implements OnInit {
     if (from === 'click' && event.option.value === 'new') {
       this.addCustomer();
     }
-
+    this.iscustomerselected = true;
     if (from === 'tab') {
       this.customer_state_code = event.code;
       this.cust_discount_prcnt = event.discount;
       this.cust_discount_type = event.discount_type;
-
       this.customerdata = event;
-      this.iscustomerselected = true;
-
     } else {
-
       this.customer_state_code = event.option.value.code;
       this.cust_discount_prcnt = event.option.value.discount;
       this.cust_discount_type = event.option.value.discount_type;
       this.customerdata = event.option.value;
-
-
-
-      this.iscustomerselected = true;
     }
+    this._cdr.detectChanges();
     this.setTaxLabel(this.customer_state_code);
 
-    this._cdr.markForCheck();
+    this.plist && this.plist.nativeElement.focus();
 
   }
 

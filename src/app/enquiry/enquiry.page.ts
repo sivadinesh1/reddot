@@ -56,6 +56,7 @@ export class EnquiryPage {
 
   iscustomerselected = false;
   clicked = false;
+  @ViewChild('clist', { static: true }) clist: any;
 
   @ViewChild('myForm', { static: true }) myForm: NgForm;
   filteredCustomers: Observable<any[]>;
@@ -64,6 +65,7 @@ export class EnquiryPage {
   @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
 
   @ViewChild('plist', { static: true }) plist: any;
+
 
   // TAB navigation for customer list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
@@ -96,7 +98,7 @@ export class EnquiryPage {
         });
 
 
-        this.init();
+        //    this.init();
         this._cdr.markForCheck();
       });
 
@@ -140,7 +142,9 @@ export class EnquiryPage {
   }
 
 
-  async init() {
+  init() {
+    this.clearInput();
+    this.clearProdInput();
     this.searchCustomers();
     this.searchProducts();
     this._cdr.markForCheck();
@@ -190,20 +194,22 @@ export class EnquiryPage {
     if (from === 'click' && event.option.value === 'new') {
       this.addCustomer();
     }
+    this.iscustomerselected = true;
+    this._cdr.detectChanges();
 
     if (from === 'tab') {
 
       this.customerdata = event;
-      this.iscustomerselected = true;
+
 
     } else {
 
       this.customerdata = event.option.value;
 
-      this.iscustomerselected = true;
+
     }
 
-
+    this.plist && this.plist.nativeElement.focus();
     this._cdr.markForCheck();
 
   }
@@ -276,7 +282,7 @@ export class EnquiryPage {
       debounceTime(300),
       tap(() => this.isLoading = true),
       switchMap(id => {
-        console.log(id);
+        // console.log(id);
         search = id;
         if (id != null && id.length >= 2) {
           return this._commonApiService.getProductInfo({ "centerid": this.userdata.center_id, "searchstring": id });
@@ -334,7 +340,10 @@ export class EnquiryPage {
       }
     })
 
-
+    setTimeout(() => {
+      this.clist && this.clist.nativeElement.focus();
+      this._cdr.detectChanges();
+    });
 
   }
 
@@ -450,7 +459,6 @@ export class EnquiryPage {
     this._cdr.markForCheck();
 
   }
-
 
 
   onRemoveRows() {

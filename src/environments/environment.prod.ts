@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  restApiUrl: 'http://demo.squapl.com:5050',
+  restApiUrl: 'https://demo.squapl.com:8440',
 };
 
 export const errorApiUrl = 'http://localhost:5555';

@@ -13,6 +13,8 @@
 						[readOnly]="iscustomerselected"
 						#typehead1
 						required
+						#clist
+						autofocus
 						matTooltipPosition="after"
 						tabindex="1"
 						[attr.disabled]="iscustomerselected?'true':null"
@@ -21,10 +23,15 @@
 					<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
 						<mat-icon>close</mat-icon>
 					</button>
-					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
+					<mat-autocomplete
+						#auto="matAutocomplete"
+						autoActiveFirstOption
+						[displayWith]="displayFn"
+						(optionSelected)="setCustomerInfo($event, 'click')"
+					>
 						<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 						<ng-container *ngIf="!isCLoading">
-							<mat-option *ngFor="let customer of customer_lis" [value]="customer" style="height: 60px; border-bottom: 1px solid lightsteelblue">
+							<mat-option *ngFor="let customer of customer_lis" [value]="customer" style="height: 70px; border-bottom: 1px solid lightsteelblue">
 								<div style="display: grid; grid-template-columns: 1fr">
 									<div>
 										<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
@@ -33,13 +40,15 @@
 									</div>
 								</div>
 							</mat-option>
-							<mat-option style="background-color: #f2f2f2" value="new">+ New Customer</mat-option>
 						</ng-container>
 					</mat-autocomplete>
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')"> Please enter a value </mat-error>
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"> Please select a valid customer </mat-error>
 					<mat-hint *ngIf="iscustomerselected">
 						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Customer Details</span>
+					</mat-hint>
+					<mat-hint *ngIf="!iscustomerselected">
+						<span (click)="addCustomer()" style="font-size: 12px; color: #310ac0; cursor: pointer">+ New Customer</span>
 					</mat-hint>
 				</mat-form-field>
 			</div>
@@ -49,7 +58,7 @@
 					<div>
 						<mat-form-field appearance="fill">
 							<mat-label>Sale Type</mat-label>
-							<mat-select formControlName="invoicetype" value="{selInvType}" (selectionChange)="invoiceTypeChange($event)" tabindex="2" required>
+							<mat-select formControlName="invoicetype" value="{selInvType}" (selectionChange)="invoiceTypeChange($event)" required>
 								<mat-option value="gstinvoice">GST Invoice</mat-option>
 								<mat-option value="stockissue">Stock Issue</mat-option>
 							</mat-select>
@@ -66,7 +75,7 @@
 							</mat-form-field>
 						</div>
 
-						<div *ngIf="mode === 'enquiry' || this.submitForm.value.orderdate !== '' ">
+						<div *ngIf="mode === 'enquiry' && this.submitForm.value.orderdate !== '' ">
 							<mat-form-field>
 								<mat-label>Enquiry #</mat-label>
 								<input matInput #orderno type="text" formControlName="orderno" />
@@ -105,7 +114,7 @@
 							</mat-error>
 						</mat-form-field>
 					</div>
-					<div *ngIf="mode === 'enquiry' || this.submitForm.value.orderdate !== '' ">
+					<div *ngIf="mode === 'enquiry' && this.submitForm.value.orderdate !== '' ">
 						<mat-form-field>
 							<mat-label>Enquiry Date</mat-label>
 							<input matInput readonly [matDatepicker]="pickerod" formControlName="orderdate" (focus)="pickerod.open()" />
@@ -191,10 +200,10 @@
 							<mat-form-field style="margin-bottom: -1.25em; width: 80px; text-align: right">
 								<input
 									matInput
-									value="{{item.disc_percent | number:'1.2-2'}}"
+									value="{{item.disc_percent}}"
 									(keyup)="handleDiscountChange($event, idx)"
 									required
-									numeric
+									type="number"
 									maxlength="7"
 									min="0"
 									max="100"
@@ -225,7 +234,7 @@
 									#typehead2
 									#plist
 									matTooltipPosition="after"
-									tabindex="3"
+									tabindex="2"
 								/>
 								<mat-hint *ngIf="selected_description" matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
 
@@ -233,13 +242,18 @@
 									<mat-icon>close</mat-icon>
 								</button>
 
-								<mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayProdFn" (optionSelected)="setItemDesc($event, 'click')">
+								<mat-autocomplete
+									#auto2="matAutocomplete"
+									autoActiveFirstOption
+									[displayWith]="displayProdFn"
+									(optionSelected)="setItemDesc($event, 'click')"
+								>
 									<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 									<ng-container *ngIf="!isLoading">
 										<mat-option
 											*ngFor="let product of product_lis"
 											[value]="product"
-											style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px"
+											style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px; border-bottom: 1px solid lightsteelblue"
 										>
 											<div style="display: grid; grid-template-columns: 1fr 80px">
 												<div>

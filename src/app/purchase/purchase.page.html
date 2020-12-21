@@ -14,6 +14,7 @@
 							[readOnly]="vendorselected"
 							#typehead1
 							required
+							#vlist
 							matTooltipPosition="after"
 							tabindex="1"
 							[attr.disabled]="vendorselected?'true':null"
@@ -21,10 +22,15 @@
 						<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
 							<mat-icon>close</mat-icon>
 						</button>
-						<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setVendorInfo($event, 'click')">
+						<mat-autocomplete
+							#auto="matAutocomplete"
+							autoActiveFirstOption
+							[displayWith]="displayFn"
+							(optionSelected)="setVendorInfo($event, 'click')"
+						>
 							<mat-option *ngIf="isVLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 							<ng-container *ngIf="!isVLoading">
-								<mat-option *ngFor="let vendor of vendor_lis" [value]="vendor" style="height: 60px; border-bottom: 1px solid lightsteelblue">
+								<mat-option *ngFor="let vendor of vendor_lis" [value]="vendor" style="height: 70px; border-bottom: 1px solid lightsteelblue">
 									<div style="display: grid; grid-template-columns: 1fr">
 										<div>
 											<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ vendor.name }}</div>
@@ -296,13 +302,18 @@
 								<mat-icon>close</mat-icon>
 							</button>
 
-							<mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayProdFn" (optionSelected)="setItemDesc($event, 'click')">
+							<mat-autocomplete
+								#auto1="matAutocomplete"
+								autoActiveFirstOption
+								[displayWith]="displayProdFn"
+								(optionSelected)="setItemDesc($event, 'click')"
+							>
 								<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 								<ng-container *ngIf="!isLoading">
 									<mat-option
 										*ngFor="let product of product_lis"
 										[value]="product"
-										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px"
+										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px; border-bottom: 1px solid lightsteelblue"
 									>
 										<div style="display: grid; grid-template-columns: 1fr 80px">
 											<div>

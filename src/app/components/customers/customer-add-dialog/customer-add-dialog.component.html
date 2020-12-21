@@ -26,25 +26,29 @@
 				</div>
 			</div>
 			<div>
-				<div style="padding: 0px 0px 16px 0px">BILLING & SHIPPING ADDRESS</div>
+				<div style="padding: 0px 0px 3px 0px">BILLING & SHIPPING ADDRESS</div>
 				<div style="font-size: 12px; color: royalblue">Add multiple shipping address in customer address page</div>
+				<br />
 				<div class="address1">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 1</mat-label>
-						<input matInput formControlName="address1" />
+						<input matInput formControlName="address1" required />
+						<mat-error *ngIf="submitForm.get('address1').hasError('required')"> This field is <strong>required</strong> </mat-error>
 					</mat-form-field>
 				</div>
 				<div class="address2">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 2</mat-label>
-						<input matInput formControlName="address2" />
+						<input matInput formControlName="address2" required />
+						<mat-error *ngIf="submitForm.get('address2').hasError('required')"> This field is <strong>required</strong> </mat-error>
 					</mat-form-field>
 				</div>
 
 				<div class="district">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>District</mat-label>
-						<input matInput formControlName="district" />
+						<input matInput formControlName="district" required />
+						<mat-error *ngIf="submitForm.get('district').hasError('required')"> This field is <strong>required</strong> </mat-error>
 					</mat-form-field>
 				</div>
 
