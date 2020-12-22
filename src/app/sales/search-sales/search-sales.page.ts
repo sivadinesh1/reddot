@@ -14,7 +14,7 @@ import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/di
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-search-sales',
@@ -78,7 +78,7 @@ export class SearchSalesPage implements OnInit {
   // new FormControl({value: '', disabled: true});
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
-    public alertController: AlertController, public _dialog: MatDialog,
+    public alertController: AlertController, public _dialog: MatDialog, private _snackBar: MatSnackBar,
     private _authservice: AuthenticationService) {
 
     this.submitForm = this._fb.group({
@@ -287,6 +287,7 @@ export class SearchSalesPage implements OnInit {
 
       if (data.result === 'success') {
         this._commonApiService.deleteSaleMaster(item.id).subscribe((data1: any) => {
+          this.openSnackBar("Deleted Successfully", "");
           this.init();
         });
       }
@@ -431,6 +432,13 @@ export class SearchSalesPage implements OnInit {
       this.init();
     }, 1000);
 
+  }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 2000,
+      panelClass: ['mat-toolbar', 'mat-primary']
+    });
   }
 
 }

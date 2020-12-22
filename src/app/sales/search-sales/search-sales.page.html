@@ -181,24 +181,22 @@
 			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
 			<div class="item" style="text-align: right">{{item.net_total | currency: "INR"}}</div>
 
-			<div class="item cursor" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
+			<div class="item" style="text-align: center">
+				<mat-icon [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}" (click)="goSalesEditScreen(item)">edit </mat-icon>
 			</div>
 
-			<div class="item cursor" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="openDialog(item)">remove_red_eye </mat-icon>
+			<div class="item" style="text-align: center">
+				<mat-icon [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}" (click)="openDialog(item)">remove_red_eye </mat-icon>
 			</div>
-			<div class="item cursor" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="goPrintInvoice(item)">print </mat-icon>
+			<div class="item" style="text-align: center">
+				<mat-icon [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}" (click)="goPrintInvoice(item)">print </mat-icon>
 			</div>
-			<div class="item cursor" *ngIf="item.status === 'D'" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#ff8484'}" (click)="presentAlertConfirm(item)">delete </mat-icon>
+			<div class="item" *ngIf="item.status === 'D'" style="text-align: center">
+				<mat-icon [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}" (click)="presentAlertConfirm(item)">delete </mat-icon>
 			</div>
 
 			<div *ngIf="tabIndex === 1">
-				<button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: item}">
-					<mat-icon>more_vert</mat-icon>
-				</button>
+				<mat-icon [matMenuTriggerFor]="menu" [matMenuTriggerData]="{item: item}" style="cursor: pointer">more_vert</mat-icon>
 			</div>
 		</div>
 

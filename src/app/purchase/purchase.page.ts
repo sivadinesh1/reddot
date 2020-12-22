@@ -160,6 +160,15 @@ export class PurchasePage implements OnInit {
     // param change
     this._route.params.subscribe(params => {
       this.clicked = false;
+
+      if (this.userdata !== undefined) {
+        this.initialize();
+        this.clearInput();
+        this.submitForm.patchValue({
+          center_id: this.userdata.center_id,
+        });
+      }
+
     });
 
 
