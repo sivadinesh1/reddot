@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, Validators, FormGroup, FormArray, NgForm } fr
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ModalController, AlertController } from '@ionic/angular';
-import { ShowCustomersComponent } from '../components/show-customers/show-customers.component';
+
 import { CommonApiService } from '../services/common-api.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
@@ -90,7 +90,7 @@ export class EnquiryPage {
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
-        this._authservice.setCurrentMenu("Enquiry");
+        this._authservice.setCurrentMenu("ENQUIRY");
         this.userdata = data;
 
         this.submitForm.patchValue({
@@ -351,7 +351,7 @@ export class EnquiryPage {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = "400px";
+    dialogConfig.width = "600px";
     dialogConfig.height = "100%";
     dialogConfig.data = this.customerdata;
     dialogConfig.position = { top: '0', right: '0' };

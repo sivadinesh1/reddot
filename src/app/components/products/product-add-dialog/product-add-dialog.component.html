@@ -16,8 +16,8 @@
 				</mat-form-field>
 				<div *ngIf="pexists" class="error">Already Exists</div>
 			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
+			<div style="display: grid; grid-column: 2/-1">
+				<mat-form-field>
 					<mat-label>Description</mat-label>
 					<input matInput formControlName="description" required />
 					<mat-error>This field is required</mat-error>
@@ -36,7 +36,7 @@
 			</div>
 
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>UOM</mat-label>
 					<mat-select formControlName="unit">
 						<mat-option *ngFor="let item of uom" [value]="item.key">
@@ -46,21 +46,21 @@
 				</mat-form-field>
 			</div>
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>Packet Size</mat-label>
 					<input matInput type="number" formControlName="packetsize" required numeric />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
+			<div style="display: grid; grid-column: 4/-1">
+				<mat-form-field>
 					<mat-label>HSN Code</mat-label>
 					<input matInput formControlName="hsncode" required />
 					<mat-hint matTooltip="Info about the action">What is HSN Code?</mat-hint>
 				</mat-form-field>
 			</div>
 			<!-- <div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>Tax Rate (%)</mat-label>
 					<input matInput type="number" formControlName="taxrate" required numeric/>
 					<mat-error>This field is required</mat-error>
@@ -79,7 +79,7 @@
 			</div>
 
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>Current Stock</mat-label>
 					<input matInput type="number" formControlName="currentstock" required numeric />
 					<mat-error>This field is required</mat-error>
@@ -87,7 +87,7 @@
 			</div>
 
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>Min. Qty</mat-label>
 					<input matInput type="number" formControlName="minqty" required numeric />
 					<mat-error>This field is required</mat-error>
@@ -95,14 +95,14 @@
 			</div>
 
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>Unit/Price</mat-label>
 					<input matInput type="number" formControlName="unit_price" required numeric decimals="2" />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>MRP</mat-label>
 					<input matInput type="number" formControlName="mrp" placeholder="Mrp" required numeric decimals="2" />
 					<mat-error>This field is required</mat-error>
@@ -116,21 +116,21 @@
 				</mat-form-field>
 			</div>
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>Sale Price</mat-label>
 					<input matInput type="number" formControlName="salesprice" numeric decimals="2" />
 				</mat-form-field>
 			</div>
 
 			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Max. Discount (%)</mat-label>
+				<mat-form-field class="mat-width-100">
+					<mat-label>Max. Disc (%)</mat-label>
 					<input matInput type="number" formControlName="maxdiscount" required />
 					<mat-hint matTooltip="Info about the action">Hint: Max 100</mat-hint>
 				</mat-form-field>
 			</div>
 			<div>
-				<mat-form-field class="mat-width-ext">
+				<mat-form-field class="mat-width-100">
 					<mat-label>Rack #</mat-label>
 					<input matInput type="text" formControlName="rackno" required />
 				</mat-form-field>

@@ -1,33 +1,17 @@
 <div class="sidenav_container" [@onSideNavChange]="sideNavState ? 'open' : 'close'">
 	<div fxLayout="column" fxLayoutGap="10px" style="height: 100%">
-		<div class="user_menu">
-			<mat-nav-list>
-				<a mat-list-item (click)="routeToDashboard()" [ngClass]="{ red: clickedItem === 'dashboard' }">
-					<img class="jim" src="/assets/images/svg/dashboard-black.svg" width="29px" height="24px" />
-					<span [@animateText]="linkText ? 'show' : 'hide'">Dashboard </span>
-				</a>
-			</mat-nav-list>
-			<mat-divider></mat-divider>
-		</div>
+		<div class="wrapper">
+			<div class="md" *ngFor="let page of pages">
+				<a class="header-menu-item" (click)="routeTo(page.name, page.link)" [ngClass]="{ selectedmenu: clickedItem === page?.name }">
+					<img src="{{ page?.icon }}" width="32px" height="32px" class="img-menu-box" />
 
-		<div>
-			<mat-nav-list dense>
-				<a mat-list-item *ngFor="let page of pages" (click)="routeTo(page.name, page.link)" [ngClass]="{ red: clickedItem === page?.name }">
-					<img src="{{ page?.icon }}" width="29px" height="24px" />
-
-					<span [@animateText]="linkText ? 'show' : 'hide'"
-						>&nbsp; <span class="side-menu-lbl">{{ page?.name }}</span>
+					<span [@animateText]="linkText ? 'show' : 'show'">
+						<span class="side-menu-lbl">{{ page?.name }}</span>
 					</span>
 				</a>
-			</mat-nav-list>
+			</div>
 		</div>
 	</div>
 
 	<span class="spacer"></span>
-	<div fxLayout="row" fxLayoutAlign="end center" style="padding: 0px 10px">
-		<button mat-icon-button (click)="onSinenavToggle()">
-			<mat-icon *ngIf="sideNavState">arrow_left</mat-icon>
-			<mat-icon *ngIf="!sideNavState">arrow_right</mat-icon>
-		</button>
-	</div>
 </div>

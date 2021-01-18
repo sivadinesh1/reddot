@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
-import { ShowCustomersComponent } from 'src/app/components/show-customers/show-customers.component';
+
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ModalController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';

@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { ModalController, PickerController, AlertController } from '@ionic/angular';
-import { AddProductComponent } from '../components/add-product/add-product.component';
+
 import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { PickerOptions } from '@ionic/core';
@@ -130,7 +130,7 @@ export class PurchasePage implements OnInit {
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
-        this._authservice.setCurrentMenu("Purchase");
+        this._authservice.setCurrentMenu("PURCHASE");
         this.userdata = data;
 
         this.submitForm.patchValue({
@@ -147,7 +147,7 @@ export class PurchasePage implements OnInit {
     // data change
     this._route.data.subscribe(data => {
       this.clicked = false;
-      this._authservice.setCurrentMenu("Purchase");
+      this._authservice.setCurrentMenu("PURCHASE");
       this.listArr = [];
       this.rawPurchaseData = data['rawpurchasedata'];
 
@@ -545,20 +545,26 @@ export class PurchasePage implements OnInit {
     if (from === 'click' && event.option.value === 'new') {
       this.addVendor();
     }
-    this.vendorselected = true;
-    if (from === 'tab') {
-      this.vendordata = event;
-      this.vendor_state_code = this.vendordata.code;
+    if (event !== undefined) {
+      this.vendorselected = true;
+      if (from === 'tab') {
+        this.vendordata = event;
+        this.vendor_state_code = this.vendordata.code;
 
-    } else {
-      this.vendordata = event.option.value;
-      this.vendor_state_code = this.vendordata.code;
+      } else {
+        this.vendordata = event.option.value;
+        this.vendor_state_code = this.vendordata.code;
 
+      }
+      this.setTaxLabel();
+
+
+
+      this.plist && this.plist.nativeElement.focus();
+      this._cdr.detectChanges();
+      this._cdr.markForCheck();
     }
-    this.setTaxLabel();
-    this.plist && this.plist.nativeElement.focus();
-    this._cdr.detectChanges();
-    this._cdr.markForCheck();
+
 
   }
 

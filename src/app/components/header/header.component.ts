@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
 import { User } from '../../models/User';
 import { filter, map, defaultIfEmpty } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
-import { AddProductComponent } from '../add-product/add-product.component';
+
+import { SearchDialogComponent } from '../search/search-dialog/search-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -111,7 +112,7 @@ export class HeaderComponent implements OnInit {
 
 
     const modal = await this._modalcontroller.create({
-      component: AddProductComponent,
+      component: SearchDialogComponent,
       componentProps: { center_id: this.userdata.center_id, customer_id: 0, },
       cssClass: 'select-modal'
 

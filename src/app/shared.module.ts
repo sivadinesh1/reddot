@@ -58,7 +58,7 @@ import { AddProductComponent } from './components/add-product/add-product.compon
 import { CurrencyPadComponent } from './components/currency-pad/currency-pad.component';
 import { PreventCutCopyPasteDirective } from './directive/prevent-cut-copy-paste.directive';
 import { ShowVendorsComponent } from './components/show-vendors/show-vendors.component';
-import { ShowCustomersComponent } from './components/show-customers/show-customers.component';
+
 import { AutoFocusDirective } from './util/directives/auto-focus.directive';
 import { FocusedDirective } from './util/directives/focused-directive';
 import { ShowHidePasswordComponent } from './components/show-hide-password/show-hide-password.component';
@@ -115,6 +115,7 @@ import { DisableControlDirective } from './util/directives/disable-control.direc
 import { SalesReturnDialogComponent } from './components/sales/sales-return-dialog/sales-return-dialog.component';
 import { SaleReturnViewComponent } from './components/returns/sale-return-view/sale-return-view.component';
 import { SaleReturnReceiveComponent } from './components/returns/sale-return-receive/sale-return-receive.component';
+import { SearchDialogComponent } from './components/search/search-dialog/search-dialog.component';
 
 const components = [
 
@@ -136,6 +137,7 @@ const components = [
   FilterPipe,
 
   AddProductComponent,
+  SearchDialogComponent,
   VendorEditDialogComponent,
   VendorAddDialogComponent,
 
@@ -179,7 +181,7 @@ const components = [
   InvoiceSuccessComponent,
   AddMoreEnquiryComponent,
   ShowVendorsComponent,
-  ShowCustomersComponent,
+
   ChangeTaxComponent,
   ChangeMrpComponent,
 
@@ -260,7 +262,7 @@ const matcomponents = [
     ...matcomponents, ...components, IonicModule, NgxSpinnerModule
   ],
   entryComponents: [
-    AddProductComponent, CurrencyPadComponent, ShowVendorsComponent, ShowCustomersComponent,
+    AddProductComponent, CurrencyPadComponent, ShowVendorsComponent,
     ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent, VendorViewDialogComponent,
     BrandAddDialogComponent, BrandEditDialogComponent, ConvertToSaleDialogComponent,
     DefaultDiscountsComponent,
@@ -269,7 +271,7 @@ const matcomponents = [
     SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent,
     SalesInvoiceDialogComponent, PurchaseEntryDialogComponent, EnquiryViewDialogComponent, WhatsappDialogComponent,
-    SalesReturnDialogComponent, SaleReturnViewComponent, SaleReturnReceiveComponent
+    SalesReturnDialogComponent, SaleReturnViewComponent, SaleReturnReceiveComponent, SearchDialogComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

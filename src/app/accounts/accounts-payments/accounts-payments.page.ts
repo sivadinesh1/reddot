@@ -75,13 +75,14 @@ export class AccountsPaymentsPage implements OnInit {
     private _dialog: MatDialog,
     private _commonApiService: CommonApiService, private _route: ActivatedRoute,
     private _router: Router,) {
-    this._authservice.setCurrentMenu("Payments");
+
     this.userdata$ = this._authservice.currentUser;
 
     this.userdata$
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
+        this._authservice.setCurrentMenu("PAYMENTS");
         this.userdata = data;
         this.ready = 1;
         this.init();
@@ -225,7 +226,6 @@ export class AccountsPaymentsPage implements OnInit {
     this._commonApiService.getPymtTransactionsByCenter(center_id).subscribe(
       (data: any) => {
 
-        // DnD - code to add a "key/Value" in every object of array
         this.pymttransactionsdataSource.data = data.map(el => {
           var o = Object.assign({}, el);
           o.isExpanded = false;

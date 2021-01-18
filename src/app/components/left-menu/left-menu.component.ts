@@ -32,15 +32,27 @@ export class LeftMenuComponent implements OnInit {
   userdata$: Observable<User>;
   userdata: any;
 
-  pages: Page[] = [
-    { name: 'Enquiry', link: '/home/enquiry/open-enquiry/O/weekly', icon: '/assets/images/svg/enquiry.svg' },
-    { name: 'Sale', link: '/home/search-sales', icon: '/assets/images/svg/sales.svg' },
-    { name: 'Purchase', link: '/home/search-purchase', icon: '/assets/images/svg/purchase.svg' },
-    { name: 'Payments', link: '/home/payments', icon: '/assets/images/svg/money.svg' },
-    { name: 'Returns', link: '/home/search-return-sales', icon: '/assets/images/svg/returning.svg' },
+  pages: Page[] = [];
+
+  admin_pages: Page[] = [
+    { name: 'HOME', link: '/home/admin-dashboard', icon: '/assets/images/svg/dashboard-black.svg' },
+    { name: 'ENQUIRY', link: '/home/enquiry/open-enquiry/O/weekly', icon: '/assets/images/svg/enquiry.svg' },
+    { name: 'SALE', link: '/home/search-sales', icon: '/assets/images/svg/sales.svg' },
+    { name: 'PURCHASE', link: '/home/search-purchase', icon: '/assets/images/svg/purchase.svg' },
+    { name: 'PAYMENTS', link: '/home/payments', icon: '/assets/images/svg/money.svg' },
+    { name: 'RETURNS', link: '/home/search-return-sales', icon: '/assets/images/svg/returning.svg' },
 
   ];
 
+  user_pages: Page[] = [
+    { name: 'HOME', link: '/home/dashboard', icon: '/assets/images/svg/dashboard-black.svg' },
+    { name: 'ENQUIRY', link: '/home/enquiry/open-enquiry/O/weekly', icon: '/assets/images/svg/enquiry.svg' },
+    { name: 'SALE', link: '/home/search-sales', icon: '/assets/images/svg/sales.svg' },
+    { name: 'PURCHASE', link: '/home/search-purchase', icon: '/assets/images/svg/purchase.svg' },
+    { name: 'PAYMENTS', link: '/home/payments', icon: '/assets/images/svg/money.svg' },
+    { name: 'RETURNS', link: '/home/search-return-sales', icon: '/assets/images/svg/returning.svg' },
+
+  ];
 
   constructor(private _sidenavService: SidenavService, private _authservice: AuthenticationService,
     private _router: Router,
@@ -74,6 +86,15 @@ export class LeftMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  ngAfterViewInit(): void {
+    if (this.userdata?.role === 'ADMIN') {
+      this.pages = this.admin_pages;
+    } else {
+      this.pages = this.user_pages;
+    }
+
+  }
+
   onSinenavToggle() {
     this.sideNavState = !this.sideNavState
 
@@ -98,11 +119,11 @@ export class LeftMenuComponent implements OnInit {
   routeToDashboard() {
 
     if (this.userdata.role === 'ADMIN') {
-      this.clickedItem = "dashboard";
+      this.clickedItem = "HOME";
       this._router.navigateByUrl("/home/admin-dashboard");
       this._cdr.markForCheck();
     } else {
-      this.clickedItem = "dashboard";
+      this.clickedItem = "HOME";
       this._router.navigateByUrl("home/dashboard");
       this._cdr.markForCheck();
     }

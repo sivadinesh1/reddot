@@ -6,8 +6,7 @@ import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-p
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 import { ModalController, AlertController, IonSearchbar } from '@ionic/angular';
-import { AddProductComponent } from 'src/app/components/add-product/add-product.component';
-import * as moment from 'moment';
+
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { AddMoreEnquiryComponent } from 'src/app/components/add-more-enquiry/add-more-enquiry.component';

@@ -1,5 +1,5 @@
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
-	<div class="screen-header"><span style="font-size: 18px">New Sale Order</span></div>
+	<div class="screen-header"><span style="font-size: 18px">{{this.breadmenu}}</span></div>
 
 	<form [formGroup]="submitForm">
 		<div class="customer">
@@ -20,7 +20,7 @@
 						[attr.disabled]="iscustomerselected?'true':null"
 					/>
 
-					<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
+					<button mat-button matSuffix mat-icon-button type="button" tabindex="-1" (click)="clearInput()">
 						<mat-icon>close</mat-icon>
 					</button>
 					<mat-autocomplete
@@ -43,13 +43,16 @@
 						</ng-container>
 					</mat-autocomplete>
 					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')"> Please enter a value </mat-error>
-					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"> Please select a valid customer </mat-error>
+					<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')">
+						<span style="color: darkorange">Customer Not Found:</span>
+						<span style="font-style: italic; color: #310ac0; cursor: pointer" (click)="addCustomer()">+ Add Customer</span>
+					</mat-error>
 					<mat-hint *ngIf="iscustomerselected">
 						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Customer Details</span>
 					</mat-hint>
-					<mat-hint *ngIf="!iscustomerselected">
+					<!-- <mat-hint *ngIf="!iscustomerselected">
 						<span (click)="addCustomer()" style="font-size: 12px; color: #310ac0; cursor: pointer">+ New Customer</span>
-					</mat-hint>
+					</mat-hint> -->
 				</mat-form-field>
 			</div>
 
@@ -58,7 +61,7 @@
 					<div>
 						<mat-form-field appearance="fill">
 							<mat-label>Sale Type</mat-label>
-							<mat-select formControlName="invoicetype" value="{selInvType}" (selectionChange)="invoiceTypeChange($event)" required>
+							<mat-select formControlName="invoicetype" value="{selInvType}" tabindex="-1" (selectionChange)="invoiceTypeChange($event)" required>
 								<mat-option value="gstinvoice">GST Invoice</mat-option>
 								<mat-option value="stockissue">Stock Issue</mat-option>
 							</mat-select>
@@ -71,14 +74,14 @@
 						<div>
 							<mat-form-field floatLabel="always">
 								<mat-label>Invoice #</mat-label>
-								<input matInput type="text" formControlName="invoiceno" required readonly />
+								<input matInput type="text" formControlName="invoiceno" tabindex="-1" required readonly />
 							</mat-form-field>
 						</div>
 
 						<div *ngIf="mode === 'enquiry' && this.submitForm.value.orderdate !== '' ">
 							<mat-form-field>
 								<mat-label>Enquiry #</mat-label>
-								<input matInput #orderno type="text" formControlName="orderno" />
+								<input matInput #orderno type="text" tabindex="-1" formControlName="orderno" />
 
 								<mat-error
 									*ngIf="(submitForm.get('orderno').hasError('required') || submitForm.get('orderno').hasError('patternInvalid'))  && submitForm.get('orderno').touched"
@@ -98,14 +101,15 @@
 								matInput
 								readonly
 								required
+								tabindex="-1"
 								formControlName="invoicedate"
 								[matDatepicker]="picker1"
 								type="text"
 								(focus)="picker1.open()"
 								[max]="maxDate"
 							/>
-							<mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-							<mat-datepicker #picker1></mat-datepicker>
+							<mat-datepicker-toggle tabindex="-1" matSuffix [for]="picker1"></mat-datepicker-toggle>
+							<mat-datepicker tabindex="-1" #picker1></mat-datepicker>
 
 							<mat-error
 								*ngIf="(submitForm.get('invoicedate').hasError('required') || submitForm.get('invoicedate').hasError('patternInvalid'))  && submitForm.get('invoicedate').touched"
@@ -117,7 +121,7 @@
 					<div *ngIf="mode === 'enquiry' && this.submitForm.value.orderdate !== '' ">
 						<mat-form-field>
 							<mat-label>Enquiry Date</mat-label>
-							<input matInput readonly [matDatepicker]="pickerod" formControlName="orderdate" (focus)="pickerod.open()" />
+							<input matInput readonly [matDatepicker]="pickerod" tabindex="-1" formControlName="orderdate" (focus)="pickerod.open()" />
 							<mat-datepicker-toggle matSuffix [for]="pickerod"></mat-datepicker-toggle>
 							<mat-datepicker #pickerod></mat-datepicker>
 						</mat-form-field>
@@ -238,8 +242,8 @@
 								/>
 								<mat-hint *ngIf="selected_description" matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
 
-								<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput()">
-									<mat-icon>close</mat-icon>
+								<button mat-button matSuffix mat-icon-button aria-label="Clear" tabindex="-1" type="button" (click)="clearProdInput()">
+									<mat-icon tabindex="-1">close</mat-icon>
 								</button>
 
 								<mat-autocomplete
@@ -249,7 +253,7 @@
 									(optionSelected)="setItemDesc($event, 'click')"
 								>
 									<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
-									<ng-container *ngIf="!isLoading">
+									<ng-container *ngIf="!isLoading && (product_lis !== null && product_lis.length> 0)">
 										<mat-option
 											*ngFor="let product of product_lis"
 											[value]="product"
@@ -272,6 +276,12 @@
 											</div>
 										</mat-option>
 									</ng-container>
+									<ng-container *ngIf="!isLoading && (product_lis !== null && product_lis.length === 0)">
+										<mat-option style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px; border-bottom: 1px solid lightsteelblue">
+											<span style="color: darkorange">Item Not Found:</span>
+											<span style="font-style: italic; color: #310ac0; cursor: pointer" (click)="addProduct()">+ Add Product</span>
+										</mat-option>
+									</ng-container>
 								</mat-autocomplete>
 
 								<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')"> Invalid product code </mat-error>
@@ -281,12 +291,12 @@
 					<div>
 						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>
-							<input matInput type="number" min="1" max="9999" tabindex="4" formControlName="tempqty" required />
+							<input matInput type="number" min="1" max="9999" tabindex="3" formControlName="tempqty" required />
 							<mat-hint matTooltip="Info about the action">Hint: Max 9999</mat-hint>
 						</mat-form-field>
 					</div>
 					<div>
-						<button mat-stroked-button color="primary" tabindex="5" #newrow [disabled]="!iscustomerselected" type="button" (click)="add()">
+						<button mat-stroked-button color="primary" tabindex="4" #newrow [disabled]="!iscustomerselected" type="button" (click)="add()">
 							+ New Row
 						</button>
 					</div>
@@ -318,7 +328,7 @@
 					<div>
 						<mat-form-field class="mat-input-wrapper">
 							<mat-label>Lr #</mat-label>
-							<input matInput #lrno type="text" formControlName="lrno" />
+							<input matInput #lrno type="text" tabindex="5" formControlName="lrno" />
 
 							<mat-error
 								*ngIf="(submitForm.get('lrno').hasError('required') || submitForm.get('lrno').hasError('patternInvalid'))  && submitForm.get('lrno').touched"
@@ -330,23 +340,31 @@
 					<div>
 						<mat-form-field class="mat-input-wrapper">
 							<mat-label>Lr Date</mat-label>
-							<input matInput readonly [matDatepicker]="pickerlr" (focus)="pickerlr.open()" formControlName="lrdate" [max]="maxDate" />
-							<mat-datepicker-toggle matSuffix [for]="pickerlr"></mat-datepicker-toggle>
-							<mat-datepicker #pickerlr></mat-datepicker>
+							<input matInput readonly tabindex="6" [matDatepicker]="pickerlr" (focus)="pickerlr.open()" formControlName="lrdate" [max]="maxDate" />
+							<mat-datepicker-toggle matSuffix tabindex="-1" [for]="pickerlr"></mat-datepicker-toggle>
+							<mat-datepicker tabindex="-1" #pickerlr></mat-datepicker>
 						</mat-form-field>
 					</div>
 					<div>
 						<mat-form-field class="mat-input-wrapper">
 							<mat-label>Shipped Date</mat-label>
-							<input matInput readonly [matDatepicker]="pickerrcvd" formControlName="orderrcvddt" (focus)="pickerrcvd.open()" [max]="maxDate" />
-							<mat-datepicker-toggle matSuffix [for]="pickerrcvd"></mat-datepicker-toggle>
-							<mat-datepicker #pickerrcvd></mat-datepicker>
+							<input
+								matInput
+								readonly
+								tabindex="7"
+								[matDatepicker]="pickerrcvd"
+								formControlName="orderrcvddt"
+								(focus)="pickerrcvd.open()"
+								[max]="maxDate"
+							/>
+							<mat-datepicker-toggle tabindex="-1" matSuffix [for]="pickerrcvd"></mat-datepicker-toggle>
+							<mat-datepicker tabindex="-1" #pickerrcvd></mat-datepicker>
 						</mat-form-field>
 					</div>
 					<div>
 						<mat-form-field class="mat-input-wrapper cursor">
 							<mat-label># of boxes</mat-label>
-							<input matInput type="number" formControlName="noofboxes" />
+							<input matInput tabindex="8" type="number" formControlName="noofboxes" />
 						</mat-form-field>
 					</div>
 				</div>
@@ -356,22 +374,20 @@
 					<div>
 						<mat-form-field class="mat-input-wrapper cursor">
 							<mat-label>Transport Cost</mat-label>
-							<input matInput type="number" formControlName="transport_charges" />
+							<input matInput tabindex="9" type="number" formControlName="transport_charges" />
 						</mat-form-field>
 					</div>
 					<div>
 						<mat-form-field class="mat-input-wrapper cursor">
 							<mat-label>Unloading Cost</mat-label>
-							<input matInput type="number" formControlName="unloading_charges" />
-							<!-- <mat-icon matSuffix (click)="openNumberPad('unloading_charges')">view_comfy</mat-icon> -->
+							<input matInput tabindex="10" type="number" formControlName="unloading_charges" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-input-wrapper cursor">
 							<mat-label>Misc Cost</mat-label>
-							<input matInput type="number" formControlName="misc_charges" />
-							<!-- <mat-icon matSuffix (click)="openNumberPad('misc_charges')">view_comfy</mat-icon> -->
+							<input matInput type="number" tabindex="11" formControlName="misc_charges" />
 						</mat-form-field>
 					</div>
 				</div>
@@ -406,6 +422,7 @@
 						color="primary"
 						type="button"
 						[disabled]="clicked"
+						tabindex="12"
 					>
 						Cancel</button
 					>&nbsp;
@@ -421,6 +438,7 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
+						tabindex="13"
 					>
 						Save as Draft
 					</button>
@@ -436,19 +454,11 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
+						tabindex="14"
 					>
 						Save Estimate
 					</button>
-					<!-- <button
-						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType === 'stockissue')) "
-						mat-raised-button
-						color="primary"
-						#ddTrigger="matMenuTrigger"
-						[matMenuTriggerFor]="dd1"
-						style="border-radius: 0px; border-left: 1px solid grey; padding: 0px 8px"
-					>
-						<mat-icon>arrow_drop_up</mat-icon>
-					</button> -->
+
 					&nbsp;
 					<button
 						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
@@ -462,6 +472,7 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
+						tabindex="15"
 					>
 						Generate Invoice
 					</button>
@@ -478,20 +489,11 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
+						tabindex="16"
 					>
 						Update Invoice
 					</button>
 
-					<!-- <button
-						*ngIf="((submitForm.get('status').value === 'C') && (selInvType !== 'stockissue')) "
-						mat-raised-button
-						color="primary"
-						#ddTrigger="matMenuTrigger"
-						[matMenuTriggerFor]="dd"
-						style="border-radius: 0px; border-left: 1px solid grey; padding: 0px 8px"
-					>
-						<mat-icon>arrow_drop_up</mat-icon>
-					</button> -->
 					&nbsp;
 
 					<button
@@ -506,16 +508,10 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
+						tabindex="17"
 					>
 						Convert to Sale Invoice
 					</button>
-
-					<!-- <mat-hint
-					*ngIf="((submitForm.get('status').value === 'D') && (selInvType === 'stockissue')) "
-					style="color: blue; padding: 5px; border: 1px solid blue; border-radius: 20px; cursor: pointer;"
-					(click)="presentConvertSaleConfirm()"
-					>convert to sale Invoice</mat-hint
-				> -->
 				</div>
 			</div>
 		</ng-container>

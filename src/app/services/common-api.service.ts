@@ -87,6 +87,10 @@ export class CommonApiService {
     return this.httpClient.post(`${this.restApiUrl}/api/search-vendor`, submitForm, { observe: 'response' });
   }
 
+  getBrandInfo(submitForm) {
+    return this.httpClient.post(`${this.restApiUrl}/api/search-brand`, submitForm, { observe: 'response' });
+  }
+
 
 
   getOpenEnquiries(centerid: number, status: string) {

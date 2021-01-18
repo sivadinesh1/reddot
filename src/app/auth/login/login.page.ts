@@ -109,7 +109,7 @@ export class LoginPage implements OnInit {
           let role = data.role;
           if (role === 'ADMIN') {
             this.router.navigate([`/home/admin-dashboard`]);
-            this.authenticationService.setCurrentMenu("dashboard");
+            this.authenticationService.setCurrentMenu("HOME");
             this.invalidLogin = false;
 
           } else {

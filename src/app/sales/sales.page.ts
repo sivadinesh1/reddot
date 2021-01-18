@@ -31,6 +31,9 @@ import { CustomerAddDialogComponent } from '../components/customers/customer-add
 import { ConvertToSaleDialogComponent } from '../components/convert-to-sale-dialog/convert-to-sale-dialog.component';
 import { Observable } from 'rxjs';
 import { User } from '../models/User';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ProductAddDialogComponent } from '../components/products/product-add-dialog/product-add-dialog.component';
+import { SuccessMessageDialogComponent } from '../components/success-message-dialog/success-message-dialog.component';
 
 @Component({
   selector: 'app-sales',
@@ -121,7 +124,7 @@ export class SalesPage {
   // TAB navigation for product list
   // @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
 
-  // @ViewChild('plist') plist: any;
+
   @ViewChild('newrow', { static: true }) newrow: any;
 
   // TAB navigation for customer list
@@ -150,7 +153,7 @@ export class SalesPage {
 
   constructor(private _modalcontroller: ModalController, private _pickerctrl: PickerController,
     public dialog: MatDialog, public alertController: AlertController, private _router: Router,
-    private _route: ActivatedRoute, private _dialog: MatDialog,
+    private _route: ActivatedRoute, private _dialog: MatDialog, private _snackBar: MatSnackBar,
     private _authservice: AuthenticationService, private _saleApiService: SaleApiService,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private spinner: NgxSpinnerService,
@@ -164,7 +167,7 @@ export class SalesPage {
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
-        this._authservice.setCurrentMenu("Sale");
+        this._authservice.setCurrentMenu("SALE");
         this.userdata = data;
 
 
@@ -182,7 +185,7 @@ export class SalesPage {
     // data change
     this._route.data.subscribe(data => {
 
-      this._authservice.setCurrentMenu("Sale");
+      this._authservice.setCurrentMenu("SALE");
       this.selInvType = "gstinvoice";
       this.listArr = [];
       this.cancel()
@@ -278,7 +281,7 @@ export class SalesPage {
 
       this.fromEnquiry = true;
 
-      this.spinner.show();
+      // this.spinner.show();
       this._commonApiService.getCustomerData(this.id).subscribe((custData: any) => {
 
         this.customerdata = custData[0];
@@ -297,7 +300,7 @@ export class SalesPage {
 
         // prod details
         this._commonApiService.getEnquiredProductData(this.userdata.center_id, this.customerdata.id, this.id, invdt).subscribe((prodData: any) => {
-          this.spinner.hide();
+          // this.spinner.hide();
           let proddata = prodData;
 
           this.submitForm.patchValue({
@@ -443,13 +446,11 @@ export class SalesPage {
   }
 
   searchCustomers() {
-    let search = "";
+
     this.submitForm.controls['customerctrl'].valueChanges.pipe(
       debounceTime(300),
       tap(() => this.isCLoading = true),
       switchMap(id => {
-        console.log(id);
-        search = id;
         if (id != null && id.length >= 2) {
           return this._commonApiService.getCustomerInfo({ "centerid": this.userdata.center_id, "searchstr": id });
         } else {
@@ -825,7 +826,8 @@ export class SalesPage {
 
 
     if (!this.submitForm.valid) {
-      console.log('invalid field ' + this.findInvalidControls());
+      // DnD this helps in finding invalid controls name, used for debugging
+      //   console.log('invalid field ' + this.findInvalidControls());
       this.presentAlert('Validation Failure Error!');
       return false;
     }
@@ -858,6 +860,10 @@ export class SalesPage {
 
         this.submitForm.patchValue({
           noofitems: this.listArr.length,
+        });
+
+        this.submitForm.patchValue({
+          customerctrl: this.customerdata
         });
 
         const tot_qty_check_Arr = this.listArr.map(arrItem => {
@@ -1098,21 +1104,18 @@ export class SalesPage {
             //main submit
             this.clicked = true;  // disable all buttons after submission
             this._cdr.markForCheck();
-            this.spinner.show();
+            // this.spinner.show();
 
             this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
-              this.spinner.hide();
+              // this.spinner.hide();
               console.log('saveSaleOrder ' + JSON.stringify(data));
 
               if (data.body.result === 'success') {
                 this.invoiceid = data.body.id;
 
                 this.cancel();
-                // this.submitForm.reset();
+
                 this.formRef.resetForm();
-
-
-
 
                 // reinit after successful insert
                 this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
@@ -1122,7 +1125,8 @@ export class SalesPage {
                   this.invoiceSuccess(this.invoiceid);
                   // invoice add dialog
                 } else {
-                  this.presentAlert('Saved to Draft!');
+                  //this.presentAlert('Saved to Draft!');
+                  this.openSnackBar("Saved to Draft!", "");
                 }
 
                 this.submitForm.patchValue({
@@ -1672,22 +1676,25 @@ export class SalesPage {
     if (from === 'click' && event.option.value === 'new') {
       this.addCustomer();
     }
-    this.iscustomerselected = true;
-    if (from === 'tab') {
-      this.customer_state_code = event.code;
-      this.cust_discount_prcnt = event.discount;
-      this.cust_discount_type = event.discount_type;
-      this.customerdata = event;
-    } else {
-      this.customer_state_code = event.option.value.code;
-      this.cust_discount_prcnt = event.option.value.discount;
-      this.cust_discount_type = event.option.value.discount_type;
-      this.customerdata = event.option.value;
-    }
-    this._cdr.detectChanges();
-    this.setTaxLabel(this.customer_state_code);
+    if (event !== undefined) {
+      this.iscustomerselected = true;
+      if (from === 'tab') {
+        this.customer_state_code = event.code;
+        this.cust_discount_prcnt = event.discount;
+        this.cust_discount_type = event.discount_type;
+        this.customerdata = event;
+      } else {
+        this.customer_state_code = event.option.value.code;
+        this.cust_discount_prcnt = event.option.value.discount;
+        this.cust_discount_type = event.option.value.discount_type;
+        this.customerdata = event.option.value;
+      }
+      this._cdr.detectChanges();
+      this.setTaxLabel(this.customer_state_code);
 
-    this.plist && this.plist.nativeElement.focus();
+      this.plist && this.plist.nativeElement.focus();
+    }
+
 
   }
 
@@ -1698,7 +1705,7 @@ export class SalesPage {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.width = "400px";
+    dialogConfig.width = "600px";
     dialogConfig.height = "100%";
     dialogConfig.data = this.customerdata;
     dialogConfig.position = { top: '0', right: '0' };
@@ -1776,6 +1783,51 @@ export class SalesPage {
     if (this.autoTrigger2 && this.autoTrigger2.panelOpen) {
       this.autoTrigger2.closePanel();
     }
+
+  }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 2000,
+      panelClass: ['mat-toolbar', 'mat-primary']
+    });
+  }
+
+
+  addProduct() {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = "50%";
+    dialogConfig.height = "100%";
+    dialogConfig.position = { top: '0', right: '0' };
+
+    const dialogRef = this._dialog.open(ProductAddDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter(val => !!val),
+        tap(() => {
+
+          this._cdr.markForCheck();
+        }
+        )
+      ).subscribe((data: any) => {
+        if (data === 'success') {
+
+          const dialogConfigSuccess = new MatDialogConfig();
+          dialogConfigSuccess.disableClose = false;
+          dialogConfigSuccess.autoFocus = true;
+          dialogConfigSuccess.width = "25%";
+          dialogConfigSuccess.height = "25%";
+          dialogConfigSuccess.data = "Product added successfully";
+
+          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+
+        }
+      });
+
 
   }
 

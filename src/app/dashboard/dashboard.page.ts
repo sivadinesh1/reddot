@@ -28,7 +28,7 @@ export class DashboardPage implements OnInit {
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
-        this._authservice.setCurrentMenu("Dashboard");
+        this._authservice.setCurrentMenu("HOME");
         this.userdata = data;
         this.reloadInquirySummary();
         this._cdr.markForCheck();

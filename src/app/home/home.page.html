@@ -2,8 +2,8 @@
 	<div>
 		<app-header [sidenav]="leftSidenav"></app-header>
 
-		<mat-sidenav-container class="sidenav-container" style="min-width: 72px">
-			<mat-sidenav #leftSidenav mode="side" opened style="min-width: 72px">
+		<mat-sidenav-container class="sidenav-container" style="min-width: 6rem">
+			<mat-sidenav #leftSidenav mode="side" opened style="min-width: 6rem">
 				<app-left-menu></app-left-menu>
 			</mat-sidenav>
 			<mat-sidenav-content [@onMainContentChange]="onSideNavChange ? 'open': 'close'">

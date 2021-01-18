@@ -6,21 +6,3 @@
 	background: #efefef;
 	padding-bottom: 50px;
 }
-
-// .main_content {
-// 	width: 100%;
-// 	height: calc(100vh - 60px);
-// 	background: #fff;
-
-// 	@include media("<=phone") {
-// 		background-color: var(--color_orange);
-// 	}
-
-// 	@include media(">phone", "<=425px", "retina2x") {
-// 		background-color: var(--color_purple);
-// 	}
-
-// 	@include media(">tablet", "<desktop") {
-// 		background-color: var(--color_blue);
-// 	}
-// }

@@ -29,6 +29,7 @@ export class SearchSalesPage implements OnInit {
 
   draftSales$: Observable<Sales[]>;
   fullfilledSales$: Observable<Sales[]>;
+  stockIssueSales$: Observable<Sales[]>;
 
   filteredSales$: Observable<Sales[]>;
 
@@ -226,11 +227,12 @@ export class SearchSalesPage implements OnInit {
     // this.filteredValues = await this.filteredSales$.toPromise();
 
     let value = await this.filteredSales$.toPromise();
-    this.filteredValues = value.filter((data: any) => data.status === 'D');
+    this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'gstinvoice');
 
 
     // to calculate the count on each status    
-    this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'D')));
+    this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'D' && f.sale_type === 'gstinvoice')));
+    this.stockIssueSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'D' && f.sale_type === 'stockissue')));
     this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter(f => f.status === 'C')));
     this.calculateSumTotals();
     this.tabIndex = 0;
@@ -326,9 +328,11 @@ export class SearchSalesPage implements OnInit {
     let value = await this.filteredSales$.toPromise();
 
     if ($event.index === 0) {
-      this.filteredValues = value.filter((data: any) => data.status === 'D');
+      this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'gstinvoice');
     } else if ($event.index === 1) {
       this.filteredValues = value.filter((data: any) => data.status === 'C');
+    } else if ($event.index === 2) {
+      this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'stockissue');
     }
 
     this.calculateSumTotals();

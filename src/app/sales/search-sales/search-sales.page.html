@@ -113,8 +113,13 @@
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 
-				<mat-tab label="Fullfilled  ({{(fullfilledSales$| async)?.length }})">
+				<mat-tab label="Completed  ({{(fullfilledSales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
+
+				<mat-tab label="StockIssue ({{(stockIssueSales$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 			</mat-tab-group>
@@ -202,6 +207,7 @@
 
 		<div class="no-records" *ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0">No item in status "Draft"</div>
 		<div class="no-records" *ngIf="tabIndex === 1 && (fullfilledSales$| async)?.length === 0">No item in status "Fullfilled"</div>
+		<div class="no-records" *ngIf="tabIndex === 2 && (stockIssueSales$| async)?.length === 0">No item in status "Stock Issue"</div>
 	</ng-template>
 </ion-content>
 
