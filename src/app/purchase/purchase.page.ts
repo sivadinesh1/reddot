@@ -109,6 +109,8 @@ export class PurchasePage implements OnInit {
   @ViewChild('vlist', { static: true }) vlist: any;
   @ViewChild('newrow', { static: true }) newrow: any;
 
+  @ViewChild('qty', { static: true }) qty: any;
+
   // TAB navigation for vendor list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
 
@@ -306,7 +308,7 @@ export class PurchasePage implements OnInit {
 
   ngAfterViewInit() {
     this.autoTrigger && this.autoTrigger.panelClosingActions.subscribe(x => {
-      if (this.autoTrigger.activeOption) {
+      if (this.autoTrigger.activeOption && this.autoTrigger.activeOption.value !== undefined) {
 
         this.submitForm.patchValue({
           productctrl: this.autoTrigger.activeOption.value
@@ -317,7 +319,7 @@ export class PurchasePage implements OnInit {
     })
 
     this.autoTrigger1 && this.autoTrigger1.panelClosingActions.subscribe(x => {
-      if (this.autoTrigger1.activeOption) {
+      if (this.autoTrigger1.activeOption && this.autoTrigger1.activeOption.value !== undefined) {
 
         this.submitForm.patchValue({
           vendorctrl: this.autoTrigger1.activeOption.value
@@ -429,6 +431,9 @@ export class PurchasePage implements OnInit {
       this.lineItemData = event.option.value;
       this.selected_description = event.option.value.description;
       this.selected_mrp = event.option.value.mrp;
+
+      this.qty && this.qty.nativeElement.focus();
+
     }
 
 
@@ -510,6 +515,10 @@ export class PurchasePage implements OnInit {
 
     this.sumTotalTax();
 
+    let v1 = document.documentElement.clientHeight + 70;
+
+    this.ScrollToPoint(0, v1);
+
     this._cdr.markForCheck();
 
   }
@@ -550,19 +559,23 @@ export class PurchasePage implements OnInit {
       if (from === 'tab') {
         this.vendordata = event;
         this.vendor_state_code = this.vendordata.code;
+        this.setTaxLabel();
+
+
+        this._cdr.detectChanges();
+        this._cdr.markForCheck();
 
       } else {
         this.vendordata = event.option.value;
         this.vendor_state_code = this.vendordata.code;
+        this.setTaxLabel();
+
+        this.plist && this.plist.nativeElement.focus();
+        this._cdr.detectChanges();
+        this._cdr.markForCheck();
 
       }
-      this.setTaxLabel();
 
-
-
-      this.plist && this.plist.nativeElement.focus();
-      this._cdr.detectChanges();
-      this._cdr.markForCheck();
     }
 
 
@@ -1251,9 +1264,9 @@ export class PurchasePage implements OnInit {
   //   this.content.scrollToTop(1500);
   // }
 
-  // ScrollToPoint(X, Y) {
-  //   this.content.scrollToPoint(X, Y, 300);
-  // }
+  ScrollToPoint(X, Y) {
+    this.content.scrollToPoint(X, Y, 300);
+  }
 
   openDialog(event): void {
     const dialogConfig = new MatDialogConfig();

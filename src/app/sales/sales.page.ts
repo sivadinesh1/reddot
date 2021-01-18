@@ -136,6 +136,8 @@ export class SalesPage {
   @ViewChild('plist', { static: true }) plist: any;
   @ViewChild('clist', { static: true }) clist: any;
 
+  @ViewChild('qty', { static: true }) qty: any;
+
 
 
   customer_lis: Customer[];
@@ -582,16 +584,18 @@ export class SalesPage {
 
     this.sumTotalTax();
 
-    // let v1 = document.documentElement.clientHeight + 70;
+    let v1 = document.documentElement.clientHeight + 70;
 
-    // this.ScrollToPoint(0, v1);
+    this.ScrollToPoint(0, v1);
 
 
     this._cdr.markForCheck();
 
   }
 
-
+  ScrollToPoint(X, Y) {
+    this.content.scrollToPoint(X, Y, 300);
+  }
 
   clearInput() {
     this.submitForm.patchValue({
@@ -652,9 +656,14 @@ export class SalesPage {
 
   ngAfterViewInit() {
 
+    setTimeout(() => {
+      this.clist && this.clist.nativeElement.focus();
+      this._cdr.detectChanges();
+    });
+
     this.autoTrigger1 && this.autoTrigger1.panelClosingActions.subscribe(x => {
 
-      if (this.autoTrigger1.activeOption) {
+      if (this.autoTrigger1.activeOption && this.autoTrigger1.activeOption.value !== undefined) {
 
         this.submitForm.patchValue({
           customerctrl: this.autoTrigger1.activeOption.value
@@ -665,19 +674,17 @@ export class SalesPage {
 
     this.autoTrigger2 && this.autoTrigger2.panelClosingActions.subscribe(x => {
 
-      if (this.autoTrigger2.activeOption) {
+      if (this.autoTrigger2.activeOption && this.autoTrigger2.activeOption.value !== undefined) {
 
         this.submitForm.patchValue({
           productctrl: this.autoTrigger2.activeOption.value
         });
+
         this.setItemDesc(this.autoTrigger2.activeOption.value, "tab");
       }
     })
 
-    setTimeout(() => {
-      this.clist && this.clist.nativeElement.focus();
-      this._cdr.detectChanges();
-    });
+
 
     // const stickyHeaderOptions = {
     //   rootMargin: "0px 0px -20px 0px"
@@ -1549,6 +1556,8 @@ export class SalesPage {
       this.lineItemData = event;
       this.selected_description = event.description;
       this.selected_mrp = event.mrp;
+
+      //this.qty && this.qty.nativeElement.focus();
     } else {
       this.submitForm.patchValue({
         tempdesc: event.option.value.description,
@@ -1557,6 +1566,7 @@ export class SalesPage {
       this.lineItemData = event.option.value;
       this.selected_description = event.option.value.description;
       this.selected_mrp = event.option.value.mrp;
+      this.qty && this.qty.nativeElement.focus();
     }
 
     this._cdr.markForCheck();
@@ -1683,16 +1693,26 @@ export class SalesPage {
         this.cust_discount_prcnt = event.discount;
         this.cust_discount_type = event.discount_type;
         this.customerdata = event;
+
+        this._cdr.detectChanges();
+        this.setTaxLabel(this.customer_state_code);
+
+
+
       } else {
         this.customer_state_code = event.option.value.code;
         this.cust_discount_prcnt = event.option.value.discount;
         this.cust_discount_type = event.option.value.discount_type;
         this.customerdata = event.option.value;
-      }
-      this._cdr.detectChanges();
-      this.setTaxLabel(this.customer_state_code);
 
-      this.plist && this.plist.nativeElement.focus();
+        this._cdr.detectChanges();
+        this.setTaxLabel(this.customer_state_code);
+
+        this.plist && this.plist.nativeElement.focus();
+
+
+      }
+
     }
 
 

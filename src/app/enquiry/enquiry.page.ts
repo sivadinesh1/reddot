@@ -65,7 +65,7 @@ export class EnquiryPage {
   @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
 
   @ViewChild('plist', { static: true }) plist: any;
-
+  @ViewChild('qty', { static: true }) qty: any;
 
   // TAB navigation for customer list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
@@ -185,9 +185,9 @@ export class EnquiryPage {
   //   this.content.scrollToTop(1500);
   // }
 
-  // ScrollToPoint(X, Y) {
-  //   this.content.scrollToPoint(X, Y, 300);
-  // }
+  ScrollToPoint(X, Y) {
+    this.content.scrollToPoint(X, Y, 300);
+  }
 
   setCustomerInfo(event, from) {
 
@@ -205,11 +205,11 @@ export class EnquiryPage {
     } else {
 
       this.customerdata = event.option.value;
-
+      this.plist && this.plist.nativeElement.focus();
 
     }
 
-    this.plist && this.plist.nativeElement.focus();
+
     this._cdr.markForCheck();
 
   }
@@ -320,7 +320,7 @@ export class EnquiryPage {
 
 
     this.autoTrigger && this.autoTrigger.panelClosingActions.subscribe(x => {
-      if (this.autoTrigger.activeOption) {
+      if (this.autoTrigger.activeOption && this.autoTrigger.activeOption.value !== undefined) {
 
         this.submitForm.patchValue({
           productctrl: this.autoTrigger.activeOption.value
@@ -331,7 +331,7 @@ export class EnquiryPage {
     })
 
     this.autoTrigger1 && this.autoTrigger1.panelClosingActions.subscribe(x => {
-      if (this.autoTrigger1.activeOption) {
+      if (this.autoTrigger1.activeOption && this.autoTrigger1.activeOption.value !== undefined) {
 
         this.submitForm.patchValue({
           customerctrl: this.autoTrigger1.activeOption.value
@@ -405,11 +405,11 @@ export class EnquiryPage {
     this.submitForm.controls['tempqty'].setErrors(null);
     this.submitForm.controls['productctrl'].setErrors(null);
     this.plist && this.plist.nativeElement.focus();
-    // let v1 = (document.documentElement.clientHeight - 250) + 70;
+    let v1 = (document.documentElement.clientHeight - 250) + 70;
     // console.log('clinet height ' + document.documentElement.clientHeight);
     // console.log('clinet height ' + v1);
 
-    // this.ScrollToPoint(0, v1);
+    this.ScrollToPoint(0, v1);
 
     this._cdr.markForCheck();
 
@@ -634,6 +634,7 @@ export class EnquiryPage {
       this.submitForm.patchValue({
         tempdesc: event.option.value.description,
       });
+      this.qty && this.qty.nativeElement.focus();
     }
 
 

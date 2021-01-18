@@ -19,7 +19,7 @@
 						[attr.disabled]="iscustomerselected?'true':null"
 					/>
 
-					<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
+					<button mat-button matSuffix mat-icon-button type="button" tabindex="-1" (click)="clearInput()">
 						<mat-icon>close</mat-icon>
 					</button>
 
@@ -131,7 +131,7 @@
 				<div class="left">
 					<div>
 						<mat-form-field class="example-full-width">
-							<input matInput [matAutocomplete]="auto1" formControlName="productctrl" #typehead #plist matTooltipPosition="after" tabindex="1" />
+							<input matInput [matAutocomplete]="auto1" formControlName="productctrl" #typehead #plist matTooltipPosition="after" tabindex="2" />
 							<mat-hint matTooltip="Add product">Hint: Type product code</mat-hint>
 							<mat-placeholder class="placeholder">Select Item Code</mat-placeholder>
 							<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput()">
@@ -175,7 +175,7 @@
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
-							<input matInput type="text" formControlName="tempdesc" required tabindex="2" />
+							<input matInput type="text" formControlName="tempdesc" required tabindex="-1" />
 							<mat-placeholder class="placeholder">Item description</mat-placeholder>
 							<mat-error *ngIf="submitForm.controls['tempdesc'].hasError('required')"> Please enter a value </mat-error>
 						</mat-form-field>
@@ -184,7 +184,7 @@
 					<div>
 						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>
-							<input matInput type="number" min="1" max="1000" formControlName="tempqty" required tabindex="3" />
+							<input matInput type="number" min="1" max="1000" formControlName="tempqty" required tabindex="3" #qty />
 							<mat-hint matTooltip="Info about the action">Max 1000</mat-hint>
 						</mat-form-field>
 					</div>
@@ -218,6 +218,7 @@
 						color="primary"
 						type="button"
 						[disabled]="clicked"
+						tabindex="5"
 					>
 						Clear All</button
 					>&nbsp;
@@ -230,6 +231,7 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
+						tabindex="6"
 					>
 						Add Inquiry
 					</button>
