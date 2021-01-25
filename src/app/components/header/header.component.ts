@@ -8,6 +8,7 @@ import { filter, map, defaultIfEmpty } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 
 import { SearchDialogComponent } from '../search/search-dialog/search-dialog.component';
+import { SettingsDialogComponent } from '../settings/settings-dialog/settings-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -110,7 +111,6 @@ export class HeaderComponent implements OnInit {
 
   async showAddProductComp() {
 
-
     const modal = await this._modalcontroller.create({
       component: SearchDialogComponent,
       componentProps: { center_id: this.userdata.center_id, customer_id: 0, },
@@ -120,9 +120,6 @@ export class HeaderComponent implements OnInit {
 
     modal.onDidDismiss().then((result) => {
       console.log('The result:', result);
-
-
-
       this._cdr.markForCheck();
     });
 
@@ -136,6 +133,24 @@ export class HeaderComponent implements OnInit {
 
   goAccountsScreen() {
     this._router.navigateByUrl(`/home/accounts/accounts-dash`);
+  }
+
+  async openSettings() {
+
+    const modal = await this._modalcontroller.create({
+      component: SettingsDialogComponent,
+      componentProps: { center_id: this.userdata.center_id, role_id: this.userdata.role_id },
+      cssClass: 'select-modal'
+
+    });
+
+    modal.onDidDismiss().then((result) => {
+      console.log('The result:', result);
+      this._cdr.markForCheck();
+    });
+
+    await modal.present();
+
   }
 
 }

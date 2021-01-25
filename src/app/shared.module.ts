@@ -116,6 +116,9 @@ import { SalesReturnDialogComponent } from './components/sales/sales-return-dial
 import { SaleReturnViewComponent } from './components/returns/sale-return-view/sale-return-view.component';
 import { SaleReturnReceiveComponent } from './components/returns/sale-return-receive/sale-return-receive.component';
 import { SearchDialogComponent } from './components/search/search-dialog/search-dialog.component';
+import { SettingsDialogComponent } from './components/settings/settings-dialog/settings-dialog.component';
+import { InventoryReportsDialogComponent } from './components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
+
 
 const components = [
 
@@ -138,6 +141,9 @@ const components = [
 
   AddProductComponent,
   SearchDialogComponent,
+  SettingsDialogComponent,
+  InventoryReportsDialogComponent,
+
   VendorEditDialogComponent,
   VendorAddDialogComponent,
 
@@ -271,7 +277,8 @@ const matcomponents = [
     SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
     CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent,
     SalesInvoiceDialogComponent, PurchaseEntryDialogComponent, EnquiryViewDialogComponent, WhatsappDialogComponent,
-    SalesReturnDialogComponent, SaleReturnViewComponent, SaleReturnReceiveComponent, SearchDialogComponent
+    SalesReturnDialogComponent, SaleReturnViewComponent, SaleReturnReceiveComponent, SearchDialogComponent, SettingsDialogComponent, InventoryReportsDialogComponent
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

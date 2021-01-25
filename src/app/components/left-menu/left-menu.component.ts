@@ -49,7 +49,6 @@ export class LeftMenuComponent implements OnInit {
     { name: 'ENQUIRY', link: '/home/enquiry/open-enquiry/O/weekly', icon: '/assets/images/svg/enquiry.svg' },
     { name: 'SALE', link: '/home/search-sales', icon: '/assets/images/svg/sales.svg' },
     { name: 'PURCHASE', link: '/home/search-purchase', icon: '/assets/images/svg/purchase.svg' },
-    { name: 'PAYMENTS', link: '/home/payments', icon: '/assets/images/svg/money.svg' },
     { name: 'RETURNS', link: '/home/search-return-sales', icon: '/assets/images/svg/returning.svg' },
 
   ];
@@ -112,22 +111,17 @@ export class LeftMenuComponent implements OnInit {
     this._authservice.setCurrentMenu(name);
 
     this.clickedItem = name;
-    this._router.navigateByUrl(url);
+    if (this.userdata.role === 'ADMIN' && this.clickedItem === 'HOME') {
+      this._router.navigateByUrl("/home/admin-dashboard");
+    } else {
+      this._router.navigateByUrl(url);
+    }
+
+
     this._cdr.markForCheck();
   }
 
-  routeToDashboard() {
 
-    if (this.userdata.role === 'ADMIN') {
-      this.clickedItem = "HOME";
-      this._router.navigateByUrl("/home/admin-dashboard");
-      this._cdr.markForCheck();
-    } else {
-      this.clickedItem = "HOME";
-      this._router.navigateByUrl("home/dashboard");
-      this._cdr.markForCheck();
-    }
-  }
 
 }
 

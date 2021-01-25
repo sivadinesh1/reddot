@@ -106,7 +106,7 @@
 			</div>
 			<div>&nbsp;</div>
 		</div>
-		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
+		<div style="width: 94%; margin: 0 auto; padding: 16px 0px 100px 0px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
 				<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
@@ -131,7 +131,6 @@
 			<div>CUSTOMER NAME</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
-			<div>SALE TYPE</div>
 
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
@@ -142,7 +141,7 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div style="font-size: 14px; font-weight: 500">&nbsp;</div>
+
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
 			<div>&nbsp;</div>
@@ -155,7 +154,6 @@
 			<div>CUSTOMER NAME</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
-			<div>SALE TYPE</div>
 
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
@@ -168,9 +166,10 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div style="font-size: 14px; font-weight: 500">&nbsp;</div>
+
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
+			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 		</div>
@@ -181,7 +180,6 @@
 			<div class="item">{{item.customer_name}}</div>
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>
-			<div class="item">{{item.sale_type === "gstinvoice" ? "Invoice" : "Stock Issue"}}</div>
 
 			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
 			<div class="item" style="text-align: right">{{item.net_total | currency: "INR"}}</div>
@@ -197,7 +195,9 @@
 				<mat-icon [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}" (click)="goPrintInvoice(item)">print </mat-icon>
 			</div>
 			<div class="item" *ngIf="item.status === 'D'" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}" (click)="presentAlertConfirm(item)">delete </mat-icon>
+				<mat-icon [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}" *ngIf="this.deleteAccess === 'Y'" (click)="presentAlertConfirm(item)"
+					>delete
+				</mat-icon>
 			</div>
 
 			<div *ngIf="tabIndex === 1">

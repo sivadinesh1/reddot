@@ -3,11 +3,11 @@ import { ModalController, PickerController, AlertController } from '@ionic/angul
 
 import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { PickerOptions } from '@ionic/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
-import { ShowVendorsComponent } from '../components/show-vendors/show-vendors.component';
+
 import { AuthenticationService } from '../services/authentication.service';
 import { ChangeTaxComponent } from '../components/change-tax/change-tax.component';
 import { ChangeMrpComponent } from '../components/change-mrp/change-mrp.component';
@@ -38,7 +38,7 @@ import { User } from '../models/User';
   styleUrls: ['./purchase.page.scss'],
 })
 export class PurchasePage implements OnInit {
-  breadmenu = "New Sale";
+  breadmenu = "New Purchase";
   vendorname: string = '';
   vendorstate = '';
 
@@ -114,12 +114,13 @@ export class PurchasePage implements OnInit {
   // TAB navigation for vendor list
   @ViewChild('typehead1', { read: MatAutocompleteTrigger }) autoTrigger1: MatAutocompleteTrigger;
 
+
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
   constructor(private _modalcontroller: ModalController, private _pickerctrl: PickerController,
     public dialog: MatDialog, public alertController: AlertController,
     private _route: ActivatedRoute, private _router: Router, private _dialog: MatDialog,
-    private _authservice: AuthenticationService,
+    private _authservice: AuthenticationService, private _snackBar: MatSnackBar,
     private _commonApiService: CommonApiService, private _fb: FormBuilder,
     private spinner: NgxSpinnerService,
     private _cdr: ChangeDetectorRef) {
@@ -152,10 +153,6 @@ export class PurchasePage implements OnInit {
       this._authservice.setCurrentMenu("PURCHASE");
       this.listArr = [];
       this.rawPurchaseData = data['rawpurchasedata'];
-
-      if (this.userdata !== undefined) {
-        this.initialize();
-      }
 
     });
 
@@ -249,7 +246,7 @@ export class PurchasePage implements OnInit {
         let pData = purchaseData;
 
         pData.forEach(element => {
-          this.processItems(element);
+          this.processItems(element, "preload");
         });
 
       });
@@ -258,6 +255,7 @@ export class PurchasePage implements OnInit {
       this._cdr.markForCheck();
 
     }
+
   }
 
   init() {
@@ -442,7 +440,7 @@ export class PurchasePage implements OnInit {
 
   }
 
-  processItems(temp) {
+  processItems(temp, type) {
 
     this.setTaxSegment(temp.taxrate);
 
@@ -515,9 +513,12 @@ export class PurchasePage implements OnInit {
 
     this.sumTotalTax();
 
-    let v1 = document.documentElement.clientHeight + 70;
-
-    this.ScrollToPoint(0, v1);
+    if (type === 'loadingnow') {
+      let v1 = document.documentElement.clientHeight + 70;
+      this.ScrollToPoint(0, v1);
+    } else {
+      this.ScrollToTop();
+    }
 
     this._cdr.markForCheck();
 
@@ -794,6 +795,11 @@ export class PurchasePage implements OnInit {
           noofitems: this.listArr.length,
         });
 
+        this.submitForm.patchValue({
+          vendorctrl: this.vendordata
+        });
+
+
         const tot_qty_check_Arr = this.listArr.map(arrItem => {
           return parseFloat(arrItem.qty)
         }
@@ -835,16 +841,9 @@ export class PurchasePage implements OnInit {
 
   }
 
-  // getNetTotal() {
-
-  //   let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges || 0) +
-  //     parseFloat(this.submitForm.value.unloading_charges || 0) +
-  //     parseFloat(this.submitForm.value.misc_charges || 0);
-
-  //   return tmpNetTot.toFixed(2);
-  // }
 
   getNetTotal(param) {
+
     let tmp = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges || 0) +
       parseFloat(this.submitForm.value.unloading_charges || 0) +
       parseFloat(this.submitForm.value.misc_charges || 0);
@@ -1018,9 +1017,9 @@ export class PurchasePage implements OnInit {
 
                 this._cdr.markForCheck();
                 if (action === 'add') {
-                  this.presentAlert('Items Added!');
+                  this.openSnackBar("Items Added!", "");
                 } else {
-                  this.presentAlert('Saved to Draft!');
+                  this.openSnackBar("Saved to Draft!", "");
                 }
 
                 this.purchaseDashboard();
@@ -1260,9 +1259,9 @@ export class PurchasePage implements OnInit {
   //   this.content.scrollToBottom(1500);
   // }
 
-  // ScrollToTop() {
-  //   this.content.scrollToTop(1500);
-  // }
+  ScrollToTop() {
+    this.content.scrollToTop(1500);
+  }
 
   ScrollToPoint(X, Y) {
     this.content.scrollToPoint(X, Y, 300);
@@ -1386,7 +1385,7 @@ export class PurchasePage implements OnInit {
     this.lineItemData.qty = this.submitForm.value.tempqty;
     this.lineItemData.purchase_price = this.submitForm.value.temppurchaseprice;
 
-    this.processItems(this.lineItemData);
+    this.processItems(this.lineItemData, "loadingnow");
 
     this.submitForm.patchValue({
       productctrl: "",
@@ -1484,6 +1483,13 @@ export class PurchasePage implements OnInit {
 
     }
 
+  }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 2000,
+      panelClass: ['mat-toolbar', 'mat-primary']
+    });
   }
 
 

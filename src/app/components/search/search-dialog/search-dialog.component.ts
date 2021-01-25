@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { IonSearchbar, ModalController } from '@ionic/angular';
+import { InventoryReportsDialogComponent } from '../../reports/inventory-reports-dialog/inventory-reports-dialog.component';
 
 @Component({
   selector: 'app-search-dialog',
@@ -155,6 +156,22 @@ export class SearchDialogComponent implements OnInit {
     this._modalcontroller.dismiss();
   }
 
+
+  async showInventoryReportsDialog(product_code) {
+
+    const modal = await this._modalcontroller.create({
+      component: InventoryReportsDialogComponent,
+      componentProps: { center_id: this.center_id, product_code: product_code },
+      cssClass: 'select-modal'
+    });
+
+    modal.onDidDismiss().then((result) => {
+      this._cdr.markForCheck();
+    });
+
+    await modal.present();
+
+  }
 
 
 }

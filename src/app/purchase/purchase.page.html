@@ -1,5 +1,5 @@
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
-	<div class="screen-header"><span style="font-size: 18px">New Purchase Order</span></div>
+	<div class="screen-header"><span style="font-size: 18px">{{breadmenu}}</span></div>
 
 	<form [formGroup]="submitForm">
 		<div class="vendor">
@@ -42,16 +42,16 @@
 							</ng-container>
 						</mat-autocomplete>
 						<mat-error *ngIf="submitForm.controls['vendorctrl'].hasError('required')"> Please enter a value </mat-error>
-						<mat-error *ngIf="submitForm.controls['vendorctrl'].hasError('incorrect')"> Please select a valid vendor </mat-error>
+						<mat-error *ngIf="submitForm.controls['vendorctrl'].hasError('incorrect')">
+							<span style="color: darkorange">Vendor Not Found:</span>
+							<span style="font-style: italic; color: #310ac0; cursor: pointer" (click)="addVendor()">+ Add Vendor</span>
+						</mat-error>
+						<mat-hint *ngIf="vendorselected" style="display: flex; justify-content: space-between">
+							<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Vendor Details</span>
+						</mat-hint>
 					</mat-form-field>
-					<div *ngIf="vendorselected" style="display: flex; justify-content: space-between">
-						<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Vendor Details</span>
-					</div>
-					<div *ngIf="!vendorselected" style="display: flex; justify-content: space-between">
-						<span (click)="addVendor()" style="font-size: 12px; color: #310ac0; cursor: pointer">+ New Vendor</span>
-					</div>
 
-					<div style="display: grid; grid-template-columns: 1fr 1fr">
+					<div style="display: grid; grid-template-columns: 1fr 1fr; top: 12px; position: relative">
 						<div>
 							<mat-form-field class="mat-input-wrapper">
 								<mat-label>Invoice #</mat-label>
@@ -430,8 +430,8 @@
 						color="primary"
 						[disabled]="clicked"
 					>
-						<span *ngIf="breadmenu === 'New Sale'">Add to stock</span>
-						<span *ngIf="breadmenu !== 'New Sale'">Update to stock</span>
+						<span *ngIf="breadmenu === 'New Purchase'">Add to stock</span>
+						<span *ngIf="breadmenu !== 'New Purchase'">Update to stock</span>
 					</button>
 				</div>
 			</div>

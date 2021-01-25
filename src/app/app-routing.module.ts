@@ -183,6 +183,17 @@ const routes: Routes = [
     path: 'financials-customer',
     loadChildren: () => import('./admin/customer/financials-customer/financials-customer.module').then(m => m.FinancialsCustomerPageModule)
   },
+
+  {
+    path: 'general-settings',
+    loadChildren: () => import('./settings/general-settings/general-settings.module').then(m => m.GeneralSettingsPageModule),
+    outlet: 'settings'
+  },
+  {
+    path: 'permissions-settings',
+    loadChildren: () => import('./settings/permissions-settings/permissions-settings.module').then(m => m.PermissionsSettingsPageModule),
+    outlet: 'settings'
+  },
   // {
   //   path: 'product-summary-reports',
   //   loadChildren: () => import('./reports/product-summary-reports/product-summary-reports.module').then( m => m.ProductSummaryReportsPageModule)

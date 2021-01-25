@@ -81,7 +81,7 @@
 			<div>&nbsp;</div>
 		</div>
 
-		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
+		<div style="width: 94%; margin: 0 auto; padding: 16px 0px 100px 0px" [@.disabled]="true">
 			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
 				<!-- <mat-tab label="All Orders ({{(purchases$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
@@ -93,7 +93,7 @@
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 
-				<mat-tab label="Fullfilled  ({{(fullfilledPurchase$| async)?.length }})">
+				<mat-tab label="Completed  ({{(fullfilledPurchase$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>

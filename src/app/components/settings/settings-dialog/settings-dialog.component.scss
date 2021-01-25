@@ -1,6 +1,6 @@
-.add-prod-wrap {
+.wrapper {
 	display: grid;
-	grid-template-rows: 60px 60px 1fr 60px;
+	grid-template-rows: 60px 1fr 40px;
 	min-height: 100%;
 
 	.row1 {
@@ -19,7 +19,7 @@
 	}
 	.header-row {
 		display: grid;
-		grid-template-columns: 40px 1fr 1fr 100px 100px 100px;
+		grid-template-columns: 40px 1fr 1fr 100px 100px 100px 50px;
 		border-bottom: 1px solid #0a0a0a;
 		width: 90%;
 		padding: 16px 10px 10px 10px;
@@ -68,14 +68,14 @@
 
 		.list-item {
 			display: grid;
-			grid-template-columns: 40px 1fr 1fr 100px 100px 100px;
+			grid-template-columns: 40px 1fr 1fr 100px 100px 100px 50px;
 			align-self: center;
 			padding: 16px 10px 10px 10px;
 
 			width: 90%;
 			justify-self: center;
 			align-items: center;
-			border-bottom: 1px solid #e7e7e7;
+
 			transition: 0.3s;
 		}
 	}
@@ -90,7 +90,7 @@
 			grid-template-columns: 40px 1fr 1fr 1fr;
 			align-self: center;
 			padding: 16px 10px 10px 10px;
-			border-bottom: 1px solid #e7e7e7;
+
 			width: 90%;
 			justify-self: center;
 			align-items: center;
@@ -110,7 +110,7 @@
 			grid-template-columns: 40px 1fr 1fr 1fr;
 			align-self: center;
 			padding: 16px 10px 10px 10px;
-			border-bottom: 1px solid #e7e7e7;
+
 			width: 90%;
 			justify-self: center;
 			align-items: center;
@@ -130,7 +130,7 @@
 			grid-template-columns: 40px 1fr;
 			align-self: center;
 			padding: 16px 10px 10px 10px;
-			border-bottom: 1px solid #e7e7e7;
+
 			width: 90%;
 			justify-self: center;
 			align-items: center;
@@ -176,4 +176,19 @@
 	opacity: 0.7;
 }
 
+.list-item:hover {
+	background-color: #c7c4d7;
+	opacity: 1;
+}
 
+.main-section {
+	display: grid;
+	grid-template-columns: 220px 1fr;
+
+	.side {
+		background-color: #f4f4f4;
+	}
+	.main {
+		width: 100%;
+	}
+}

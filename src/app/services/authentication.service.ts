@@ -11,6 +11,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { User } from '../models/User';
+import { CommonApiService } from 'src/app/services/common-api.service';
 
 
 @Injectable({
@@ -25,6 +26,9 @@ export class AuthenticationService {
     private currentMenuSubject = new BehaviorSubject<any>(null);
     public currentMenu: Observable<any> = this.currentMenuSubject.asObservable();
 
+    private currentPermisssionSubject = new BehaviorSubject<any>(null);
+    public currentPermisssion: Observable<any> = this.currentPermisssionSubject.asObservable();
+
     restApiUrl = environment.restApiUrl;
 
     storagemode: any;
@@ -37,7 +41,7 @@ export class AuthenticationService {
 
     constructor(
         private httpClient: HttpClient, private plt: Platform,
-        private storage: Storage,
+        private storage: Storage, private _commonApiService: CommonApiService,
         private nativeStorage: NativeStorage,
 
         @Inject(PLATFORM_ID) private platformId: any
@@ -61,12 +65,18 @@ export class AuthenticationService {
     async reloadLocalStorage() {
         let tempCurrentUser = await this.getLocalStoreItems('currentUser');
         let tempMenuUser = await this.getLocalStoreItems('currentMenu');
+        let tempCurrentPermission = await this.getLocalStoreItems('currentPermission');
+
 
         if (tempCurrentUser) {
             this.currentUserSubject.next(JSON.parse(tempCurrentUser));
         }
         if (tempMenuUser) {
             this.currentMenuSubject.next(tempMenuUser);
+        }
+
+        if (tempCurrentPermission) {
+            this.currentPermisssionSubject.next(tempCurrentPermission);
         }
 
     }
@@ -128,6 +138,14 @@ export class AuthenticationService {
                 }
                 return data;
             }));
+    }
+
+    fetchPermissions(center_id: string, role_id: string) {
+        this._commonApiService.fetchPermissions(center_id, role_id)
+            .subscribe((data) => {
+                this.storagemode.set('currentPermission', JSON.stringify(data));
+                this.currentPermisssionSubject.next(data);
+            });
     }
 
 

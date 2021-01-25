@@ -596,6 +596,9 @@ export class CommonApiService {
   }
 
 
+  fetchPermissions(centerid, roleid) {
+    return this.httpClient.get(`${this.restApiUrl}/api/auth/fetch-permissions/${centerid}/${roleid}`);
+  }
 
 }
 

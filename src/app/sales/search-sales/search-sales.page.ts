@@ -76,11 +76,19 @@ export class SearchSalesPage implements OnInit {
   sumTotalValue = 0.00;
   sumNumItems = 0;
 
+  permissionsdata;
+  permissions$: Observable<any>;
+
+  deleteAccess;
+
   // new FormControl({value: '', disabled: true});
   constructor(private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private _fb: FormBuilder, private _router: Router, private _route: ActivatedRoute,
     public alertController: AlertController, public _dialog: MatDialog, private _snackBar: MatSnackBar,
     private _authservice: AuthenticationService) {
+
+
+
 
     this.submitForm = this._fb.group({
       customerid: ['all'],
@@ -116,12 +124,26 @@ export class SearchSalesPage implements OnInit {
     });
 
 
+    this.permissions$ = this._authservice.currentPermisssion;
 
+    this.permissions$
+      .pipe(
+        filter((data) => data !== null))
+      .subscribe((data: any) => {
+        this.permissionsdata = data;
 
+        console.log('print permissions data ... from search sales >> ' + JSON.stringify(this.permissionsdata));
+
+        this.deleteAccess = this.permissionsdata.filter(f => f.resource === 'SALE' && f.operation === 'DELETE')[0].is_access;
+
+        console.log('print it > ' + JSON.stringify(this.deleteAccess));
+
+        this._cdr.markForCheck();
+      });
 
   }
 
-
+  // [{"id":4,"center_id":2,"role_id":1,"operation":"VIEW","resource":"SALE","is_access":"Y"},{"id":5,"center_id":2,"role_id":1,"operation":"EDIT","resource":"SALE","is_access":"Y"},{"id":6,"center_id":2,"role_id":1,"operation":"DELETE","resource":"SALE","is_access":"Y"}]
 
   filtercustomer(value: any) {
 

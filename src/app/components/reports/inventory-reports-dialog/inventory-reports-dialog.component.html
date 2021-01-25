@@ -1,0 +1,63 @@
+<ion-content>
+	<div class="screen-header">
+		<div>&nbsp;</div>
+
+		<div style="align-items: center">
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="closeModal()" width="16px" height="16px" />
+		</div>
+	</div>
+
+	
+
+	
+<div style="padding: 0px 10px;">
+  <span>
+    ITEM CODE:</span>
+    <span style="color: blue;"> {{product_code}}
+  </span>
+  
+</div>
+	<div #epltable>
+		<table style="width: 90%; margin: 0 auto;">
+			<thead>
+				<tr class="header">
+					<th style="text-align: left">Brand</th>
+				
+					<th style="text-align: left">Item</th>
+					<th style="text-align: left">Action</th>
+
+					<th style="text-align: left">Invoice #</th>
+					<th style="text-align: left">Customer/Vendor</th>
+
+					<th style="text-align: right">Txn Qty</th>
+
+          <th style="text-align: right">Stock Level</th>
+          <th style="text-align: right">Txn Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let item of resultList ? resultList : []; let idx = index" class="list-item plain-row-color-nohover">
+					<td style="text-align: left">{{ item.brand_name }}</td>
+				
+					<td>{{ item.product_description }}</td>
+
+					<td style="text-align: left">{{ item?.module }}</td>
+          <td style="text-align: left; color: blue; cursor: pointer;"
+          (click)="openDialog(item.module, item.invoice_no, item.sale_id, item.purchase_id, item.customer_id, item.vendor_id)"
+          >{{ (item?.invoice_no) }}</td>
+					<td style="text-align: left">	{{item.customer_name === null ? item.vendor_name : item.customer_name}}</td>
+					<td style="text-align: right">{{ item?.txn_qty }}</td>
+          <td style="text-align: right">{{ item?.stock_level }}</td>
+          <td style="text-align: right">{{ item?.txn_date }}</td>
+        </tr>
+        
+        <tr *ngIf="resultList.length === 0">
+          <span style="color: blue">No Records</span>
+        </tr>
+
+			</tbody>
+		</table>
+	</div>
+
+	
+</ion-content>

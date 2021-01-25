@@ -148,6 +148,7 @@ export class SalesPage {
 
   // @ViewChild('stickyHeaderStart', { static: true }) stickyHeaderStart: ElementRef<HTMLElement>;
 
+
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
   question = '+ Add Customer"';
@@ -283,7 +284,7 @@ export class SalesPage {
 
       this.fromEnquiry = true;
 
-      // this.spinner.show();
+      this.spinner.show();
       this._commonApiService.getCustomerData(this.id).subscribe((custData: any) => {
 
         this.customerdata = custData[0];
@@ -302,7 +303,7 @@ export class SalesPage {
 
         // prod details
         this._commonApiService.getEnquiredProductData(this.userdata.center_id, this.customerdata.id, this.id, invdt).subscribe((prodData: any) => {
-          // this.spinner.hide();
+          this.spinner.hide();
           let proddata = prodData;
 
           this.submitForm.patchValue({
@@ -311,7 +312,7 @@ export class SalesPage {
           })
 
           proddata.forEach(element => {
-            this.processItems(element);
+            this.processItems(element, "preload");
           });
 
 
@@ -405,7 +406,7 @@ export class SalesPage {
 
 
             sData.forEach(element => {
-              this.processItems(element);
+              this.processItems(element, "preload");
             });
           });
 
@@ -473,7 +474,7 @@ export class SalesPage {
   }
 
 
-  processItems(temp) {
+  processItems(temp, type) {
 
     this.setTaxSegment(temp.taxrate);
     let subtotal = 0;
@@ -584,9 +585,12 @@ export class SalesPage {
 
     this.sumTotalTax();
 
-    let v1 = document.documentElement.clientHeight + 70;
-
-    this.ScrollToPoint(0, v1);
+    if (type === 'loadingnow') {
+      let v1 = document.documentElement.clientHeight + 70;
+      this.ScrollToPoint(0, v1);
+    } else {
+      this.ScrollToTop();
+    }
 
 
     this._cdr.markForCheck();
@@ -1111,11 +1115,11 @@ export class SalesPage {
             //main submit
             this.clicked = true;  // disable all buttons after submission
             this._cdr.markForCheck();
-            // this.spinner.show();
+            this.spinner.show();
 
             this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
-              // this.spinner.hide();
-              console.log('saveSaleOrder ' + JSON.stringify(data));
+              this.spinner.hide();
+              // console.log('saveSaleOrder ' + JSON.stringify(data));
 
               if (data.body.result === 'success') {
                 this.invoiceid = data.body.id;
@@ -1125,7 +1129,7 @@ export class SalesPage {
                 this.formRef.resetForm();
 
                 // reinit after successful insert
-                this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
+                //  this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
 
                 this._cdr.markForCheck();
                 if (action === 'add') {
@@ -1660,7 +1664,7 @@ export class SalesPage {
     this.lineItemData.qty = this.submitForm.value.tempqty;
 
     // lineitemdata is the input box row to add items
-    this.processItems(this.lineItemData);
+    this.processItems(this.lineItemData, "loadingnow");
 
     this.submitForm.patchValue({
       productctrl: "",
@@ -1850,6 +1854,13 @@ export class SalesPage {
 
 
   }
+
+
+
+  ScrollToTop() {
+    this.content.scrollToTop(1500);
+  }
+
 
   // @HostListener('window:beforeunload', ['$event'])
   // beforeUnloadHander($event) {

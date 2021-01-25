@@ -141,6 +141,11 @@ button {
 	background: rgb(226, 226, 226);
 }
 
+.plain-row-color-nohover:hover {
+	background: #f2f2f2;
+}
+
+
 .error {
 	color: rgb(156, 0, 0);
 }
@@ -207,4 +212,8 @@ input[type="number"] {
 
 .mat-drawer-side {
 	border-right-color: #f3f3f3;
+}
+
+* {
+	box-sizing: border-box;
 }

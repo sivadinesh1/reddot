@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { CountryPhone } from '../../util/validators/country-phone.model';
 import { PhoneValidator } from '../../util/validators/phone.validator';
 import { AuthenticationService } from '../../services/authentication.service';
+import { CommonApiService } from 'src/app/services/common-api.service';
 
 
 @Component({
@@ -41,7 +42,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     public router: Router,
-    private _cdr: ChangeDetectorRef,
+    private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService,
     private authenticationService: AuthenticationService,
   ) {
 
@@ -99,14 +100,16 @@ export class LoginPage implements OnInit {
     let username = this.loginForm.controls.phone.value;
     let password = this.loginForm.controls.password.value;
 
-    console.log('object ' + username);
-    console.log('object ' + password);
 
+    //login
     this.authenticationService.login(username, password).subscribe(
       async data => {
 
         if (data.result === 'success') {
           let role = data.role;
+
+          this.authenticationService.fetchPermissions(data.obj.center_id, data.obj.role_id);
+
           if (role === 'ADMIN') {
             this.router.navigate([`/home/admin-dashboard`]);
             this.authenticationService.setCurrentMenu("HOME");
@@ -117,6 +120,8 @@ export class LoginPage implements OnInit {
 
             this.invalidLogin = false;
           }
+
+
 
         } else if (data.result === 'error') {
           this.invalidLogin = true;
