@@ -20,7 +20,7 @@ import { WhatsappDialogComponent } from '../../social/whatsapp/whatsapp-dialog/w
 export class EnquiryViewDialogComponent implements OnInit {
 
   enquirymasterdata: any;
-  enquirydetailsdata: any;
+  enquirydetailsdata = []
 
   centerdata: any;
 
@@ -45,7 +45,8 @@ export class EnquiryViewDialogComponent implements OnInit {
     })
 
     this._commonApiService.getEnquiryDetails(this.data.id).subscribe((data: any) => {
-      this.enquirydetailsdata = data;
+      this.enquirydetailsdata = data.enquiryDetails;
+      
       this._cdr.markForCheck();
     });
 

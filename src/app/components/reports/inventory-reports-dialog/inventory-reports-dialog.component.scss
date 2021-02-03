@@ -16,7 +16,7 @@
 
 .header {
 	display: grid;
-	grid-template-columns: 1fr 1fr 50px 110px 1fr 60px 80px 180px;
+	grid-template-columns: 1fr 1fr 110px 110px 1fr 70px 60px 80px 80px 140px;
 	padding: 10px;
 	font-size: 12px;
 	background-color: #e7e7e7;
@@ -24,11 +24,11 @@
 
 .list-item {
 	display: grid;
-	grid-template-columns: 1fr 1fr 50px 110px 1fr 60px 80px 180px;
+	grid-template-columns: 1fr 1fr 110px 110px 1fr 70px 60px 80px 80px 140px;
 	padding: 10px;
     font-size: 12px;
     border-bottom: 1px solid #e7e7e7;
-}
+}	
 
 .action-row {
 	display: flex;

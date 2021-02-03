@@ -1094,8 +1094,9 @@ export class PurchasePage implements OnInit {
   executeDeleteProduct(elem) {
 
     this._commonApiService.deletePurchaseDetails({
+      center_id: this.userdata.center_id,
       id: elem.pur_det_id, purchaseid: elem.purchase_id, qty: elem.qty,
-      product_id: elem.product_id, stock_id: elem.stock_pk,
+      product_id: elem.product_id, stock_id: elem.stock_pk, mrp: elem.mrp,
       autidneeded: true
     }).subscribe((data: any) => {
 

@@ -35,7 +35,7 @@ export class ChangeTaxComponent implements OnInit {
 
 
     this.submitForm = new FormGroup({
-      tax: new FormControl('', Validators.compose([Validators.max(50), Validators.min(1), Validators.required])),
+      tax: new FormControl('', Validators.compose([Validators.max(50), Validators.min(0), Validators.required])),
     });
 
 

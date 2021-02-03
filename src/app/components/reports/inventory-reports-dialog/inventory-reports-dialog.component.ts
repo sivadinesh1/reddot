@@ -41,7 +41,7 @@ export class InventoryReportsDialogComponent implements OnInit {
         // DnD - code to add a "key/Value" in every object of array
         this.resultList = data.body;
         this._cdr.markForCheck();
-      debugger;
+      
 
       });
 

@@ -93,18 +93,19 @@
 					<th style="text-align: right; padding-right: 5px; font-weight: 500">R. Qty</th>
 				</tr>
 			</thead>
+			
 			<tbody>
-				<tr *ngFor="let item of enquirydetailsdata; let idx = index" class="list-item">
-					<td style="text-align: left; padding-left: 5px">{{ idx + 1 }}</td>
-					<td style="text-align: left; padding-left: 5px">{{ item.pcode }}</td>
-					<td style="text-align: left; padding-left: 5px">{{ item.pdesc }}</td>
-					<td style="text-align: right; padding-right: 5px">{{ item.available_stock }}</td>
-					<td style="text-align: left">{{ item.rackno }}</td>
+				<div *ngFor="let item of enquirydetailsdata ? enquirydetailsdata : []; let idx = index" class="list-item">
+					<div style="text-align: left; padding-left: 5px">{{ idx + 1 }}</div>
+					<div style="text-align: left; padding-left: 5px">{{ item?.pcode }}</div>
+					<div style="text-align: left; padding-left: 5px">{{ item?.pdesc }}</div>
+					<div style="text-align: right; padding-right: 5px">{{ item?.available_stock }}</div>
+					<div style="text-align: left">{{ item?.rackno }}</div>
 
-					<td style="text-align: right; padding-right: 5px">{{ item.giveqty }}</td>
-					<td style="text-align: left; padding-left: 5px">{{ item.notes }}</td>
-					<td style="text-align: right; padding-right: 5px">{{ item.askqty }}</td>
-				</tr>
+					<div style="text-align: right; padding-right: 5px">{{ item?.giveqty }}</div>
+					<div style="text-align: left; padding-left: 5px">{{ item?.notes }}</div>
+					<div style="text-align: right; padding-right: 5px">{{ item?.askqty }}</div>
+				</div>
 			</tbody>
 		</table>
 	</div>

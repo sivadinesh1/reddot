@@ -29,6 +29,10 @@ export class CommonApiService {
     return this.httpClient.get(this.restApiUrl + '/api/admin/get-states');
   }
 
+  getTimezones() {
+    return this.httpClient.get(this.restApiUrl + '/api/admin/get-timezones');
+  }
+
   getAllPartsStockData() {
     return this.httpClient.get(this.restApiUrl + '/api/inventory/all');
   }

@@ -1334,7 +1334,9 @@ export class SalesPage {
     this._commonApiService.deleteSalesDetails({
       id: elem.sale_det_id, salesid: elem.sales_id, qty: elem.qty,
       product_id: elem.product_id, stock_id: elem.stock_pk,
-      autidneeded: this.editCompletedSales
+      autidneeded: this.editCompletedSales,
+      center_id: this.userdata.center_id,
+      mrp: elem.mrp
     }).subscribe((data: any) => {
 
       if (data.body.result === 'success') {
