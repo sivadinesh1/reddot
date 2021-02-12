@@ -1,0 +1,54 @@
+<ion-content>
+	<div class="content">
+		<app-messages></app-messages>
+		<div class="header">
+			<div>
+				<div>List of Employees</div>
+				<div style="font-size: 12px; color: #797979">Showing {{listArr?.length }} Records</div>
+			</div>
+			<div>
+				<button appPreventDoubleClick (throttledClick)="add()" [throttleTime]="500" mat-raised-button color="primary">+ Add Users</button>
+			</div>
+		</div>
+
+    <form [formGroup]="submitForm">
+      <div>
+        <mat-form-field class="mat-width-ext" style="padding-top: 20px;">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
+            <mat-option *ngFor="let item of status" [value]="item.id">
+              {{item.value}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      </form>
+
+		<ng-container>
+			
+          <div class="header-row list-item">
+            <div>User Name</div>
+            <div>First Name</div>
+            <div>Role</div>
+            <div>&nbsp;</div>
+            
+          </div>
+          <div *ngFor="let item of listArr ? listArr : []; let idx = index" class="list-item plain-row-color-nohover">
+            <div>{{item?.username}}</div>
+            <div>{{item?.firstname}}</div>
+            <div>{{item?.description}}</div>
+            <div *ngIf="item.username !== this.userdata.username"
+            style="color: blue; font-size: 14px; cursor: pointer;"
+            (click)="changestatus(item)">{{item?.status === 'A' ? 'Deactivate': 'Activate'}}</div>
+
+
+          </div>
+				
+					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
+				
+				
+			
+		
+		</ng-container>
+	</div>
+</ion-content>

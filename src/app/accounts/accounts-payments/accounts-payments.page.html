@@ -1,25 +1,49 @@
 <ion-content>
-	<div style="display: flex; justify-content: space-between; width: 90%; margin: 0 auto; padding: 16px 0px">
-		<div>All Received Payments</div>
+	<div
+		style="
+			display: flex;
+			justify-content: space-between;
+			width: 90%;
+			margin: 0 auto;
+			padding: 16px 0px;
+		"
+	>
+		<div>Payments Management</div>
 		<div>
 			&nbsp;
 			<span>
-				<button appPreventDoubleClick (throttledClick)="addPayments()" [throttleTime]="500" mat-button color="primary">+ Add Payment Record</button>
+				<button
+					appPreventDoubleClick
+					(throttledClick)="addPayments()"
+					[throttleTime]="500"
+					mat-button
+					color="primary"
+					style="background-color: bisque"
+				>
+					+ Add Payment Record
+				</button>
 			</span>
 		</div>
 	</div>
 
-	<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
-		<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-			<mat-tab label="Invoices">
+	<div
+		style="width: 94%; margin: 0 auto; padding-top: 16px"
+		[@.disabled]="true"
+	>
+		<mat-tab-group
+			color="primary"
+			[(selectedIndex)]="tabIndex"
+			(selectedTabChange)="tabClick($event)"
+		>
+			<mat-tab label="Pending Payments">
 				<ng-template [ngTemplateOutlet]="INVTABLE"></ng-template>
 			</mat-tab>
 
-			<mat-tab label="Payments">
+			<mat-tab label="Received Payments">
 				<ng-template [ngTemplateOutlet]="PYMTTABLE"></ng-template>
 			</mat-tab>
 
-			<mat-tab label="Transactions">
+			<mat-tab label="Transaction Details">
 				<ng-template [ngTemplateOutlet]="TXNTABLE"></ng-template>
 			</mat-tab>
 		</mat-tab-group>
@@ -41,45 +65,125 @@
 						></ion-searchbar>
 					</div>
 					<div class="actions">
-						<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" />
+						<img
+							src="/assets/images/svg/download-excel.svg"
+							style="cursor: pointer"
+							width="32px"
+							height="32px"
+						/>
 					</div>
 				</div>
 
 				<div class="example-table-container" #epltable1>
-					<table mat-table [dataSource]="saleInvoicedataSource" multiTemplateDataRows>
+					<table
+						mat-table
+						[dataSource]="saleInvoicedataSource"
+						multiTemplateDataRows
+					>
 						<ng-container matColumnDef="invoicedate">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Invoice Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" style="color: #333333; font-weight: 500">{{(element.invoice_date )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Invoice Date
+							</th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-title"
+								style="color: #333333; font-weight: 500"
+							>
+								{{(element.invoice_date )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="invoiceno">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Inv #</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.invoice_no)}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Inv #
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.invoice_no)}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="customername">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Custmer Name</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.customer_name)}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Custmer Name
+							</th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								(click)="goCustomerFinancials(element.customer_id)"
+								style="color: blue; cursor: pointer"
+								class="m-card-title"
+							>
+								{{(element.customer_name)}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paymentstatus">
-							<th class="m-txt-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Payment Status</th>
-							<td mat-cell *matCellDef="let element" class="m-txt-field">{{(element.payment_status)}}</td>
+							<th
+								class="m-txt-field"
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Payment Status
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-txt-field">
+								{{(element.payment_status)}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="nettotal">
-							<th class="m-curr-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Amount</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">{{(element.invoice_amt | currency: "INR")}}</td>
+							<th
+								class="m-curr-field"
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Amount
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">
+								{{(element.invoice_amt | currency: "INR")}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paidamt">
-							<th class="m-curr-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Paid Amount</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">{{(element.paid_amount | nullzero | currency: "INR")}}</td>
+							<th
+								class="m-curr-field"
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Paid Amount
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">
+								{{(element.paid_amount | nullzero | currency: "INR")}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="balamt">
-							<th class="m-curr-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Balance Amount</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">{{(element.bal_amount | nullzero | currency: "INR")}}</td>
+							<th
+								class="m-curr-field"
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Balance Amount
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">
+								{{(element.bal_amount | nullzero | currency: "INR")}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paybtn">
@@ -99,13 +203,26 @@
 							</td>
 						</ng-container>
 
-						<tr mat-header-row *matHeaderRowDef="saleInvoiceDisplayedColumns; sticky: true"></tr>
+						<tr
+							mat-header-row
+							*matHeaderRowDef="saleInvoiceDisplayedColumns; sticky: true"
+						></tr>
 
-						<tr class="example-element-row" mat-row *matRowDef="let row; columns: saleInvoiceDisplayedColumns;"></tr>
+						<tr
+							class="example-element-row"
+							mat-row
+							*matRowDef="let row; columns: saleInvoiceDisplayedColumns;"
+						></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
+					<div [hidden]="isTableHasData" class="center-message">
+						No Data available.
+					</div>
 				</div>
-				<mat-paginator #InvoiceTablePaginator="matPaginator" [pageSizeOptions]="[100, 200]" showFirstLastButtons></mat-paginator>
+				<mat-paginator
+					#InvoiceTablePaginator="matPaginator"
+					[pageSizeOptions]="[100, 200]"
+					showFirstLastButtons
+				></mat-paginator>
 			</div>
 			<mat-menu #menu="matMenu">
 				<ng-template matMenuContent let-element="element">
@@ -134,53 +251,165 @@
 						></ion-searchbar>
 					</div>
 					<div class="actions">
-						<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" />
+						<img
+							src="/assets/images/svg/download-excel.svg"
+							style="cursor: pointer"
+							width="32px"
+							height="32px"
+						/>
 					</div>
 				</div>
 				<div class="example-table-container" #epltable1>
-					<table mat-table [dataSource]="paymentdataSource" multiTemplateDataRows>
+					<table
+						mat-table
+						[dataSource]="paymentdataSource"
+						multiTemplateDataRows
+					>
 						<ng-container matColumnDef="invoiceno">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Invoice #</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.invoice_no )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Invoice #
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.invoice_no )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="invoicedate">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Invoice Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.invoice_date )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Invoice Date
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.invoice_date )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="customername">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Customer Name</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" style="color: #333333; font-weight: 500">{{(element.customer_name )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Customer Name
+							</th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-title"
+								(click)="goCustomerFinancials(element.customer_id)"
+								style="color: blue; cursor: pointer; font-weight: 500"
+							>
+								{{(element.customer_name )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="pymtmodename">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Payment Mode</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.pymt_mode_name )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Payment Mode
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.pymt_mode_name )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="pymtdate">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Payment Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.pymt_date )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Payment Date
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.pymt_date )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paymentno">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Pymt #</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.payment_no)}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Pymt #
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.payment_no)}}
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="bankref">
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Bank Ref
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.bank_ref)}}
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="pymtref">
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Pymt Ref
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.pymt_ref)}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paidamt">
-							<th class="m-curr-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Paid Amt</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">{{element.applied_amount | currency: "INR"}}</td>
+							<th
+								class="m-curr-field"
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Paid Amt
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">
+								{{element.applied_amount | currency: "INR"}}
+							</td>
 						</ng-container>
 
-						<tr mat-header-row *matHeaderRowDef="paymentDisplayedColumns; sticky: true"></tr>
+						<tr
+							mat-header-row
+							*matHeaderRowDef="paymentDisplayedColumns; sticky: true"
+						></tr>
 
-						<tr class="example-element-row" mat-row *matRowDef="let row; columns: paymentDisplayedColumns;"></tr>
+						<tr
+							class="example-element-row"
+							mat-row
+							*matRowDef="let row; columns: paymentDisplayedColumns;"
+						></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
+					<div [hidden]="isTableHasData" class="center-message">
+						No Data available.
+					</div>
 				</div>
-				<mat-paginator #PaymentTablePaginator="matPaginator" [pageSize]="100" [pageSizeOptions]="[100, 200]" showFirstLastButtons></mat-paginator>
+				<mat-paginator
+					#PaymentTablePaginator="matPaginator"
+					[pageSize]="100"
+					[pageSizeOptions]="[100, 200]"
+					showFirstLastButtons
+				></mat-paginator>
 			</div>
 		</ng-container>
 	</ng-template>
@@ -201,46 +430,131 @@
 						></ion-searchbar>
 					</div>
 					<div class="actions">
-						<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" />
+						<img
+							src="/assets/images/svg/download-excel.svg"
+							style="cursor: pointer"
+							width="32px"
+							height="32px"
+						/>
 					</div>
 				</div>
 				<div class="example-table-container" #epltable1>
-					<table mat-table [dataSource]="pymttransactionsdataSource" multiTemplateDataRows>
+					<table
+						mat-table
+						[dataSource]="pymttransactionsdataSource"
+						multiTemplateDataRows
+					>
 						<ng-container matColumnDef="custname">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Customer Nmae</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" style="color: #333333; font-weight: 500">{{(element.customer_name )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Customer Nmae
+							</th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-title"
+								(click)="goCustomerFinancials(element.customer_id)"
+								style="color: blue; cursor: pointer"
+							>
+								{{(element.customer_name )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="pymtno">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Payment #</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.payment_no )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Payment #
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.payment_no )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="pymtdate">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Payment Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.pymt_date )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Payment Date
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.pymt_date )}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paidamt">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Paid Amount</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.paid_amount | currency: "INR")}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Paid Amount
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.paid_amount | currency: "INR")}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="paymode">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Pay Mode</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.pymt_mode_name )}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Pay Mode
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.pymt_mode_name )}}
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="bankref">
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Bank Reference
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.bank_ref)}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="payref">
-							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">Pymt Reference</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">{{(element.pymt_ref)}}</td>
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Pymt Reference
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.pymt_ref)}}
+							</td>
 						</ng-container>
 
-						<tr mat-header-row *matHeaderRowDef="pymtTxnDisplayedColumns; sticky: true"></tr>
+						<tr
+							mat-header-row
+							*matHeaderRowDef="pymtTxnDisplayedColumns; sticky: true"
+						></tr>
 
-						<tr class="example-element-row" mat-row *matRowDef="let row; columns: pymtTxnDisplayedColumns;"></tr>
+						<tr
+							class="example-element-row"
+							mat-row
+							*matRowDef="let row; columns: pymtTxnDisplayedColumns;"
+						></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
+					<div [hidden]="isTableHasData" class="center-message">
+						No Data available.
+					</div>
 				</div>
 				<mat-paginator
 					#PymtTransactionTablePaginator="matPaginator"

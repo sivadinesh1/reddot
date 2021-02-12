@@ -116,7 +116,10 @@ const routes: Routes = [
         path: 'view-brands',
         loadChildren: () => import('./admin/brand/view-brands/view-brands.module').then(m => m.ViewBrandsPageModule)
       },
-
+      {
+        path: 'users-list',
+        loadChildren: () => import('./admin/users-list/users-list.module').then( m => m.UsersListPageModule)
+      },
 
       // customers
       {
@@ -194,6 +197,8 @@ const routes: Routes = [
     loadChildren: () => import('./settings/permissions-settings/permissions-settings.module').then(m => m.PermissionsSettingsPageModule),
     outlet: 'settings'
   },
+  
+  
   // {
   //   path: 'product-summary-reports',
   //   loadChildren: () => import('./reports/product-summary-reports/product-summary-reports.module').then( m => m.ProductSummaryReportsPageModule)

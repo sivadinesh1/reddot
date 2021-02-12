@@ -84,7 +84,7 @@ export class ViewBrandsPage implements OnInit {
 
   reloadBrands() {
 
-    this._commonApiService.getAllActiveBrands(this.center_id, "A")
+    this._commonApiService.getUsers(this.center_id, "A")
       .subscribe((data: any) => {
 
         // DnD - code to add a "key/Value" in every object of array

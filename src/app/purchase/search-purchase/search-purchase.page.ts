@@ -166,12 +166,14 @@ export class SearchPurchasePage implements OnInit {
 
   }
 
+
+  
   async search() {
     this.purchases$ = this._commonApiService
-      .searchPurchases(this.userdata.center_id, this.submitForm.value.vendorid,
-        this.submitForm.value.status,
-        this.submitForm.value.fromdate,
-        this.submitForm.value.todate,
+      .searchPurchases({"centerid":this.userdata.center_id, "vendorid":this.submitForm.value.vendorid,
+        "status":this.submitForm.value.status,
+        "fromdate":this.submitForm.value.fromdate,
+        "todate":this.submitForm.value.todate}
 
       );
 

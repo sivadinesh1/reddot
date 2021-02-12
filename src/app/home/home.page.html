@@ -6,7 +6,9 @@
 			<mat-sidenav #leftSidenav mode="side" opened style="min-width: 6rem">
 				<app-left-menu></app-left-menu>
 			</mat-sidenav>
-			<mat-sidenav-content [@onMainContentChange]="onSideNavChange ? 'open': 'close'">
+			<mat-sidenav-content
+				[@onMainContentChange]="onSideNavChange ? 'open': 'close'"
+			>
 				<div class="main_content">
 					<ion-router-outlet></ion-router-outlet>
 				</div>

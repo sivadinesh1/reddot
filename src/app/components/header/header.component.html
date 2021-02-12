@@ -1,3 +1,20 @@
+<div
+	style="
+		background-color: #f2f2f2;
+		display: flex;
+		flex-direction: row-reverse;
+		color: #fff;
+		font-size: 14px;
+		padding: 3px;
+	"
+>
+	<div
+		style="color: blue; cursor: pointer; padding: 0px 4px"
+		(click)="viewCustomer()"
+	>
+		Customers
+	</div>
+</div>
 <div fxFlex="row" fxLayoutGap="10px" class="header">
 	<!-- <button mat-icon-button (click)="toggle()">
 		<mat-icon>menu</mat-icon>
@@ -8,19 +25,39 @@
 			{{ userdata?.center_name }}
 		</div>
 		<div>
-			<span style="font-size: 0.8rem; color: #0007ff">{{ userdata?.plan_name }} </span>
+			<span style="font-size: 0.8rem; color: #0007ff"
+				>{{ userdata?.plan_name }}
+			</span>
 		</div>
 	</span>
 	<span class="spacer"></span>
 	<span style="align-self: center">
-		<img src="../../assets/images/svg/sales-white.svg" (click)="showNewSales()" width="26px" height="26px" class="img cursor" />
+		<img
+			src="../../assets/images/svg/sales-white.svg"
+			(click)="showNewSales()"
+			width="26px"
+			height="26px"
+			class="img cursor"
+		/>
 	</span>
 	<span style="align-self: center; padding: 0px 40px">
-		<img src="../../assets/images/svg/enquiry-white.svg" (click)="showNewEnquiry()" width="26px" height="26px" class="img cursor" />
+		<img
+			src="../../assets/images/svg/enquiry-white.svg"
+			(click)="showNewEnquiry()"
+			width="26px"
+			height="26px"
+			class="img cursor"
+		/>
 	</span>
 	&nbsp;&nbsp;
 	<span style="align-self: center">
-		<img src="../../assets/images/svg/search.svg" (click)="showAddProductComp()" width="26px" height="26px" class="img cursor" />
+		<img
+			src="../../assets/images/svg/search.svg"
+			(click)="showAddProductComp()"
+			width="26px"
+			height="26px"
+			class="img cursor"
+		/>
 	</span>
 	&nbsp;&nbsp;
 	<span style="align-self: center">
@@ -31,7 +68,13 @@
 	</span>
 
 	<span style="align-self: center">
-		<img src="../../assets/images/svg/account.svg" width="28px" height="28px" class="img cursor" [matMenuTriggerFor]="menu" />
+		<img
+			src="../../assets/images/svg/account.svg"
+			width="28px"
+			height="28px"
+			class="img cursor"
+			[matMenuTriggerFor]="menu"
+		/>
 	</span>
 </div>
 
@@ -42,7 +85,12 @@
 	</button>
 	<button mat-menu-item [matMenuTriggerFor]="admin">
 		<span style="padding-right: 16px; vertical-align: middle">
-			<img src="../../assets/images/svg/manager.svg" width="26px" height="26px" style="vertical-align: middle" />
+			<img
+				src="../../assets/images/svg/manager.svg"
+				width="26px"
+				height="26px"
+				style="vertical-align: middle"
+			/>
 		</span>
 		Admin
 	</button>
@@ -59,7 +107,12 @@
 	</button>
 	<button mat-menu-item (click)="logout()">
 		<span style="padding-right: 16px; vertical-align: middle">
-			<img src="../../assets/images/svg/logout.svg" width="24px" height="24px" style="vertical-align: middle" />
+			<img
+				src="../../assets/images/svg/logout.svg"
+				width="24px"
+				height="24px"
+				style="vertical-align: middle"
+			/>
 		</span>
 
 		<span>Log Out</span>
@@ -85,6 +138,10 @@
 		<span>Center</span>
 	</button>
 
+	<button mat-menu-item (click)="viewUsers()">
+		<span>Users</span>
+	</button>
+
 	<button mat-menu-item [matMenuTriggerFor]="reportsadmin">
 		<span>Reports</span>
 	</button>
@@ -100,10 +157,18 @@
 </mat-menu>
 
 <mat-menu #reportsadmin="matMenu">
-	<button mat-menu-item (click)="viewProductSummaryReports()" style="padding-right: 16px">
+	<button
+		mat-menu-item
+		(click)="viewProductSummaryReports()"
+		style="padding-right: 16px"
+	>
 		<span>Product Summary </span>
 	</button>
-	<button mat-menu-item (click)="viewInventoryReports()" style="padding-right: 16px">
+	<button
+		mat-menu-item
+		(click)="viewInventoryReports()"
+		style="padding-right: 16px"
+	>
 		<span>Inventory </span>
 	</button>
 	<button mat-menu-item (click)="openBackOrder()">

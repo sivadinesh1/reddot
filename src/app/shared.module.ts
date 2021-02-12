@@ -118,6 +118,7 @@ import { SaleReturnReceiveComponent } from './components/returns/sale-return-rec
 import { SearchDialogComponent } from './components/search/search-dialog/search-dialog.component';
 import { SettingsDialogComponent } from './components/settings/settings-dialog/settings-dialog.component';
 import { InventoryReportsDialogComponent } from './components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
+import { AddUserComponent } from './components/users/add-user/add-user.component';
 
 
 const components = [
@@ -172,6 +173,8 @@ const components = [
 
   BrandAddDialogComponent,
   BrandEditDialogComponent,
+
+  AddUserComponent,
 
   DefaultDiscountsComponent,
   BrandDiscountsComponent,
@@ -271,6 +274,7 @@ const matcomponents = [
     AddProductComponent, CurrencyPadComponent, ShowVendorsComponent,
     ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent, VendorViewDialogComponent,
     BrandAddDialogComponent, BrandEditDialogComponent, ConvertToSaleDialogComponent,
+    AddUserComponent,
     DefaultDiscountsComponent,
     BrandDiscountsComponent, DeleteEnquiryDialogComponent,
     CustomerAddDialogComponent, CustomerEditDialogComponent, CustomerAddDialogComponent, AccountsReceivablesComponent,

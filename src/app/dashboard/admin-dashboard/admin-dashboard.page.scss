@@ -99,3 +99,16 @@
 // 	opacity: 0.6;
 
 // }
+
+.list-item {
+	display: grid;
+	grid-template-columns: 30px 2fr 1fr;
+	align-self: center;
+	padding: 8px;
+	border-bottom: 1px solid #e7e7e7;
+	width: 100%;
+	justify-self: center;
+	align-items: center;
+	font-size: 14px;
+	transition: 0.3s;
+}

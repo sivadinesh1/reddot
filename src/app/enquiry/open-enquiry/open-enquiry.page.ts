@@ -222,15 +222,14 @@ export class OpenEnquiryPage implements OnInit {
 
   }
 
-
   async search(param) {
 
     //main search
     this.enquiries$ = this._commonApiService
-      .searchEnquiries(this.userdata.center_id, this.submitForm.value.customerid,
-        this.submitForm.value.status,
-        this.submitForm.value.fromdate,
-        this.submitForm.value.todate,
+      .searchEnquiries({"centerid":this.userdata.center_id, "customerid": this.submitForm.value.customerid,
+        "status": this.submitForm.value.status,
+        "fromdate":this.submitForm.value.fromdate,
+        "todate": this.submitForm.value.todate}
 
       );
 

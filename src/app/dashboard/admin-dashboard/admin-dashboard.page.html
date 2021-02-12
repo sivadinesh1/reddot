@@ -19,9 +19,19 @@
 											[ngModel]="dateF"
 											(dateChange)="opsFromDateEvent('change', $event)"
 										/>
-										<input matEndDate matInput readonly placeholder="End date" [ngModel]="dateF" (dateChange)="opsToDateEvent('change', $event)" />
+										<input
+											matEndDate
+											matInput
+											readonly
+											placeholder="End date"
+											[ngModel]="dateF"
+											(dateChange)="opsToDateEvent('change', $event)"
+										/>
 									</mat-date-range-input>
-									<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+									<mat-datepicker-toggle
+										matSuffix
+										[for]="picker"
+									></mat-datepicker-toggle>
 									<mat-date-range-picker #picker></mat-date-range-picker>
 								</mat-form-field>
 							</div>
@@ -29,23 +39,69 @@
 					</ng-container>
 
 					<ng-container *ngIf="!iscustomenquiry">
-						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'yearly' }" (click)="reloadOpsSummary('yearly')">This year</div>
-						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'monthly' }" (click)="reloadOpsSummary('monthly')">This month</div>
-						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'weekly' }" (click)="reloadOpsSummary('weekly')">This week</div>
-						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'today' }" (click)="reloadOpsSummary('today')">Today</div>
+						<div
+							class="timeline"
+							[ngClass]="{ selected: selectedOpsOption == 'yearly' }"
+							(click)="reloadOpsSummary('yearly')"
+						>
+							This year
+						</div>
+						<div
+							class="timeline"
+							[ngClass]="{ selected: selectedOpsOption == 'monthly' }"
+							(click)="reloadOpsSummary('monthly')"
+						>
+							This month
+						</div>
+						<div
+							class="timeline"
+							[ngClass]="{ selected: selectedOpsOption == 'weekly' }"
+							(click)="reloadOpsSummary('weekly')"
+						>
+							This week
+						</div>
+						<div
+							class="timeline"
+							[ngClass]="{ selected: selectedOpsOption == 'today' }"
+							(click)="reloadOpsSummary('today')"
+						>
+							Today
+						</div>
 					</ng-container>
-					<div style="padding: 0px 0px 0px 10px" *ngIf="!iscustomenquiry" (click)="reloadOpsSummary('custom')">
-						<img class="cursor" src="/assets/images/svg/filter.svg" width="28px" height="28px" />
+					<div
+						style="padding: 0px 0px 0px 10px"
+						*ngIf="!iscustomenquiry"
+						(click)="reloadOpsSummary('custom')"
+					>
+						<img
+							class="cursor"
+							src="/assets/images/svg/filter.svg"
+							width="28px"
+							height="28px"
+						/>
 					</div>
-					<div style="padding: 0px 0px 0px 10px" *ngIf="iscustomenquiry" (click)="reloadOpsSummary('custom')">
-						<img class="cursor" src="/assets/images/svg/filter-orange.svg" width="28px" height="28px" />
+					<div
+						style="padding: 0px 0px 0px 10px"
+						*ngIf="iscustomenquiry"
+						(click)="reloadOpsSummary('custom')"
+					>
+						<img
+							class="cursor"
+							src="/assets/images/svg/filter-orange.svg"
+							width="28px"
+							height="28px"
+						/>
 					</div>
 				</div>
 				<div class="section1">
 					<div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
-								<img src="/assets/images/svg/enquiry.svg" width="22px" height="22px" />
+								<img
+									src="/assets/images/svg/enquiry.svg"
+									width="22px"
+									height="22px"
+								/>
 							</div>
 							<div class="card-head">Inquiry</div>
 						</div>
@@ -60,12 +116,16 @@
 								<div class="card-sub-data">In Progress</div>
 							</div>
 							<div (click)="navigateToInquiry('P')">
-								<div class="card-sub-head">{{this.enquirySummary?.invoiceready}}</div>
+								<div class="card-sub-head">
+									{{this.enquirySummary?.invoiceready}}
+								</div>
 								<div class="card-sub-data">Ready</div>
 							</div>
 
 							<div (click)="navigateToInquiry('E')">
-								<div class="card-sub-head">{{this.enquirySummary?.executed}}</div>
+								<div class="card-sub-head">
+									{{this.enquirySummary?.executed}}
+								</div>
 								<div class="card-sub-data">Closed</div>
 							</div>
 						</div>
@@ -74,7 +134,11 @@
 					<div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
-								<img src="/assets/images/svg/sales.svg" width="22px" height="22px" />
+								<img
+									src="/assets/images/svg/sales.svg"
+									width="22px"
+									height="22px"
+								/>
 							</div>
 							<div class="card-head">Sales</div>
 						</div>
@@ -85,7 +149,9 @@
 							</div>
 
 							<div>
-								<div class="card-sub-head">{{this.salesSummary?.completed}}</div>
+								<div class="card-sub-head">
+									{{this.salesSummary?.completed}}
+								</div>
 								<div class="card-sub-data">Completed</div>
 							</div>
 						</div>
@@ -94,7 +160,11 @@
 					<div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
-								<img src="/assets/images/svg/purchase.svg" width="22px" height="22px" />
+								<img
+									src="/assets/images/svg/purchase.svg"
+									width="22px"
+									height="22px"
+								/>
 							</div>
 							<div class="card-head">Purchase</div>
 						</div>
@@ -105,58 +175,184 @@
 							</div>
 
 							<div>
-								<div class="card-sub-head">{{this.purchaseSummary?.completed}}</div>
+								<div class="card-sub-head">
+									{{this.purchaseSummary?.completed}}
+								</div>
 								<div class="card-sub-data">Completed</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="horizontal-spacer">&nbsp;</div>
-				<div style="display: flex; justify-content: flex-end; padding: 16px">
-					<div class="timeline selected">Overview</div>
-					<div class="timeline">Clients</div>
-					<div class="timeline">Account</div>
-					<div class="timeline">Payments</div>
-					<div style="text-align: center; padding: 0px 16px; align-self: flex-end"><span class="material-icons"> date_range </span></div>
-				</div>
 
 				<div class="section2">
-					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 200px; width: 100%">
-						<div style="background-color: #3246d3; display: grid; align-content: center">
-							<div style="color: #fff; opacity: 0.9; font-size: 24px; text-align: center">{{this?.yearly_turnover | currency: "INR"}}</div>
-							<div style="width: 100px; height: 60px; color: #fff; opacity: 0.9; padding: 10px">Yearly Turnover</div>
+					<div
+						style="
+							display: grid;
+							grid-template-columns: 1fr 1fr;
+							gap: 10px;
+							height: 200px;
+							width: 100%;
+						"
+					>
+						<div
+							style="
+								background-color: #3246d3;
+								display: grid;
+								align-content: center;
+							"
+						>
+							<div
+								style="
+									color: #fff;
+									opacity: 0.9;
+									font-size: 24px;
+									text-align: center;
+								"
+							>
+								{{this?.yearly_turnover | currency: "INR"}}
+							</div>
+							<div
+								style="
+									width: 100px;
+									height: 60px;
+									color: #fff;
+									opacity: 0.9;
+									padding: 10px;
+								"
+							>
+								Yearly Turnover
+							</div>
 						</div>
-						<div style="background-color: dodgerblue; display: grid; align-content: center">
-							<div style="color: #fff; opacity: 0.9; font-size: 24px; text-align: left; padding: 0px 10px">
+						<div
+							style="
+								background-color: dodgerblue;
+								display: grid;
+								align-content: center;
+							"
+						>
+							<div
+								style="
+									color: #fff;
+									opacity: 0.9;
+									font-size: 24px;
+									text-align: left;
+									padding: 0px 10px;
+								"
+							>
 								{{this.centerSummary?.active_customers}}
 							</div>
-							<div style="width: 100px; height: 60px; color: #fff; opacity: 0.9; padding: 10px">Enterprise Clients</div>
-							<div style="color: #fff; opacity: 0.9; font-size: 24px; text-align: left; padding: 0px 10px">
+							<div
+								style="
+									width: 100px;
+									height: 60px;
+									color: #fff;
+									opacity: 0.9;
+									padding: 10px;
+								"
+							>
+								Enterprise Clients
+							</div>
+							<div
+								style="
+									color: #fff;
+									opacity: 0.9;
+									font-size: 24px;
+									text-align: left;
+									padding: 0px 10px;
+								"
+							>
 								{{this.centerSummary?.active_vendors}}
 							</div>
-							<div style="width: 100px; height: 60px; color: #fff; opacity: 0.9; padding: 10px">Suppliers</div>
+							<div
+								style="
+									width: 100px;
+									height: 60px;
+									color: #fff;
+									opacity: 0.9;
+									padding: 10px;
+								"
+							>
+								Suppliers
+							</div>
 						</div>
 					</div>
 					<div style="display: grid; background-color: #fff; width: 100%">
-						<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; justify-items: center; background-color: #fff">
-							<div>
-								<div style="font-size: larger">{{this.salesTotal | currency: "INR"}}</div>
+						<div
+							style="
+								display: grid;
+								grid-template-columns: 1fr 1fr 1fr;
+								gap: 16px;
+							"
+						>
+							<div
+								style="
+									background-color: aliceblue;
+									display: grid;
+									place-content: center;
+								"
+							>
+								<div style="font-size: larger">
+									{{this.salesTotal | currency: "INR"}}
+								</div>
 								<div style="font-size: medium; opacity: 0.9">Today Sales</div>
 							</div>
-							<div>
-								<div style="font-size: larger">{{this.centerReceivablesTotal | currency: "INR"}}</div>
-								<div style="font-size: medium; opacity: 0.9">Receivables Total</div>
+							<div
+								style="
+									background-color: #f5a5a5;
+									display: grid;
+									place-content: center;
+								"
+							>
+								<div style="font-size: larger">
+									{{this.centerReceivablesTotal | currency: "INR"}}
+								</div>
+								<div style="font-size: medium; opacity: 0.9">
+									Outstanding Total
+								</div>
 							</div>
-							<div>
-								<div style="font-size: larger">{{this.paymentsTotal | currency: "INR"}}</div>
-								<div style="font-size: medium; opacity: 0.9">Payments Total</div>
+							<div
+								style="
+									background-color: aliceblue;
+									display: grid;
+									place-content: center;
+								"
+							>
+								<div style="font-size: larger">
+									{{this.paymentsTotal | currency: "INR"}}
+								</div>
+								<div style="font-size: medium; opacity: 0.9">
+									Payments Total
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="right; background-color: #f2f2f2">&nbsp;</div>
+			<div class="right; background-color: #f2f2f2">
+				<div
+					style="
+						text-align: center;
+						font-size: 16px;
+						font-weight: 500;
+						color: #234;
+						background-color: mediumturquoise;
+						padding: 10px 0px;
+					"
+				>
+					Top 10 Payment Outstanding
+				</div>
+				<div
+					*ngFor="let item of outstandingBalanceList ? outstandingBalanceList : []; let idx = index"
+					class="list-item row-color"
+					(click)="goCustomerFinancials(item.id)"
+				>
+					<div style="text-align: left">{{ idx + 1 }}</div>
+					<div style="text-align: left">{{ item.name }}</div>
+					<div>{{ item.balance_amt }}</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </ion-content>

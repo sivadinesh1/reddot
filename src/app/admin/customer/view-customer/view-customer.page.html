@@ -3,10 +3,20 @@
 		<div class="header">
 			<div>
 				<div>List of Active Customers</div>
-				<div style="font-size: 12px; color: #797979">showing {{pageLength }} Records</div>
+				<div style="font-size: 12px; color: #797979">
+					showing {{pageLength }} Records
+				</div>
 			</div>
 			<div>
-				<button appPreventDoubleClick (throttledClick)="add()" [throttleTime]="500" mat-raised-button color="primary">+ Add Customers</button>
+				<button
+					appPreventDoubleClick
+					(throttledClick)="add()"
+					[throttleTime]="500"
+					mat-raised-button
+					color="primary"
+				>
+					+ Add Customers
+				</button>
 			</div>
 		</div>
 
@@ -23,7 +33,13 @@
 				></ion-searchbar>
 			</div>
 			<div class="actions">
-				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportToExcel()" />
+				<img
+					src="/assets/images/svg/download-excel.svg"
+					style="cursor: pointer"
+					width="32px"
+					height="32px"
+					(click)="exportToExcel()"
+				/>
 			</div>
 		</div>
 
@@ -33,12 +49,24 @@
 					<table mat-table [dataSource]="dataSource" multiTemplateDataRows>
 						<ng-container matColumnDef="name">
 							<th mat-header-cell *matHeaderCellDef>Name</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.name}}</td>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-title"
+								data-label="Name"
+							>
+								{{element.name}}
+							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="address1">
 							<th mat-header-cell *matHeaderCellDef>Additional Info</th>
-							<td mat-cell *matCellDef="let element" class="m-card-sub-title" data-label="Form type">
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-sub-title"
+								data-label="Form type"
+							>
 								<div style="padding: 3px">{{element.name}}</div>
 								<div style="padding: 3px">{{element.address1}}</div>
 								<div style="padding: 3px">{{element.address2 | nullna}}</div>
@@ -46,19 +74,48 @@
 						</ng-container>
 
 						<ng-container matColumnDef="financial">
-							<th mat-header-cell *matHeaderCellDef style="text-align: left">Financials</th>
-							<td mat-cell *matCellDef="let element" class="m-card-sub-title" data-label="Form type">
+							<th mat-header-cell *matHeaderCellDef style="text-align: left">
+								Financials
+							</th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-sub-title"
+								data-label="Form type"
+							>
 								<div
 									(click)="goCustomerFinancials(element)"
-									style="display: grid; grid-template-columns: 50px 1fr; line-height: 24px; cursor: pointer"
+									style="
+										display: grid;
+										grid-template-columns: 1fr 2fr;
+										line-height: 24px;
+										cursor: pointer;
+									"
 								>
-									<div style="place-self: center"><img src="/assets/images/svg/money.svg" width="22px" height="22px" />&nbsp;</div>
-									<div>
+									<div style="text-align: left">
 										<div>
-											<span style="color: grey; font-size: 13px"> Credit Balance</span>
+											<span style="color: grey; font-size: 13px"> Credit </span>
 										</div>
 										<div>
-											<span style="color: blue"> {{element.credit_amt | nullzero | currency: "INR"}}</span>
+											<span style="color: blue">
+												{{element.credit_amt | nullzero | currency:
+												"INR"}}</span
+											>
+										</div>
+									</div>
+									<div
+										style="border-left: 1px solid #f2f2f2; padding-left: 10px"
+									>
+										<div>
+											<span style="color: grey; font-size: 13px">
+												Outstanding
+											</span>
+										</div>
+										<div>
+											<span style="color: blue">
+												{{element.balance_amt | nullzero | currency:
+												"INR"}}</span
+											>
 										</div>
 									</div>
 								</div>
@@ -68,19 +125,35 @@
 						<ng-container matColumnDef="actions">
 							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
 							<td mat-cell *matCellDef="let element">
-								<button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{element: element}">
+								<button
+									mat-icon-button
+									[matMenuTriggerFor]="menu"
+									[matMenuTriggerData]="{element: element}"
+								>
 									<mat-icon>more_vert</mat-icon>
 								</button>
 							</td>
 						</ng-container>
 
-						<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+						<tr
+							mat-header-row
+							*matHeaderRowDef="displayedColumns; sticky: true"
+						></tr>
 
-						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+						<tr
+							class="example-element-row"
+							mat-row
+							*matRowDef="let row; columns: displayedColumns;"
+						></tr>
 					</table>
-					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
+					<div [hidden]="isTableHasData" class="center-message">
+						No Data available.
+					</div>
 				</div>
-				<mat-paginator [pageSizeOptions]="[50, 100]" showFirstLastButtons></mat-paginator>
+				<mat-paginator
+					[pageSizeOptions]="[50, 100]"
+					showFirstLastButtons
+				></mat-paginator>
 			</div>
 			<mat-menu #menu="matMenu">
 				<ng-template matMenuContent let-element="element">
