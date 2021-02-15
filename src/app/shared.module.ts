@@ -50,9 +50,11 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatStepperModule, MatStep, MatHorizontalStepper } from '@angular/material/stepper';
-
-
+import {
+	MatStepperModule,
+	MatStep,
+	MatHorizontalStepper,
+} from '@angular/material/stepper';
 
 import { AddProductComponent } from './components/add-product/add-product.component';
 import { CurrencyPadComponent } from './components/currency-pad/currency-pad.component';
@@ -62,7 +64,6 @@ import { ShowVendorsComponent } from './components/show-vendors/show-vendors.com
 import { AutoFocusDirective } from './util/directives/auto-focus.directive';
 import { FocusedDirective } from './util/directives/focused-directive';
 import { ShowHidePasswordComponent } from './components/show-hide-password/show-hide-password.component';
-
 
 import { WindowComponent } from './components/window.component';
 
@@ -75,9 +76,6 @@ import { VendorAddDialogComponent } from './components/vendors/vendor-add-dialog
 import { CustomerEditDialogComponent } from './components/customers/customer-edit-dialog/customer-edit-dialog.component';
 import { CustomerAddDialogComponent } from './components/customers/customer-add-dialog/customer-add-dialog.component';
 import { CustomerViewDialogComponent } from './components/customers/customer-view-dialog/customer-view-dialog.component';
-
-
-
 
 import { LoadingComponent } from './components/loading/loading.component';
 import { MessagesComponent } from './components/messages/messages.component';
@@ -108,7 +106,7 @@ import { PurchaseEntryDialogComponent } from './components/purchase/purchase-ent
 import { FilterPipe } from './util/pipes/filter.pipe';
 import { EnquiryViewDialogComponent } from './components/enquiry/enquiry-view-dialog/enquiry-view-dialog.component';
 import { WhatsappDialogComponent } from './components/social/whatsapp/whatsapp-dialog/whatsapp-dialog.component';
-import { NgxSpinnerModule } from "ngx-spinner";
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { NumericDirective } from './util/directives/numeric.directive';
 import { DisableControlDirective } from './util/directives/disable-control.directive';
@@ -119,171 +117,192 @@ import { SearchDialogComponent } from './components/search/search-dialog/search-
 import { SettingsDialogComponent } from './components/settings/settings-dialog/settings-dialog.component';
 import { InventoryReportsDialogComponent } from './components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
 import { AddUserComponent } from './components/users/add-user/add-user.component';
-
+import { EnquiryPrintComponent } from './components/enquiry-print/enquiry-print.component';
 
 const components = [
+	NullToQuotePipe,
+	NullToZeroPipe,
+	NullToDashPipe,
+	NullToNaPipe,
+	CheckBooleanPipe,
+	SupDatePipe,
+	CustomPipe,
+	NoNullPipe,
+	TruncatePipe,
+	UrlidPipe,
+	SafePipe,
+	EscapeHtmlPipe,
+	DayWeekPipe,
+	ZeroToValPipe,
 
-  NullToQuotePipe,
-  NullToZeroPipe,
-  NullToDashPipe,
-  NullToNaPipe,
-  CheckBooleanPipe,
-  SupDatePipe,
-  CustomPipe,
-  NoNullPipe,
-  TruncatePipe,
-  UrlidPipe,
-  SafePipe,
-  EscapeHtmlPipe,
-  DayWeekPipe,
-  ZeroToValPipe,
+	FilterPipe,
 
-  FilterPipe,
+	AddProductComponent,
+	SearchDialogComponent,
+	SettingsDialogComponent,
+	InventoryReportsDialogComponent,
 
-  AddProductComponent,
-  SearchDialogComponent,
-  SettingsDialogComponent,
-  InventoryReportsDialogComponent,
+	VendorEditDialogComponent,
+	VendorAddDialogComponent,
 
-  VendorEditDialogComponent,
-  VendorAddDialogComponent,
+	CustomerAddDialogComponent,
+	CustomerEditDialogComponent,
+	CustomerPaymentDialogComponent,
 
-  CustomerAddDialogComponent,
-  CustomerEditDialogComponent,
-  CustomerPaymentDialogComponent,
+	SalesInvoiceDialogComponent,
+	SalesReturnDialogComponent,
+	SaleReturnViewComponent,
+	SaleReturnReceiveComponent,
+	PurchaseEntryDialogComponent,
+	EnquiryViewDialogComponent,
 
-  SalesInvoiceDialogComponent,
-  SalesReturnDialogComponent,
-  SaleReturnViewComponent,
-  SaleReturnReceiveComponent,
-  PurchaseEntryDialogComponent,
-  EnquiryViewDialogComponent,
+	WhatsappDialogComponent,
 
-  WhatsappDialogComponent,
+	DeleteBrandDialogComponent,
+	DeleteVendorDialogComponent,
 
-  DeleteBrandDialogComponent,
-  DeleteVendorDialogComponent,
+	DeleteEnquiryDialogComponent,
 
-  DeleteEnquiryDialogComponent,
+	AccountsReceivablesComponent,
 
-  AccountsReceivablesComponent,
+	ProductAddDialogComponent,
+	ProductEditDialogComponent,
 
-  ProductAddDialogComponent,
-  ProductEditDialogComponent,
+	BrandAddDialogComponent,
+	BrandEditDialogComponent,
 
-  BrandAddDialogComponent,
-  BrandEditDialogComponent,
+	AddUserComponent,
 
-  AddUserComponent,
+	DefaultDiscountsComponent,
+	BrandDiscountsComponent,
 
-  DefaultDiscountsComponent,
-  BrandDiscountsComponent,
+	VendorViewDialogComponent,
 
-  VendorViewDialogComponent,
+	CustomerViewDialogComponent,
+	CustomerEditShippingAddressComponent,
 
-  CustomerViewDialogComponent,
-  CustomerEditShippingAddressComponent,
+	SuccessMessageDialogComponent,
 
-  SuccessMessageDialogComponent,
+	CurrencyPadComponent,
+	InvoiceSuccessComponent,
+	EnquiryPrintComponent,
+	AddMoreEnquiryComponent,
+	ShowVendorsComponent,
 
-  CurrencyPadComponent,
-  InvoiceSuccessComponent,
-  AddMoreEnquiryComponent,
-  ShowVendorsComponent,
+	ChangeTaxComponent,
+	ChangeMrpComponent,
 
-  ChangeTaxComponent,
-  ChangeMrpComponent,
+	ConvertToSaleDialogComponent,
 
-  ConvertToSaleDialogComponent,
+	AutoFocusDirective,
+	FocusedDirective,
+	PreventDoubleClickDirective,
 
-  AutoFocusDirective,
-  FocusedDirective,
-  PreventDoubleClickDirective,
+	NumericDirective,
+	DisableControlDirective,
 
-  NumericDirective,
-  DisableControlDirective,
+	ShowHidePasswordComponent,
 
-  ShowHidePasswordComponent,
+	HeaderComponent,
+	LeftMenuComponent,
 
-  HeaderComponent,
-  LeftMenuComponent,
-
-
-  WindowComponent,
-  LoadingComponent,
-  MessagesComponent,
-
-
+	WindowComponent,
+	LoadingComponent,
+	MessagesComponent,
 ];
 
 const matcomponents = [
-  MatFormFieldModule,
-  MatInputModule,
-  MatIconModule,
-  MatSliderModule,
-  MatSelectModule,
-  MatRadioModule,
+	MatFormFieldModule,
+	MatInputModule,
+	MatIconModule,
+	MatSliderModule,
+	MatSelectModule,
+	MatRadioModule,
 
-  MatSlideToggleModule,
-  MatExpansionModule,
-  MatDatepickerModule,
-  MatCardModule,
-  MatNativeDateModule,
+	MatSlideToggleModule,
+	MatExpansionModule,
+	MatDatepickerModule,
+	MatCardModule,
+	MatNativeDateModule,
 
-  MatToolbarModule,
-  MatTooltipModule,
-  MatTableModule,
-  MatMenuModule,
-  MatPaginatorModule,
-  MatSortModule,
-  MatChipsModule,
-  MatButtonToggleModule,
-  MatButtonModule,
+	MatToolbarModule,
+	MatTooltipModule,
+	MatTableModule,
+	MatMenuModule,
+	MatPaginatorModule,
+	MatSortModule,
+	MatChipsModule,
+	MatButtonToggleModule,
+	MatButtonModule,
 
-  MatSidenavModule,
-  MatListModule,
-  MatCheckboxModule,
-  MatAutocompleteModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule,
-  MatBottomSheetModule,
-  MatDialogModule,
-  MatSnackBarModule,
-  MatBadgeModule,
-  MatTabsModule,
-  MatStepperModule,
-
+	MatSidenavModule,
+	MatListModule,
+	MatCheckboxModule,
+	MatAutocompleteModule,
+	MatProgressBarModule,
+	MatProgressSpinnerModule,
+	MatBottomSheetModule,
+	MatDialogModule,
+	MatSnackBarModule,
+	MatBadgeModule,
+	MatTabsModule,
+	MatStepperModule,
 ];
 
-
 @NgModule({
-  declarations: [...components, PreventCutCopyPasteDirective, ArrowDivDirective],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    IonicModule,
-    RouterModule,
-    ...matcomponents,
-    NgxSpinnerModule
-  ],
-  exports: [
-    ...matcomponents, ...components, IonicModule, NgxSpinnerModule
-  ],
-  entryComponents: [
-    AddProductComponent, CurrencyPadComponent, ShowVendorsComponent,
-    ChangeTaxComponent, ChangeMrpComponent, VendorAddDialogComponent, VendorViewDialogComponent,
-    BrandAddDialogComponent, BrandEditDialogComponent, ConvertToSaleDialogComponent,
-    AddUserComponent,
-    DefaultDiscountsComponent,
-    BrandDiscountsComponent, DeleteEnquiryDialogComponent,
-    CustomerAddDialogComponent, CustomerEditDialogComponent, CustomerAddDialogComponent, AccountsReceivablesComponent,
-    SuccessMessageDialogComponent, DeleteBrandDialogComponent, DeleteVendorDialogComponent,
-    CustomerViewDialogComponent, CustomerEditShippingAddressComponent, InvoiceSuccessComponent, AddMoreEnquiryComponent,
-    SalesInvoiceDialogComponent, PurchaseEntryDialogComponent, EnquiryViewDialogComponent, WhatsappDialogComponent,
-    SalesReturnDialogComponent, SaleReturnViewComponent, SaleReturnReceiveComponent, SearchDialogComponent, SettingsDialogComponent, InventoryReportsDialogComponent
-
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+	declarations: [
+		...components,
+		PreventCutCopyPasteDirective,
+		ArrowDivDirective,
+	],
+	imports: [
+		CommonModule,
+		ReactiveFormsModule,
+		FormsModule,
+		IonicModule,
+		RouterModule,
+		...matcomponents,
+		NgxSpinnerModule,
+	],
+	exports: [...matcomponents, ...components, IonicModule, NgxSpinnerModule],
+	entryComponents: [
+		AddProductComponent,
+		CurrencyPadComponent,
+		ShowVendorsComponent,
+		ChangeTaxComponent,
+		ChangeMrpComponent,
+		VendorAddDialogComponent,
+		VendorViewDialogComponent,
+		BrandAddDialogComponent,
+		BrandEditDialogComponent,
+		ConvertToSaleDialogComponent,
+		AddUserComponent,
+		DefaultDiscountsComponent,
+		BrandDiscountsComponent,
+		DeleteEnquiryDialogComponent,
+		CustomerAddDialogComponent,
+		CustomerEditDialogComponent,
+		CustomerAddDialogComponent,
+		AccountsReceivablesComponent,
+		SuccessMessageDialogComponent,
+		DeleteBrandDialogComponent,
+		DeleteVendorDialogComponent,
+		CustomerViewDialogComponent,
+		CustomerEditShippingAddressComponent,
+		InvoiceSuccessComponent,
+		EnquiryPrintComponent,
+		AddMoreEnquiryComponent,
+		SalesInvoiceDialogComponent,
+		PurchaseEntryDialogComponent,
+		EnquiryViewDialogComponent,
+		WhatsappDialogComponent,
+		SalesReturnDialogComponent,
+		SaleReturnViewComponent,
+		SaleReturnReceiveComponent,
+		SearchDialogComponent,
+		SettingsDialogComponent,
+		InventoryReportsDialogComponent,
+	],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SharedModule { }
+export class SharedModule {}

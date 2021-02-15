@@ -66,9 +66,9 @@
 					<ng-template [ngTemplateOutlet]="LEDGERTABLE"></ng-template>
 				</mat-tab>
 
-				<mat-tab label="Transactions">
+				<!-- <mat-tab label="Cash Transactions">
 					<ng-template [ngTemplateOutlet]="TXNTABLE"></ng-template>
-				</mat-tab>
+				</mat-tab> -->
 			</mat-tab-group>
 		</div>
 	</div>
@@ -144,7 +144,12 @@
 								Payment Status
 							</th>
 							<td mat-cell *matCellDef="let element" class="m-txt-field">
-								{{(element.payment_status)}}
+								<ng-container *ngIf="element.payment_status === 'NOT PAID' ">
+									{{(element.payment_status)}} [{{element.aging_days}} Days]
+								</ng-container>
+								<ng-container *ngIf="element.payment_status !== 'NOT PAID' ">
+									{{(element.payment_status)}}
+								</ng-container>
 							</td>
 						</ng-container>
 
@@ -282,7 +287,7 @@
 									color: #333333;
 									font-size: 14px;
 									font-weight: 500;
-									width: 150px;
+									width: 120px;
 								"
 							>
 								Payment Date
@@ -291,7 +296,7 @@
 								mat-cell
 								*matCellDef="let element"
 								class="m-card-title"
-								style="color: #333333; font-weight: 500; width: 150px"
+								style="color: #333333; font-weight: 500; width: 120px"
 							>
 								{{(element.pymt_date )}}
 							</td>
@@ -305,7 +310,7 @@
 									color: #333333;
 									font-size: 14px;
 									font-weight: 500;
-									width: 150px;
+									width: 120px;
 								"
 							>
 								Invoice #
@@ -314,7 +319,7 @@
 								mat-cell
 								*matCellDef="let element"
 								class="m-card-title"
-								style="width: 150px"
+								style="width: 120px"
 							>
 								INV-{{(element.invoice_no )}}
 							</td>
@@ -328,7 +333,7 @@
 									color: #333333;
 									font-size: 14px;
 									font-weight: 500;
-									width: 150px;
+									width: 120px;
 								"
 							>
 								Invoice Date
@@ -336,7 +341,7 @@
 							<td
 								mat-cell
 								*matCellDef="let element"
-								style="width: 150px"
+								style="width: 120px"
 								class="m-card-title"
 							>
 								{{(element.invoice_date )}}
@@ -352,7 +357,7 @@
 									color: #333333;
 									font-size: 14px;
 									font-weight: 500;
-									width: 150px;
+									width: 120px;
 								"
 							>
 								Invoice Amount
@@ -360,7 +365,7 @@
 							<td
 								mat-cell
 								*matCellDef="let element"
-								style="width: 150px"
+								style="width: 120px"
 								class="m-curr-field"
 							>
 								{{element.invoice_amount | currency: "INR"}}
@@ -375,7 +380,7 @@
 									color: #333333;
 									font-size: 14px;
 									font-weight: 500;
-									width: 150px;
+									width: 120px;
 								"
 							>
 								Pymt #
@@ -383,10 +388,23 @@
 							<td
 								mat-cell
 								*matCellDef="let element"
-								style="width: 150px"
+								style="width: 120px"
 								class="m-card-title"
 							>
 								{{(element.payment_no)}}
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="pymtmode">
+							<th
+								mat-header-cell
+								*matHeaderCellDef
+								style="color: #333333; font-size: 14px; font-weight: 500"
+							>
+								Payment Mode
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title">
+								{{(element.pymt_mode)}}
 							</td>
 						</ng-container>
 
@@ -456,7 +474,7 @@
 									width: 150px;
 								"
 							>
-								Applied Amount
+								Paid Amount
 							</th>
 							<td
 								mat-cell

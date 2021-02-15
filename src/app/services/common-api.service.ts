@@ -291,6 +291,17 @@ export class CommonApiService {
 		);
 	}
 
+	printEstimate(submitForm) {
+		let headers = new HttpHeaders();
+		headers = headers.set('Accept', 'application/pdf');
+
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/print/estimate-pdf`,
+			submitForm,
+			{ headers: headers, responseType: 'blob' as 'json' }
+		);
+	}
+
 	addProduct(submitForm) {
 		return this.httpClient.post<any>(
 			this.restApiUrl + '/api/admin/add-product',

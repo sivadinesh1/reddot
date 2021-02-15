@@ -1,0 +1,67 @@
+<div class="content">
+	<div class="header" style="display: flex; color: blue; font-size: 18px">
+		<div>
+			<label id="example-radio-group-label">Choose your Print Options</label>
+		</div>
+		<div>
+			<img
+				src="/assets/images/svg/close.svg"
+				(click)="cancel()"
+				width="20px"
+				height="20px"
+			/>
+		</div>
+	</div>
+
+	<div>
+		<form [formGroup]="submitForm">
+			<mat-form-field appearance="fill">
+				<mat-select
+					formControlName="printtype"
+					value="{selPrintType}"
+					tabindex="-1"
+					(selectionChange)="printTypeChange($event)"
+					required
+				>
+					<mat-option value="estimateprint">Estimate Print</mat-option>
+					<mat-option value="stockissueprint">Stock Issue Print</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</form>
+	</div>
+
+	<div
+		style="padding: 0px 8px 10px 10px"
+		*ngIf="selPrintType === 'stockissueprint'"
+	>
+		<mat-list-item *ngFor="let item of checkbox_list">
+			<mat-checkbox
+				[(ngModel)]="item.checked"
+				(change)="list_change()"
+				[disabled]="item.disabled"
+				[labelPosition]="item.labelPosition"
+				>{{ item.name }}</mat-checkbox
+			>
+		</mat-list-item>
+	</div>
+
+	<div class="invoice-details">
+		<div>
+			<button mat-stroked-button color="primary" (click)="cancel()">
+				Close
+			</button>
+		</div>
+		&nbsp;&nbsp;
+		<div>
+			<button
+				*ngIf="isPrint"
+				[disabled]="selectedoptionArr.length === 0"
+				(click)="printEstimate()"
+				mat-raised-button
+				color="primary"
+			>
+				Print
+			</button>
+		</div>
+	</div>
+</div>

@@ -137,10 +137,17 @@
 								*matHeaderCellDef
 								style="color: #333333; font-size: 14px; font-weight: 500"
 							>
-								Payment Status
+								Aging Days
 							</th>
+
 							<td mat-cell *matCellDef="let element" class="m-txt-field">
-								{{(element.payment_status)}}
+								<ng-container *ngIf="element.aging_days >= 31">
+									<span style="color: red"> {{(element.aging_days)}} </span>
+								</ng-container>
+
+								<ng-container *ngIf="element.aging_days <= 30">
+									<span style="color: blue"> {{(element.aging_days)}} </span>
+								</ng-container>
 							</td>
 						</ng-container>
 

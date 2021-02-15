@@ -73,9 +73,9 @@
 							</td>
 						</ng-container>
 
-						<ng-container matColumnDef="financial">
+						<ng-container matColumnDef="credit">
 							<th mat-header-cell *matHeaderCellDef style="text-align: left">
-								Financials
+								Credit
 							</th>
 							<td
 								mat-cell
@@ -83,7 +83,7 @@
 								class="m-card-sub-title"
 								data-label="Form type"
 							>
-								<div
+								<!-- <div
 									(click)="goCustomerFinancials(element)"
 									style="
 										display: grid;
@@ -91,33 +91,57 @@
 										line-height: 24px;
 										cursor: pointer;
 									"
+								> -->
+								<div
+									style="text-align: left; cursor: pointer"
+									(click)="goCustomerFinancials(element)"
 								>
-									<div style="text-align: left">
-										<div>
-											<span style="color: grey; font-size: 13px"> Credit </span>
-										</div>
-										<div>
-											<span style="color: blue">
-												{{element.credit_amt | nullzero | currency:
-												"INR"}}</span
-											>
-										</div>
+									<div>
+										<span style="color: blue">
+											{{element.credit_amt | nullzero | currency: "INR"}}</span
+										>
 									</div>
-									<div
-										style="border-left: 1px solid #f2f2f2; padding-left: 10px"
-									>
-										<div>
-											<span style="color: grey; font-size: 13px">
-												Outstanding
-											</span>
-										</div>
-										<div>
-											<span style="color: blue">
-												{{element.balance_amt | nullzero | currency:
-												"INR"}}</span
-											>
-										</div>
+								</div>
+
+								<!-- </div> -->
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="outstanding">
+							<th mat-header-cell *matHeaderCellDef>Outstanding</th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-sub-title"
+								data-label="Form type"
+							>
+								<div
+									style="
+										border-left: 1px solid #f2f2f2;
+										padding-left: 10px;
+										cursor: pointer;
+									"
+									(click)="goCustomerFinancials(element)"
+								>
+									<div>
+										<span style="color: blue">
+											{{element.balance_amt | nullzero | currency: "INR"}}</span
+										>
 									</div>
+								</div>
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="lastpaiddate">
+							<th mat-header-cell *matHeaderCellDef>Last Paid Date</th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-sub-title"
+								data-label="Form type"
+							>
+								<div style="padding: 3px">
+									{{element.last_paid_date | nulldash }}
 								</div>
 							</td>
 						</ng-container>
