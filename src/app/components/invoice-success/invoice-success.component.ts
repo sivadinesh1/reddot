@@ -21,6 +21,7 @@ export class InvoiceSuccessComponent implements OnInit {
 	paletteColour: any;
 	isPrint = true;
 	data: any;
+	checked = false;
 
 	selectedoptionArr = ['Original for Buyer', 'Duplicate For Transporter'];
 
@@ -82,6 +83,7 @@ export class InvoiceSuccessComponent implements OnInit {
 		let submitForm = {
 			sale_id: this.invoice_id,
 			print_type: this.selectedoptionArr,
+			print_ship_to: this.checked,
 		};
 
 		this._commonApiService.printInvoice(submitForm).subscribe((data: any) => {

@@ -19,6 +19,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { CustomerPaymentDialogComponent } from 'src/app/components/customers/customer-payment-dialog/customer-payment-dialog.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
+import {
+	FormGroup,
+	FormControl,
+	Validators,
+	FormBuilder,
+} from '@angular/forms';
+import { ShowStatementComponent } from 'src/app/components/reports/show-statement/show-statement.component';
 
 @Component({
 	selector: 'app-financials-customer',
@@ -48,6 +55,22 @@ export class FinancialsCustomerPage implements OnInit {
 	totalOutstandingBalance = 0;
 
 	customer_credit_amount = 0;
+
+	submitForm: FormGroup;
+	statementForm: FormGroup;
+
+	fromdate = new Date();
+	todate = new Date();
+	minDate = new Date();
+	maxDate = new Date();
+
+	startdate = new Date();
+	enddate = new Date();
+
+	searchType = [
+		{ name: 'All', id: 'all', checked: true },
+		{ name: 'Invoice Only', id: 'invonly', checked: false },
+	];
 
 	@ViewChild('searchbartab1', { static: true }) searchbartab1: IonSearchbar;
 	@ViewChild('searchbartab2', { static: true }) searchbartab2: IonSearchbar;
@@ -124,7 +147,8 @@ export class FinancialsCustomerPage implements OnInit {
 		private _dialog: MatDialog,
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
-		private _router: Router
+		private _router: Router,
+		private _fb: FormBuilder
 	) {
 		this.userdata$ = this._authservice.currentUser;
 
@@ -141,6 +165,29 @@ export class FinancialsCustomerPage implements OnInit {
 				this._cdr.markForCheck();
 			});
 
+		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+
+		this.startdate.setTime(this.minDate.getTime() - dateOffset);
+
+		this.userdata$ = this._authservice.currentUser;
+
+		this.submitForm = this._fb.group({
+			todate: [this.todate, Validators.required],
+			fromdate: [this.fromdate, Validators.required],
+			invoiceno: new FormControl({
+				value: '',
+				disabled: true,
+			}),
+			searchtype: new FormControl('all'),
+		});
+
+		this.statementForm = this._fb.group({
+			startdate: [this.startdate, Validators.required],
+			enddate: [this.enddate, Validators.required],
+			customerid: [],
+		});
+
 		this._route.data.subscribe((data) => {
 			this.customerdata = data['customerdata'][0];
 			this.customer_id = this.customerdata.id;
@@ -150,9 +197,10 @@ export class FinancialsCustomerPage implements OnInit {
 		this._route.params.subscribe((params) => {
 			this.center_id = params['center_id'];
 			this.customer_id = params['customer_id'];
-
-			this._cdr.markForCheck();
+			this.initForm();
+			this.initStatementForm();
 			this.init();
+			this._cdr.markForCheck();
 		});
 	}
 
@@ -161,9 +209,38 @@ export class FinancialsCustomerPage implements OnInit {
 			this.reloadSaleInvoiceByCustomer();
 			this.reloadCustomerLedger();
 			this.reloadPaymentsByCustomer();
-			this.reloadPymtTransactionByCustomer();
+			// this.reloadPymtTransactionByCustomer();
 			this.updateCustomerCreditBalance();
 		}
+	}
+
+	initForm() {
+		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+
+		this.submitForm.patchValue({
+			customerid: 'all',
+
+			todate: this.todate,
+			fromdate: this.fromdate,
+			invoiceno: '',
+			searchtype: 'all',
+		});
+
+		this._cdr.detectChanges();
+	}
+
+	initStatementForm() {
+		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		this.startdate.setTime(this.minDate.getTime() - dateOffset);
+
+		this.submitForm.patchValue({
+			startdate: this.startdate,
+			enddate: this.enddate,
+			customerid: this.customer_id,
+		});
+
+		this._cdr.detectChanges();
 	}
 
 	reloadCustomerLedger() {
@@ -194,6 +271,21 @@ export class FinancialsCustomerPage implements OnInit {
 		this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
 	}
 
+	radioClickHandle() {
+		if (this.submitForm.value.searchtype === 'invonly') {
+		} else {
+			this.submitForm.value.invoiceno = '';
+			this.submitForm.patchValue({
+				invoiceno: '',
+				searchtype: 'all',
+			});
+
+			this.submitForm.controls['invoiceno'].setErrors(null);
+			this.submitForm.controls['invoiceno'].markAsTouched();
+		}
+		this._cdr.detectChanges();
+	}
+
 	applyFilter3(filterValue: string) {
 		filterValue = filterValue.trim(); // Remove whitespace
 		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
@@ -216,6 +308,22 @@ export class FinancialsCustomerPage implements OnInit {
 		} else {
 			this.isTableHasData = false;
 		}
+	}
+
+	fromDateSelected($event) {
+		this.fromdate = $event.target.value;
+	}
+
+	toDateSelected($event) {
+		this.todate = $event.target.value;
+	}
+
+	startDateSelected($event) {
+		this.startdate = $event.target.value;
+	}
+
+	endDateSelected($event) {
+		this.enddate = $event.target.value;
 	}
 
 	applyFilter1(filterValue: string) {
@@ -274,16 +382,25 @@ export class FinancialsCustomerPage implements OnInit {
 	}
 
 	reloadSaleInvoiceByCustomer() {
-		this._commonApiService
-			.getSaleInvoiceByCustomer(this.center_id, this.customer_id)
-			.subscribe((data: any) => {
-				// DnD - code to add a "key/Value" in every object of array
-				this.saleInvoicedataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
+		let center_id = this.center_id;
+		let fromdate = this.submitForm.value.fromdate;
+		let todate = this.submitForm.value.todate;
 
+		let searchtype = this.submitForm.value.searchtype;
+		let invoiceno = this.submitForm.value.invoiceno;
+
+		this._commonApiService
+			.getSaleInvoiceByCustomer({
+				centerid: center_id,
+				customerid: this.customer_id,
+				fromdate: fromdate,
+				todate: todate,
+
+				searchtype: searchtype,
+				invoiceno: invoiceno,
+			})
+			.subscribe((data: any) => {
+				this.saleInvoicedataSource = data.body;
 				this.saleInvoicedataSource.sort = this.sort;
 				this.pageLength = data.length;
 
@@ -292,15 +409,24 @@ export class FinancialsCustomerPage implements OnInit {
 	}
 
 	reloadPaymentsByCustomer() {
+		let center_id = this.center_id;
+		let fromdate = this.submitForm.value.fromdate;
+		let todate = this.submitForm.value.todate;
+
+		let searchtype = this.submitForm.value.searchtype;
+		let invoiceno = this.submitForm.value.invoiceno;
 		this._commonApiService
-			.getPaymentsByCustomer(this.center_id, this.customer_id)
+			.getPaymentsByCustomer({
+				centerid: center_id,
+				customerid: this.customer_id,
+				fromdate: fromdate,
+				todate: todate,
+
+				searchtype: searchtype,
+				invoiceno: invoiceno,
+			})
 			.subscribe((data: any) => {
-				// DnD - code to add a "key/Value" in every object of array
-				this.paymentdataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
+				this.paymentdataSource.data = data.body;
 
 				this.paymentdataSource.sort = this.sort;
 				this.pageLength = data.length;
@@ -381,5 +507,27 @@ export class FinancialsCustomerPage implements OnInit {
 				this.customer_credit_amount = data.credit_amt;
 				this._cdr.markForCheck();
 			});
+	}
+
+	openDialog(): void {
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '50%';
+		dialogConfig.height = '100%';
+		dialogConfig.data = {
+			centerid: this.center_id,
+			customerid: this.customer_id,
+			startdate: this.statementForm.value.startdate,
+			enddate: this.statementForm.value.enddate,
+		};
+
+		dialogConfig.position = { top: '0', right: '0' };
+
+		const dialogRef = this._dialog.open(ShowStatementComponent, dialogConfig);
+
+		dialogRef.afterClosed().subscribe((result) => {
+			console.log('The dialog was closed');
+		});
 	}
 }

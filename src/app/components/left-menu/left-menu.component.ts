@@ -58,8 +58,13 @@ export class LeftMenuComponent implements OnInit {
 			icon: '/assets/images/svg/purchase.svg',
 		},
 		{
-			name: 'PAYMENTS',
+			name: 'RECEIVABLES',
 			link: '/home/payments',
+			icon: '/assets/images/svg/money.svg',
+		},
+		{
+			name: 'PAYMENTS',
+			link: '/home/vpayments',
 			icon: '/assets/images/svg/money.svg',
 		},
 		{

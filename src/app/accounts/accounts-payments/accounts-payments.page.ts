@@ -16,10 +16,17 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, tap } from 'rxjs/operators';
+
 import { CustomerPaymentDialogComponent } from 'src/app/components/customers/customer-payment-dialog/customer-payment-dialog.component';
 import { AccountsReceivablesComponent } from 'src/app/components/accounts/accounts-receivables/accounts-receivables.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
+import {
+	FormGroup,
+	FormControl,
+	Validators,
+	FormBuilder,
+} from '@angular/forms';
+import { filter, tap, map, startWith } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-accounts-payments',
@@ -43,6 +50,14 @@ export class AccountsPaymentsPage implements OnInit {
 
 	customerslist: any;
 	customersOriglist: any;
+
+	filteredCustomer: Observable<any[]>;
+	customer_lis: Customer[];
+
+	searchType = [
+		{ name: 'All', id: 'all', checked: true },
+		{ name: 'Invoice Only', id: 'invonly', checked: false },
+	];
 
 	@ViewChild('searchbartab2', { static: true }) searchbartab2: IonSearchbar;
 	@ViewChild('searchbartab1', { static: true }) searchbartab1: IonSearchbar;
@@ -96,6 +111,12 @@ export class AccountsPaymentsPage implements OnInit {
 
 	tabIndex = 0;
 	invoicesdata: any;
+	submitForm: FormGroup;
+
+	fromdate = new Date();
+	todate = new Date();
+	minDate = new Date();
+	maxDate = new Date();
 
 	constructor(
 		private _authservice: AuthenticationService,
@@ -103,14 +124,32 @@ export class AccountsPaymentsPage implements OnInit {
 		private _dialog: MatDialog,
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
-		private _router: Router
+		private _router: Router,
+		private _fb: FormBuilder
 	) {
+		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 		this.userdata$ = this._authservice.currentUser;
+
+		this.submitForm = this._fb.group({
+			customerid: ['all'],
+			customerctrl: new FormControl({
+				value: 'All Customers',
+				disabled: false,
+			}),
+			todate: [this.todate, Validators.required],
+			fromdate: [this.fromdate, Validators.required],
+			invoiceno: new FormControl({
+				value: '',
+				disabled: true,
+			}),
+			searchtype: new FormControl('all'),
+		});
 
 		this.userdata$
 			.pipe(filter((data) => data !== null))
 			.subscribe((data: any) => {
-				this._authservice.setCurrentMenu('PAYMENTS');
+				this._authservice.setCurrentMenu('RECEIVABLES');
 				this.userdata = data;
 				this.ready = 1;
 				this.init();
@@ -125,12 +164,67 @@ export class AccountsPaymentsPage implements OnInit {
 		});
 	}
 
-	init() {
-		if (this.ready === 1) {
-			this.reloadSaleInvoiceByCenter(this.userdata.center_id);
-			this.reloadPaymentsByCenter(this.userdata.center_id);
-			this.reloadTransactionsByCenter(this.userdata.center_id);
+	initForm() {
+		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+
+		this.submitForm.patchValue({
+			customerid: 'all',
+			customerctrl: 'All Customers',
+			todate: this.todate,
+			fromdate: this.fromdate,
+			invoiceno: '',
+			searchtype: 'all',
+		});
+		this.submitForm.get('customerctrl').enable();
+		this._cdr.detectChanges();
+	}
+
+	filtercustomer(value: any) {
+		if (typeof value == 'object') {
+			return this.customer_lis.filter(
+				(customer) =>
+					customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
+			);
+		} else if (typeof value == 'string') {
+			return this.customer_lis.filter(
+				(customer) =>
+					customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0
+			);
 		}
+	}
+
+	async init() {
+		if (this.ready === 1) {
+			this.reloadSaleInvoiceByCenter();
+			this.reloadPaymentsByCenter();
+			//this.reloadTransactionsByCenter(this.userdata.center_id);
+		}
+
+		this._commonApiService
+			.getAllActiveCustomers(this.userdata.center_id)
+			.subscribe((data: any) => {
+				this.customer_lis = data;
+
+				this.filteredCustomer = this.submitForm.controls[
+					'customerctrl'
+				].valueChanges.pipe(
+					startWith(''),
+					map((customer) =>
+						customer ? this.filtercustomer(customer) : this.customer_lis.slice()
+					)
+				);
+			});
+	}
+
+	getPosts(event) {
+		this.submitForm.patchValue({
+			customerid: event.option.value.id,
+			customerctrl: event.option.value.name,
+		});
+
+		this.tabIndex = 0;
+		this._cdr.markForCheck();
 	}
 
 	ngOnInit() {}
@@ -141,17 +235,28 @@ export class AccountsPaymentsPage implements OnInit {
 		this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
 	}
 
+	fromDateSelected($event) {
+		this.fromdate = $event.target.value;
+	}
+
+	toDateSelected($event) {
+		this.todate = $event.target.value;
+	}
+
 	async tabClick($event) {
-		// Ledger Tab
 		if ($event.index === 0) {
-			this.reloadSaleInvoiceByCenter(this.userdata.center_id);
+			const dateOffset = 24 * 60 * 60 * 1000 * 30;
+			this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+			this.initForm();
+			this.reloadSaleInvoiceByCenter();
 		} else if ($event.index === 1) {
-			this.reloadPaymentsByCenter(this.userdata.center_id);
-		} else if ($event.index === 2) {
-			this.reloadTransactionsByCenter(this.userdata.center_id);
+			const dateOffset = 24 * 60 * 60 * 1000 * 30;
+			this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+			this.initForm();
+			this.reloadPaymentsByCenter();
 		}
 
-		this._cdr.markForCheck();
+		this._cdr.detectChanges();
 	}
 
 	resetTab2() {
@@ -178,17 +283,17 @@ export class AccountsPaymentsPage implements OnInit {
 		}
 	}
 
-	applyFilter3(filterValue: string) {
-		filterValue = filterValue.trim(); // Remove whitespace
-		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-		this.pymttransactionsdataSource.filter = filterValue;
+	// applyFilter3(filterValue: string) {
+	// 	filterValue = filterValue.trim(); // Remove whitespace
+	// 	filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+	// 	this.pymttransactionsdataSource.filter = filterValue;
 
-		if (this.pymttransactionsdataSource.filteredData.length > 0) {
-			this.isTableHasData = true;
-		} else {
-			this.isTableHasData = false;
-		}
-	}
+	// 	if (this.pymttransactionsdataSource.filteredData.length > 0) {
+	// 		this.isTableHasData = true;
+	// 	} else {
+	// 		this.isTableHasData = false;
+	// 	}
+	// }
 
 	applyFilterTab1(filterValue: string) {
 		filterValue = filterValue.trim(); // Remove whitespace
@@ -202,12 +307,37 @@ export class AccountsPaymentsPage implements OnInit {
 		}
 	}
 
-	reloadPaymentsByCenter(center_id) {
+	applyFilterTab2(filterValue: string) {
+		filterValue = filterValue.trim(); // Remove whitespace
+		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+		this.paymentdataSource.filter = filterValue;
+
+		if (this.paymentdataSource.filteredData.length > 0) {
+			this.isTableHasData = true;
+		} else {
+			this.isTableHasData = false;
+		}
+	}
+
+	reloadPaymentsByCenter() {
+		let fromdate = this.submitForm.value.fromdate;
+		let todate = this.submitForm.value.todate;
+		let customerid = this.submitForm.value.customerid;
+		let searchtype = this.submitForm.value.searchtype;
+		let invoiceno = this.submitForm.value.invoiceno;
+
 		this._commonApiService
-			.getPaymentsByCenter(center_id)
+			.getPaymentsByCenter({
+				centerid: this.userdata.center_id,
+				fromdate: fromdate,
+				todate: todate,
+				customerid: customerid,
+				searchtype: searchtype,
+				invoiceno: invoiceno,
+			})
 			.subscribe((data: any) => {
 				// DnD - code to add a "key/Value" in every object of array
-				this.paymentdataSource.data = data.map((el) => {
+				this.paymentdataSource.data = data.body.map((el) => {
 					var o = Object.assign({}, el);
 					o.isExpanded = false;
 					return o;
@@ -237,11 +367,24 @@ export class AccountsPaymentsPage implements OnInit {
 			});
 	}
 
-	reloadSaleInvoiceByCenter(center_id) {
+	reloadSaleInvoiceByCenter() {
+		let fromdate = this.submitForm?.value.fromdate;
+		let todate = this.submitForm?.value.todate;
+		let customerid = this.submitForm?.value.customerid;
+		let searchtype = this.submitForm?.value.searchtype;
+		let invoiceno = this.submitForm?.value.invoiceno;
+
 		this._commonApiService
-			.getSaleInvoiceByCenter(center_id)
+			.getSaleInvoiceByCenter({
+				centerid: this.userdata.center_id,
+				fromdate: fromdate,
+				todate: todate,
+				customerid: customerid,
+				searchtype: searchtype,
+				invoiceno: invoiceno,
+			})
 			.subscribe((data: any) => {
-				this.invoicesdata = data;
+				this.invoicesdata = data.body;
 
 				this.saleInvoicedataSource.data = this.invoicesdata.filter(
 					(data: any) => {
@@ -249,18 +392,95 @@ export class AccountsPaymentsPage implements OnInit {
 					}
 				);
 
-				// DnD - code to add a "key/Value" in every object of array
-				// this.saleInvoicedataSource.data = data.map(el => {
-				//   var o = Object.assign({}, el);
-				//   o.isExpanded = false;
-				//   return o;
-				// })
+				this.saleInvoicedataSource.sort = this.sort;
+				this.pageLength = data.length;
+
+				this._cdr.markForCheck();
+			});
+	}
+
+	searchPendingPayments() {
+		let fromdate = this.submitForm.value.fromdate;
+		let todate = this.submitForm.value.todate;
+		let customerid = this.submitForm.value.customerid;
+		let searchtype = this.submitForm.value.searchtype;
+		let invoiceno = this.submitForm.value.invoiceno;
+
+		this._commonApiService
+			.getSaleInvoiceByCenter({
+				centerid: this.userdata.center_id,
+				fromdate: fromdate,
+				todate: todate,
+				customerid: customerid,
+				searchtype: searchtype,
+				invoiceno: invoiceno,
+			})
+			.subscribe((data: any) => {
+				this.invoicesdata = data.body;
+
+				this.saleInvoicedataSource.data = this.invoicesdata.filter(
+					(data: any) => {
+						return data.payment_status !== 'PAID';
+					}
+				);
 
 				this.saleInvoicedataSource.sort = this.sort;
 				this.pageLength = data.length;
 
 				this._cdr.markForCheck();
 			});
+	}
+
+	searchReceivedPayments() {
+		let fromdate = this.submitForm.value.fromdate;
+		let todate = this.submitForm.value.todate;
+		let customerid = this.submitForm.value.customerid;
+		let searchtype = this.submitForm.value.searchtype;
+		let invoiceno = this.submitForm.value.invoiceno;
+
+		this._commonApiService
+			.getPaymentsByCenter({
+				centerid: this.userdata.center_id,
+				fromdate: fromdate,
+				todate: todate,
+				customerid: customerid,
+				searchtype: searchtype,
+				invoiceno: invoiceno,
+			})
+			.subscribe((data: any) => {
+				this.paymentdataSource = data.body;
+
+				this.paymentdataSource.sort = this.sort;
+				this.pageLength = data.length;
+
+				this._cdr.markForCheck();
+			});
+	}
+
+	clearPendingPymtCustomers() {
+		this.submitForm.patchValue({
+			customerid: 'all',
+			customerctrl: 'All Customers',
+		});
+		this._cdr.markForCheck();
+		this.searchPendingPayments();
+	}
+
+	radioClickHandle() {
+		if (this.submitForm.value.searchtype === 'invonly') {
+			this.submitForm.get('customerctrl').disable();
+		} else {
+			this.submitForm.value.invoiceno = '';
+			this.submitForm.patchValue({
+				invoiceno: '',
+				searchtype: 'all',
+			});
+
+			this.submitForm.get('customerctrl').enable();
+			this.submitForm.controls['invoiceno'].setErrors(null);
+			this.submitForm.controls['invoiceno'].markAsTouched();
+		}
+		this._cdr.detectChanges();
 	}
 
 	viewAllCustomers() {
@@ -273,7 +493,6 @@ export class AccountsPaymentsPage implements OnInit {
 		]);
 	}
 
-	// can be deleted not used
 	addPayments() {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
@@ -346,5 +565,9 @@ export class AccountsPaymentsPage implements OnInit {
 						}
 					});
 			});
+	}
+
+	showCustomerStatement() {
+		this._router.navigate([`/home/statement-reports`]);
 	}
 }

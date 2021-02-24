@@ -118,6 +118,10 @@ import { SettingsDialogComponent } from './components/settings/settings-dialog/s
 import { InventoryReportsDialogComponent } from './components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
 import { AddUserComponent } from './components/users/add-user/add-user.component';
 import { EnquiryPrintComponent } from './components/enquiry-print/enquiry-print.component';
+import { ShowStatementComponent } from './components/reports/show-statement/show-statement.component';
+import { VendorPaymentDialogComponent } from './components/vendors/vendor-payment-dialog/vendor-payment-dialog.component';
+import { AccountsPayablesComponent } from './components/accounts/accounts-payables/accounts-payables.component';
+import { ShowVendorStatementComponent } from './components/reports/show-vendor-statement/show-vendor-statement.component';
 
 const components = [
 	NullToQuotePipe,
@@ -148,7 +152,7 @@ const components = [
 	CustomerAddDialogComponent,
 	CustomerEditDialogComponent,
 	CustomerPaymentDialogComponent,
-
+	VendorPaymentDialogComponent,
 	SalesInvoiceDialogComponent,
 	SalesReturnDialogComponent,
 	SaleReturnViewComponent,
@@ -164,6 +168,7 @@ const components = [
 	DeleteEnquiryDialogComponent,
 
 	AccountsReceivablesComponent,
+	AccountsPayablesComponent,
 
 	ProductAddDialogComponent,
 	ProductEditDialogComponent,
@@ -209,6 +214,8 @@ const components = [
 	WindowComponent,
 	LoadingComponent,
 	MessagesComponent,
+	ShowStatementComponent,
+	ShowVendorStatementComponent,
 ];
 
 const matcomponents = [
@@ -284,6 +291,7 @@ const matcomponents = [
 		CustomerEditDialogComponent,
 		CustomerAddDialogComponent,
 		AccountsReceivablesComponent,
+		AccountsPayablesComponent,
 		SuccessMessageDialogComponent,
 		DeleteBrandDialogComponent,
 		DeleteVendorDialogComponent,
@@ -302,6 +310,8 @@ const matcomponents = [
 		SearchDialogComponent,
 		SettingsDialogComponent,
 		InventoryReportsDialogComponent,
+		ShowStatementComponent,
+		ShowVendorStatementComponent,
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

@@ -1,9 +1,21 @@
-<div class="sidenav_container" [@onSideNavChange]="sideNavState ? 'open' : 'close'">
+<div
+	class="sidenav_container"
+	[@onSideNavChange]="sideNavState ? 'open' : 'close'"
+>
 	<div fxLayout="column" fxLayoutGap="10px" style="height: 100%">
 		<div class="wrapper">
 			<div class="md" *ngFor="let page of pages">
-				<a class="header-menu-item" (click)="routeTo(page.name, page.link)" [ngClass]="{ selectedmenu: clickedItem === page?.name }">
-					<img src="{{ page?.icon }}" width="32px" height="32px" class="img-menu-box" />
+				<a
+					class="header-menu-item"
+					(click)="routeTo(page.name, page.link)"
+					[ngClass]="{ selectedmenu: clickedItem === page?.name }"
+				>
+					<img
+						src="{{ page?.icon }}"
+						width="24px"
+						height="24px"
+						class="img-menu-box"
+					/>
 
 					<span [@animateText]="linkText ? 'show' : 'show'">
 						<span class="side-menu-lbl">{{ page?.name }}</span>

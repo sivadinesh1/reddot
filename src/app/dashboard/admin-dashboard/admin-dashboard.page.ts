@@ -52,6 +52,7 @@ export class AdminDashboardPage implements OnInit {
 	dateF: any = new Date();
 
 	outstandingBalanceList: any;
+	topClientsList: any;
 
 	constructor(
 		private _authservice: AuthenticationService,
@@ -85,6 +86,7 @@ export class AdminDashboardPage implements OnInit {
 				this.reloadCenterReceivablesSummary();
 				this.reloadPaymentsByCustomer();
 				this.reloadOutstandingBalance();
+				this.reloadTopClients();
 				this._cdr.markForCheck();
 			});
 	}
@@ -195,9 +197,21 @@ export class AdminDashboardPage implements OnInit {
 
 	reloadOutstandingBalance() {
 		this._commonApiService
-			.getOutstandingBalance({ center_id: this.userdata.center_id, limit: 10 })
+			.getOutstandingBalance({ center_id: this.userdata.center_id, limit: 5 })
 			.subscribe((data: any) => {
 				this.outstandingBalanceList = data.body;
+
+				this._cdr.markForCheck();
+			});
+
+		this._cdr.markForCheck();
+	}
+
+	reloadTopClients() {
+		this._commonApiService
+			.getTopClients({ center_id: this.userdata.center_id, limit: 5 })
+			.subscribe((data: any) => {
+				this.topClientsList = data.body;
 
 				this._cdr.markForCheck();
 			});

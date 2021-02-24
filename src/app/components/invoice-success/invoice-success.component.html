@@ -1,22 +1,59 @@
 <div class="content">
 	<div class="header" style="display: flex; color: blue; font-size: 18px">
-		<div><label id="example-radio-group-label">Choose your Print Options</label></div>
-		<div><img src="/assets/images/svg/close.svg" (click)="cancel()" width="20px" height="20px" /></div>
+		<div>
+			<label id="example-radio-group-label">Choose your Print Options</label>
+		</div>
+		<div>
+			<img
+				src="/assets/images/svg/close.svg"
+				(click)="cancel()"
+				width="20px"
+				height="20px"
+			/>
+		</div>
 	</div>
 
-	<div style="padding: 0px 8px 10px 10px">
+	<div style="padding: 0px 8px 10px 10px; font-size: 16px">
 		<mat-list-item *ngFor="let item of checkbox_list">
-			<mat-checkbox [(ngModel)]="item.checked" (change)="list_change()" [disabled]="item.disabled" [labelPosition]="item.labelPosition">{{
-				item.name
-			}}</mat-checkbox>
+			<mat-checkbox
+				[(ngModel)]="item.checked"
+				(change)="list_change()"
+				[disabled]="item.disabled"
+				[labelPosition]="item.labelPosition"
+				>{{ item.name }}</mat-checkbox
+			>
 		</mat-list-item>
+	</div>
+	<div style="text-align: right; font-size: 13px; padding: 2px 0">
+		<mat-checkbox class="example-margin" [(ngModel)]="checked"
+			>Include Ship To</mat-checkbox
+		>
+		<!-- <mat-checkbox
+				[(ngModel)]="item.checked"
+				(change)="list_change()"
+				[disabled]="item.disabled"
+				[labelPosition]="item.labelPosition"
+				>Include Ship To</mat-checkbox
+			> -->
 	</div>
 
 	<div class="invoice-details">
-		<div><button mat-stroked-button color="primary" (click)="cancel()">Close</button></div>
+		<div>
+			<button mat-stroked-button color="primary" (click)="cancel()">
+				Close
+			</button>
+		</div>
 		&nbsp;&nbsp;
 		<div>
-			<button *ngIf="isPrint" [disabled]="selectedoptionArr.length === 0" (click)="printActn()" mat-raised-button color="primary">Print</button>
+			<button
+				*ngIf="isPrint"
+				[disabled]="selectedoptionArr.length === 0"
+				(click)="printActn()"
+				mat-raised-button
+				color="primary"
+			>
+				Print
+			</button>
 		</div>
 	</div>
 </div>

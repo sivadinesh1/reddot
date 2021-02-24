@@ -87,6 +87,10 @@ export class HeaderComponent implements OnInit {
 		this._router.navigate([`/home/enquiry`]);
 	}
 
+	showCustomerStatement() {
+		this._router.navigate([`/home/statement-reports`]);
+	}
+
 	showNewSales() {
 		this._router.navigate([`home/sales/edit/0`]);
 	}

@@ -657,9 +657,26 @@ export class CommonApiService {
 		);
 	}
 
+	addVendorPymtReceived(submitForm) {
+		return this.httpClient.post<any>(
+			this.restApiUrl + '/api/purchaseaccounts/add-vendor-payment-received',
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
 	addBulkPymtReceived(submitForm) {
 		return this.httpClient.post<any>(
 			this.restApiUrl + '/api/accounts/add-bulk-payment-received',
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
+	addBulkVendorPymtReceived(submitForm) {
+		return this.httpClient.post<any>(
+			this.restApiUrl +
+				'/api/purchaseaccounts/add-bulk-vendor-payment-received',
 			submitForm,
 			{ observe: 'response' }
 		);
@@ -730,15 +747,47 @@ export class CommonApiService {
 		);
 	}
 
-	getSaleInvoiceByCustomer(center_id, customer_id) {
+	getLedgerVendor(center_id, vendor_id) {
 		return this.httpClient.get(
-			`${this.restApiUrl}/api/accounts/get-sale-invoice-customer/${center_id}/${customer_id}`
+			`${this.restApiUrl}/api/purchaseaccounts/get-ledger-vendor/${center_id}/${vendor_id}`
+		);
+	}
+
+	getSaleInvoiceByCustomer(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/accounts/get-sale-invoice-customer`,
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
+	getPurhaseInvoiceByVendor(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/purchaseaccounts/get-purchase-invoice-vendor`,
+			submitForm,
+			{ observe: 'response' }
 		);
 	}
 
 	getSaleMasterData(sale_id) {
 		return this.httpClient.get(
 			`${this.restApiUrl}/api/sale/get-sale-master/${sale_id}`
+		);
+	}
+
+	getCustomerStatement(statementForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/reports/customer-statement`,
+			statementForm,
+			{ observe: 'response' }
+		);
+	}
+
+	getVendorStatement(statementForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/reports/vendor-statement`,
+			statementForm,
+			{ observe: 'response' }
 		);
 	}
 
@@ -762,9 +811,19 @@ export class CommonApiService {
 		);
 	}
 
-	getPaymentsByCustomer(center_id, customer_id) {
-		return this.httpClient.get(
-			`${this.restApiUrl}/api/accounts/get-payments-customer/${center_id}/${customer_id}`
+	getPaymentsByCustomer(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/accounts/get-payments-customer`,
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
+	getPaymentsByVendor(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/purchaseaccounts/get-payments-vendor`,
+			submitForm,
+			{ observe: 'response' }
 		);
 	}
 
@@ -774,9 +833,25 @@ export class CommonApiService {
 		);
 	}
 
-	getPaymentsByCenter(center_id) {
+	getPymtTransactionByVendor(center_id, vendor_id) {
 		return this.httpClient.get(
-			`${this.restApiUrl}/api/accounts/get-payments-center/${center_id}`
+			`${this.restApiUrl}/api/purchaseaccounts/get-pymt-transactions-vendor/${center_id}/${vendor_id}`
+		);
+	}
+
+	getPaymentsByCenter(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/accounts/get-payments-center`,
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
+	getVendorPaymentsByCenter(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/purchaseaccounts/get-vendor-payments-center`,
+			submitForm,
+			{ observe: 'response' }
 		);
 	}
 
@@ -786,9 +861,19 @@ export class CommonApiService {
 		);
 	}
 
-	getSaleInvoiceByCenter(center_id) {
-		return this.httpClient.get(
-			`${this.restApiUrl}/api/accounts/get-sale-invoice-center/${center_id}`
+	getSaleInvoiceByCenter(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/accounts/get-sale-invoice-center`,
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
+	getPurchaseInvoiceByCenter(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/purchaseaccounts/get-purchase-invoice-center`,
+			submitForm,
+			{ observe: 'response' }
 		);
 	}
 
@@ -865,6 +950,14 @@ export class CommonApiService {
 	getOutstandingBalance(submitForm) {
 		return this.httpClient.post(
 			`${this.restApiUrl}/api/admin/get-outstanding-balance`,
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
+	getTopClients(submitForm) {
+		return this.httpClient.post(
+			`${this.restApiUrl}/api/dashboard/get-top-clients`,
 			submitForm,
 			{ observe: 'response' }
 		);
