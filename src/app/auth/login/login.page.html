@@ -15,23 +15,57 @@
 					<mat-label>Mobile Number</mat-label>
 					<input matInput formControlName="phone" required />
 
-					<mat-error *ngIf="loginForm.get('phone').hasError('required')"> Phone # is <strong>required</strong> </mat-error>
-					<mat-error *ngIf="loginForm.get('phone').hasError('invalidCountryPhone')"> Wrong phone # <strong>format</strong> </mat-error>
+					<mat-error *ngIf="loginForm.get('phone').hasError('required')">
+						Phone # is <strong>required</strong>
+					</mat-error>
+					<mat-error
+						*ngIf="loginForm.get('phone').hasError('invalidCountryPhone')"
+					>
+						Wrong phone # <strong>format</strong>
+					</mat-error>
 				</mat-form-field>
 
 				<mat-form-field class="example-full-width">
 					<mat-label>Password</mat-label>
-					<input matInput placeholder="Password" [type]="hide ? 'password' : 'text'" formControlName="password" required />
-					<mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-					<mat-error *ngIf="loginForm.get('password').hasError('required')"> Password is <strong>required</strong> </mat-error>
+					<input
+						matInput
+						placeholder="Password"
+						[type]="hide ? 'password' : 'text'"
+						formControlName="password"
+						required
+					/>
+					<mat-icon matSuffix style="cursor: pointer" (click)="hide = !hide"
+						>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon
+					>
+					<mat-error *ngIf="loginForm.get('password').hasError('required')">
+						Password is <strong>required</strong>
+					</mat-error>
 				</mat-form-field>
 
 				<div class="error">{{ responsemsg }}</div>
 
-				<ion-button class="login-btn" type="submit" expand="block" [disabled]="!loginForm.valid">Log In</ion-button>
+				<ion-button
+					class="login-btn"
+					type="submit"
+					expand="block"
+					[disabled]="!loginForm.valid"
+					>Log In</ion-button
+				>
 				<ion-row class="other-auth-options-row">
-					<ion-button class="forgot-btn" fill="clear" [routerLink]="['/auth/forgot-password']"> Forgot Password? </ion-button>
-					<ion-button class="signup-btn" fill="clear" [routerLink]="['/auth/signup']"> Sign Up! </ion-button>
+					<ion-button
+						class="forgot-btn"
+						fill="clear"
+						[routerLink]="['/auth/forgot-password']"
+					>
+						Forgot Password?
+					</ion-button>
+					<ion-button
+						class="signup-btn"
+						fill="clear"
+						[routerLink]="['/auth/signup']"
+					>
+						Sign Up!
+					</ion-button>
 				</ion-row>
 			</form>
 		</div>

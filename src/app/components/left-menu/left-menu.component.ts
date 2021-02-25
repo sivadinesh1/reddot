@@ -38,7 +38,7 @@ export class LeftMenuComponent implements OnInit {
 
 	admin_pages: Page[] = [
 		{
-			name: 'HOME',
+			name: 'DASHBOARD',
 			link: '/home/admin-dashboard',
 			icon: '/assets/images/svg/dashboard-black.svg',
 		},
@@ -60,7 +60,7 @@ export class LeftMenuComponent implements OnInit {
 		{
 			name: 'RECEIVABLES',
 			link: '/home/payments',
-			icon: '/assets/images/svg/money.svg',
+			icon: '/assets/images/svg/receivables.svg',
 		},
 		{
 			name: 'PAYMENTS',
@@ -76,7 +76,7 @@ export class LeftMenuComponent implements OnInit {
 
 	user_pages: Page[] = [
 		{
-			name: 'HOME',
+			name: 'DASHBOARD',
 			link: '/home/dashboard',
 			icon: '/assets/images/svg/dashboard-black.svg',
 		},

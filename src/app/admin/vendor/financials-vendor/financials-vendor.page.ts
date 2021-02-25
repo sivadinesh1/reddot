@@ -76,14 +76,10 @@ export class FinancialsVendorPage implements OnInit {
 	@ViewChild('searchbartab1', { static: true }) searchbartab1: IonSearchbar;
 	@ViewChild('searchbartab2', { static: true }) searchbartab2: IonSearchbar;
 	@ViewChild('searchbartab3', { static: true }) searchbartab3: IonSearchbar;
-	@ViewChild('searchbartab4', { static: true }) searchbartab4: IonSearchbar;
 
 	@ViewChild('InvoiceTablePaginator') invoiceTablePaginator: MatPaginator;
 	@ViewChild('PaymentTablePaginator') pymtTablePaginator: MatPaginator;
 	@ViewChild('LedgerTablePaginator') ledgerTablePaginator: MatPaginator;
-
-	@ViewChild('PymtTransactionTablePaginator')
-	pymttransactionTablePaginator: MatPaginator;
 
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild('epltable', { static: false }) epltable: ElementRef;
@@ -124,14 +120,6 @@ export class FinancialsVendorPage implements OnInit {
 		'paidamt',
 	];
 
-	pymtTxnDisplayedColumns: string[] = [
-		'pymtdate',
-		'pymtno',
-		'paidamt',
-		'paymode',
-		'payref',
-	];
-
 	// data sources
 	ledgerdataSource = new MatTableDataSource<any>();
 	purchaseInvoicedataSource = new MatTableDataSource<any>();
@@ -164,7 +152,7 @@ export class FinancialsVendorPage implements OnInit {
 				this._cdr.markForCheck();
 			});
 
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.startdate.setTime(this.minDate.getTime() - dateOffset);
@@ -214,7 +202,7 @@ export class FinancialsVendorPage implements OnInit {
 	}
 
 	initForm() {
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.submitForm.patchValue({
@@ -230,7 +218,7 @@ export class FinancialsVendorPage implements OnInit {
 	}
 
 	initStatementForm() {
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.startdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.submitForm.patchValue({
@@ -259,11 +247,10 @@ export class FinancialsVendorPage implements OnInit {
 	ngOnInit() {}
 
 	ngAfterViewInit() {
+		this.purchaseInvoicedataSource.data = [];
 		this.purchaseInvoicedataSource.paginator = this.invoiceTablePaginator;
 		this.paymentdataSource.paginator = this.pymtTablePaginator;
 		this.ledgerdataSource.paginator = this.ledgerTablePaginator;
-
-		this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
 	}
 
 	radioClickHandle() {
@@ -333,22 +320,6 @@ export class FinancialsVendorPage implements OnInit {
 		}
 	}
 
-	applyFilter4(filterValue: string) {
-		filterValue = filterValue.trim(); // Remove whitespace
-		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-		this.pymttransactionsdataSource.filter = filterValue;
-
-		if (this.pymttransactionsdataSource.filteredData.length > 0) {
-			this.isTableHasData = true;
-		} else {
-			this.isTableHasData = false;
-		}
-	}
-
-	resetTab4() {
-		this.searchbartab4.value = '';
-	}
-
 	resetTab2() {
 		this.searchbartab2.value = '';
 	}
@@ -369,8 +340,6 @@ export class FinancialsVendorPage implements OnInit {
 			this.reloadPaymentsByVendor();
 		} else if ($event.index === 2) {
 			this.reloadVendorLedger();
-		} else if ($event.index === 3) {
-			this.reloadPymtTransactionByVendor();
 		}
 
 		this._cdr.markForCheck();
@@ -395,10 +364,7 @@ export class FinancialsVendorPage implements OnInit {
 				invoiceno: invoiceno,
 			})
 			.subscribe((data: any) => {
-				this.purchaseInvoicedataSource = data.body;
-				this.purchaseInvoicedataSource.sort = this.sort;
-				this.pageLength = data.length;
-
+				this.purchaseInvoicedataSource.data = data.body;
 				this._cdr.markForCheck();
 			});
 	}
@@ -422,9 +388,6 @@ export class FinancialsVendorPage implements OnInit {
 			})
 			.subscribe((data: any) => {
 				this.paymentdataSource.data = data.body;
-
-				this.paymentdataSource.sort = this.sort;
-				this.pageLength = data.length;
 
 				this._cdr.markForCheck();
 			});

@@ -17,22 +17,15 @@
 			background-color: #f8f8fb;
 		"
 	>
-		<div
-			style="
-				align-self: center;
-				font-size: 16px;
-				padding: 8px 16px 8px 32px;
-				color: darkblue;
-			"
-		>
+		<div style="font-size: 16px; padding: 8px 16px 8px 32px; color: darkblue">
 			<div style="font-size: 12px; color: grey; padding: 6px 0px">
-				Credit Available
+				Excess Paid
 			</div>
 			<div>{{ vendordata.credit_amt | currency: "INR"}}</div>
 		</div>
 		<div style="font-size: 16px; padding: 8px 16px 8px 32px; color: darkblue">
 			<div style="font-size: 12px; color: grey; padding: 6px 0px">
-				Total Outstanding Balance
+				Pending Payments
 			</div>
 			<div style="font-size: 16px; color: red">
 				{{ this.totalOutstandingBalance | currency: "INR"}}
@@ -118,10 +111,6 @@
 
 				<mat-tab label="Payments">
 					<ng-template [ngTemplateOutlet]="PYMTTABLE"></ng-template>
-				</mat-tab>
-
-				<mat-tab label="Ledger">
-					<ng-template [ngTemplateOutlet]="LEDGERTABLE"></ng-template>
 				</mat-tab>
 			</mat-tab-group>
 		</div>
@@ -234,17 +223,31 @@
 						</div>
 					</div>
 				</form>
-				<ion-searchbar
-					autofocus
-					debounce="300"
-					placeholder="Type to search from Transactions"
-					#searchbartab1
-					show-cancel-button="focus"
-					(ionClear)="resetTab1()"
-					(ionInput)="applyFilter1($event.target.value)"
-				></ion-searchbar>
+				<div style="display: grid; grid-template-columns: 500px 1fr">
+					<div>
+						<ion-searchbar
+							autofocus
+							debounce="300"
+							placeholder="Type to search from results"
+							#searchbartab1
+							show-cancel-button="focus"
+							(ionClear)="resetTab1()"
+							(ionInput)="applyFilter1($event.target.value)"
+						></ion-searchbar>
+					</div>
+					<div
+						style="
+							text-align: left;
+							justify-self: right;
+							align-self: center;
+							font-style: italic;
+						"
+					>
+						Results: {{purchaseInvoicedataSource?.filteredData.length}} Rows
+					</div>
+				</div>
 
-				<div class="example-table-container" #epltable0>
+				<div class="example-table-container" #epltable>
 					<table
 						mat-table
 						[dataSource]="purchaseInvoicedataSource"
@@ -381,6 +384,7 @@
 				</div>
 				<mat-paginator
 					#InvoiceTablePaginator="matPaginator"
+					[pageSize]="100"
 					[pageSizeOptions]="[100, 200]"
 					showFirstLastButtons
 				></mat-paginator>
@@ -503,16 +507,32 @@
 						</div>
 					</div>
 				</form>
-				<ion-searchbar
-					autofocus
-					debounce="300"
-					placeholder="Type to search from Transactions"
-					#searchbartab1
-					show-cancel-button="focus"
-					(ionClear)="resetTab1()"
-					(ionInput)="applyFilter1($event.target.value)"
-				></ion-searchbar>
-				<div class="example-table-container" #epltable1>
+
+				<div style="display: grid; grid-template-columns: 500px 1fr">
+					<div>
+						<ion-searchbar
+							autofocus
+							debounce="300"
+							placeholder="Type to search from results"
+							#searchbartab1
+							show-cancel-button="focus"
+							(ionClear)="resetTab2()"
+							(ionInput)="applyFilter2($event.target.value)"
+						></ion-searchbar>
+					</div>
+					<div
+						style="
+							text-align: left;
+							justify-self: right;
+							align-self: center;
+							font-style: italic;
+						"
+					>
+						Results: {{paymentdataSource?.filteredData?.length}} Rows
+					</div>
+				</div>
+
+				<div class="example-table-container" #epltable0>
 					<table
 						mat-table
 						[dataSource]="paymentdataSource"
@@ -755,281 +775,6 @@
 					</button>
 				</ng-template>
 			</mat-menu>
-		</ng-container>
-	</ng-template>
-
-	<ng-template #LEDGERTABLE>
-		<ng-container>
-			<div class="example-container mat-elevation-z8">
-				<div style="display: grid; grid-template-columns: 1fr 100px">
-					<div class="search_box">
-						<ion-searchbar
-							autofocus
-							debounce="300"
-							placeholder="Type to search from Ledger"
-							#searchbartab3
-							show-cancel-button="focus"
-							(ionClear)="resetTab3()"
-							(ionInput)="applyFilter3($event.target.value)"
-						></ion-searchbar>
-					</div>
-					<div class="actions">
-						<img
-							src="/assets/images/svg/download-excel.svg"
-							style="cursor: pointer"
-							width="32px"
-							height="32px"
-						/>
-					</div>
-				</div>
-				<div class="example-table-container" #epltable>
-					<table
-						mat-table
-						[dataSource]="ledgerdataSource"
-						multiTemplateDataRows
-					>
-						<ng-container matColumnDef="ledgerdate">
-							<th
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Ledger Date
-							</th>
-							<td
-								mat-cell
-								*matCellDef="let element"
-								class="m-card-title"
-								style="color: #333333; font-weight: 500"
-							>
-								{{(element.ledger_date | date: 'dd/MMM/yyyy')}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="ledgerrefid">
-							<th
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Inv / Pay #
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.purchase_ref_id === null ?
-								element.vend_payment_ref_id : element.purchase_ref_id)}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="type">
-							<th
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Type
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{element.ledger_detail === 'purchase' ? 'Buy Materials' :
-								'Payments'}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="creditamt">
-							<th
-								class="m-curr-field"
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Credit
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">
-								{{element.credit_amt | currency: "INR"}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="debitamt">
-							<th
-								class="m-curr-field"
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Debit
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">
-								{{element.debit_amt | currency: "INR"}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="balamt">
-							<th
-								class="m-curr-field"
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Balance
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-curr-field">
-								{{element.balance_amt | currency: "INR"}}
-							</td>
-						</ng-container>
-
-						<tr
-							mat-header-row
-							*matHeaderRowDef="displayedColumns; sticky: true"
-						></tr>
-
-						<tr
-							class="example-element-row"
-							mat-row
-							*matRowDef="let row; columns: displayedColumns;"
-						></tr>
-					</table>
-					<div [hidden]="isTableHasData" class="center-message">
-						No Data available.
-					</div>
-				</div>
-				<mat-paginator
-					#LedgerTablePaginator="matPaginator"
-					[pageSizeOptions]="[100, 200]"
-					showFirstLastButtons
-				></mat-paginator>
-			</div>
-			<mat-menu #menu="matMenu">
-				<ng-template matMenuContent let-element="element">
-					<button mat-menu-item>
-						<mat-icon>edit </mat-icon>
-						<span>Edit</span>
-					</button>
-				</ng-template>
-			</mat-menu>
-		</ng-container>
-	</ng-template>
-
-	<ng-template #TXNTABLE>
-		<ng-container>
-			<div class="example-container mat-elevation-z8">
-				<div style="display: grid; grid-template-columns: 1fr 100px">
-					<div class="search_box">
-						<ion-searchbar
-							autofocus
-							debounce="300"
-							placeholder="Type to search from Transactions"
-							#searchbartab4
-							show-cancel-button="focus"
-							(ionClear)="resetTab4()"
-							(ionInput)="applyFilter4($event.target.value)"
-						></ion-searchbar>
-					</div>
-					<div class="actions">
-						<img
-							src="/assets/images/svg/download-excel.svg"
-							style="cursor: pointer"
-							width="32px"
-							height="32px"
-						/>
-					</div>
-				</div>
-				<div class="example-table-container" #epltable1>
-					<table
-						mat-table
-						[dataSource]="pymttransactionsdataSource"
-						multiTemplateDataRows
-					>
-						<ng-container matColumnDef="pymtdate">
-							<th
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Payment Date
-							</th>
-							<td
-								mat-cell
-								*matCellDef="let element"
-								class="m-card-title"
-								style="color: #333333; font-weight: 500"
-							>
-								{{(element.pymt_date | date: 'dd/MMM/yyyy')}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="pymtno">
-							<th
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Payment #
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.payment_no )}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="paidamt">
-							<th
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Paid Amount
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.payment_now_amt | currency: "INR" )}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="paymode">
-							<th
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Pay Mode
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.pymt_mode )}}
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="payref">
-							<th
-								mat-header-cell
-								*matHeaderCellDef
-								style="color: #333333; font-size: 14px; font-weight: 500"
-							>
-								Pymt Reference
-							</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title">
-								{{(element.pymt_ref)}}
-							</td>
-						</ng-container>
-
-						<tr
-							mat-header-row
-							*matHeaderRowDef="pymtTxnDisplayedColumns; sticky: true"
-						></tr>
-
-						<tr
-							class="example-element-row"
-							mat-row
-							*matRowDef="let row; columns: pymtTxnDisplayedColumns;"
-						></tr>
-					</table>
-					<div [hidden]="isTableHasData" class="center-message">
-						No Data available.
-					</div>
-				</div>
-				<mat-paginator
-					#PymtTransactionTablePaginator="matPaginator"
-					[pageSize]="100"
-					[pageSizeOptions]="[100, 200]"
-					showFirstLastButtons
-				></mat-paginator>
-			</div>
 		</ng-container>
 	</ng-template>
 </ion-content>

@@ -116,7 +116,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 		private _router: Router,
 		private _fb: FormBuilder
 	) {
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 		this.userdata$ = this._authservice.currentUser;
 
@@ -154,7 +154,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 	}
 
 	initForm() {
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.submitForm.patchValue({
@@ -233,12 +233,12 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 
 	async tabClick($event) {
 		if ($event.index === 0) {
-			const dateOffset = 24 * 60 * 60 * 1000 * 30;
+			const dateOffset = 24 * 60 * 60 * 1000 * 365;
 			this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 			this.initForm();
 			this.reloadPurchaseInvoiceByCenter();
 		} else if ($event.index === 1) {
-			const dateOffset = 24 * 60 * 60 * 1000 * 30;
+			const dateOffset = 24 * 60 * 60 * 1000 * 365;
 			this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 			this.initForm();
 			this.searchReceivedPayments();
@@ -372,10 +372,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 				invoiceno: invoiceno,
 			})
 			.subscribe((data: any) => {
-				this.paymentdataSource = data.body;
-
-				this.paymentdataSource.sort = this.sort;
-				this.pageLength = data.length;
+				this.paymentdataSource.data = data.body;
 
 				this._cdr.markForCheck();
 			});

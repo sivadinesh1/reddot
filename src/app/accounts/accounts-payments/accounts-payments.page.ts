@@ -127,7 +127,7 @@ export class AccountsPaymentsPage implements OnInit {
 		private _router: Router,
 		private _fb: FormBuilder
 	) {
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 		this.userdata$ = this._authservice.currentUser;
 
@@ -165,7 +165,7 @@ export class AccountsPaymentsPage implements OnInit {
 	}
 
 	initForm() {
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.submitForm.patchValue({
@@ -245,12 +245,12 @@ export class AccountsPaymentsPage implements OnInit {
 
 	async tabClick($event) {
 		if ($event.index === 0) {
-			const dateOffset = 24 * 60 * 60 * 1000 * 30;
+			const dateOffset = 24 * 60 * 60 * 1000 * 365;
 			this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 			this.initForm();
 			this.reloadSaleInvoiceByCenter();
 		} else if ($event.index === 1) {
-			const dateOffset = 24 * 60 * 60 * 1000 * 30;
+			const dateOffset = 24 * 60 * 60 * 1000 * 365;
 			this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 			this.initForm();
 			this.reloadPaymentsByCenter();
