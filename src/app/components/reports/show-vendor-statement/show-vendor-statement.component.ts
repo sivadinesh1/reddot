@@ -55,7 +55,7 @@ export class ShowVendorStatementComponent implements OnInit {
 			.getVendorStatement(this.data)
 			.subscribe((data: any) => {
 				this.statementdata = data.body;
-				debugger;
+
 				if (this.statementdata[0].txn_type === 'purchase') {
 					this.openingbalance =
 						this.statementdata[0].balance_amt -

@@ -58,6 +58,14 @@ const routes: Routes = [
 			},
 
 			{
+				path: 'reports-home',
+				loadChildren: () =>
+					import('./reports/reports-home/reports-home.module').then(
+						(m) => m.ReportsHomePageModule
+					),
+			},
+
+			{
 				path: 'statement-reports',
 				loadChildren: () =>
 					import('./reports/statement-reports/statement-reports.module').then(
@@ -246,6 +254,13 @@ const routes: Routes = [
 							import(
 								'./reports/product-summary-reports/product-summary-reports.module'
 							).then((m) => m.ProductSummaryReportsPageModule),
+					},
+					{
+						path: 'item-wise-sale-reports',
+						loadChildren: () =>
+							import(
+								'./reports/item-wise-sale-reports/item-wise-sale-reports.module'
+							).then((m) => m.ItemWiseSaleReportsPageModule),
 					},
 				],
 			},

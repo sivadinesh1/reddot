@@ -147,13 +147,27 @@
 				style="
 					align-self: center;
 					font-size: 16px;
-					padding: 16px 16px 0px 32px;
+					margin: 16px;
 					color: darkblue;
 				"
 			>
 				All Orders ({{(sales$| async)?.length }}) records
 			</div>
-			<div>&nbsp;</div>
+
+			<div style="margin: 16px">
+				<span
+					style="
+						color: blue;
+						font-size: 16px;
+						padding: 8px;
+						background-color: bisque;
+						cursor: pointer;
+					"
+					(click)="goSalesReturns()"
+				>
+					Sale Returns
+				</span>
+			</div>
 		</div>
 		<div
 			style="width: 94%; margin: 0 auto; padding: 16px 0px 100px 0px"
@@ -175,7 +189,7 @@
 				</mat-tab>
 
 				<mat-tab label="StockIssue ({{(stockIssueSales$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="stockIssueMsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab>
 			</mat-tab-group>
@@ -191,7 +205,50 @@
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
 			<div class="txt-center-align">STATUS</div>
+			<div>
+				<img
+					src="/assets/images/svg/download-excel.svg"
+					style="cursor: pointer"
+					width="32px"
+					height="32px"
+					(click)="exportDraftSalesToExcel()"
+				/>
+			</div>
+		</div>
+		<div class="headerRow" style="background-color: #dfdfdf">
 			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+
+			<div style="font-size: 14px; font-weight: 500; text-align: right">
+				{{this.sumNumItems}}
+			</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">
+				{{this.sumTotalValue | currency: "INR"}}
+			</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+		</div>
+	</ng-template>
+
+	<ng-template #stockIssueMsgRef>
+		<div class="header header-style">
+			<div>CUSTOMER NAME</div>
+			<div>INVOICE #</div>
+			<div>INV DATE</div>
+
+			<div class="txt-right-align"># ITEMS</div>
+			<div class="txt-right-align">TOTAL VALUE</div>
+			<div class="txt-center-align">STATUS</div>
+			<div>
+				<img
+					src="/assets/images/svg/download-excel.svg"
+					style="cursor: pointer"
+					width="32px"
+					height="32px"
+					(click)="exportStockIssueSalesToExcel()"
+				/>
+			</div>
 		</div>
 		<div class="headerRow" style="background-color: #dfdfdf">
 			<div>&nbsp;</div>
@@ -220,7 +277,15 @@
 
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div>&nbsp;</div>
+			<div>
+				<img
+					src="/assets/images/svg/download-excel.svg"
+					style="cursor: pointer"
+					width="32px"
+					height="32px"
+					(click)="exportCompletedSalesToExcel()"
+				/>
+			</div>
 		</div>
 		<div class="headerRow" style="background-color: #dfdfdf">
 			<div>&nbsp;</div>

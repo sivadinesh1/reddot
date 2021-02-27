@@ -739,6 +739,14 @@ export class CommonApiService {
 		);
 	}
 
+	fetchItemWiseSaleReports(submitForm) {
+		return this.httpClient.post<any>(
+			this.restApiUrl + '/api/reports/item-wise-sale',
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
 	// /get-ledger-customer/:centerid/:customerid
 
 	getLedgerCustomer(center_id, customer_id) {

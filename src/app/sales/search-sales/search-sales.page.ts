@@ -1,8 +1,10 @@
 import {
 	Component,
 	OnInit,
-	ChangeDetectionStrategy,
 	ChangeDetectorRef,
+	ViewChild,
+	ChangeDetectionStrategy,
+	ElementRef,
 } from '@angular/core';
 import { CommonApiService } from '../../services/common-api.service';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -14,7 +16,7 @@ import {
 	FormBuilder,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom, of } from 'rxjs';
 import { Sales } from '../../models/Sales';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
@@ -30,6 +32,7 @@ import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invo
 import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-print.component';
+import * as xlsx from 'xlsx';
 
 @Component({
 	selector: 'app-search-sales',
@@ -68,6 +71,8 @@ export class SearchSalesPage implements OnInit {
 	filteredCustomer: Observable<any[]>;
 	customer_lis: Customer[];
 
+	@ViewChild('epltable', { static: false }) epltable: ElementRef;
+
 	userdata: any;
 
 	userdata$: Observable<User>;
@@ -92,10 +97,12 @@ export class SearchSalesPage implements OnInit {
 	sumTotalValue = 0.0;
 	sumNumItems = 0;
 
-	permissionsdata;
+	permissionsdata = [];
 	permissions$: Observable<any>;
 
 	deleteAccess;
+
+	arr: Array<any>;
 
 	// new FormControl({value: '', disabled: true});
 	constructor(
@@ -150,16 +157,11 @@ export class SearchSalesPage implements OnInit {
 			.subscribe((data: any) => {
 				this.permissionsdata = data;
 
-				console.log(
-					'print permissions data ... from search sales >> ' +
-						JSON.stringify(this.permissionsdata)
-				);
-
-				this.deleteAccess = this.permissionsdata.filter(
-					(f) => f.resource === 'SALE' && f.operation === 'DELETE'
-				)[0].is_access;
-
-				console.log('print it > ' + JSON.stringify(this.deleteAccess));
+				if (Array.isArray(this.permissionsdata)) {
+					this.deleteAccess = this.permissionsdata.filter(
+						(f) => f.resource === 'SALE' && f.operation === 'DELETE'
+					)[0].is_access;
+				}
 
 				this._cdr.markForCheck();
 			});
@@ -502,5 +504,115 @@ export class SearchSalesPage implements OnInit {
 			duration: 2000,
 			panelClass: ['mat-toolbar', 'mat-primary'],
 		});
+	}
+	goSalesReturns() {
+		this._router.navigateByUrl(`/home/search-return-sales`);
+	}
+
+	async exportCompletedSalesToExcel() {
+		this.arr = [];
+		const fileName = 'Completed_Sale_Reports.xlsx';
+
+		this.arr = await lastValueFrom(this.fullfilledSales$);
+		this.arr.forEach((e) => {
+			delete e['id'];
+			delete e['center_id'];
+			delete e['customer_id'];
+			delete e['lr_no'];
+			delete e['lr_date'];
+			delete e['received_date'];
+			delete e['order_no'];
+			delete e['order_date'];
+			delete e['transport_charges'];
+
+			delete e['unloading_charges'];
+			delete e['misc_charges'];
+			delete e['status'];
+			delete e['revision'];
+			delete e['tax_applicable'];
+			delete e['stock_issue_ref'];
+			delete e['stock_issue_date_ref'];
+			delete e['roundoff'];
+			delete e['retail_customer_name'];
+			delete e['no_of_boxes'];
+		});
+		this.arr.splice(0, 1);
+		debugger;
+
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet(this.arr);
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		xlsx.writeFile(wb1, fileName);
+	}
+
+	async exportStockIssueSalesToExcel() {
+		this.arr = [];
+		const fileName = 'Stock_Issue_Sale_Reports.xlsx';
+
+		this.arr = await lastValueFrom(this.stockIssueSales$);
+		this.arr.forEach((e) => {
+			delete e['id'];
+			delete e['center_id'];
+			delete e['customer_id'];
+			delete e['lr_no'];
+			delete e['lr_date'];
+			delete e['received_date'];
+			delete e['order_no'];
+			delete e['order_date'];
+			delete e['transport_charges'];
+
+			delete e['unloading_charges'];
+			delete e['misc_charges'];
+			delete e['status'];
+			delete e['revision'];
+			delete e['tax_applicable'];
+			delete e['roundoff'];
+			delete e['retail_customer_name'];
+			delete e['no_of_boxes'];
+		});
+		this.arr.splice(0, 1);
+		debugger;
+
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet(this.arr);
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		xlsx.writeFile(wb1, fileName);
+	}
+
+	async exportDraftSalesToExcel() {
+		this.arr = [];
+		const fileName = 'Draft_Sale_Reports.xlsx';
+
+		this.arr = await lastValueFrom(this.draftSales$);
+		this.arr.forEach((e) => {
+			delete e['id'];
+			delete e['center_id'];
+			delete e['customer_id'];
+			delete e['lr_no'];
+			delete e['lr_date'];
+			delete e['received_date'];
+			delete e['order_no'];
+			delete e['order_date'];
+			delete e['transport_charges'];
+
+			delete e['unloading_charges'];
+			delete e['misc_charges'];
+			delete e['status'];
+			delete e['revision'];
+			delete e['tax_applicable'];
+			delete e['roundoff'];
+			delete e['retail_customer_name'];
+			delete e['no_of_boxes'];
+		});
+		this.arr.splice(0, 1);
+		debugger;
+
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet(this.arr);
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		xlsx.writeFile(wb1, fileName);
 	}
 }

@@ -68,9 +68,9 @@ export class LeftMenuComponent implements OnInit {
 			icon: '/assets/images/svg/money.svg',
 		},
 		{
-			name: 'RETURNS',
-			link: '/home/search-return-sales',
-			icon: '/assets/images/svg/returning.svg',
+			name: 'REPORTS',
+			link: '/home/reports-home',
+			icon: '/assets/images/svg/growth.svg',
 		},
 	];
 
@@ -96,9 +96,9 @@ export class LeftMenuComponent implements OnInit {
 			icon: '/assets/images/svg/purchase.svg',
 		},
 		{
-			name: 'RETURNS',
+			name: 'REPORTS',
 			link: '/home/search-return-sales',
-			icon: '/assets/images/svg/returning.svg',
+			icon: '/assets/images/svg/growth.svg',
 		},
 	];
 
