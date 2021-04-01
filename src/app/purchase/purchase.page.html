@@ -1,5 +1,7 @@
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
-	<div class="screen-header"><span style="font-size: 18px">{{breadmenu}}</span></div>
+	<div class="screen-header">
+		<span style="font-size: 18px">{{breadmenu}}</span>
+	</div>
 
 	<form [formGroup]="submitForm">
 		<div class="vendor">
@@ -19,7 +21,14 @@
 							tabindex="1"
 							[attr.disabled]="vendorselected?'true':null"
 						/>
-						<button mat-button matSuffix mat-icon-button tabindex="-1" type="button" (click)="clearInput()">
+						<button
+							mat-button
+							matSuffix
+							mat-icon-button
+							tabindex="-1"
+							type="button"
+							(click)="clearInput()"
+						>
 							<mat-icon tabindex="-1">close</mat-icon>
 						</button>
 						<mat-autocomplete
@@ -28,34 +37,93 @@
 							[displayWith]="displayFn"
 							(optionSelected)="setVendorInfo($event, 'click')"
 						>
-							<mat-option *ngIf="isVLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+							<mat-option *ngIf="isVLoading" class="is-loading"
+								><mat-spinner diameter="20"></mat-spinner
+							></mat-option>
 							<ng-container *ngIf="!isVLoading">
-								<mat-option *ngFor="let vendor of vendor_lis" [value]="vendor" style="height: 70px; border-bottom: 1px solid lightsteelblue">
+								<mat-option
+									*ngFor="let vendor of vendor_lis"
+									[value]="vendor"
+									style="height: 70px; border-bottom: 1px solid lightsteelblue"
+								>
 									<div style="display: grid; grid-template-columns: 1fr">
 										<div>
-											<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ vendor.name }}</div>
-											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.address1 }}</div>
-											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.address3 }}</div>
+											<div
+												style="font-size: 15px; padding: 2px; line-height: 1em"
+											>
+												{{ vendor.name }}
+											</div>
+											<div
+												style="
+													font-size: 14px;
+													padding: 2px;
+													line-height: 1em;
+													color: grey;
+												"
+											>
+												{{ vendor.address1 }}
+											</div>
+											<div
+												style="
+													font-size: 14px;
+													padding: 2px;
+													line-height: 1em;
+													color: grey;
+												"
+											>
+												{{ vendor.address3 }}
+											</div>
 										</div>
 									</div>
 								</mat-option>
 							</ng-container>
 						</mat-autocomplete>
-						<mat-error *ngIf="submitForm.controls['vendorctrl'].hasError('required')"> Please enter a value </mat-error>
-						<mat-error *ngIf="submitForm.controls['vendorctrl'].hasError('incorrect')">
-							<span style="color: darkorange">Vendor Not Found:</span>
-							<span style="font-style: italic; color: #310ac0; cursor: pointer" (click)="addVendor()">+ Add Vendor</span>
+						<mat-error
+							*ngIf="submitForm.controls['vendorctrl'].hasError('required')"
+						>
+							Please enter a value
 						</mat-error>
-						<mat-hint *ngIf="vendorselected" style="display: flex; justify-content: space-between">
-							<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Vendor Details</span>
+						<mat-error
+							*ngIf="submitForm.controls['vendorctrl'].hasError('incorrect')"
+						>
+							<span style="color: darkorange">Vendor Not Found:</span>
+							<span
+								style="font-style: italic; color: #310ac0; cursor: pointer"
+								(click)="addVendor()"
+								>+ Add Vendor</span
+							>
+						</mat-error>
+						<mat-hint
+							*ngIf="vendorselected"
+							style="display: flex; justify-content: space-between"
+						>
+							<span
+								(click)="openDialog($event)"
+								style="font-size: 12px; color: #310ac0; cursor: pointer"
+								>View Vendor Details</span
+							>
 						</mat-hint>
 					</mat-form-field>
 
-					<div style="display: grid; grid-template-columns: 1fr 1fr; top: 12px; position: relative">
+					<div
+						style="
+							display: grid;
+							grid-template-columns: 1fr 1fr;
+							top: 12px;
+							position: relative;
+						"
+					>
 						<div>
 							<mat-form-field class="mat-input-wrapper">
 								<mat-label>Invoice #</mat-label>
-								<input matInput type="text" tabindex="7" #invno formControlName="invoiceno" required />
+								<input
+									matInput
+									type="text"
+									tabindex="7"
+									#invno
+									formControlName="invoiceno"
+									required
+								/>
 
 								<mat-error
 									*ngIf="(submitForm.get('invoiceno').hasError('required') || submitForm.get('invoiceno').hasError('patternInvalid'))  && submitForm.get('invoiceno').touched"
@@ -77,7 +145,11 @@
 									required
 									tabindex="8"
 								/>
-								<mat-datepicker-toggle tabindex="-1" matSuffix [for]="picker1"></mat-datepicker-toggle>
+								<mat-datepicker-toggle
+									tabindex="-1"
+									matSuffix
+									[for]="picker1"
+								></mat-datepicker-toggle>
 								<mat-datepicker tabindex="-1" #picker1></mat-datepicker>
 
 								<mat-error
@@ -94,7 +166,13 @@
 				<div>
 					<mat-form-field class="mat-input-wrapper">
 						<mat-label>Order #</mat-label>
-						<input matInput #orderno type="text" formControlName="orderno" tabindex="9" />
+						<input
+							matInput
+							#orderno
+							type="text"
+							formControlName="orderno"
+							tabindex="9"
+						/>
 
 						<mat-error
 							*ngIf="(submitForm.get('orderno').hasError('required') || submitForm.get('orderno').hasError('patternInvalid'))  && submitForm.get('orderno').touched"
@@ -115,7 +193,11 @@
 							(focus)="pickerod.open()"
 							[max]="maxOrderDate"
 						/>
-						<mat-datepicker-toggle tabindex="-1" matSuffix [for]="pickerod"></mat-datepicker-toggle>
+						<mat-datepicker-toggle
+							tabindex="-1"
+							matSuffix
+							[for]="pickerod"
+						></mat-datepicker-toggle>
 						<mat-datepicker tabindex="-1" #pickerod></mat-datepicker>
 					</mat-form-field>
 				</div>
@@ -123,7 +205,13 @@
 				<div>
 					<mat-form-field class="mat-input-wrapper">
 						<mat-label>Lr #</mat-label>
-						<input matInput #lrno type="text" tabindex="11" formControlName="lrno" />
+						<input
+							matInput
+							#lrno
+							type="text"
+							tabindex="11"
+							formControlName="lrno"
+						/>
 
 						<mat-error
 							*ngIf="(submitForm.get('lrno').hasError('required') || submitForm.get('lrno').hasError('patternInvalid'))  && submitForm.get('lrno').touched"
@@ -136,8 +224,20 @@
 				<div>
 					<mat-form-field class="mat-input-wrapper">
 						<mat-label>Lr date</mat-label>
-						<input matInput readonly tabindex="12" [matDatepicker]="pickerlr" (focus)="pickerlr.open()" formControlName="lrdate" [max]="maxDate" />
-						<mat-datepicker-toggle tabindex="-1" matSuffix [for]="pickerlr"></mat-datepicker-toggle>
+						<input
+							matInput
+							readonly
+							tabindex="12"
+							[matDatepicker]="pickerlr"
+							(focus)="pickerlr.open()"
+							formControlName="lrdate"
+							[max]="maxDate"
+						/>
+						<mat-datepicker-toggle
+							tabindex="-1"
+							matSuffix
+							[for]="pickerlr"
+						></mat-datepicker-toggle>
 						<mat-datepicker tabindex="-1" #pickerlr></mat-datepicker>
 					</mat-form-field>
 				</div>
@@ -154,7 +254,11 @@
 							(focus)="pickerrcvd.open()"
 							[max]="maxDate"
 						/>
-						<mat-datepicker-toggle tabindex="-1" matSuffix [for]="pickerrcvd"></mat-datepicker-toggle>
+						<mat-datepicker-toggle
+							tabindex="-1"
+							matSuffix
+							[for]="pickerrcvd"
+						></mat-datepicker-toggle>
 						<mat-datepicker tabindex="-1" #pickerrcvd></mat-datepicker>
 					</mat-form-field>
 				</div>
@@ -163,26 +267,46 @@
 						<div>
 							<mat-form-field class="mat-input-wrapper-short">
 								<mat-label># of Boxes</mat-label>
-								<input matInput tabindex="14" type="number" formControlName="noofboxes" />
+								<input
+									matInput
+									tabindex="14"
+									type="number"
+									formControlName="noofboxes"
+								/>
 							</mat-form-field>
 						</div>
 						<div>
 							<mat-form-field class="mat-input-wrapper-short">
 								<mat-label>Transportation Cost</mat-label>
-								<input matInput type="number" tabindex="15" formControlName="transport_charges" />
+								<input
+									matInput
+									type="number"
+									tabindex="15"
+									formControlName="transport_charges"
+								/>
 							</mat-form-field>
 						</div>
 
 						<div>
 							<mat-form-field class="mat-input-wrapper-short">
 								<mat-label>Unloading Cost</mat-label>
-								<input matInput type="number" tabindex="16" formControlName="unloading_charges" />
+								<input
+									matInput
+									type="number"
+									tabindex="16"
+									formControlName="unloading_charges"
+								/>
 							</mat-form-field>
 						</div>
 						<div>
 							<mat-form-field class="mat-input-wrapper-short">
 								<mat-label>TDS</mat-label>
-								<input matInput type="number" tabindex="17" formControlName="misc_charges" />
+								<input
+									matInput
+									type="number"
+									tabindex="17"
+									formControlName="misc_charges"
+								/>
 							</mat-form-field>
 						</div>
 					</div>
@@ -193,7 +317,9 @@
 		<ng-container *ngIf="!vendorselected">
 			<div style="display: grid; place-items: center; padding: 2rem 2rem">
 				<div style="color: #333333"><h4>Vendor not selected</h4></div>
-				<div style="color: #666666">Select vendor & start adding items to purchase cart</div>
+				<div style="color: #666666">
+					Select vendor & start adding items to purchase cart
+				</div>
 				<div>
 					<img src="/assets/images/svg/to-do-list.svg" width="200px" />
 				</div>
@@ -203,12 +329,32 @@
 		<div class="purchase-wrap" [hidden]="!vendorselected">
 			<div class="wrap">
 				<div class="acton-btns">
-					<img class="cursor" src="/assets/images/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
-					<span class="sub-menu cursor" style="color: blue" *ngIf="showDelIcon" (click)="presentDeleteConfirm()">Delete</span>
+					<img
+						class="cursor"
+						src="/assets/images/svg/trash.svg"
+						width="16px"
+						height="16px"
+						*ngIf="showDelIcon"
+						(click)="presentDeleteConfirm()"
+					/>
+					<span
+						class="sub-menu cursor"
+						style="color: blue"
+						*ngIf="showDelIcon"
+						(click)="presentDeleteConfirm()"
+						>Delete</span
+					>
 				</div>
 
 				<div class="acton-btns">
-					<img class="cursor" src="/assets/images/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editTax()" /><span
+					<img
+						class="cursor"
+						src="/assets/images/svg/edit.svg"
+						width="16px"
+						height="16px"
+						*ngIf="singleRowSelected"
+						(click)="editTax()"
+					/><span
 						class="sub-menu cursor"
 						style="color: blue"
 						*ngIf="singleRowSelected"
@@ -217,13 +363,27 @@
 					>
 				</div>
 				<div class="acton-btns">
-					<img class="cursor" src="/assets/images/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editMrp()" />
-					<span class="sub-menu cursor" style="color: blue" *ngIf="singleRowSelected" (click)="editMrp()">Mrp</span>
+					<img
+						class="cursor"
+						src="/assets/images/svg/edit.svg"
+						width="16px"
+						height="16px"
+						*ngIf="singleRowSelected"
+						(click)="editMrp()"
+					/>
+					<span
+						class="sub-menu cursor"
+						style="color: blue"
+						*ngIf="singleRowSelected"
+						(click)="editMrp()"
+						>Mrp</span
+					>
 				</div>
 			</div>
 			<div class="left">
 				<div class="row1">
 					<div class="item1 headstyl-left txt-center-align">#</div>
+					<div class="item1 headstyl-left txt-center-align">&nbsp;</div>
 					<div class="item2 headstyl-left">Item Code</div>
 					<div class="item2 headstyl-left">Item Description</div>
 					<div class="item3 headstyl-right">Qty</div>
@@ -236,31 +396,58 @@
 					<ng-container *ngIf="listArr.length === 0 && vendorselected">
 						<div style="display: grid; place-items: center; padding: 2rem 2rem">
 							<div style="color: #333333"><h4>Purchase cart</h4></div>
-							<div style="color: #666666">There are no items in your Purchase cart</div>
+							<div style="color: #666666">
+								There are no items in your Purchase cart
+							</div>
 						</div>
 					</ng-container>
 
 					<div *ngIf="vendorselected;">
-						<div *ngFor="let item of listArr ? listArr : []; let idx = index" class="list-item">
+						<div
+							*ngFor="let item of listArr ? listArr : []; let idx = index"
+							class="list-item"
+						>
+							<div>{{idx + 1}}</div>
 							<div class="txt-align">
-								<!-- {{idx + 1}} -->
-								<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
+								<mat-checkbox
+									#myCheckbox
+									(click)="checkedRow(idx)"
+								></mat-checkbox>
 							</div>
 							<div class="item2">{{item.product_code}}</div>
 
 							<div class="item2">{{item.product_desc}}</div>
 
 							<div style="text-align: right" class="num-format-cell-style">
-								<mat-form-field style="margin-bottom: -1.25em; width: 80px; text-align: right">
-									<input matInput value="{{item.qty}}" (keyup)="handleQtyChange($event, idx)" required numeric maxlength="7" min="0" max="999999" />
-									<mat-hint *ngIf="item.qtyerror!== '' " style="color: red; font-size: 12px; margin-top: -4px">{{item.qtyerror}}</mat-hint>
+								<mat-form-field
+									style="margin-bottom: -1.25em; width: 80px; text-align: right"
+								>
+									<input
+										matInput
+										value="{{item.qty}}"
+										(keyup)="handleQtyChange($event, idx)"
+										required
+										numeric
+										maxlength="7"
+										min="0"
+										max="999999"
+									/>
+									<mat-hint
+										*ngIf="item.qtyerror!== '' "
+										style="color: red; font-size: 12px; margin-top: -4px"
+										>{{item.qtyerror}}</mat-hint
+									>
 								</mat-form-field>
 							</div>
 
-							<div class="item4 txt-right-align num-format-cell-style">{{item.mrp}}</div>
+							<div class="item4 txt-right-align num-format-cell-style">
+								{{item.mrp}}
+							</div>
 
 							<div style="text-align: right" class="num-format-cell-style">
-								<mat-form-field style="margin-bottom: -1.25em; width: 80px; text-align: right">
+								<mat-form-field
+									style="margin-bottom: -1.25em; width: 80px; text-align: right"
+								>
 									<input
 										matInput
 										value="{{item.purchase_price | number:'1.2-2'}}"
@@ -270,13 +457,21 @@
 										min="0"
 										max="999999"
 									/>
-									<mat-hint *ngIf="item.pperror!== '' " style="color: red; font-size: 12px; margin-top: -4px">{{item.pperror}}</mat-hint>
+									<mat-hint
+										*ngIf="item.pperror!== '' "
+										style="color: red; font-size: 12px; margin-top: -4px"
+										>{{item.pperror}}</mat-hint
+									>
 								</mat-form-field>
 							</div>
 
-							<div class="item4 txt-right-align num-format-cell-style">{{item.taxrate}}</div>
+							<div class="item4 txt-right-align num-format-cell-style">
+								{{item.taxrate}}
+							</div>
 
-							<div class="item4 txt-right-align num-format-cell-style">{{item.total_value}}</div>
+							<div class="item4 txt-right-align num-format-cell-style">
+								{{item.total_value}}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -297,9 +492,19 @@
 								matTooltipPosition="after"
 								tabindex="3"
 							/>
-							<mat-hint *ngIf="selected_description" matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
+							<mat-hint *ngIf="selected_description" matTooltip="Add product"
+								>{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint
+							>
 
-							<button mat-button matSuffix mat-icon-button tabindex="-1" aria-label="Clear" type="button" (click)="clearProdInput()">
+							<button
+								mat-button
+								matSuffix
+								mat-icon-button
+								tabindex="-1"
+								aria-label="Clear"
+								type="button"
+								(click)="clearProdInput()"
+							>
 								<mat-icon tabindex="-1">close</mat-icon>
 							</button>
 
@@ -309,24 +514,72 @@
 								[displayWith]="displayProdFn"
 								(optionSelected)="setItemDesc($event, 'click')"
 							>
-								<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+								<mat-option *ngIf="isLoading" class="is-loading"
+									><mat-spinner diameter="20"></mat-spinner
+								></mat-option>
 								<ng-container *ngIf="!isLoading">
 									<mat-option
 										*ngFor="let product of product_lis"
 										[value]="product"
-										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px; border-bottom: 1px solid lightsteelblue"
+										style="
+											padding-top: 15px;
+											height: 3.3em !important;
+											padding-bottom: 15px;
+											border-bottom: 1px solid lightsteelblue;
+										"
 									>
 										<div style="display: grid; grid-template-columns: 1fr 80px">
 											<div>
-												<div style="font-size: 15px; padding: 2px; line-height: 1em">
-													{{ product.product_code }} &nbsp;&nbsp; <span style="color: blue">MRP: {{ product.mrp | currency: "INR"}}</span>
+												<div
+													style="
+														font-size: 15px;
+														padding: 2px;
+														line-height: 1em;
+													"
+												>
+													{{ product.product_code }} &nbsp;&nbsp;
+													<span style="color: blue"
+														>MRP: {{ product.mrp | currency: "INR"}}</span
+													>
 												</div>
-												<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ product.description }}</div>
+												<div
+													style="
+														font-size: 14px;
+														padding: 2px;
+														line-height: 1em;
+														color: grey;
+													"
+												>
+													{{ product.description }}
+												</div>
 											</div>
 											<div>
-												<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right; color: grey">{{ product.name }}</div>
-												<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
-													<span> <img src="/assets/images/svg/sales.svg" width="18px" height="18px" /></span>
+												<div
+													style="
+														font-size: 15px;
+														padding: 2px;
+														line-height: 1em;
+														text-align: right;
+														color: grey;
+													"
+												>
+													{{ product.name }}
+												</div>
+												<div
+													style="
+														font-size: 14px;
+														padding: 2px;
+														line-height: 1em;
+														text-align: right;
+														color: blue;
+													"
+												>
+													<span>
+														<img
+															src="/assets/images/svg/sales.svg"
+															width="18px"
+															height="18px"
+													/></span>
 													<span> &nbsp;{{ product.available_stock }} </span>
 												</div>
 											</div>
@@ -335,47 +588,123 @@
 								</ng-container>
 							</mat-autocomplete>
 
-							<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')"> Invalid product code </mat-error>
+							<mat-error
+								*ngIf="submitForm.controls['productctrl'].hasError('incorrect')"
+							>
+								Invalid product code
+							</mat-error>
 						</mat-form-field>
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
 							<mat-label>Purchase Price</mat-label>
-							<input matInput type="number" min="1" max="100000" tabindex="4" formControlName="temppurchaseprice" required />
+							<input
+								matInput
+								type="number"
+								min="1"
+								max="100000"
+								tabindex="4"
+								formControlName="temppurchaseprice"
+								required
+							/>
 
-							<mat-error *ngIf="submitForm.controls['temppurchaseprice'].hasError('required')"> Required feild </mat-error>
+							<mat-error
+								*ngIf="submitForm.controls['temppurchaseprice'].hasError('required')"
+							>
+								Required feild
+							</mat-error>
 						</mat-form-field>
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>
-							<input matInput type="number" min="1" max="9999" tabindex="5" formControlName="tempqty" required #qty />
-							<mat-hint matTooltip="Info about the action">Hint: Max 9999</mat-hint>
+							<input
+								matInput
+								type="number"
+								min="1"
+								max="9999"
+								tabindex="5"
+								formControlName="tempqty"
+								required
+								#qty
+							/>
+							<mat-hint matTooltip="Info about the action"
+								>Hint: Max 9999</mat-hint
+							>
 						</mat-form-field>
 					</div>
 					<div>
-						<button mat-stroked-button color="primary" tabindex="6" #newrow [disabled]="!vendorselected" type="button" (click)="add()">
+						<button
+							mat-stroked-button
+							color="primary"
+							tabindex="6"
+							#newrow
+							[disabled]="!vendorselected"
+							type="button"
+							(click)="add()"
+						>
 							+ New Row
 						</button>
 					</div>
 				</div>
 				<div class="right">
 					<div style="display: grid; grid-template-columns: 1fr 1fr">
-						<div style="color: #666666; text-align: right; font-size: 14px"># Items</div>
-						<div style="color: #666666; text-align: right; font-size: 14px">{{listArr.length}}</div>
+						<div style="color: #666666; text-align: right; font-size: 14px">
+							# Items
+						</div>
+						<div style="color: #666666; text-align: right; font-size: 14px">
+							{{listArr.length}}
+						</div>
 
-						<div *ngIf="i_gst" style="color: #666666; text-align: right; font-size: 14px">IGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="i_gst">{{igstTotal}}</div>
+						<div
+							*ngIf="i_gst"
+							style="color: #666666; text-align: right; font-size: 14px"
+						>
+							IGST
+						</div>
+						<div
+							style="color: #666666; text-align: right; font-size: 14px"
+							*ngIf="i_gst"
+						>
+							{{igstTotal}}
+						</div>
 
-						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px">CGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="!i_gst">{{cgstTotal}}</div>
+						<div
+							*ngIf="!i_gst"
+							style="color: #666666; text-align: right; font-size: 14px"
+						>
+							CGST
+						</div>
+						<div
+							style="color: #666666; text-align: right; font-size: 14px"
+							*ngIf="!i_gst"
+						>
+							{{cgstTotal}}
+						</div>
 
-						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px">SGST</div>
-						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="!i_gst">{{sgstTotal}}</div>
+						<div
+							*ngIf="!i_gst"
+							style="color: #666666; text-align: right; font-size: 14px"
+						>
+							SGST
+						</div>
+						<div
+							style="color: #666666; text-align: right; font-size: 14px"
+							*ngIf="!i_gst"
+						>
+							{{sgstTotal}}
+						</div>
 					</div>
 					<div>
-						<div style="color: #666666; text-align: right; font-size: 14px">Total</div>
-						<div style="text-align: right" class="align-self-center left-pad20 fsize32 fweight500">{{this.total | number:'1.2-2'}}</div>
+						<div style="color: #666666; text-align: right; font-size: 14px">
+							Total
+						</div>
+						<div
+							style="text-align: right"
+							class="align-self-center left-pad20 fsize32 fweight500"
+						>
+							{{this.total | number:'1.2-2'}}
+						</div>
 					</div>
 				</div>
 			</div>

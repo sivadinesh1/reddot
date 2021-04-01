@@ -2,7 +2,13 @@
 	<div class="screen-header">
 		<div>Add New Vendor</div>
 		<div>
-			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+			<img
+				class="cursor"
+				src="/assets/images/svg/close.svg"
+				(click)="close()"
+				width="20px"
+				height="20px"
+			/>
 		</div>
 	</div>
 
@@ -11,7 +17,12 @@
 			<div class="name">
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Name</mat-label>
-					<input matInput (blur)="isVendorExists()" formControlName="name" required />
+					<input
+						matInput
+						(blur)="isVendorExists()"
+						formControlName="name"
+						required
+					/>
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 				<div *ngIf="vexists" class="error">Already Exists</div>
@@ -30,26 +41,46 @@
 				<div class="address1">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 1</mat-label>
-						<input matInput placeholder="Address Line 1" formControlName="address1" />
+						<input
+							matInput
+							placeholder="Address Line 1"
+							formControlName="address1"
+							required
+						/>
 					</mat-form-field>
 				</div>
 				<div class="address2">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 2</mat-label>
-						<input matInput placeholder="Address Line 2" formControlName="address2" />
+						<input
+							matInput
+							placeholder="Address Line 2"
+							formControlName="address2"
+							required
+						/>
 					</mat-form-field>
 				</div>
 				<div class="address3">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 3</mat-label>
-						<input matInput placeholder="Address Line 3" formControlName="address3" />
+						<input
+							matInput
+							placeholder="Address Line 3"
+							formControlName="address3"
+							required
+						/>
 					</mat-form-field>
 				</div>
 
 				<div class="district">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>District</mat-label>
-						<input matInput placeholder="District" formControlName="district" />
+						<input
+							matInput
+							placeholder="District"
+							formControlName="district"
+							required
+						/>
 					</mat-form-field>
 				</div>
 
@@ -102,7 +133,13 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Whatsapp</mat-label>
-						<input type="number" matInput formControlName="whatsapp" required placeholder="Whatsapp" />
+						<input
+							type="number"
+							matInput
+							formControlName="whatsapp"
+							required
+							placeholder="Whatsapp"
+						/>
 						<mat-error>Missing or wrong format</mat-error>
 					</mat-form-field>
 				</div>
@@ -110,7 +147,12 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Email</mat-label>
-						<input type="text" matInput formControlName="email" placeholder="Email" />
+						<input
+							type="text"
+							matInput
+							formControlName="email"
+							placeholder="Email"
+						/>
 						<mat-error>Missing or wrong format</mat-error>
 					</mat-form-field>
 				</div>
@@ -118,7 +160,9 @@
 		</div>
 
 		<div style="text-align: center">
-			<button mat-raised-button color="primary" type="submit">+ Add New Vendor</button>
+			<button mat-raised-button color="primary" type="submit">
+				+ Add New Vendor
+			</button>
 		</div>
 	</form>
 </div>

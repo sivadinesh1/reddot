@@ -20,7 +20,7 @@ import { filter, tap, catchError } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom, of } from 'rxjs';
 import * as xlsx from 'xlsx';
 import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
 import { CustomerEditDialogComponent } from 'src/app/components/customers/customer-edit-dialog/customer-edit-dialog.component';
@@ -39,6 +39,7 @@ export class ViewCustomerPage implements OnInit {
 	userdata$: Observable<User>;
 	userdata: any;
 	isTableHasData = true;
+	arr: Array<any>;
 
 	ready = 0;
 	pcount: any;
@@ -100,6 +101,7 @@ export class ViewCustomerPage implements OnInit {
 		this._commonApiService
 			.getAllActiveCustomers(this.center_id)
 			.subscribe((data: any) => {
+				this.arr = data;
 				// DnD - code to add a "key/Value" in every object of array
 				this.dataSource.data = data.map((el) => {
 					var o = Object.assign({}, el);
@@ -256,16 +258,44 @@ export class ViewCustomerPage implements OnInit {
 		}
 	}
 
-	exportToExcel() {
-		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-			this.epltable.nativeElement
+	async exportCustomerDataToExcel() {
+		const fileName = 'Active_Customers_Reports.xlsx';
+
+		let reportData = JSON.parse(JSON.stringify(this.arr));
+
+		reportData.forEach((e) => {
+			delete e['id'];
+			delete e['center_id'];
+			delete e['state_id'];
+			delete e['code'];
+			delete e['isactive'];
+		});
+		this.arr.splice(0, 1);
+
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Customers List',
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
 		);
 
-		ws['!cols'] = [];
-		ws['!cols'][3] = { hidden: true };
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
 
-		const wb: xlsx.WorkBook = xlsx.utils.book_new();
-		xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-		xlsx.writeFile(wb, 'customers.xlsx');
+		xlsx.writeFile(wb1, fileName);
 	}
 }

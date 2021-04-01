@@ -514,7 +514,52 @@ export class SearchSalesPage implements OnInit {
 		const fileName = 'Completed_Sale_Reports.xlsx';
 
 		this.arr = await lastValueFrom(this.fullfilledSales$);
-		this.arr.forEach((e) => {
+
+		let reportData = JSON.parse(JSON.stringify(this.arr));
+
+		reportData.forEach((e) => {
+			e['Customer Name'] = e['customer_name'];
+			delete e['customer_name'];
+
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+
+			e['Sale Type'] = e['sale_type'];
+			delete e['sale_type'];
+
+			e['Total Qty'] = e['total_qty'];
+			delete e['total_qty'];
+
+			e['# of Items'] = e['no_of_items'];
+			delete e['no_of_items'];
+
+			e['Taxable Value'] = e['taxable_value'];
+			delete e['taxable_value'];
+
+			e['CGST'] = e['cgst'];
+			delete e['cgst'];
+
+			e['SGST'] = e['sgst'];
+			delete e['sgst'];
+
+			e['IGST'] = e['igst'];
+			delete e['igst'];
+
+			e['IGST'] = e['igst'];
+			delete e['igst'];
+
+			e['Total Value'] = e['total_value'];
+			delete e['total_value'];
+
+			e['Net Total'] = e['net_total'];
+			delete e['net_total'];
+
+			e['Sale Date Time'] = e['sale_datetime'];
+			delete e['sale_datetime'];
+
 			delete e['id'];
 			delete e['center_id'];
 			delete e['customer_id'];
@@ -534,14 +579,40 @@ export class SearchSalesPage implements OnInit {
 			delete e['stock_issue_date_ref'];
 			delete e['roundoff'];
 			delete e['retail_customer_name'];
+			delete e['retail_customer_address'];
 			delete e['no_of_boxes'];
 		});
 		this.arr.splice(0, 1);
-		debugger;
 
-		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet(this.arr);
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Completed Sale Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
 
 		xlsx.writeFile(wb1, fileName);
 	}
@@ -551,7 +622,52 @@ export class SearchSalesPage implements OnInit {
 		const fileName = 'Stock_Issue_Sale_Reports.xlsx';
 
 		this.arr = await lastValueFrom(this.stockIssueSales$);
-		this.arr.forEach((e) => {
+
+		let reportData = JSON.parse(JSON.stringify(this.arr));
+
+		reportData.forEach((e) => {
+			e['Customer Name'] = e['customer_name'];
+			delete e['customer_name'];
+
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+
+			e['Sale Type'] = e['sale_type'];
+			delete e['sale_type'];
+
+			e['Total Qty'] = e['total_qty'];
+			delete e['total_qty'];
+
+			e['# of Items'] = e['no_of_items'];
+			delete e['no_of_items'];
+
+			e['Taxable Value'] = e['taxable_value'];
+			delete e['taxable_value'];
+
+			e['CGST'] = e['cgst'];
+			delete e['cgst'];
+
+			e['SGST'] = e['sgst'];
+			delete e['sgst'];
+
+			e['IGST'] = e['igst'];
+			delete e['igst'];
+
+			e['IGST'] = e['igst'];
+			delete e['igst'];
+
+			e['Total Value'] = e['total_value'];
+			delete e['total_value'];
+
+			e['Net Total'] = e['net_total'];
+			delete e['net_total'];
+
+			e['Sale Date Time'] = e['sale_datetime'];
+			delete e['sale_datetime'];
+
 			delete e['id'];
 			delete e['center_id'];
 			delete e['customer_id'];
@@ -569,14 +685,43 @@ export class SearchSalesPage implements OnInit {
 			delete e['tax_applicable'];
 			delete e['roundoff'];
 			delete e['retail_customer_name'];
+			delete e['retail_customer_address'];
 			delete e['no_of_boxes'];
+
+			delete e['stock_issue_date_ref'];
+			delete e['stock_issue_ref'];
 		});
 		this.arr.splice(0, 1);
-		debugger;
 
-		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet(this.arr);
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Stock Issue Sale Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
 
 		xlsx.writeFile(wb1, fileName);
 	}
@@ -586,7 +731,52 @@ export class SearchSalesPage implements OnInit {
 		const fileName = 'Draft_Sale_Reports.xlsx';
 
 		this.arr = await lastValueFrom(this.draftSales$);
-		this.arr.forEach((e) => {
+
+		let reportData = JSON.parse(JSON.stringify(this.arr));
+
+		reportData.forEach((e) => {
+			e['Customer Name'] = e['customer_name'];
+			delete e['customer_name'];
+
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+
+			e['Sale Type'] = e['sale_type'];
+			delete e['sale_type'];
+
+			e['Total Qty'] = e['total_qty'];
+			delete e['total_qty'];
+
+			e['# of Items'] = e['no_of_items'];
+			delete e['no_of_items'];
+
+			e['Taxable Value'] = e['taxable_value'];
+			delete e['taxable_value'];
+
+			e['CGST'] = e['cgst'];
+			delete e['cgst'];
+
+			e['SGST'] = e['sgst'];
+			delete e['sgst'];
+
+			e['IGST'] = e['igst'];
+			delete e['igst'];
+
+			e['IGST'] = e['igst'];
+			delete e['igst'];
+
+			e['Total Value'] = e['total_value'];
+			delete e['total_value'];
+
+			e['Net Total'] = e['net_total'];
+			delete e['net_total'];
+
+			e['Sale Date Time'] = e['sale_datetime'];
+			delete e['sale_datetime'];
+
 			delete e['id'];
 			delete e['center_id'];
 			delete e['customer_id'];
@@ -604,14 +794,41 @@ export class SearchSalesPage implements OnInit {
 			delete e['tax_applicable'];
 			delete e['roundoff'];
 			delete e['retail_customer_name'];
+			delete e['retail_customer_address'];
+
 			delete e['no_of_boxes'];
 		});
 		this.arr.splice(0, 1);
-		debugger;
 
-		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet(this.arr);
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Draft Sale Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
 
 		xlsx.writeFile(wb1, fileName);
 	}

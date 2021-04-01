@@ -645,8 +645,10 @@ export class CommonApiService {
 		);
 	}
 
-	isVendorExists(name) {
-		return this.httpClient.get(`${this.restApiUrl}/api/vendor-exists/${name}`);
+	isVendorExists(name, center_id) {
+		return this.httpClient.get(
+			`${this.restApiUrl}/api/vendor-exists/${name}/${center_id}`
+		);
 	}
 
 	addPymtReceived(submitForm) {

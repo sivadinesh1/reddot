@@ -191,6 +191,7 @@
 
 						<div class="actions">
 							<img
+								(click)="exportPendingPaymentsToExcel()"
 								src="/assets/images/svg/download-excel.svg"
 								style="cursor: pointer"
 								width="32px"
@@ -518,6 +519,7 @@
 
 				<div class="actions">
 					<img
+						(click)="exportClearedPaymentsToExcel()"
 						src="/assets/images/svg/download-excel.svg"
 						style="cursor: pointer"
 						width="32px"

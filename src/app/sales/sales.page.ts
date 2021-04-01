@@ -649,7 +649,7 @@ export class SalesPage {
 		this.sumTotalTax();
 
 		if (type === 'loadingnow') {
-			let v1 = document.documentElement.clientHeight + 70;
+			let v1 = 240 + this.listArr.length * 70 + 70;
 			this.ScrollToPoint(0, v1);
 		} else {
 			this.ScrollToTop();

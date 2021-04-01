@@ -352,10 +352,10 @@
 					>print
 				</mat-icon>
 			</div>
+			<!-- *ngIf="this.deleteAccess === 'Y'" -->
 			<div class="item" *ngIf="item.status === 'D'" style="text-align: center">
 				<mat-icon
 					[ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
-					*ngIf="this.deleteAccess === 'Y'"
 					(click)="presentAlertConfirm(item)"
 					>delete
 				</mat-icon>

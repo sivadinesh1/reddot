@@ -27,6 +27,8 @@ import { filter, tap, map, startWith } from 'rxjs/operators';
 import { Vendor } from 'src/app/models/Vendor';
 import { VendorPaymentDialogComponent } from 'src/app/components/vendors/vendor-payment-dialog/vendor-payment-dialog.component';
 import { AccountsPayablesComponent } from 'src/app/components/accounts/accounts-payables/accounts-payables.component';
+import * as xlsx from 'xlsx';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-vpurchase-accounts-payments',
@@ -49,6 +51,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 	noMatch: any;
 	responseMsg: string;
 	pageLength: any;
+	clearedPayments: any;
 
 	filteredVendor: Observable<any[]>;
 	vendor_lis: Vendor[];
@@ -310,11 +313,9 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			.subscribe((data: any) => {
 				this.invoicesdata = data.body;
 
-				this.purchaseInvoicedataSource.data = this.invoicesdata.filter(
-					(data: any) => {
-						return data.payment_status !== 'PAID';
-					}
-				);
+				this.purchaseInvoicedataSource.data = data.body.filter((data: any) => {
+					return data.payment_status !== 'PAID';
+				});
 
 				this.purchaseInvoicedataSource.sort = this.sort;
 				this.pageLength = data.length;
@@ -342,11 +343,9 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			.subscribe((data: any) => {
 				this.invoicesdata = data.body;
 
-				this.purchaseInvoicedataSource.data = this.invoicesdata.filter(
-					(data: any) => {
-						return data.payment_status !== 'PAID';
-					}
-				);
+				this.purchaseInvoicedataSource.data = data.body.filter((data: any) => {
+					return data.payment_status !== 'PAID';
+				});
 
 				this.purchaseInvoicedataSource.sort = this.sort;
 				this.pageLength = data.length;
@@ -372,6 +371,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 				invoiceno: invoiceno,
 			})
 			.subscribe((data: any) => {
+				this.clearedPayments = data.body;
 				this.paymentdataSource.data = data.body;
 
 				this._cdr.markForCheck();
@@ -491,5 +491,155 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 
 	showVendorStatement() {
 		this._router.navigate([`/home/vendor-statement-reports`]);
+	}
+
+	exportPendingPaymentsToExcel() {
+		const fileName = 'Purchase_Pending_Payments_Reports.xlsx';
+
+		let reportData = JSON.parse(JSON.stringify(this.invoicesdata));
+		debugger;
+		reportData.forEach((e) => {
+			e['Vendor Name'] = e['vendor_name'];
+			delete e['vendor_name'];
+
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+
+			e['Invoice Amount'] = e['invoice_amt'];
+			delete e['invoice_amt'];
+
+			e['Aging Days'] = e['aging_days'];
+			delete e['aging_days'];
+
+			e['Payment Status'] = e['payment_status'];
+			delete e['payment_status'];
+
+			e['Paid Amount'] = e['paid_amount'];
+			delete e['paid_amount'];
+
+			e['Balance Amount'] = e['bal_amount'];
+			delete e['bal_amount'];
+
+			delete e['purchase_id'];
+			delete e['center_id'];
+			delete e['vendor_id'];
+			delete e['vendor_address1'];
+			delete e['vendor_address2'];
+		});
+
+		// debugger;
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		//create sheet with empty json/there might be other ways to do this
+		const ws1 = xlsx.utils.json_to_sheet([]);
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Pending Payments Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
+
+		xlsx.writeFile(wb1, fileName);
+	}
+
+	exportClearedPaymentsToExcel() {
+		//	this.arr = [];
+		const fileName = 'Cleared_Payments_Reports.xlsx';
+
+		//	this.arr = this.clearedPayments;
+		let reportData = JSON.parse(JSON.stringify(this.clearedPayments));
+		debugger;
+		reportData.forEach((e) => {
+			e['Vendor Name'] = e['vendor_name'];
+			delete e['vendor_name'];
+
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+
+			e['Bank Ref'] = e['bank_ref'];
+			delete e['bank_ref'];
+
+			e['Payment Ref'] = e['pymt_ref'];
+			delete e['pymt_ref'];
+
+			e['Payment #'] = e['payment_no'];
+			delete e['payment_no'];
+
+			e['Payment Date'] = e['payment_date'];
+			delete e['payment_date'];
+
+			e['Payment Mode'] = e['pymt_mode_name'];
+			delete e['pymt_mode_name'];
+
+			e['Advance Amount Used'] = e['advance_amt_used'];
+			delete e['advance_amt_used'];
+
+			e['Paid Amount'] = e['applied_amount'];
+			delete e['applied_amount'];
+
+			delete e['vendor_id'];
+			delete e['last_updated'];
+			delete e['pymt_mode_ref_id'];
+		});
+
+		// debugger;
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		//create sheet with empty json/there might be other ways to do this
+		const ws1 = xlsx.utils.json_to_sheet([]);
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Pending Payments Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
+
+		xlsx.writeFile(wb1, fileName);
 	}
 }

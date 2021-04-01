@@ -5,7 +5,7 @@ import {
 	ElementRef,
 	ChangeDetectorRef,
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { Customer } from 'src/app/models/Customer';
 import { User } from 'src/app/models/User';
 import { IonSearchbar } from '@ionic/angular';
@@ -27,6 +27,8 @@ import {
 	FormBuilder,
 } from '@angular/forms';
 import { filter, tap, map, startWith } from 'rxjs/operators';
+import * as xlsx from 'xlsx';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-accounts-payments',
@@ -41,6 +43,7 @@ export class AccountsPaymentsPage implements OnInit {
 	userdata$: Observable<User>;
 	userdata: any;
 	isTableHasData = true;
+	arr: Array<any>;
 
 	ready = 0;
 	pcount: any;
@@ -111,6 +114,7 @@ export class AccountsPaymentsPage implements OnInit {
 
 	tabIndex = 0;
 	invoicesdata: any;
+	paymentdata: any;
 	submitForm: FormGroup;
 
 	fromdate = new Date();
@@ -336,6 +340,7 @@ export class AccountsPaymentsPage implements OnInit {
 				invoiceno: invoiceno,
 			})
 			.subscribe((data: any) => {
+				this.paymentdata = data.body;
 				// DnD - code to add a "key/Value" in every object of array
 				this.paymentdataSource.data = data.body.map((el) => {
 					var o = Object.assign({}, el);
@@ -386,11 +391,9 @@ export class AccountsPaymentsPage implements OnInit {
 			.subscribe((data: any) => {
 				this.invoicesdata = data.body;
 
-				this.saleInvoicedataSource.data = this.invoicesdata.filter(
-					(data: any) => {
-						return data.payment_status !== 'PAID';
-					}
-				);
+				this.saleInvoicedataSource.data = data.body.filter((data: any) => {
+					return data.payment_status !== 'PAID';
+				});
 
 				this.saleInvoicedataSource.sort = this.sort;
 				this.pageLength = data.length;
@@ -418,11 +421,9 @@ export class AccountsPaymentsPage implements OnInit {
 			.subscribe((data: any) => {
 				this.invoicesdata = data.body;
 
-				this.saleInvoicedataSource.data = this.invoicesdata.filter(
-					(data: any) => {
-						return data.payment_status !== 'PAID';
-					}
-				);
+				this.saleInvoicedataSource.data = data.body.filter((data: any) => {
+					return data.payment_status !== 'PAID';
+				});
 
 				this.saleInvoicedataSource.sort = this.sort;
 				this.pageLength = data.length;
@@ -448,6 +449,7 @@ export class AccountsPaymentsPage implements OnInit {
 				invoiceno: invoiceno,
 			})
 			.subscribe((data: any) => {
+				this.paymentdata = data.body;
 				this.paymentdataSource = data.body;
 
 				this.paymentdataSource.sort = this.sort;
@@ -569,5 +571,149 @@ export class AccountsPaymentsPage implements OnInit {
 
 	showCustomerStatement() {
 		this._router.navigate([`/home/statement-reports`]);
+	}
+
+	exportPendingPaymentsToExcel() {
+		const fileName = 'Pending_Receivables_Reports.xlsx';
+
+		let reportData = JSON.parse(
+			JSON.stringify(this.saleInvoicedataSource.data)
+		);
+
+		reportData.forEach((e) => {
+			e['Customer Name'] = e['customer_name'];
+			delete e['customer_name'];
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+			e['Aging Days'] = e['aging_days'];
+			delete e['aging_days'];
+			e['Invoice Amount'] = e['invoice_amt'];
+			delete e['invoice_amt'];
+			e['Sale Type'] = e['sale_type'];
+			delete e['sale_type'];
+			e['Payment Status'] = e['payment_status'];
+			delete e['payment_status'];
+			e['Paid Amount'] = e['paid_amount'];
+			delete e['paid_amount'];
+			e['Balance Amount'] = e['bal_amount'];
+			delete e['bal_amount'];
+			delete e['sale_id'];
+			delete e['center_id'];
+			delete e['customer_id'];
+			delete e['customer_address1'];
+			delete e['customer_address2'];
+		});
+		// // debugger;
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		//create sheet with empty json/there might be other ways to do this
+		const ws1 = xlsx.utils.json_to_sheet([]);
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Pending Receivables Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
+		xlsx.writeFile(wb1, fileName);
+	}
+
+	exportPaymentsToExcel() {
+		this.arr = [];
+		const fileName = 'Received_Payments_Reports.xlsx';
+
+		this.arr = this.paymentdata;
+		this.arr.forEach((e) => {
+			e['Customer Name'] = e['customer_name'];
+			delete e['customer_name'];
+
+			e['Pymt Mode'] = e['pymt_mode_name'];
+			delete e['pymt_mode_name'];
+
+			e['Bank Ref'] = e['bank_ref'];
+			delete e['bank_ref'];
+
+			e['Payment Ref'] = e['pymt_ref'];
+			delete e['pymt_ref'];
+
+			e['Payment No'] = e['payment_no'];
+			delete e['payment_no'];
+
+			e['Payment Date'] = e['pymt_date'];
+			delete e['pymt_date'];
+
+			e['Advance Amount Used'] = e['advance_amt_used'];
+			delete e['advance_amt_used'];
+
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+
+			e['Paid Amount'] = e['applied_amount'];
+			delete e['applied_amount'];
+
+			delete e['sale_id'];
+			delete e['center_id'];
+			delete e['customer_id'];
+			delete e['customer_address1'];
+			delete e['customer_address2'];
+			delete e['pymt_mode_ref_id'];
+			delete e['last_updated'];
+		});
+
+		// debugger;
+
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Received Payments Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, this.arr, {
+			skipHeader: false,
+			origin: 'A2',
+		});
+
+		xlsx.writeFile(wb1, fileName);
 	}
 }

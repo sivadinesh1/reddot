@@ -24,6 +24,7 @@ import { User } from 'src/app/models/User';
 import { PurchaseEntryDialogComponent } from '../../components/purchase/purchase-entry-dialog/purchase-entry-dialog.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import * as xlsx from 'xlsx';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-search-purchase',
@@ -370,10 +371,52 @@ export class SearchPurchasePage implements OnInit {
 		const fileName = 'Draft_Purchase_Reports.xlsx';
 
 		this.arr = await lastValueFrom(this.draftPurchase$);
-		this.arr.forEach((e) => {
+		debugger;
+		let reportData = JSON.parse(JSON.stringify(this.arr));
+
+		reportData.forEach((e) => {
+			e['Vendor Name'] = e['vendor_name'];
+			delete e['vendor_name'];
+
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+
+			e['Purchase Type'] = e['purchase_type'];
+			delete e['purchase_type'];
+
+			e['Total Qty'] = e['total_qty'];
+			delete e['total_qty'];
+
+			e['# of Items'] = e['no_of_items'];
+			delete e['no_of_items'];
+
+			e['Taxable Value'] = e['taxable_value'];
+			delete e['taxable_value'];
+
+			e['CGST'] = e['cgst'];
+			delete e['cgst'];
+
+			e['SGST'] = e['sgst'];
+			delete e['sgst'];
+
+			e['IGST'] = e['igst'];
+			delete e['igst'];
+
+			e['Total Value'] = e['total_value'];
+			delete e['total_value'];
+
+			e['Net Total'] = e['net_total'];
+			delete e['net_total'];
+
+			e['Stock Inwards Date Time'] = e['stock_inwards_datetime'];
+			delete e['stock_inwards_datetime'];
+
 			delete e['id'];
 			delete e['center_id'];
-			delete e['customer_id'];
+			delete e['vendor_id'];
 			delete e['lr_no'];
 			delete e['lr_date'];
 			delete e['received_date'];
@@ -390,12 +433,38 @@ export class SearchPurchasePage implements OnInit {
 			delete e['retail_customer_name'];
 			delete e['no_of_boxes'];
 		});
-		this.arr.splice(0, 1);
+
 		debugger;
 
-		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet(this.arr);
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Draft Purchase Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
 
 		xlsx.writeFile(wb1, fileName);
 	}
@@ -405,10 +474,52 @@ export class SearchPurchasePage implements OnInit {
 		const fileName = 'Completed_Purchase_Reports.xlsx';
 
 		this.arr = await lastValueFrom(this.fullfilledPurchase$);
-		this.arr.forEach((e) => {
+
+		let reportData = JSON.parse(JSON.stringify(this.arr));
+
+		reportData.forEach((e) => {
+			e['Vendor Name'] = e['vendor_name'];
+			delete e['vendor_name'];
+
+			e['Invoice #'] = e['invoice_no'];
+			delete e['invoice_no'];
+
+			e['Invoice Date'] = e['invoice_date'];
+			delete e['invoice_date'];
+
+			e['Purchase Type'] = e['purchase_type'];
+			delete e['purchase_type'];
+
+			e['Total Qty'] = e['total_qty'];
+			delete e['total_qty'];
+
+			e['# of Items'] = e['no_of_items'];
+			delete e['no_of_items'];
+
+			e['Taxable Value'] = e['taxable_value'];
+			delete e['taxable_value'];
+
+			e['CGST'] = e['cgst'];
+			delete e['cgst'];
+
+			e['SGST'] = e['sgst'];
+			delete e['sgst'];
+
+			e['IGST'] = e['igst'];
+			delete e['igst'];
+
+			e['Total Value'] = e['total_value'];
+			delete e['total_value'];
+
+			e['Net Total'] = e['net_total'];
+			delete e['net_total'];
+
+			e['Stock Inwards Date Time'] = e['stock_inwards_datetime'];
+			delete e['stock_inwards_datetime'];
+
 			delete e['id'];
 			delete e['center_id'];
-			delete e['customer_id'];
+			delete e['vendor_id'];
 			delete e['lr_no'];
 			delete e['lr_date'];
 			delete e['received_date'];
@@ -425,12 +536,38 @@ export class SearchPurchasePage implements OnInit {
 			delete e['retail_customer_name'];
 			delete e['no_of_boxes'];
 		});
-		this.arr.splice(0, 1);
+
 		debugger;
 
-		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet(this.arr);
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Completed Purchase Reports',
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
+						'DD/MM/YYYY'
+					)}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format(
+						'DD/MM/YYYY'
+					)}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
+		);
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
 
 		xlsx.writeFile(wb1, fileName);
 	}

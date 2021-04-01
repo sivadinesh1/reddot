@@ -323,6 +323,7 @@
 			<div class="left">
 				<div class="row1">
 					<div class="item1 headstyl-center txt-center-align">#</div>
+					<div class="item1 headstyl-center txt-center-align">&nbsp;</div>
 					<div class="item2 headstyl-left">Items Code</div>
 					<div class="item2 headstyl-left">Item Description</div>
 
@@ -348,6 +349,8 @@
 						*ngFor="let item of listArr ? listArr : []; let idx = index"
 						class="list-item"
 					>
+						<div>{{idx + 1}}</div>
+
 						<div class="txt-align">
 							<mat-checkbox
 								#myCheckbox

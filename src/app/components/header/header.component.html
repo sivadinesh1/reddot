@@ -142,10 +142,6 @@
 	<button mat-menu-item (click)="viewUsers()">
 		<span>Users</span>
 	</button>
-
-	<button mat-menu-item [matMenuTriggerFor]="reportsadmin">
-		<span>Reports</span>
-	</button>
 </mat-menu>
 
 <mat-menu #customeradmin="matMenu">
@@ -154,25 +150,5 @@
 	</button>
 	<button mat-menu-item (click)="viewDiscounts()">
 		<span>Discounts</span>
-	</button>
-</mat-menu>
-
-<mat-menu #reportsadmin="matMenu">
-	<button
-		mat-menu-item
-		(click)="viewProductSummaryReports()"
-		style="padding-right: 16px"
-	>
-		<span>Product Summary </span>
-	</button>
-	<button
-		mat-menu-item
-		(click)="viewInventoryReports()"
-		style="padding-right: 16px"
-	>
-		<span>Inventory </span>
-	</button>
-	<button mat-menu-item (click)="openBackOrder()">
-		<span>Backorders</span>
 	</button>
 </mat-menu>
