@@ -1,54 +1,60 @@
-<div class="content">
-	<div class="screen-header">
-		<div>Edit Product</div>
-		<div>
-			<img
-				class="cursor"
-				src="/assets/images/svg/close.svg"
-				(click)="close()"
-				width="20px"
-				height="20px"
-			/>
-		</div>
+<div class="screen-header">
+	<div>Edit Product</div>
+	<div>
+		<img
+			class="cursor"
+			src="/assets/images/svg/close.svg"
+			(click)="close()"
+			width="20px"
+			height="20px"
+		/>
 	</div>
+</div>
 
+<div class="content">
 	<form [formGroup]="submitForm">
-		<div class="prod-info">
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Code</mat-label>
-					<input
-						matInput
-						placeholder="Code"
-						(blur)="isProdExists()"
-						formControlName="product_code"
-						required
-					/>
-				</mat-form-field>
-				<div *ngIf="pexists" class="error">Already Exists</div>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Description</mat-label>
-					<input
-						matInput
-						placeholder="Description"
-						formControlName="description"
-						required
-					/>
-					<mat-error>This field is required</mat-error>
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Brands</mat-label>
-					<mat-select formControlName="brand_id">
-						<mat-option *ngFor="let item of brands$ | async" [value]="item.id">
-							{{ item.name }}
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
-			</div>
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Product Item Code</mat-label>
+				<input
+					matInput
+					placeholder="Code"
+					(blur)="isProdExists()"
+					formControlName="product_code"
+					required
+				/>
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+
+			<div *ngIf="pexists" class="error">Already Exists</div>
+		</div>
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Product Description</mat-label>
+				<input matInput formControlName="description" required />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Product's Brand</mat-label>
+				<mat-select formControlName="brand_id">
+					<mat-option *ngFor="let item of brands$ | async" [value]="item.id">
+						{{ item.name }}
+					</mat-option>
+				</mat-select>
+				<mat-hint>ex. Swaraj, Sonalika</mat-hint>
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div
+			style="
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				padding-top: 16px;
+			"
+		>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>UOM</mat-label>
@@ -57,6 +63,7 @@
 							{{ item.viewValue }}
 						</mat-option>
 					</mat-select>
+					<mat-hint>Unit of measurement</mat-hint>
 				</mat-form-field>
 			</div>
 			<div>
@@ -72,6 +79,15 @@
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
+		</div>
+		<div
+			style="
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				padding-top: 16px;
+			"
+		>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>HSN Code</mat-label>
@@ -86,6 +102,14 @@
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
+					<mat-label>Tax Rate (%)</mat-label>
+					<mat-select formControlName="taxrate">
+						<mat-option *ngFor="let item of tax" [value]="item.key">
+							{{ item.viewValue }}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+				<!-- <mat-form-field class="mat-width-ext">
 					<mat-label>Tax Rate</mat-label>
 					<input
 						type="number"
@@ -95,9 +119,30 @@
 						required
 					/>
 					<mat-error>This field is required</mat-error>
+				</mat-form-field> -->
+			</div>
+		</div>
+		<div
+			style="
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				padding-top: 16px;
+			"
+		>
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Current Stock</mat-label>
+					<input
+						matInput
+						type="number"
+						formControlName="currentstock"
+						required
+						numeric
+					/>
+					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
-
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Min. Qty</mat-label>
@@ -110,7 +155,15 @@
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
-
+		</div>
+		<div
+			style="
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				padding-top: 16px;
+			"
+		>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Unit/Price</mat-label>
@@ -123,6 +176,7 @@
 					/>
 				</mat-form-field>
 			</div>
+
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>MRP</mat-label>
@@ -132,10 +186,20 @@
 						formControlName="mrp"
 						placeholder="Mrp"
 						readonly
+						required
 					/>
 					<mat-hint>Use Purchase screen to change MRP</mat-hint>
 				</mat-form-field>
 			</div>
+		</div>
+		<div
+			style="
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				padding-top: 16px;
+			"
+		>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Purchase Price</mat-label>
@@ -159,16 +223,26 @@
 					/>
 				</mat-form-field>
 			</div>
-
+		</div>
+		<div
+			style="
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				padding-top: 16px;
+			"
+		>
 			<div>
 				<mat-form-field class="mat-width-ext">
-					<mat-label>Max. Discount</mat-label>
+					<mat-label>Max. Discount (%)</mat-label>
 					<input
 						type="number"
 						matInput
 						formControlName="maxdiscount"
 						placeholder="Max Discount"
+						required
 					/>
+					<mat-hint>Hint: Max 100 </mat-hint>
 				</mat-form-field>
 			</div>
 
@@ -184,6 +258,7 @@
 				</mat-form-field>
 			</div>
 		</div>
+
 		<div style="text-align: center">
 			<button
 				mat-raised-button

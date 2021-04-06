@@ -51,7 +51,13 @@ export class ProductEditDialogComponent implements OnInit {
 		{ key: 'Ltrs', viewValue: 'Ltrs' },
 		{ key: 'pcs', viewValue: 'Pcs' },
 	];
-
+	tax = [
+		{ key: '0', viewValue: '0' },
+		{ key: '5', viewValue: '5' },
+		{ key: '12', viewValue: '12' },
+		{ key: '18', viewValue: '18' },
+		{ key: '28', viewValue: '28' },
+	];
 	constructor(
 		private _formBuilder: FormBuilder,
 		private _router: Router,

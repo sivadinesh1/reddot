@@ -47,7 +47,7 @@ export class ViewBrandsPage implements OnInit {
 
 	@ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
-	displayedColumns: string[] = ['name', 'actions'];
+	displayedColumns: string[] = ['name', 'edit', 'delete'];
 	dataSource = new MatTableDataSource<Brand>();
 
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
