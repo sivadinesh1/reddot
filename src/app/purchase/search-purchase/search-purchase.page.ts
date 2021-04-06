@@ -48,6 +48,13 @@ export class SearchPurchasePage implements OnInit {
 	maxDate = new Date();
 	minDate = new Date();
 	dobMaxDate = new Date();
+
+	orderDefaultFlag = 'desc';
+	orderList = [
+		{ id: 'desc', value: 'Recent Orders First' },
+		{ id: 'asc', value: 'Old Orders First' },
+	];
+
 	statusList = [
 		{ id: 'all', value: 'All' },
 		{ id: 'D', value: 'Draft' },
@@ -95,6 +102,7 @@ export class SearchPurchasePage implements OnInit {
 			todate: [this.todate, Validators.required],
 			fromdate: [this.fromdate, Validators.required],
 			status: new FormControl('all'),
+			order: ['desc'],
 		});
 
 		this.userdata$ = this._authservice.currentUser;
@@ -185,6 +193,7 @@ export class SearchPurchasePage implements OnInit {
 			status: this.submitForm.value.status,
 			fromdate: this.submitForm.value.fromdate,
 			todate: this.submitForm.value.todate,
+			order: this.submitForm.value.order,
 		});
 
 		this.filteredPurchase$ = this.purchases$;
@@ -371,7 +380,7 @@ export class SearchPurchasePage implements OnInit {
 		const fileName = 'Draft_Purchase_Reports.xlsx';
 
 		this.arr = await lastValueFrom(this.draftPurchase$);
-		debugger;
+
 		let reportData = JSON.parse(JSON.stringify(this.arr));
 
 		reportData.forEach((e) => {
@@ -433,8 +442,6 @@ export class SearchPurchasePage implements OnInit {
 			delete e['retail_customer_name'];
 			delete e['no_of_boxes'];
 		});
-
-		debugger;
 
 		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
@@ -536,8 +543,6 @@ export class SearchPurchasePage implements OnInit {
 			delete e['retail_customer_name'];
 			delete e['no_of_boxes'];
 		});
-
-		debugger;
 
 		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();

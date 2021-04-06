@@ -55,27 +55,40 @@
 								class="m-card-title"
 								data-label="Name"
 							>
-								{{element.name}}
+								<div style="padding: 3px">{{element.name}}</div>
+								<div style="padding: 3px">
+									CR:
+									<span style="color: blue">
+										{{element.credit_amt | nullzero | currency: "INR"}}</span
+									>
+									/ DR:
+									<span style="color: blue">
+										{{element.balance_amt | nullzero | currency: "INR"}}</span
+									>
+								</div>
+								<div style="padding: 3px">
+									Last Received {{element.last_paid_date | nulldash }}
+								</div>
 							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="address1">
-							<th mat-header-cell *matHeaderCellDef>Additional Info</th>
+							<th mat-header-cell *matHeaderCellDef>Registered Address</th>
 							<td
 								mat-cell
 								*matCellDef="let element"
 								class="m-card-sub-title"
 								data-label="Form type"
 							>
-								<div style="padding: 3px">{{element.name}}</div>
 								<div style="padding: 3px">{{element.address1}}</div>
 								<div style="padding: 3px">{{element.address2 | nullna}}</div>
+								<div style="padding: 3px">{{element.district | nullna}}</div>
 							</td>
 						</ng-container>
 
 						<ng-container matColumnDef="credit">
 							<th mat-header-cell *matHeaderCellDef style="text-align: left">
-								Credit
+								&nbsp;
 							</th>
 							<td
 								mat-cell
@@ -97,9 +110,7 @@
 									(click)="goCustomerFinancials(element)"
 								>
 									<div>
-										<span style="color: blue">
-											{{element.credit_amt | nullzero | currency: "INR"}}</span
-										>
+										<span style="color: blue"> Financial Reports </span>
 									</div>
 								</div>
 
@@ -107,42 +118,22 @@
 							</td>
 						</ng-container>
 
-						<ng-container matColumnDef="outstanding">
-							<th mat-header-cell *matHeaderCellDef>Outstanding</th>
-							<td
-								mat-cell
-								*matCellDef="let element"
-								class="m-card-sub-title"
-								data-label="Form type"
-							>
-								<div
-									style="
-										border-left: 1px solid #f2f2f2;
-										padding-left: 10px;
-										cursor: pointer;
-									"
-									(click)="goCustomerFinancials(element)"
-								>
-									<div>
-										<span style="color: blue">
-											{{element.balance_amt | nullzero | currency: "INR"}}</span
-										>
-									</div>
-								</div>
-							</td>
-						</ng-container>
-
 						<ng-container matColumnDef="lastpaiddate">
-							<th mat-header-cell *matHeaderCellDef>Last Paid Date</th>
-							<td
-								mat-cell
-								*matCellDef="let element"
-								class="m-card-sub-title"
-								data-label="Form type"
-							>
-								<div style="padding: 3px">
-									{{element.last_paid_date | nulldash }}
-								</div>
+							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+							<td mat-cell *matCellDef="let element">
+								<button
+									mat-button
+									[matMenuTriggerFor]="menu"
+									[matMenuTriggerData]="{element: element}"
+								>
+									Contact Info
+									<img
+										src="/assets/images/svg/down-arrow.svg"
+										width="12px"
+										height="12px"
+										alt=""
+									/>
+								</button>
 							</td>
 						</ng-container>
 
@@ -150,11 +141,17 @@
 							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
 							<td mat-cell *matCellDef="let element">
 								<button
-									mat-icon-button
-									[matMenuTriggerFor]="menu"
+									mat-button
+									[matMenuTriggerFor]="menu1"
 									[matMenuTriggerData]="{element: element}"
 								>
-									<mat-icon>more_vert</mat-icon>
+									Discount Settings
+									<img
+										src="/assets/images/svg/down-arrow.svg"
+										width="12px"
+										height="12px"
+										alt=""
+									/>
 								</button>
 							</td>
 						</ng-container>
@@ -182,12 +179,28 @@
 			<mat-menu #menu="matMenu">
 				<ng-template matMenuContent let-element="element">
 					<button mat-menu-item (click)="edit(element)">
-						<mat-icon>edit </mat-icon>
-						<span> Billing & Contact</span>
+						<span> Primary Contact Info</span>
 					</button>
 					<button mat-menu-item (click)="editShippingAddress(element)">
-						<mat-icon [ngStyle]="{'color':'#bf0d3e'}">edit </mat-icon>
-						<span> Shipping Address</span>
+						<span> Secondary Shipping Address(s)</span>
+					</button>
+					<!-- <button mat-menu-item (click)="editdefault(element)">
+						<span>Default Discounts</span>
+					</button>
+
+					<button mat-menu-item (click)="manageBrandDiscounts(element)">
+						<span>Discounts By Brand</span>
+					</button> -->
+				</ng-template>
+			</mat-menu>
+			<mat-menu #menu1="matMenu">
+				<ng-template matMenuContent let-element="element">
+					<button mat-menu-item (click)="editdefault(element)">
+						<span>Default Discounts</span>
+					</button>
+
+					<button mat-menu-item (click)="manageBrandDiscounts(element)">
+						<span>Discounts By Brand</span>
 					</button>
 				</ng-template>
 			</mat-menu>

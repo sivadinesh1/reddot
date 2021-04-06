@@ -119,29 +119,64 @@
 		</div>
 
 		<div
-			style="width: 94%; margin: 0 auto; padding: 16px 0px 100px 0px"
+			style="
+				width: 94%;
+				margin: 0 auto;
+				padding: 16px 0px 100px 0px;
+				position: relative;
+				display: grid;
+			"
 			[@.disabled]="true"
 		>
-			<mat-tab-group
-				color="primary"
-				[(selectedIndex)]="tabIndex"
-				(selectedTabChange)="tabClick($event)"
-			>
-				<!-- <mat-tab label="All Orders ({{(purchases$| async)?.length }})">
+			<div>
+				<mat-tab-group
+					color="primary"
+					[(selectedIndex)]="tabIndex"
+					(selectedTabChange)="tabClick($event)"
+				>
+					<!-- <mat-tab label="All Orders ({{(purchases$| async)?.length }})">
 					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 				</mat-tab> -->
 
-				<mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
+					<mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
+						<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
 
-				<mat-tab label="Completed  ({{(fullfilledPurchase$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
-			</mat-tab-group>
+					<mat-tab
+						label="Completed  ({{(fullfilledPurchase$| async)?.length }})"
+					>
+						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
+				</mat-tab-group>
+			</div>
+
+			<div
+				style="
+					position: absolute;
+					justify-self: flex-end;
+					top: 16px;
+					z-index: 1;
+				"
+			>
+				<form [formGroup]="submitForm">
+					<mat-form-field class="readonly-wrapper">
+						<mat-label>Show</mat-label>
+						<mat-select
+							formControlName="order"
+							(selectionChange)="search()"
+							value="{orderDefaultFlag}"
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
+						>
+							<mat-option *ngFor="let item of orderList" [value]="item.id">
+								{{item.value}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</form>
+			</div>
 		</div>
 	</div>
 

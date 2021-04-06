@@ -1,20 +1,21 @@
 .content {
 	display: grid;
-	width: 94%;
-	margin: 0 auto;
+	width: 100%;
+
 	padding: 16px;
 }
 
 .grid-split {
 	display: grid;
-	grid-template-columns: auto auto;
+	grid-template-columns: auto;
 	grid-gap: 10px;
 	width: 100%;
 }
 
 .screen-header {
 	display: flex;
-	padding: 8px 0px;
+	width: 100%;
+
 	font-size: 18px;
 	font-weight: 500;
 	color: #222222;

@@ -4,7 +4,7 @@ import {
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
 } from '@angular/core';
-import { onSideNavChange, animateText } from '../../util/animations';
+
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -22,7 +22,7 @@ interface Page {
 	selector: 'app-left-menu',
 	templateUrl: './left-menu.component.html',
 	styleUrls: ['./left-menu.component.scss'],
-	animations: [onSideNavChange, animateText],
+
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeftMenuComponent implements OnInit {
@@ -33,42 +33,79 @@ export class LeftMenuComponent implements OnInit {
 	clickedMenudata$: Observable<any>;
 	userdata$: Observable<User>;
 	userdata: any;
+	panelOpenState = false;
 
 	pages: Page[] = [];
+	secondarymenus: Page[] = [];
 
 	admin_pages: Page[] = [
 		{
-			name: 'DASHBOARD',
+			name: 'Home',
 			link: '/home/admin-dashboard',
 			icon: '/assets/images/svg/dashboard-black.svg',
 		},
 		{
-			name: 'ENQUIRY',
+			name: 'Enquiry',
 			link: '/home/enquiry/open-enquiry/O/weekly',
 			icon: '/assets/images/svg/enquiry.svg',
 		},
 		{
-			name: 'SALE',
+			name: 'Sale Orders',
 			link: '/home/search-sales',
 			icon: '/assets/images/svg/sales.svg',
 		},
 		{
-			name: 'PURCHASE',
-			link: '/home/search-purchase',
-			icon: '/assets/images/svg/purchase.svg',
-		},
-		{
-			name: 'RECEIVABLES',
+			name: 'Receivables',
 			link: '/home/payments',
-			icon: '/assets/images/svg/receivables.svg',
-		},
-		{
-			name: 'PAYMENTS',
-			link: '/home/vpayments',
 			icon: '/assets/images/svg/money.svg',
 		},
 		{
-			name: 'REPORTS',
+			name: 'Customers',
+			link: '/home/view-customers',
+			icon: '/assets/images/svg/customers.svg',
+		},
+		{
+			name: 'Purchase',
+			link: '/home/search-purchase',
+			icon: '/assets/images/svg/purchase.svg',
+		},
+
+		{
+			name: 'Payments',
+			link: '/home/vpayments',
+			icon: '/assets/images/svg/payments.svg',
+		},
+		{
+			name: 'Vendors',
+			link: '/home/view-vendors',
+			icon: '/assets/images/svg/vendors.svg',
+		},
+		{
+			name: 'Products',
+			link: '/home/view-products',
+			icon: '/assets/images/svg/product.svg',
+		},
+		{
+			name: 'Brands',
+			link: '/home/view-brands',
+			icon: '/assets/images/svg/brands.svg',
+		},
+
+		{
+			name: 'Reports',
+			link: '/home/reports-home',
+			icon: '/assets/images/svg/growth.svg',
+		},
+	];
+
+	secondary_menus: Page[] = [
+		{
+			name: 'Reports 1',
+			link: '/home/reports-home',
+			icon: '/assets/images/svg/growth.svg',
+		},
+		{
+			name: 'Reports 2',
 			link: '/home/reports-home',
 			icon: '/assets/images/svg/growth.svg',
 		},
@@ -129,6 +166,7 @@ export class LeftMenuComponent implements OnInit {
 				if (this.userdata !== undefined) {
 					if (this.userdata?.role === 'ADMIN') {
 						this.pages = this.admin_pages;
+						this.secondarymenus = this.secondary_menus;
 					} else {
 						this.pages = this.user_pages;
 					}
@@ -158,7 +196,7 @@ export class LeftMenuComponent implements OnInit {
 		this._authservice.setCurrentMenu(name);
 
 		this.clickedItem = name;
-		if (this.userdata.role === 'ADMIN' && this.clickedItem === 'HOME') {
+		if (this.userdata.role === 'ADMIN' && this.clickedItem === 'Home') {
 			this._router.navigateByUrl('/home/admin-dashboard');
 		} else {
 			this._router.navigateByUrl(url);

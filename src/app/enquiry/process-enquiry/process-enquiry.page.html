@@ -352,7 +352,15 @@
 									{{item.value.product_desc}}
 								</td>
 								<td style="text-align: right">
-									{{item.value.available_stock}}
+									<span
+										*ngIf="item.value.available_stock <= 0"
+										style="color: red"
+									>
+										{{item.value.available_stock}}
+									</span>
+									<span *ngIf="item.value.available_stock > 0">
+										{{item.value.available_stock}}
+									</span>
 								</td>
 								<td style="text-align: right; padding-right: 5px">
 									{{item.value.rackno}}

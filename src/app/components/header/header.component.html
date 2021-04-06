@@ -1,34 +1,16 @@
-<div
-	style="
-		background-color: #f2f2f2;
-		display: flex;
-		flex-direction: row-reverse;
-		color: #fff;
-		font-size: 14px;
-		padding: 3px;
-	"
->
-	<div
-		style="color: blue; cursor: pointer; padding: 0px 4px"
-		(click)="viewCustomer()"
-	>
-		Customers
-	</div>
-</div>
 <div fxFlex="row" fxLayoutGap="10px" class="header">
-	<!-- <button mat-icon-button (click)="toggle()">
-		<mat-icon>menu</mat-icon>
-	</button> -->
-
 	<span style="align-self: center">
-		<div>
+		<div
+			style="
+				color: #bf0000;
+				font-size: 20px;
+				font-weight: 400;
+				letter-spacing: 0.1rem;
+			"
+		>
 			{{ userdata?.center_name }}
 		</div>
-		<div>
-			<span style="font-size: 0.8rem; color: #0007ff"
-				>{{ userdata?.plan_name }}
-			</span>
-		</div>
+		<div>Coimbatore</div>
 	</span>
 	<span class="spacer"></span>
 
@@ -121,19 +103,19 @@
 </mat-menu>
 
 <mat-menu #admin="matMenu">
-	<button mat-menu-item (click)="viewProduct()" style="padding-right: 16px">
+	<!-- <button mat-menu-item (click)="viewProduct()" style="padding-right: 16px">
 		<span>Product</span>
-	</button>
-	<button mat-menu-item (click)="viewBrand()">
+	</button> -->
+	<!-- <button mat-menu-item (click)="viewBrand()">
 		<span>Brand</span>
-	</button>
-	<button mat-menu-item (click)="viewVendor()">
+	</button> -->
+	<!-- <button mat-menu-item (click)="viewVendor()">
 		<span>Vendor</span>
-	</button>
+	</button> -->
 
-	<button mat-menu-item [matMenuTriggerFor]="customeradmin">
+	<!-- <button mat-menu-item [matMenuTriggerFor]="customeradmin">
 		<span>Customers</span>
-	</button>
+	</button> -->
 
 	<button mat-menu-item (click)="editCenter()">
 		<span>Center</span>
@@ -144,11 +126,11 @@
 	</button>
 </mat-menu>
 
-<mat-menu #customeradmin="matMenu">
+<!-- <mat-menu #customeradmin="matMenu">
 	<button mat-menu-item (click)="viewCustomer()" style="padding-right: 16px">
 		<span>Customer</span>
 	</button>
 	<button mat-menu-item (click)="viewDiscounts()">
 		<span>Discounts</span>
 	</button>
-</mat-menu>
+</mat-menu> -->

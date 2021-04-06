@@ -123,6 +123,7 @@
 									#invno
 									formControlName="invoiceno"
 									required
+									appSelectOnFocus
 								/>
 
 								<mat-error
@@ -172,6 +173,7 @@
 							type="text"
 							formControlName="orderno"
 							tabindex="9"
+							appSelectOnFocus
 						/>
 
 						<mat-error
@@ -211,6 +213,7 @@
 							type="text"
 							tabindex="11"
 							formControlName="lrno"
+							appSelectOnFocus
 						/>
 
 						<mat-error
@@ -272,6 +275,7 @@
 									tabindex="14"
 									type="number"
 									formControlName="noofboxes"
+									appSelectOnFocus
 								/>
 							</mat-form-field>
 						</div>
@@ -283,6 +287,7 @@
 									type="number"
 									tabindex="15"
 									formControlName="transport_charges"
+									appSelectOnFocus
 								/>
 							</mat-form-field>
 						</div>
@@ -295,6 +300,7 @@
 									type="number"
 									tabindex="16"
 									formControlName="unloading_charges"
+									appSelectOnFocus
 								/>
 							</mat-form-field>
 						</div>
@@ -306,6 +312,7 @@
 									type="number"
 									tabindex="17"
 									formControlName="misc_charges"
+									appSelectOnFocus
 								/>
 							</mat-form-field>
 						</div>
@@ -386,6 +393,7 @@
 					<div class="item1 headstyl-left txt-center-align">&nbsp;</div>
 					<div class="item2 headstyl-left">Item Code</div>
 					<div class="item2 headstyl-left">Item Description</div>
+					<div class="item2 headstyl-right">HSN Code</div>
 					<div class="item3 headstyl-right">Qty</div>
 					<div class="item3 headstyl-right">MRP</div>
 					<div class="item3 headstyl-right">Purchase Price</div>
@@ -417,6 +425,7 @@
 							<div class="item2">{{item.product_code}}</div>
 
 							<div class="item2">{{item.product_desc}}</div>
+							<div style="text-align: right">{{item.hsncode}}</div>
 
 							<div style="text-align: right" class="num-format-cell-style">
 								<mat-form-field
@@ -431,6 +440,7 @@
 										maxlength="7"
 										min="0"
 										max="999999"
+										appSelectOnFocus
 									/>
 									<mat-hint
 										*ngIf="item.qtyerror!== '' "
@@ -450,12 +460,14 @@
 								>
 									<input
 										matInput
-										value="{{item.purchase_price | number:'1.2-2'}}"
+										value="{{item.purchase_price}}"
 										(keyup)="handlePPChange($event, idx)"
 										required
 										maxlength="7"
 										min="0"
 										max="999999"
+										type="number"
+										appSelectOnFocus
 									/>
 									<mat-hint
 										*ngIf="item.pperror!== '' "
@@ -606,6 +618,7 @@
 								tabindex="4"
 								formControlName="temppurchaseprice"
 								required
+								appSelectOnFocus
 							/>
 
 							<mat-error
@@ -627,9 +640,11 @@
 								formControlName="tempqty"
 								required
 								#qty
+								(keydown.enter)="add()"
+								appSelectOnFocus
 							/>
 							<mat-hint matTooltip="Info about the action"
-								>Hint: Max 9999</mat-hint
+								>Hit Enter to Add</mat-hint
 							>
 						</mat-form-field>
 					</div>

@@ -59,6 +59,8 @@ export class SearchSalesPage implements OnInit {
 
 	saletypeFlag = 'all';
 
+	orderDefaultFlag = 'desc';
+
 	today = new Date();
 	submitForm: FormGroup;
 	maxDate = new Date();
@@ -81,6 +83,11 @@ export class SearchSalesPage implements OnInit {
 		{ id: 'all', value: 'All' },
 		{ id: 'D', value: 'Draft' },
 		{ id: 'C', value: 'Fullfilled' },
+	];
+
+	orderList = [
+		{ id: 'desc', value: 'Recent Orders First' },
+		{ id: 'asc', value: 'Old Orders First' },
 	];
 
 	saletypeList = [
@@ -129,6 +136,7 @@ export class SearchSalesPage implements OnInit {
 			saletype: new FormControl('all'),
 			invoiceno: [''],
 			searchtype: ['all'],
+			order: ['desc'],
 		});
 
 		this.userdata$ = this._authservice.currentUser;
@@ -259,6 +267,7 @@ export class SearchSalesPage implements OnInit {
 			saletype: this.submitForm.value.saletype,
 			searchtype: this.submitForm.value.searchtype,
 			invoiceno: this.submitForm.value.invoiceno,
+			order: this.submitForm.value.order,
 		});
 
 		this.filteredSales$ = this.sales$;

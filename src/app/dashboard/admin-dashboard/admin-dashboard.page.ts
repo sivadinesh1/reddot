@@ -67,7 +67,7 @@ export class AdminDashboardPage implements OnInit {
 		this.userdata$
 			.pipe(filter((data) => data !== null))
 			.subscribe((data: any) => {
-				this._authservice.setCurrentMenu('HOME');
+				this._authservice.setCurrentMenu('Home');
 				this.userdata = data;
 				this.reloadOpsSummary('today');
 				this.reloadSalesSummary();

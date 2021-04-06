@@ -537,6 +537,7 @@ export class PurchasePage implements OnInit {
 			stock_pk: temp.stock_pk,
 			qtyerror: '',
 			pperror: '',
+			hsncode: temp.hsncode,
 		});
 
 		const tempArr = this.listArr.map((arrItem) => {

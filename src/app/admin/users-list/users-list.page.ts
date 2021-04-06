@@ -1,4 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, ElementRef } from '@angular/core';
+import {
+	Component,
+	OnInit,
+	ChangeDetectorRef,
+	ViewChild,
+	ChangeDetectionStrategy,
+	ElementRef,
+} from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
@@ -6,159 +13,147 @@ import { IonSearchbar } from '@ionic/angular';
 import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 import { filter, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { User } from "../../models/User";
+import { User } from '../../models/User';
 import { AddUserComponent } from '../../components/users/add-user/add-user.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import {
+	FormGroup,
+	FormControl,
+	Validators,
+	FormBuilder,
+} from '@angular/forms';
 
 @Component({
-  selector: 'app-users-list',
-  templateUrl: './users-list.page.html',
-  styleUrls: ['./users-list.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'app-users-list',
+	templateUrl: './users-list.page.html',
+	styleUrls: ['./users-list.page.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersListPage implements OnInit {
+	listArr: any;
 
-  listArr: any;
+	pageLength: any;
+	isTableHasData = true;
+	submitForm: FormGroup;
 
-  pageLength: any;
-  isTableHasData = true;
-  submitForm: FormGroup;
+	userdata$: Observable<User>;
+	userdata: any;
 
-  userdata$: Observable<User>;
-  userdata: any;
+	ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
-  ready = 0; // flag check - centerid (localstorage) & customerid (param)
+	@ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
-  @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
+	@ViewChild('epltable', { static: false }) epltable: ElementRef;
 
-  @ViewChild('epltable', { static: false }) epltable: ElementRef;
+	status = [
+		{ id: 'A', value: 'Active' },
+		{ id: 'D', value: 'Deactive' },
+	];
 
-  status = [
-    { id: 'A', value: 'Active' },
-    { id: 'D', value: 'Deactive' }
-  ];
+	constructor(
+		private _authservice: AuthenticationService,
+		private _cdr: ChangeDetectorRef,
+		private _commonApiService: CommonApiService,
+		private _dialog: MatDialog,
+		private _route: ActivatedRoute,
+		private _fb: FormBuilder,
+		private _router: Router
+	) {
+		this.userdata$ = this._authservice.currentUser;
+		this.userdata$
+			.pipe(filter((data) => data !== null))
+			.subscribe((data: any) => {
+				this.userdata = data;
 
+				this.ready = 1;
+				this.reloadUsers('A');
+				this._cdr.markForCheck();
+			});
 
-  constructor(private _authservice: AuthenticationService, private _cdr: ChangeDetectorRef,
-    private _commonApiService: CommonApiService, private _dialog: MatDialog,
-    private _route: ActivatedRoute, private _fb: FormBuilder, 
-    private _router: Router,) {
+		this._route.params.subscribe((params) => {
+			this.init();
+		});
+	}
 
-    this.userdata$ = this._authservice.currentUser;
-    this.userdata$
-      .pipe(
-        filter((data) => data !== null))
-      .subscribe((data: any) => {
-        this.userdata = data;
-        
-        this.ready = 1;
-        this.reloadUsers('A');
-        this._cdr.markForCheck();
-      });
+	ngOnInit() {
+		this.submitForm = this._fb.group({
+			status: new FormControl('A'),
+		});
+	}
 
-    this._route.params.subscribe(params => {
-      this.init();
-    });
+	init() {
+		if (this.ready === 1) {
+			// ready = 1 only after userdata observable returns
+			this.reloadUsers('A');
+		}
+	}
 
-  }
+	reloadUsers(status) {
+		this._commonApiService
+			.getUsers(this.userdata.center_id, status)
+			.subscribe((data: any) => {
+				this.listArr = data;
+				this._cdr.markForCheck();
+			});
+	}
 
-  ngOnInit() {
+	addBrand() {
+		this._router.navigate([`/home/brand/add`]);
+	}
 
-    this.submitForm = this._fb.group({
-      status: new FormControl('A'),
-    })
-    
-  }
+	reset() {}
 
-  init() {
-    if (this.ready === 1) {  // ready = 1 only after userdata observable returns 
-      this.reloadUsers('A');
-    }
-  }
+	add() {
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '400px';
+		dialogConfig.height = '70%';
 
-  reloadUsers(status) {
+		const dialogRef = this._dialog.open(AddUserComponent, dialogConfig);
 
-    this._commonApiService.getUsers(this.userdata.center_id, status)
-      .subscribe((data: any) => {
+		dialogRef
+			.afterClosed()
+			.pipe(
+				filter((val) => !!val),
+				tap(() => {
+					console.log('calling add close..');
+					this.reloadUsers('A');
+					this._cdr.markForCheck();
+				})
+			)
+			.subscribe((data: any) => {
+				if (data === 'success') {
+					const dialogConfigSuccess = new MatDialogConfig();
+					dialogConfigSuccess.disableClose = false;
+					dialogConfigSuccess.autoFocus = true;
+					dialogConfigSuccess.width = '25%';
+					dialogConfigSuccess.height = '25%';
+					dialogConfigSuccess.data = 'New User added successfully';
 
-       this.listArr = data;
-       this._cdr.markForCheck();
-      });
+					const dialogRef = this._dialog.open(
+						SuccessMessageDialogComponent,
+						dialogConfigSuccess
+					);
+				}
+			});
+	}
 
-    
-  }
+	statusChange($event) {
+		this.reloadUsers($event.value);
+	}
 
-  addBrand() {
-    this._router.navigate([`/home/brand/add`]);
-  }
+	changestatus(item) {
+		if (item.status === 'A') {
+			item.status = 'D';
+		} else if (item.status === 'D') {
+			item.status = 'A';
+		}
 
-  reset() {
+		this._commonApiService.updateUserStatus(item).subscribe((data: any) => {
+			this.reloadUsers('A');
 
-  }
-
-  
-
-  add() {
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "50%";
-    dialogConfig.height = "50%";
-
-    const dialogRef = this._dialog.open(AddUserComponent, dialogConfig);
-
-    dialogRef.afterClosed()
-      .pipe(
-        filter(val => !!val),
-        tap(() => {
-          console.log('calling add close..')
-          this.reloadUsers('A');
-          this._cdr.markForCheck();
-        }
-        )
-      ).subscribe((data: any) => {
-        if (data === 'success') {
-
-          const dialogConfigSuccess = new MatDialogConfig();
-          dialogConfigSuccess.disableClose = false;
-          dialogConfigSuccess.autoFocus = true;
-          dialogConfigSuccess.width = "25%";
-          dialogConfigSuccess.height = "25%";
-          dialogConfigSuccess.data = "New User added successfully";
-
-          const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
-
-        }
-      });
-
-
-  }
-
-  statusChange($event) {
-
-    this.reloadUsers($event.value);
-
-  }
-
-  changestatus(item) {
-    
-    if(item.status === 'A') {
-      item.status = 'D'
-    } else if(item.status === 'D') {
-      item.status = 'A';
-    }
-
-    this._commonApiService.updateUserStatus(item)
-    .subscribe((data: any) => {
-
-     this.reloadUsers('A');
-
-     this._cdr.markForCheck();
-    });
-  }
-
+			this._cdr.markForCheck();
+		});
+	}
 }
-
-

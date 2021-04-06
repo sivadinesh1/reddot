@@ -605,7 +605,7 @@ export class AccountsPaymentsPage implements OnInit {
 			delete e['customer_address1'];
 			delete e['customer_address2'];
 		});
-		// // debugger;
+
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		//create sheet with empty json/there might be other ways to do this
 		const ws1 = xlsx.utils.json_to_sheet([]);
@@ -681,8 +681,6 @@ export class AccountsPaymentsPage implements OnInit {
 			delete e['pymt_mode_ref_id'];
 			delete e['last_updated'];
 		});
-
-		// debugger;
 
 		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();

@@ -101,7 +101,7 @@ export class BrandDiscountsComponent implements OnInit {
 		private _commonApiService: CommonApiService
 	) {
 		this.elements = elements;
-		debugger;
+
 		const currentUser = this._authservice.currentUserValue;
 		this.center_id = currentUser.center_id;
 

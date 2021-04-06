@@ -272,7 +272,7 @@ export class SalesPage {
 			customerctrl: [null, [Validators.required, RequireMatch]],
 			productctrl: [null, [RequireMatch]],
 			tempdesc: [''],
-
+			tempmrp: [0],
 			tempqty: [
 				'1',
 				[
@@ -1580,8 +1580,8 @@ export class SalesPage {
 	clearProdInput() {
 		this.submitForm.patchValue({
 			productctrl: null,
-
 			tempdesc: null,
+			tempmrp: 0,
 			tempqty: 1,
 		});
 		this.product_lis = null;
@@ -1595,6 +1595,7 @@ export class SalesPage {
 			this.submitForm.patchValue({
 				tempdesc: event.description,
 				tempqty: event.qty === 0 ? 1 : event.qty,
+				tempmrp: event.mrp,
 			});
 			this.lineItemData = event;
 			this.selected_description = event.description;
@@ -1605,6 +1606,7 @@ export class SalesPage {
 			this.submitForm.patchValue({
 				tempdesc: event.option.value.description,
 				tempqty: event.option.value.qty === 0 ? 1 : event.option.value.qty,
+				tempmrp: event.option.value.mrp,
 			});
 			this.lineItemData = event.option.value;
 			this.selected_description = event.option.value.description;
@@ -1695,6 +1697,16 @@ export class SalesPage {
 
 			return false;
 		}
+		if (
+			this.submitForm.value.tempmrp === '' ||
+			this.submitForm.value.tempmrp === null ||
+			this.submitForm.value.tempmrp === 0
+		) {
+			this.submitForm.controls['tempmrp'].setErrors({ required: true });
+			this.submitForm.controls['tempmrp'].markAsTouched();
+
+			return false;
+		}
 
 		if (
 			this.submitForm.value.customerctrl === '' ||
@@ -1708,6 +1720,7 @@ export class SalesPage {
 
 		// this line over writes default qty vs entered qty
 		this.lineItemData.qty = this.submitForm.value.tempqty;
+		this.lineItemData.mrp = this.submitForm.value.tempmrp;
 
 		// lineitemdata is the input box row to add items
 		this.processItems(this.lineItemData, 'loadingnow');
@@ -1715,11 +1728,13 @@ export class SalesPage {
 		this.submitForm.patchValue({
 			productctrl: '',
 			tempdesc: '',
+			tempmrp: 0,
 			tempqty: 1,
 		});
 
 		this.submitForm.controls['tempdesc'].setErrors(null);
 		this.submitForm.controls['tempqty'].setErrors(null);
+		this.submitForm.controls['tempmrp'].setErrors(null);
 		this.submitForm.controls['productctrl'].setErrors(null);
 		// this.plist.nativeElement.focus();
 		this.plist && this.plist.nativeElement.focus();

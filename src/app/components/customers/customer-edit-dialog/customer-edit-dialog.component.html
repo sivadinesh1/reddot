@@ -2,7 +2,13 @@
 	<div class="screen-header">
 		<div>Edit Customer Details</div>
 		<div>
-			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+			<img
+				class="cursor"
+				src="/assets/images/svg/close.svg"
+				(click)="close()"
+				width="20px"
+				height="20px"
+			/>
 		</div>
 	</div>
 
@@ -11,9 +17,15 @@
 			<div class="name">
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Name</mat-label>
-					<input matInput readonly formControlName="name" required />
+					<input
+						matInput
+						(blur)="isCustomerExists()"
+						formControlName="name"
+						required
+					/>
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
+				<div *ngIf="cexists" class="error">Already Exists</div>
 			</div>
 
 			<div>
@@ -101,7 +113,14 @@
 			</div>
 		</div>
 		<div style="text-align: center">
-			<button mat-raised-button color="primary" (click)="onSubmit()" type="button">Update Customer</button>
+			<button
+				mat-raised-button
+				color="primary"
+				(click)="onSubmit()"
+				type="button"
+			>
+				Update Customer
+			</button>
 		</div>
 	</form>
 </div>

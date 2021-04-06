@@ -170,34 +170,67 @@
 			</div>
 		</div>
 		<div
-			style="width: 94%; margin: 0 auto; padding: 16px 0px 100px 0px"
+			style="
+				width: 94%;
+				margin: 0 auto;
+				padding: 16px 0px 100px 0px;
+				position: relative;
+				display: grid;
+			"
 			[@.disabled]="true"
 		>
-			<mat-tab-group
-				color="primary"
-				[(selectedIndex)]="tabIndex"
-				(selectedTabChange)="tabClick($event)"
+			<div>
+				<mat-tab-group
+					color="primary"
+					[(selectedIndex)]="tabIndex"
+					(selectedTabChange)="tabClick($event)"
+				>
+					<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
+						<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
+
+					<mat-tab label="Completed  ({{(fullfilledSales$| async)?.length }})">
+						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
+
+					<mat-tab label="StockIssue ({{(stockIssueSales$| async)?.length }})">
+						<ng-template [ngTemplateOutlet]="stockIssueMsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
+				</mat-tab-group>
+			</div>
+			<div
+				style="
+					position: absolute;
+					justify-self: flex-end;
+					top: 16px;
+					z-index: 1;
+				"
 			>
-				<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
-
-				<mat-tab label="Completed  ({{(fullfilledSales$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
-
-				<mat-tab label="StockIssue ({{(stockIssueSales$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="stockIssueMsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
-			</mat-tab-group>
+				<form [formGroup]="submitForm">
+					<mat-form-field class="readonly-wrapper">
+						<mat-label>Show</mat-label>
+						<mat-select
+							formControlName="order"
+							(selectionChange)="search()"
+							value="{orderDefaultFlag}"
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
+						>
+							<mat-option *ngFor="let item of orderList" [value]="item.id">
+								{{item.value}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</form>
+			</div>
 		</div>
 	</div>
 
 	<ng-template #draftMsgRef>
 		<div class="header header-style">
+			<div>#</div>
 			<div>CUSTOMER NAME</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
@@ -219,6 +252,7 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
+			<div>&nbsp;</div>
 
 			<div style="font-size: 14px; font-weight: 500; text-align: right">
 				{{this.sumNumItems}}
@@ -233,6 +267,7 @@
 
 	<ng-template #stockIssueMsgRef>
 		<div class="header header-style">
+			<div>#</div>
 			<div>CUSTOMER NAME</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
@@ -254,6 +289,7 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
+			<div>&nbsp;</div>
 
 			<div style="font-size: 14px; font-weight: 500; text-align: right">
 				{{this.sumNumItems}}
@@ -268,6 +304,7 @@
 
 	<ng-template #MsgRef>
 		<div class="header header-style">
+			<div>#</div>
 			<div>CUSTOMER NAME</div>
 			<div>INVOICE #</div>
 			<div>INV DATE</div>
@@ -291,6 +328,7 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
+			<div>&nbsp;</div>
 
 			<div style="font-size: 14px; font-weight: 500; text-align: right">
 				{{this.sumNumItems}}
@@ -305,7 +343,8 @@
 	</ng-template>
 
 	<ng-template #MsgRef1>
-		<div *ngFor="let item of filteredValues" class="listItem">
+		<div *ngFor="let item of filteredValues; let idx = index" class="listItem">
+			<div>{{idx + 1}}</div>
 			<div class="item">{{item.customer_name}}</div>
 			<div class="item">{{item.invoice_no}}</div>
 			<div class="item">{{item.invoice_date}}</div>

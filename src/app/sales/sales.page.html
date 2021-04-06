@@ -170,6 +170,7 @@
 									tabindex="-1"
 									required
 									readonly
+									[disableControl]="true"
 								/>
 							</mat-form-field>
 						</div>
@@ -374,6 +375,7 @@
 									maxlength="7"
 									min="0"
 									max="999999"
+									appSelectOnFocus
 								/>
 								<mat-hint
 									*ngIf="item.qtyerror!== '' "
@@ -400,6 +402,7 @@
 									maxlength="7"
 									min="0"
 									max="100"
+									appSelectOnFocus
 								/>
 								<mat-hint
 									*ngIf="item.discerror!== '' "
@@ -570,6 +573,26 @@
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
+							<mat-label>MRP</mat-label>
+							<input
+								matInput
+								type="number"
+								min="1"
+								max="100000"
+								tabindex="4"
+								formControlName="tempmrp"
+								required
+							/>
+
+							<mat-error
+								*ngIf="submitForm.controls['tempmrp'].hasError('required')"
+							>
+								Required feild
+							</mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>
 							<input
 								matInput
@@ -580,9 +603,11 @@
 								formControlName="tempqty"
 								required
 								#qty
+								(keydown.enter)="add()"
+								appSelectOnFocus
 							/>
 							<mat-hint matTooltip="Info about the action"
-								>Hint: Max 9999</mat-hint
+								>Hit Enter to Add</mat-hint
 							>
 						</mat-form-field>
 					</div>
@@ -737,6 +762,7 @@
 								tabindex="8"
 								type="number"
 								formControlName="noofboxes"
+								appSelectOnFocus
 							/>
 						</mat-form-field>
 					</div>
@@ -756,6 +782,7 @@
 								tabindex="9"
 								type="number"
 								formControlName="transport_charges"
+								appSelectOnFocus
 							/>
 						</mat-form-field>
 					</div>
@@ -767,6 +794,7 @@
 								tabindex="10"
 								type="number"
 								formControlName="unloading_charges"
+								appSelectOnFocus
 							/>
 						</mat-form-field>
 					</div>
@@ -779,6 +807,7 @@
 								type="number"
 								tabindex="11"
 								formControlName="misc_charges"
+								appSelectOnFocus
 							/>
 						</mat-form-field>
 					</div>

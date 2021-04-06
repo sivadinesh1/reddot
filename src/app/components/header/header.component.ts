@@ -5,7 +5,7 @@ import {
 	ChangeDetectorRef,
 	ChangeDetectionStrategy,
 } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -28,7 +28,6 @@ export class HeaderComponent implements OnInit {
 
 	userdata$: Observable<User>;
 
-	@Input() sidenav: MatSidenav;
 	public today = Date.now();
 
 	constructor(
@@ -48,11 +47,6 @@ export class HeaderComponent implements OnInit {
 	}
 
 	ngOnInit() {}
-
-	toggle() {
-		this.sidenav.toggle();
-		this._cdr.detectChanges();
-	}
 
 	goAdmin() {
 		this._router.navigate([`/home/admin`]);

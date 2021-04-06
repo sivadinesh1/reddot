@@ -122,6 +122,7 @@ import { ShowStatementComponent } from './components/reports/show-statement/show
 import { VendorPaymentDialogComponent } from './components/vendors/vendor-payment-dialog/vendor-payment-dialog.component';
 import { AccountsPayablesComponent } from './components/accounts/accounts-payables/accounts-payables.component';
 import { ShowVendorStatementComponent } from './components/reports/show-vendor-statement/show-vendor-statement.component';
+import { SelectOnFocusDirective } from './util/directives/select-focus.directive';
 
 const components = [
 	NullToQuotePipe,
@@ -202,7 +203,7 @@ const components = [
 	AutoFocusDirective,
 	FocusedDirective,
 	PreventDoubleClickDirective,
-
+	SelectOnFocusDirective,
 	NumericDirective,
 	DisableControlDirective,
 

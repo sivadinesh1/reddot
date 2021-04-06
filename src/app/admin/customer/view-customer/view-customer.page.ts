@@ -26,6 +26,8 @@ import { CustomerAddDialogComponent } from 'src/app/components/customers/custome
 import { CustomerEditDialogComponent } from 'src/app/components/customers/customer-edit-dialog/customer-edit-dialog.component';
 import { CustomerEditShippingAddressComponent } from 'src/app/components/customers/customer-edit-shipping-address/customer-edit-shipping-address.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
+import { DefaultDiscountsComponent } from 'src/app/components/customers/discount/default-discounts/default-discounts.component';
+import { BrandDiscountsComponent } from 'src/app/components/customers/discount/brand-discounts/brand-discounts.component';
 
 @Component({
 	selector: 'app-view-customer',
@@ -61,7 +63,7 @@ export class ViewCustomerPage implements OnInit {
 		'name',
 		'address1',
 		'credit',
-		'outstanding',
+
 		'lastpaiddate',
 		'actions',
 	];
@@ -297,5 +299,80 @@ export class ViewCustomerPage implements OnInit {
 		});
 
 		xlsx.writeFile(wb1, fileName);
+	}
+
+	editdefault(element) {
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '80%';
+		dialogConfig.height = '80%';
+		dialogConfig.data = element;
+
+		const dialogRef = this._dialog.open(
+			DefaultDiscountsComponent,
+			dialogConfig
+		);
+
+		dialogRef
+			.afterClosed()
+			.pipe(
+				filter((val) => !!val),
+				tap(() => {
+					this.reloadCustomers();
+					this._cdr.markForCheck();
+				})
+			)
+			.subscribe((data: any) => {
+				if (data.body === 1) {
+					const dialogConfigSuccess = new MatDialogConfig();
+					dialogConfigSuccess.disableClose = false;
+					dialogConfigSuccess.autoFocus = true;
+					dialogConfigSuccess.width = '25%';
+					dialogConfigSuccess.height = '25%';
+					dialogConfigSuccess.data = 'Discount updated successfully';
+
+					const dialogRef = this._dialog.open(
+						SuccessMessageDialogComponent,
+						dialogConfigSuccess
+					);
+				}
+			});
+	}
+
+	manageBrandDiscounts(element) {
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '80%';
+		dialogConfig.height = '80%';
+		dialogConfig.data = element;
+
+		const dialogRef = this._dialog.open(BrandDiscountsComponent, dialogConfig);
+
+		dialogRef
+			.afterClosed()
+			.pipe(
+				filter((val) => !!val),
+				tap(() => {
+					this.reloadCustomers();
+					this._cdr.markForCheck();
+				})
+			)
+			.subscribe((data: any) => {
+				if (data === 'success') {
+					const dialogConfigSuccess = new MatDialogConfig();
+					dialogConfigSuccess.disableClose = false;
+					dialogConfigSuccess.autoFocus = true;
+					dialogConfigSuccess.width = '25%';
+					dialogConfigSuccess.height = '25%';
+					dialogConfigSuccess.data = 'Discounts successfull';
+
+					const dialogRef = this._dialog.open(
+						SuccessMessageDialogComponent,
+						dialogConfigSuccess
+					);
+				}
+			});
 	}
 }

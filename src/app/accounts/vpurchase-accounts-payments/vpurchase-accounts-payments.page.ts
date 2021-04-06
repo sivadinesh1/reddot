@@ -497,7 +497,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 		const fileName = 'Purchase_Pending_Payments_Reports.xlsx';
 
 		let reportData = JSON.parse(JSON.stringify(this.invoicesdata));
-		debugger;
+
 		reportData.forEach((e) => {
 			e['Vendor Name'] = e['vendor_name'];
 			delete e['vendor_name'];
@@ -530,7 +530,6 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			delete e['vendor_address2'];
 		});
 
-		// debugger;
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		//create sheet with empty json/there might be other ways to do this
 		const ws1 = xlsx.utils.json_to_sheet([]);
@@ -571,7 +570,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 
 		//	this.arr = this.clearedPayments;
 		let reportData = JSON.parse(JSON.stringify(this.clearedPayments));
-		debugger;
+
 		reportData.forEach((e) => {
 			e['Vendor Name'] = e['vendor_name'];
 			delete e['vendor_name'];
@@ -608,7 +607,6 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			delete e['pymt_mode_ref_id'];
 		});
 
-		// debugger;
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		//create sheet with empty json/there might be other ways to do this
 		const ws1 = xlsx.utils.json_to_sheet([]);

@@ -1,22 +1,12 @@
-.screen-header {
-	display: flex;
-	width: 94%;
-	margin: 0 auto;
-	padding-top: 16px;
-	font-size: 16px;
-	font-weight: 500;
-	color: #222222;
-}
-
 .content {
 	display: grid;
-	width: 94%;
+	width: 30%;
 	margin: 0 auto;
 	padding: 16px;
 }
 
 .mat-width-ext {
-	width: 400px;
+	width: 100%;
 }
 
 .gap {
@@ -28,7 +18,7 @@
 .center-info1,
 .center-info2 {
 	display: grid;
-	grid-template-columns: auto auto auto;
+	grid-template-columns: auto;
 	gap: 16px;
 	padding-top: 16px;
 }

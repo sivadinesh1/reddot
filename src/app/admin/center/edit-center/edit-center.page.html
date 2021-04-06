@@ -1,8 +1,12 @@
 <div class="content">
 	<form [formGroup]="submitForm">
-		<mat-horizontal-stepper [linear]="isLinear" #stepper formArrayName="formArray">
+		<mat-horizontal-stepper
+			[linear]="isLinear"
+			#stepper
+			formArrayName="formArray"
+		>
 			<mat-step formGroupName="0" [stepControl]="formArray?.get([0])">
-				<ng-template matStepLabel>Basic Info</ng-template>
+				<ng-template matStepLabel>Contact Info</ng-template>
 				<div class="center-info">
 					<div class="name">
 						<mat-form-field class="mat-width-ext">
@@ -11,29 +15,30 @@
 							<mat-error>This field is required</mat-error>
 						</mat-form-field>
 					</div>
-					<div class="address1">
+
+					<div class="address1" style="padding-top: 16px">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Address Line 1</mat-label>
-							<input matInput formControlName="address1" />
+							<input matInput formControlName="address1" required />
 						</mat-form-field>
 					</div>
 					<div class="address2">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Address Line 2</mat-label>
-							<input matInput formControlName="address2" />
+							<input matInput formControlName="address2" required />
 						</mat-form-field>
 					</div>
 					<div class="address3">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Address Line 3</mat-label>
-							<input matInput formControlName="address3" />
+							<input matInput formControlName="address3" required />
 						</mat-form-field>
 					</div>
 
 					<div class="district">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>District</mat-label>
-							<input matInput formControlName="district" />
+							<input matInput formControlName="district" required />
 						</mat-form-field>
 					</div>
 
@@ -41,7 +46,9 @@
 						<mat-form-field class="mat-width-ext">
 							<mat-label>State</mat-label>
 							<mat-select formControlName="state_id" required>
-								<mat-option *ngFor="let item of statesdata" [value]="item.id"> {{item.description}} </mat-option>
+								<mat-option *ngFor="let item of statesdata" [value]="item.id">
+									{{item.description}}
+								</mat-option>
 							</mat-select>
 						</mat-form-field>
 					</div>
@@ -49,13 +56,15 @@
 					<div class="pin">
 						<mat-form-field class="mat-width-ext">
 							<mat-label>Pin</mat-label>
-							<input matInput formControlName="pin" />
+							<input matInput formControlName="pin" required />
 						</mat-form-field>
 					</div>
 				</div>
 
 				<div>
-					<button mat-button matStepperNext>Next</button>
+					<button mat-button mat-raised-button color="primary" matStepperNext>
+						Next
+					</button>
 				</div>
 			</mat-step>
 
@@ -64,42 +73,51 @@
 				<div class="center-info1">
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>GST</mat-label>
+							<mat-label>GST (Optional)</mat-label>
 							<input type="text" matInput formControlName="gst" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Primary Contact #</mat-label>
-							<input type="number" matInput formControlName="mobile" />
+							<mat-label>Primary Phone #</mat-label>
+							<input type="number" matInput formControlName="mobile" required />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Secondary Contact #</mat-label>
+							<mat-label>Secondary Phone # (Optional)</mat-label>
 							<input type="number" matInput formControlName="mobile2" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Landline</mat-label>
+							<mat-label>Landline # (Optional)</mat-label>
 							<input type="number" matInput formControlName="phone" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Whatsapp</mat-label>
+							<mat-label>Whatsapp # (Optional)</mat-label>
 							<input type="number" matInput formControlName="whatsapp" />
 						</mat-form-field>
 					</div>
 				</div>
 				<div>
-					<button mat-button matStepperPrevious>Back</button>
-					<button mat-button matStepperNext>Next</button>
+					<button
+						mat-button
+						mat-raised-button
+						color="primary"
+						matStepperPrevious
+					>
+						Back</button
+					>&nbsp;&nbsp;
+					<button mat-button mat-raised-button color="primary" matStepperNext>
+						Next
+					</button>
 				</div>
 			</mat-step>
 
@@ -108,42 +126,57 @@
 				<div class="center-info2">
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Email</mat-label>
+							<mat-label>Email (Optional)</mat-label>
 							<input type="text" matInput formControlName="email" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Bank Name</mat-label>
+							<mat-label>Bank Name (Optional)</mat-label>
 							<input type="text" matInput formControlName="bankname" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Account #</mat-label>
+							<mat-label>Account # (Optional)</mat-label>
 							<input type="text" matInput formControlName="accountno" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>IFSC Code</mat-label>
+							<mat-label>IFSC Code (Optional)</mat-label>
 							<input type="text" matInput formControlName="ifsccode" />
 						</mat-form-field>
 					</div>
 
 					<div>
 						<mat-form-field class="mat-width-ext">
-							<mat-label>Branch</mat-label>
+							<mat-label>Branch (Optional)</mat-label>
 							<input type="text" matInput formControlName="branch" />
 						</mat-form-field>
 					</div>
 				</div>
 				<div>
-					<button mat-button matStepperPrevious>Back</button>
-					<button mat-button (click)="submit()">Update Center</button>
+					<button
+						mat-button
+						mat-raised-button
+						color="primary"
+						matStepperPrevious
+					>
+						Back
+					</button>
+					&nbsp;&nbsp;
+					<button
+						mat-button
+						mat-raised-button
+						color="primary"
+						(click)="submit()"
+					>
+						Update Center
+					</button>
 				</div>
 			</mat-step>
 		</mat-horizontal-stepper>

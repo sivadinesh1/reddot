@@ -2,7 +2,9 @@
 	<div class="content">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goEnquiryScreen()" style="cursor: pointer">INQUIRIES&nbsp;&nbsp;&nbsp;+</div>
+				<div class="title" (click)="goEnquiryScreen()" style="cursor: pointer">
+					INQUIRIES&nbsp;&nbsp;&nbsp;+
+				</div>
 				<div class="customers" style="padding-top: 20px; text-align: right">
 					<mat-form-field class="width">
 						<mat-label>Search</mat-label>
@@ -14,11 +16,24 @@
 							matTooltip="Type to filter the Customer list"
 							matTooltipPosition="after"
 						/>
-						<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
+						<button
+							mat-button
+							matSuffix
+							mat-icon-button
+							aria-label="Clear"
+							type="button"
+							(click)="clearInput()"
+						>
 							<mat-icon>close</mat-icon>
 						</button>
-						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
-							<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
+						<mat-autocomplete
+							#auto="matAutocomplete"
+							(optionSelected)="getPosts($event)"
+						>
+							<mat-option
+								*ngFor="let customer of filteredCustomer | async"
+								[value]="customer"
+							>
 								<span>{{ customer.name }} </span>
 							</mat-option>
 						</mat-autocomplete>
@@ -37,7 +52,10 @@
 							(focus)="fromdate.open()"
 							(dateChange)="fromDateSelected($event)"
 						/>
-						<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
+						<mat-datepicker-toggle
+							matSuffix
+							[for]="fromdate"
+						></mat-datepicker-toggle>
 						<mat-datepicker #fromdate></mat-datepicker>
 					</mat-form-field>
 				</div>
@@ -54,66 +72,132 @@
 							required
 							(dateChange)="toDateSelected($event)"
 						/>
-						<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
+						<mat-datepicker-toggle
+							matSuffix
+							[for]="todate"
+						></mat-datepicker-toggle>
 						<mat-datepicker #todate></mat-datepicker>
 					</mat-form-field>
 				</div>
 
-				<!-- <div style="padding-top: 20px">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Status</mat-label>
-						<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
-							<mat-option *ngFor="let item of statusList" [value]="item.id"> {{item.value}} </mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div> -->
 				<div class="search-btn" style="padding-top: 20px">
-					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search('O')">Search</button>
+					<button
+						mat-raised-button
+						[disabled]="!submitForm.valid"
+						color="primary"
+						style="font-size: 1rem"
+						(click)="search('O')"
+					>
+						Search
+					</button>
 				</div>
 			</div>
 		</form>
 
 		<div style="display: flex; justify-content: space-between">
-			<div style="align-self: center; font-size: 16px; padding: 16px 16px 0px 32px; color: darkblue">
+			<div
+				style="
+					align-self: center;
+					font-size: 16px;
+					padding: 16px 16px 0px 32px;
+					color: darkblue;
+				"
+			>
 				All Inquiries ({{(enquiries$| async)?.length }}) records
 			</div>
 			<div>
-				<button mat-button color="accent" (click)="openBackOrder()">Backorder Report</button>
+				<button mat-button color="accent" (click)="openBackOrder()"></button>
+				<span
+					(click)="openBackOrder()"
+					style="
+						color: red;
+						background-color: powderblue;
+						padding: 10px 16px;
+						position: relative;
+						top: 10px;
+					"
+				>
+					Backorder Report
+				</span>
 			</div>
 		</div>
 
-		<div style="width: 94%; margin: 0 auto; padding: 16px 0px 100px 0px" [@.disabled]="true">
-			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
-				<!-- <mat-tab label="All Inquiries ({{(enquiries$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab> -->
+		<div
+			style="
+				width: 94%;
+				margin: 0 auto;
+				padding: 16px 0px 100px 0px;
+				position: relative;
+				display: grid;
+			"
+			[@.disabled]="true"
+		>
+			<div>
+				<mat-tab-group
+					color="primary"
+					[(selectedIndex)]="tabIndex"
+					(selectedTabChange)="tabClick($event)"
+				>
+					<mat-tab
+						class="tab-label"
+						label="Order Queue ({{(newEnquiries$| async)?.length }})"
+					>
+						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
 
-				<mat-tab class="tab-label" label="New Inquiry ({{(newEnquiries$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
+					<!-- <mat-tab label="In Progress ({{(draftEnquiries$| async)?.length }})">
+						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab> -->
 
-				<mat-tab label="In Progress ({{(draftEnquiries$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
+					<mat-tab
+						label="Ready to Invoice ({{(invoiceReadyEnquiries$| async)?.length }})"
+					>
+						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
 
-				<mat-tab label="Ready to Invoice ({{(invoiceReadyEnquiries$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
+					<mat-tab
+						label="Closed Inquiry ({{(fullfilledEnquiries$| async)?.length }})"
+					>
+						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
 
-				<mat-tab label="Closed Inquiry ({{(fullfilledEnquiries$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
+					<mat-tab
+						label="Cancelled Inquiry ({{(cancelledEnquiries$| async)?.length }})"
+					>
+						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					</mat-tab>
+				</mat-tab-group>
+			</div>
 
-				<mat-tab label="Cancelled Inquiry ({{(cancelledEnquiries$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab>
-			</mat-tab-group>
+			<div
+				style="
+					position: absolute;
+					justify-self: flex-end;
+					top: 16px;
+					z-index: 1;
+				"
+			>
+				<form [formGroup]="submitForm">
+					<mat-form-field class="readonly-wrapper">
+						<mat-label>Show</mat-label>
+						<mat-select
+							formControlName="order"
+							(selectionChange)="search('O')"
+							value="{orderDefaultFlag}"
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
+						>
+							<mat-option *ngFor="let item of orderList" [value]="item.id">
+								{{item.value}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</form>
+			</div>
 		</div>
 	</div>
 
@@ -123,106 +207,126 @@
 
 			<div>CUSTOMER</div>
 			<div>INQUIRED ON</div>
-
 			<div>ITEMS</div>
+			<div>&nbsp;</div>
+
 			<div>&nbsp;</div>
 		</div>
 	</ng-template>
 
 	<ng-template #MsgRef1>
 		<div *ngFor="let item of filteredValues let idx = index;" class="listItem">
-			<div>{{idx + 1}}</div>
+			<div style="padding-left: 10px">{{idx + 1}}</div>
 
 			<div>{{item.customer_name}}</div>
 			<div>{{item.enquiry_date | date: 'dd/MMM/yyyy h:mm a'}}</div>
 
 			<div class="items">{{item.noofitems}}</div>
 			<div>
+				<div *ngIf="item.estatus === 'O' ">New</div>
+				<div *ngIf="item.estatus === 'D' ">Verification in progress</div>
+			</div>
+			<div>
 				<div *ngIf="item.estatus === 'O' ">
-					<div style="display: flex; justify-content: space-between; cursor: pointer">
-						<div style="color: blue">New Inquiry</div>
-						<div style="display: flex">
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="delete(item)"
-								><mat-icon>delete_outline </mat-icon></span
-							>
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="processEnquiry(item)"
-								><mat-icon>edit </mat-icon></span
-							>
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="openDialog(item)"
-								><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
-							>
-						</div>
-					</div>
-
-					<div>
-						<img src="/assets/images/svg/step1.svg" style="cursor: pointer" width="200px" />
+					<div style="display: flex; justify-content: space-evenly">
+						<span class="icon-style" (click)="delete(item)"
+							><mat-icon>delete_outline </mat-icon></span
+						>
+						<span class="icon-style" (click)="processEnquiry(item)"
+							><mat-icon>edit </mat-icon></span
+						>
+						<span class="icon-style" (click)="openDialog(item)"
+							><mat-icon [ngStyle]="{'color':'#6d78d2'}"
+								>remove_red_eye
+							</mat-icon></span
+						>
 					</div>
 				</div>
 
 				<div *ngIf="item.estatus === 'D' ">
-					<div style="display: flex; justify-content: space-between; cursor: pointer">
-						<div style="color: blue; cursor: pointer">In Progress</div>
-						<div style="display: flex">
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="delete(item)"
-								><mat-icon>delete_outline </mat-icon></span
-							>
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="processEnquiry(item)"
-								><mat-icon>edit </mat-icon></span
-							>
+					<div style="display: flex; justify-content: space-evenly">
+						<span class="icon-style" (click)="delete(item)"
+							><mat-icon>delete_outline </mat-icon></span
+						>
+						<span class="icon-style" (click)="processEnquiry(item)"
+							><mat-icon>edit </mat-icon></span
+						>
 
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="openDialog(item)"
-								><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
-							>
-						</div>
-					</div>
-
-					<div>
-						<img src="/assets/images/svg/step2.svg" style="cursor: pointer" width="200px" />
+						<span class="icon-style" (click)="openDialog(item)"
+							><mat-icon [ngStyle]="{'color':'#6d78d2'}"
+								>remove_red_eye
+							</mat-icon></span
+						>
 					</div>
 				</div>
 
 				<div *ngIf="item.estatus === 'P' ">
-					<div style="display: flex; justify-content: space-between; cursor: pointer">
-						<div style="color: blue; cursor: pointer">Ready to Invoice</div>
-						<div style="display: flex">
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="delete(item)"
-								><mat-icon>delete_outline </mat-icon></span
-							>
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="moveToSale(item)"
-								><mat-icon>edit </mat-icon></span
-							>
-							<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px" (click)="openDialog(item)"
-								><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
-							>
-						</div>
-					</div>
-
-					<div>
-						<img src="/assets/images/svg/step3.svg" style="cursor: pointer" width="200px" />
+					<div style="display: flex; justify-content: space-evenly">
+						<span class="icon-style" (click)="delete(item)"
+							><mat-icon>delete_outline </mat-icon></span
+						>
+						<span class="icon-style" (click)="moveToSale(item)"
+							><mat-icon>edit </mat-icon></span
+						>
+						<span class="icon-style" (click)="openDialog(item)"
+							><mat-icon [ngStyle]="{'color':'#6d78d2'}"
+								>remove_red_eye
+							</mat-icon></span
+						>
 					</div>
 				</div>
 
 				<div *ngIf="item.estatus === 'E' ">
-					<div style="display: flex; justify-content: space-between; cursor: pointer" (click)="openDialog(item)">
-						<div style="color: blue; cursor: pointer">Closed Inquiry</div>
-						<span class="extra highlight" style="color: blue; cursor: pointer; padding: 5px; width: 32px"
-							><mat-icon [ngStyle]="{'color':'#6d78d2'}">remove_red_eye </mat-icon></span
-						>
-					</div>
+					<div
+						style="
+							display: flex;
+							justify-content: space-evenly;
 
-					<div>
-						<img src="/assets/images/svg/step4.svg" style="cursor: pointer" width="200px" />
+							cursor: pointer;
+						"
+						(click)="openDialog(item)"
+					>
+						<span class="icon-style"
+							><mat-icon [ngStyle]="{'color':'#6d78d2'}"
+								>remove_red_eye
+							</mat-icon></span
+						>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- <div *ngIf="(enquiries$| async)?.length === 0">No records found, try other search combinations!!!</div> -->
-		<div class="no-records" *ngIf="tabIndex === 0 && (newEnquiries$| async)?.length === 0">No item in status "New Inquiry"</div>
-		<div class="no-records" *ngIf="tabIndex === 1 && (draftEnquiries$| async)?.length === 0">No item in status "In Progress"</div>
-		<div class="no-records" *ngIf="tabIndex === 2 && (invoiceReadyEnquiries$| async)?.length === 0">No item in status "Ready to Invoice"</div>
-		<div class="no-records" *ngIf="tabIndex === 3 && (fullfilledEnquiries$| async)?.length === 0">No item in status "Closed Inquiry"</div>
-		<div class="no-records" *ngIf="tabIndex === 4 && (cancelledEnquiries$| async)?.length === 0">No item in status "Cancelled Inquiry"</div>
+		<div
+			class="no-records"
+			*ngIf="tabIndex === 0 && (newEnquiries$| async)?.length === 0"
+		>
+			No item in status "New Inquiry"
+		</div>
+		<!-- <div
+			class="no-records"
+			*ngIf="tabIndex === 1 && (draftEnquiries$| async)?.length === 0"
+		>
+			No item in status "In Progress"
+		</div> -->
+		<div
+			class="no-records"
+			*ngIf="tabIndex === 1 && (invoiceReadyEnquiries$| async)?.length === 0"
+		>
+			No item in status "Ready to Invoice"
+		</div>
+		<div
+			class="no-records"
+			*ngIf="tabIndex === 2 && (fullfilledEnquiries$| async)?.length === 0"
+		>
+			No item in status "Closed Inquiry"
+		</div>
+		<div
+			class="no-records"
+			*ngIf="tabIndex === 3 && (cancelledEnquiries$| async)?.length === 0"
+		>
+			No item in status "Cancelled Inquiry"
+		</div>
 	</ng-template>
 </ion-content>
 
