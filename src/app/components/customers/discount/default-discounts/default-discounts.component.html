@@ -1,12 +1,18 @@
 <div class="screen-header">
-	<div>Discount Setup - {{ this.customerName }}</div>
+	<div>Discount Setup</div>
 	<div>
-		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+		<img
+			class="cursor"
+			src="/assets/images/svg/close.svg"
+			(click)="close()"
+			width="20px"
+			height="20px"
+		/>
 	</div>
 </div>
-<br />
+
 <div class="content">
-	<form [formGroup]="submitForm" class="form-wrap" #myForm="ngForm">
+	<form [formGroup]="submitForm" #myForm="ngForm">
 		<div>
 			<mat-form-field class="mat-width-ext">
 				<mat-label>Type</mat-label>
@@ -28,12 +34,16 @@
 					(focus)="picker1.open()"
 					(dateChange)="handleDicountDateChange($event)"
 				/>
-				<mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+				<mat-datepicker-toggle
+					matSuffix
+					[for]="picker1"
+				></mat-datepicker-toggle>
 				<mat-datepicker #picker1></mat-datepicker>
 
 				<mat-error
 					*ngIf="
-						(submitForm.get('effDiscStDate').hasError('required') || submitForm.get('effDiscStDate').hasError('patternInvalid')) &&
+						(submitForm.get('effDiscStDate').hasError('required') ||
+							submitForm.get('effDiscStDate').hasError('patternInvalid')) &&
 						submitForm.get('effDiscStDate').touched
 					"
 				>
@@ -77,7 +87,9 @@
 
 		<div style="display: grid; grid-column: 1 / span 5">
 			<div style="text-align: center">
-				<button mat-raised-button color="primary" (click)="submit()">Update</button>
+				<button mat-raised-button color="primary" (click)="submit()">
+					Update
+				</button>
 			</div>
 		</div>
 	</form>

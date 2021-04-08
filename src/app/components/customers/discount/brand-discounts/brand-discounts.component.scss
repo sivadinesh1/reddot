@@ -6,11 +6,11 @@
 }
 
 .mat-width-ext {
-	width: 60px;
+	width: 240px;
 }
 
 .mat-width-date {
-	width: 150px;
+	width: 240px;
 }
 
 .mat-width-brand {
@@ -40,9 +40,9 @@
 
 .form-wrap {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr;
 	grid-gap: 10px;
-	width: 80%;
+	width: 50%;
 	margin: 0 auto;
 }
 
@@ -141,7 +141,8 @@ td.mat-column-actions {
 			height: auto;
 			position: relative;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+				0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 			background-color: #fff;
 			border-radius: 3px;
 			+ .mat-row {

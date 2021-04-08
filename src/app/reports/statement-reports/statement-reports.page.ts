@@ -194,7 +194,7 @@ export class StatementReportsPage implements OnInit {
 	clearInput() {
 		this.statementForm.patchValue({
 			customerid: 'all',
-			customerctrl: 'All Customers',
+			customerctrl: '',
 		});
 		this._cdr.markForCheck();
 	}

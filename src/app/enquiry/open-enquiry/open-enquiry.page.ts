@@ -219,7 +219,7 @@ export class OpenEnquiryPage implements OnInit {
 	clearInput() {
 		this.submitForm.patchValue({
 			customerid: 'all',
-			customerctrl: 'All Customers',
+			customerctrl: '',
 		});
 		this._cdr.markForCheck();
 		this.search('O');

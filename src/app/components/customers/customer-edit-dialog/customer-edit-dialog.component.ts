@@ -130,7 +130,7 @@ export class CustomerEditDialogComponent implements OnInit {
 	isCustomerExists() {
 		if (this.submitForm.value.name.length > 0) {
 			this._commonApiService
-				.isCustomerExists(this.submitForm.value.name)
+				.isCustomerExists(this.submitForm.value.name, this.center_id)
 				.subscribe((data: any) => {
 					if (data.result.length > 0) {
 						if (data.result[0].id > 0) {

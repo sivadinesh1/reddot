@@ -732,6 +732,14 @@ export class PurchasePage implements OnInit {
 		}
 
 		if (
+			this.submitForm.value.orderrcvddt == '' ||
+			this.submitForm.value.orderrcvddt == null
+		) {
+			this.presentAlert('Enter Received Date!');
+			return false;
+		}
+
+		if (
 			this.submitForm.value.invoicedate !== null &&
 			this.submitForm.value.orderdate !== ''
 		) {

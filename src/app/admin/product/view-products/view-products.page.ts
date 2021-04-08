@@ -25,6 +25,7 @@ import { Observable } from 'rxjs';
 import { Product } from 'src/app/models/Product';
 import { ProductEditDialogComponent } from 'src/app/components/products/product-edit-dialog/product-edit-dialog.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'app-view-products',
@@ -67,6 +68,7 @@ export class ViewProductsPage implements OnInit {
 	constructor(
 		private _cdr: ChangeDetectorRef,
 		private _commonApiService: CommonApiService,
+		private _snackBar: MatSnackBar,
 		private _route: ActivatedRoute,
 		private _dialog: MatDialog,
 		private _router: Router,
@@ -170,21 +172,29 @@ export class ViewProductsPage implements OnInit {
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
-					const dialogConfigSuccess = new MatDialogConfig();
-					dialogConfigSuccess.disableClose = false;
-					dialogConfigSuccess.autoFocus = true;
-					dialogConfigSuccess.width = '25%';
-					dialogConfigSuccess.height = '25%';
-					dialogConfigSuccess.data = 'Product added successfully';
+					// const dialogConfigSuccess = new MatDialogConfig();
+					// dialogConfigSuccess.disableClose = false;
+					// dialogConfigSuccess.autoFocus = true;
+					// dialogConfigSuccess.width = '25%';
+					// dialogConfigSuccess.height = '25%';
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					this.openSnackBar('Product added successfully', '');
+
+					// dialogConfigSuccess.data = 'Product added successfully';
+
+					// const dialogRef = this._dialog.open(
+					// 	SuccessMessageDialogComponent,
+					// 	dialogConfigSuccess
+					// );
 				}
 			});
 	}
-
+	openSnackBar(message: string, action: string) {
+		this._snackBar.open(message, action, {
+			duration: 2000,
+			panelClass: ['mat-toolbar', 'mat-primary'],
+		});
+	}
 	edit(product: Product) {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
@@ -211,17 +221,7 @@ export class ViewProductsPage implements OnInit {
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
-					const dialogConfigSuccess = new MatDialogConfig();
-					dialogConfigSuccess.disableClose = false;
-					dialogConfigSuccess.autoFocus = true;
-					dialogConfigSuccess.width = '25%';
-					dialogConfigSuccess.height = '30%';
-					dialogConfigSuccess.data = 'Product details updated successfully';
-
-					const dialogRef1 = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					this.openSnackBar('Product edited successfully', '');
 				}
 			});
 	}

@@ -183,7 +183,8 @@
 	<ng-template #draftMsgRef>
 		<div class="header header-style">
 			<div>INVOICE #</div>
-			<div>INV DATE</div>
+			<div>LR #</div>
+			<div>RECEIVED DATE</div>
 			<div>VENDOR NAME</div>
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
@@ -201,6 +202,7 @@
 			</div>
 		</div>
 		<div class="headerRow">
+			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">
@@ -221,7 +223,8 @@
 	<ng-template #MsgRef>
 		<div class="header header-style">
 			<div>INVOICE #</div>
-			<div>INV DATE</div>
+			<div>LR #</div>
+			<div>RECEIVED DATE</div>
 			<div>VENDOR NAME</div>
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
@@ -239,6 +242,7 @@
 			</div>
 		</div>
 		<div class="headerRow">
+			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">
@@ -259,7 +263,8 @@
 	<ng-template #MsgRef1>
 		<div *ngFor="let item of filteredValues  " class="listItem">
 			<div class="item">{{item.invoice_no}}</div>
-			<div class="item">{{item.invoice_date}}</div>
+			<div class="item">{{item.lr_no}}</div>
+			<div class="item">{{item.received_date}}</div>
 			<div class="item">{{item.vendor_name}}</div>
 			<div class="item txt-right-align">{{item.no_of_items}}</div>
 			<div class="item txt-right-align">

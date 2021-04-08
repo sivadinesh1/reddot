@@ -620,9 +620,9 @@ export class CommonApiService {
 		);
 	}
 
-	isCustomerExists(cname) {
+	isCustomerExists(cname, centerid) {
 		return this.httpClient.get(
-			`${this.restApiUrl}/api/customer-exists/${cname}`
+			`${this.restApiUrl}/api/customer-exists/${cname}/${centerid}`
 		);
 	}
 
@@ -694,9 +694,9 @@ export class CommonApiService {
 	//   return this.httpClient.get(`${this.restApiUrl}/api/admin/customer-discount/${center_id}/${customer_id}`);
 	// }
 
-	getAllCustomerDefaultDiscounts(center_id) {
+	getAllCustomerDefaultDiscounts(center_id, customer_id) {
 		return this.httpClient.get(
-			`${this.restApiUrl}/api/admin/all-customer-default-discounts/${center_id}`
+			`${this.restApiUrl}/api/admin/all-customer-default-discounts/${center_id}/${customer_id}`
 		);
 	}
 

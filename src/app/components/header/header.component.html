@@ -5,12 +5,12 @@
 				color: #bf0000;
 				font-size: 20px;
 				font-weight: 400;
-				letter-spacing: 0.1rem;
+				letter-spacing: 0.01rem;
 			"
 		>
 			{{ userdata?.center_name }}
 		</div>
-		<div>Coimbatore</div>
+		<div style="font-size: 12px">{{ userdata?.district }}</div>
 	</span>
 	<span class="spacer"></span>
 
@@ -78,12 +78,6 @@
 		Admin
 	</button>
 
-	<!-- <button mat-menu-item (click)="goAdmin()">
-		<span style="padding-right: 16px; vertical-align: middle;">
-			<img src="../../assets/images/svg/manager.svg" width="24px" height="24px" style="vertical-align: middle;" />
-		</span>
-		<span>Admin</span>
-	</button> -->
 	<button mat-menu-item (click)="openSettings()">
 		<mat-icon>settings</mat-icon>
 		<span>Settings</span>
@@ -103,20 +97,6 @@
 </mat-menu>
 
 <mat-menu #admin="matMenu">
-	<!-- <button mat-menu-item (click)="viewProduct()" style="padding-right: 16px">
-		<span>Product</span>
-	</button> -->
-	<!-- <button mat-menu-item (click)="viewBrand()">
-		<span>Brand</span>
-	</button> -->
-	<!-- <button mat-menu-item (click)="viewVendor()">
-		<span>Vendor</span>
-	</button> -->
-
-	<!-- <button mat-menu-item [matMenuTriggerFor]="customeradmin">
-		<span>Customers</span>
-	</button> -->
-
 	<button mat-menu-item (click)="editCenter()">
 		<span>Center</span>
 	</button>
@@ -125,12 +105,3 @@
 		<span>Users</span>
 	</button>
 </mat-menu>
-
-<!-- <mat-menu #customeradmin="matMenu">
-	<button mat-menu-item (click)="viewCustomer()" style="padding-right: 16px">
-		<span>Customer</span>
-	</button>
-	<button mat-menu-item (click)="viewDiscounts()">
-		<span>Discounts</span>
-	</button>
-</mat-menu> -->

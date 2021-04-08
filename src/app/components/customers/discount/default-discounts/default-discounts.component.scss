@@ -1,12 +1,12 @@
 .content {
 	display: grid;
-	width: 94%;
+	width: 100%;
 	margin: 0 auto;
-	padding: 16px;
+	padding: 8px;
 }
 
 .mat-width-ext {
-	width: 60px;
+	width: 100%;
 }
 
 .mat-width-date {
@@ -20,22 +20,21 @@
 
 .screen-header {
 	display: flex;
-	width: 94%;
-	margin: 0 auto;
-	justify-content: space-between;
-	font-size: 16px;
+	padding: 8px 0px;
+	font-size: 18px;
 	font-weight: 500;
 	color: #222222;
+	justify-content: space-between;
 }
 
 .customer-info,
 .customer-info1 {
 	display: grid;
-	grid-template-columns: auto auto;
+	grid-template-columns: auto;
 }
 
 .form-wrap {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr;
 	grid-gap: 10px;
 }

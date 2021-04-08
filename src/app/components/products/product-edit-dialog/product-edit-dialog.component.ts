@@ -118,8 +118,6 @@ export class ProductEditDialogComponent implements OnInit {
 		this._commonApiService
 			.updateProduct(this.submitForm.value)
 			.subscribe((data: any) => {
-				console.log('object... update successful');
-
 				if (data.body.result === 'success') {
 					this.dialogRef.close('success');
 					this.searchProducts();

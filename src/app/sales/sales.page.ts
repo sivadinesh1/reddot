@@ -38,7 +38,13 @@ import { ChangeTaxComponent } from '../components/change-tax/change-tax.componen
 import { ChangeMrpComponent } from '../components/change-mrp/change-mrp.component';
 import { Route, ActivatedRoute, Router } from '@angular/router';
 import { NullToQuotePipe } from '../util/pipes/null-quote.pipe';
-import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
+import {
+	filter,
+	tap,
+	debounceTime,
+	switchMap,
+	startWith,
+} from 'rxjs/operators';
 import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -502,7 +508,7 @@ export class SalesPage {
 			this.mode !== 'enquiry' &&
 			this.orig_selInvType !== 'stockissue'
 		) {
-			this.presentAlert('Invoiced to Stock Issue Not allowed');
+			this.presentAlert('Invoiced Sale cannot move to Stock Issue');
 
 			this.submitForm.patchValue({
 				invoicetype: 'gstinvoice',
@@ -510,7 +516,26 @@ export class SalesPage {
 			this._cdr.markForCheck();
 			return false;
 		} else {
-			this.getInvoiceSequence(this.userdata.center_id, event.value);
+			if (
+				this.submitForm.value.invoiceno.startsWith('SI') &&
+				event.value === 'gstinvoice'
+			) {
+				this.presentAlert('Use Convert to Sale Invoice Option');
+				this.submitForm.patchValue({
+					invoicetype: 'stockissue',
+				});
+				this._cdr.markForCheck();
+				return false;
+			} else {
+				this.submitForm.patchValue({
+					invoicetype: event.value,
+				});
+
+				this.selInvType = event.value;
+			}
+
+			this._cdr.markForCheck();
+			// this.getInvoiceSequence(this.userdata.center_id, event.value);
 		}
 	}
 

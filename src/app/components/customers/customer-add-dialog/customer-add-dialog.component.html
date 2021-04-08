@@ -1,125 +1,182 @@
-<div class="content">
-	<div class="screen-header">
-		<div>Add New Customer</div>
-		<div>
-			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="18px" height="18px" />
-		</div>
+<div class="screen-header">
+	<div>Add New Customer</div>
+	<div>
+		<img
+			class="cursor"
+			src="/assets/images/svg/close.svg"
+			(click)="close()"
+			width="20px"
+			height="20px"
+		/>
 	</div>
+</div>
 
+<div class="content">
 	<form class="myForm" [formGroup]="submitForm" (ngSubmit)="onSubmit()">
-		<div class="customer-info">
-			<div class="name">
+		<div class="name">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Name</mat-label>
+				<input
+					matInput
+					(blur)="isCustomerExists()"
+					formControlName="name"
+					required
+				/>
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+			<div *ngIf="cexists" class="error">Already Exists</div>
+		</div>
+
+		<div>
+			<div>
 				<mat-form-field class="mat-width-ext">
-					<mat-label>Name</mat-label>
-					<input matInput (blur)="isCustomerExists()" formControlName="name" required />
-					<mat-error>This field is required</mat-error>
+					<mat-label>GST</mat-label>
+					<input type="text" matInput formControlName="gst" />
 				</mat-form-field>
-				<div *ngIf="cexists" class="error">Already Exists</div>
+			</div>
+		</div>
+		<div>
+			<div style="padding: 0px 0px 3px 0px">BILLING & SHIPPING ADDRESS</div>
+			<div style="font-size: 12px; color: royalblue">
+				Add multiple shipping address in customer address page
+			</div>
+			<br />
+			<div class="address1">
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Address Line 1</mat-label>
+					<input matInput formControlName="address1" required />
+					<mat-error *ngIf="submitForm.get('address1').hasError('required')">
+						This field is <strong>required</strong>
+					</mat-error>
+				</mat-form-field>
+			</div>
+			<div class="address2">
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Address Line 2</mat-label>
+					<input matInput formControlName="address2" required />
+					<mat-error *ngIf="submitForm.get('address2').hasError('required')">
+						This field is <strong>required</strong>
+					</mat-error>
+				</mat-form-field>
+			</div>
+
+			<div class="district">
+				<mat-form-field class="mat-width-ext">
+					<mat-label>District</mat-label>
+					<input matInput formControlName="district" required />
+					<mat-error *ngIf="submitForm.get('district').hasError('required')">
+						This field is <strong>required</strong>
+					</mat-error>
+				</mat-form-field>
+			</div>
+
+			<div class="state">
+				<mat-form-field class="mat-width-ext">
+					<mat-label>State</mat-label>
+					<mat-select formControlName="state_id" required>
+						<mat-option *ngFor="let item of statesdata" [value]="item.id">
+							{{ item.description }}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+			</div>
+
+			<div class="pin">
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Pin</mat-label>
+					<input matInput formControlName="pin" />
+				</mat-form-field>
+			</div>
+		</div>
+
+		<div>
+			<div style="padding: 0px 0px 16px 0px">CONTACT INFO</div>
+
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Primary contact</mat-label>
+					<input
+						type="number"
+						matInput
+						formControlName="mobile"
+						required
+						numeric
+					/>
+					<mat-error *ngIf="submitForm.get('mobile').hasError('required')">
+						This field is <strong>required</strong>
+					</mat-error>
+					<mat-error
+						*ngIf="
+							submitForm.controls['mobile'].hasError('invalidCountryPhone')
+						"
+					>
+						Invalid mobile number
+					</mat-error>
+				</mat-form-field>
 			</div>
 
 			<div>
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>GST</mat-label>
-						<input type="text" matInput formControlName="gst" />
-					</mat-form-field>
-				</div>
-			</div>
-			<div>
-				<div style="padding: 0px 0px 3px 0px">BILLING & SHIPPING ADDRESS</div>
-				<div style="font-size: 12px; color: royalblue">Add multiple shipping address in customer address page</div>
-				<br />
-				<div class="address1">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Address Line 1</mat-label>
-						<input matInput formControlName="address1" required />
-						<mat-error *ngIf="submitForm.get('address1').hasError('required')"> This field is <strong>required</strong> </mat-error>
-					</mat-form-field>
-				</div>
-				<div class="address2">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Address Line 2</mat-label>
-						<input matInput formControlName="address2" required />
-						<mat-error *ngIf="submitForm.get('address2').hasError('required')"> This field is <strong>required</strong> </mat-error>
-					</mat-form-field>
-				</div>
-
-				<div class="district">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>District</mat-label>
-						<input matInput formControlName="district" required />
-						<mat-error *ngIf="submitForm.get('district').hasError('required')"> This field is <strong>required</strong> </mat-error>
-					</mat-form-field>
-				</div>
-
-				<div class="state">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>State</mat-label>
-						<mat-select formControlName="state_id" required>
-							<mat-option *ngFor="let item of statesdata" [value]="item.id">
-								{{ item.description }}
-							</mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div>
-
-				<div class="pin">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Pin</mat-label>
-						<input matInput formControlName="pin" />
-					</mat-form-field>
-				</div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Secondary contact (Optional)</mat-label>
+					<input type="number" matInput formControlName="mobile2" numeric />
+				</mat-form-field>
 			</div>
 
 			<div>
-				<div style="padding: 0px 0px 16px 0px">CONTACT INFO</div>
-				<div>&nbsp;</div>
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Primary contact</mat-label>
-						<input type="number" matInput formControlName="mobile" required numeric />
-						<mat-error *ngIf="submitForm.get('mobile').hasError('required')"> This field is <strong>required</strong> </mat-error>
-						<mat-error *ngIf="submitForm.controls['mobile'].hasError('invalidCountryPhone')"> Invalid mobile number </mat-error>
-					</mat-form-field>
-				</div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Whatsapp</mat-label>
+					<input
+						type="number"
+						matInput
+						formControlName="whatsapp"
+						required
+						numeric
+					/>
 
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Secondary contact</mat-label>
-						<input type="number" matInput formControlName="mobile2" numeric />
-					</mat-form-field>
-				</div>
+					<mat-error *ngIf="submitForm.get('whatsapp').hasError('required')">
+						This field is <strong>required</strong>
+					</mat-error>
+					<mat-error
+						*ngIf="
+							!submitForm.get('whatsapp').hasError('required') &&
+							submitForm.controls['whatsapp'].hasError('invalidCountryPhone')
+						"
+					>
+						Invalid mobile number
+					</mat-error>
+				</mat-form-field>
+			</div>
 
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Whatsapp</mat-label>
-						<input type="number" matInput formControlName="whatsapp" required numeric />
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Landline (Optional)</mat-label>
+					<input
+						type="number"
+						matInput
+						formControlName="phone"
+						min="0"
+						numeric
+					/>
+				</mat-form-field>
+			</div>
 
-						<mat-error *ngIf="submitForm.get('whatsapp').hasError('required')"> This field is <strong>required</strong> </mat-error>
-						<mat-error *ngIf="!submitForm.get('whatsapp').hasError('required') && submitForm.controls['whatsapp'].hasError('invalidCountryPhone')">
-							Invalid mobile number
-						</mat-error>
-					</mat-form-field>
-				</div>
-
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Landline</mat-label>
-						<input type="number" matInput formControlName="phone" min="0" numeric />
-					</mat-form-field>
-				</div>
-
-				<div>
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Email</mat-label>
-						<input type="text" matInput formControlName="email" />
-					</mat-form-field>
-				</div>
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Email (Optional)</mat-label>
+					<input type="text" matInput formControlName="email" />
+				</mat-form-field>
 			</div>
 		</div>
 
 		<div style="padding: 1rem">Discount</div>
-		<div style="display: grid; grid-gap: 16px; padding: 1rem; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr">
+		<div
+			style="
+				display: grid;
+				grid-gap: 16px;
+				padding: 1rem;
+				grid-template-columns: 1fr 1fr;
+			"
+		>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Discount Type</mat-label>
@@ -162,10 +219,15 @@
 				</mat-form-field>
 			</div>
 		</div>
-		<div style="text-align: center" *ngIf="cexists" class="error">{{ responseMsg }}</div>
+		<div style="text-align: center" *ngIf="cexists" class="error">
+			{{ responseMsg }}
+		</div>
 		<div style="text-align: center">
-			<button mat-stroked-button type="button" (click)="clear()">Clear</button>&nbsp;&nbsp;
-			<button mat-raised-button color="primary" type="submit">+ Add New Customer</button>
+			<button mat-stroked-button type="button" (click)="clear()">Clear</button
+			>&nbsp;&nbsp;
+			<button mat-raised-button color="primary" type="submit">
+				+ Add New Customer
+			</button>
 		</div>
 	</form>
 </div>

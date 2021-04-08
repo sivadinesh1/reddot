@@ -124,8 +124,9 @@ export class ViewCustomerPage implements OnInit {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '80%';
-		dialogConfig.height = '80%';
+		dialogConfig.width = '500px';
+		dialogConfig.height = '100%';
+		dialogConfig.position = { top: '0', right: '0' };
 
 		const dialogRef = this._dialog.open(
 			CustomerAddDialogComponent,
@@ -162,8 +163,9 @@ export class ViewCustomerPage implements OnInit {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '80%';
-		dialogConfig.height = '80%';
+		dialogConfig.width = '500px';
+		dialogConfig.height = '100%';
+		dialogConfig.position = { top: '0', right: '0' };
 		dialogConfig.data = customer;
 
 		const dialogRef = this._dialog.open(
@@ -302,77 +304,89 @@ export class ViewCustomerPage implements OnInit {
 	}
 
 	editdefault(element) {
-		const dialogConfig = new MatDialogConfig();
-		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
-		dialogConfig.width = '80%';
-		dialogConfig.height = '80%';
-		dialogConfig.data = element;
-
-		const dialogRef = this._dialog.open(
-			DefaultDiscountsComponent,
-			dialogConfig
-		);
-
-		dialogRef
-			.afterClosed()
-			.pipe(
-				filter((val) => !!val),
-				tap(() => {
-					this.reloadCustomers();
-					this._cdr.markForCheck();
-				})
-			)
+		this._commonApiService
+			.getAllCustomerDefaultDiscounts(this.center_id, element.id)
 			.subscribe((data: any) => {
-				if (data.body === 1) {
-					const dialogConfigSuccess = new MatDialogConfig();
-					dialogConfigSuccess.disableClose = false;
-					dialogConfigSuccess.autoFocus = true;
-					dialogConfigSuccess.width = '25%';
-					dialogConfigSuccess.height = '25%';
-					dialogConfigSuccess.data = 'Discount updated successfully';
+				const dialogConfig = new MatDialogConfig();
+				dialogConfig.disableClose = true;
+				dialogConfig.autoFocus = true;
+				dialogConfig.width = '300px';
+				dialogConfig.height = '100%';
+				dialogConfig.data = data[0];
+				dialogConfig.position = { top: '0', right: '0' };
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
-				}
+				const dialogRef = this._dialog.open(
+					DefaultDiscountsComponent,
+					dialogConfig
+				);
+
+				dialogRef
+					.afterClosed()
+					.pipe(
+						filter((val) => !!val),
+						tap(() => {
+							this.reloadCustomers();
+							this._cdr.markForCheck();
+						})
+					)
+					.subscribe((data: any) => {
+						if (data.body === 1) {
+							const dialogConfigSuccess = new MatDialogConfig();
+							dialogConfigSuccess.disableClose = false;
+							dialogConfigSuccess.autoFocus = true;
+							dialogConfigSuccess.width = '25%';
+							dialogConfigSuccess.height = '25%';
+							dialogConfigSuccess.data = 'Discount updated successfully';
+
+							const dialogRef = this._dialog.open(
+								SuccessMessageDialogComponent,
+								dialogConfigSuccess
+							);
+						}
+					});
 			});
 	}
 
 	manageBrandDiscounts(element) {
-		const dialogConfig = new MatDialogConfig();
-		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
-		dialogConfig.width = '80%';
-		dialogConfig.height = '80%';
-		dialogConfig.data = element;
-
-		const dialogRef = this._dialog.open(BrandDiscountsComponent, dialogConfig);
-
-		dialogRef
-			.afterClosed()
-			.pipe(
-				filter((val) => !!val),
-				tap(() => {
-					this.reloadCustomers();
-					this._cdr.markForCheck();
-				})
-			)
+		this._commonApiService
+			.getAllCustomerDefaultDiscounts(this.center_id, element.id)
 			.subscribe((data: any) => {
-				if (data === 'success') {
-					const dialogConfigSuccess = new MatDialogConfig();
-					dialogConfigSuccess.disableClose = false;
-					dialogConfigSuccess.autoFocus = true;
-					dialogConfigSuccess.width = '25%';
-					dialogConfigSuccess.height = '25%';
-					dialogConfigSuccess.data = 'Discounts successfull';
+				const dialogConfig = new MatDialogConfig();
+				dialogConfig.disableClose = true;
+				dialogConfig.autoFocus = true;
+				dialogConfig.width = '80%';
+				dialogConfig.height = '80%';
+				dialogConfig.data = element;
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
-				}
+				const dialogRef = this._dialog.open(
+					BrandDiscountsComponent,
+					dialogConfig
+				);
+
+				dialogRef
+					.afterClosed()
+					.pipe(
+						filter((val) => !!val),
+						tap(() => {
+							this.reloadCustomers();
+							this._cdr.markForCheck();
+						})
+					)
+					.subscribe((data: any) => {
+						if (data === 'success') {
+							const dialogConfigSuccess = new MatDialogConfig();
+							dialogConfigSuccess.disableClose = false;
+							dialogConfigSuccess.autoFocus = true;
+							dialogConfigSuccess.width = '25%';
+							dialogConfigSuccess.height = '25%';
+							dialogConfigSuccess.data = 'Discounts successfull';
+
+							const dialogRef = this._dialog.open(
+								SuccessMessageDialogComponent,
+								dialogConfigSuccess
+							);
+						}
+					});
 			});
 	}
 }

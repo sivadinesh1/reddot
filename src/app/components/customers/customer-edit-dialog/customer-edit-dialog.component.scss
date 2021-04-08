@@ -1,5 +1,8 @@
 .content {
 	display: grid;
+	width: 100%;
+	margin: 0 auto;
+	padding: 8px;
 }
 
 .mat-width-ext {
@@ -13,27 +16,23 @@
 
 .screen-header {
 	display: flex;
-	font-size: 16px;
+	padding: 8px 0px;
+	font-size: 18px;
 	font-weight: 500;
 	color: #222222;
 	justify-content: space-between;
-	padding-bottom: 16px;
 }
 
 .customer-info,
 .customer-info1 {
 	display: grid;
-	grid-template-columns: auto auto;
-	grid-gap: 16px;
+	grid-template-columns: auto;
+	grid-gap: 6px;
 	padding: 1rem;
 }
 
 .myForm {
 	padding: 1rem;
-}
-
-.mat-width-ext {
-	width: 90%;
 }
 
 .mat-width-disc {
