@@ -172,6 +172,7 @@ button {
 			overflow: visible;
 		}
 	}
+	background-color: #fafbfc;
 }
 
 .mat-tab-label-active {
@@ -211,7 +212,7 @@ input[type='number'] {
 
 .mat-drawer-side {
 	border-right-color: #f1f1f1;
-	filter: drop-shadow(0px 0px 8px lightgrey) invert(85%);
+	//	filter: drop-shadow(0px 0px 8px lightgrey) invert(85%);
 }
 
 * {

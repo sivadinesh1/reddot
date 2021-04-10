@@ -23,16 +23,7 @@
 .tc2 {
 	display: grid;
 	grid-template-rows: 1fr 1fr;
-
-	.pcode {
-		font-size: 14px;
-		color: #222222;
-	}
-
-	.pdesc {
-		font-size: 14px;
-		color: #222222;
-	}
+	font-size: 14px;
 }
 .det_wrap {
 	padding: 10px;
@@ -45,6 +36,6 @@
 }
 
 .tbl-detail:hover {
-	background-color: #c7c4d7;
+	background-color: #e9e8f1;
 	opacity: 1;
 }

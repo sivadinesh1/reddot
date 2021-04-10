@@ -1,9 +1,10 @@
 @import '../../breakpoints/breakpoints.scss';
 
 .main_content {
-	width: calc(10rem - 100%);
-	height: calc(100vh - 80px);
-	background: #efefef;
-	padding-bottom: 100px;
-	padding-left: calc(10rem - 100%);
+	margin-left: calc(11rem - 100%);
+	// width: calc(12rem - 100%);
+	//	height: calc(100vh - 80px);
+	//	background: #efefef;
+	// padding-bottom: 100px;
+	//	padding-left: calc(11rem - 100%);
 }

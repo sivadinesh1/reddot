@@ -1,5 +1,5 @@
 .sidenav-container {
-	min-width: 10rem;
+	min-width: 11rem;
 	height: calc(100vh - 200px);
 	padding-right: 16px;
 	padding-top: 8px;
@@ -29,18 +29,19 @@
 }
 .selectedmenu {
 	// background-color: #e8e8e8;
-	background-color: #a9a9a9;
+	background-color: #ebecf0 !important;
+	color: #0052cc !important;
 }
 
 .side-menu-lbl {
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: 400;
-	color: #111111;
-	text-transform: capitalize;
+	// color: #111111;
+
 	padding: 0px 8px;
 }
 .side-menu-lbl:hover {
-	color: mediumblue;
+	color: #0052cc;
 }
 
 .header-menu-item {

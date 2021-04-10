@@ -1,16 +1,15 @@
-<ion-content>
-	<div>
-		<app-header></app-header>
-
-		<mat-sidenav-container>
-			<mat-sidenav mode="side" opened>
-				<app-left-menu></app-left-menu>
-			</mat-sidenav>
-			<mat-sidenav-content style="margin-left: 162px">
-				<div class="main_content">
-					<ion-router-outlet></ion-router-outlet>
-				</div>
-			</mat-sidenav-content>
-		</mat-sidenav-container>
-	</div>
-</ion-content>
+<!-- <ion-content> -->
+<div>
+	<app-header></app-header>
+	<mat-sidenav-container fullscreen style="margin-top: 56px">
+		<mat-sidenav mode="side" opened>
+			<app-left-menu></app-left-menu>
+		</mat-sidenav>
+		<mat-sidenav-content class="main-content">
+			<div>
+				<ion-router-outlet></ion-router-outlet>
+			</div>
+		</mat-sidenav-content>
+	</mat-sidenav-container>
+</div>
+<!-- </ion-content> -->
