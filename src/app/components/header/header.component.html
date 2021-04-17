@@ -16,20 +16,28 @@
 
 	<span style="align-self: center; padding: 0px 0px 0px 40px">
 		<img
-			src="../../assets/images/svg/sales-white.svg"
+			src="../../assets/images/svg/sales.svg"
 			(click)="showNewSales()"
 			width="24px"
 			height="24px"
 			class="img cursor"
+			#tooltip="matTooltip"
+			matTooltip="New Sale Screen"
+			matTooltipClass="tooltip"
+			(mousedown)="tooltip.hide()"
 		/>
 	</span>
 	<span style="align-self: center; padding: 0px 40px">
 		<img
-			src="../../assets/images/svg/enquiry-white.svg"
+			src="../../assets/images/svg/enquiry.svg"
 			(click)="showNewEnquiry()"
 			width="24px"
 			height="24px"
 			class="img cursor"
+			#tooltip="matTooltip"
+			matTooltip="New Enquiry Screen"
+			matTooltipClass="tooltip"
+			(mousedown)="tooltip.hide()"
 		/>
 	</span>
 	&nbsp;&nbsp;
@@ -40,10 +48,14 @@
 			width="24px"
 			height="24px"
 			class="img cursor"
+			#tooltip="matTooltip"
+			matTooltip="Quick Search (Items/Customer/Vendor/Brand)"
+			matTooltipClass="tooltip"
+			(mousedown)="tooltip.hide()"
 		/>
 	</span>
 	&nbsp;&nbsp;
-	<span style="align-self: center; padding: 0px 25px">
+	<!-- <span style="align-self: center; padding: 0px 25px">
 		<ng-container *ngIf="userdata">
 			<div class="fname">{{ userdata?.firstname }}</div>
 			<div class="role">{{ userdata?.role }}</div>
@@ -58,9 +70,9 @@
 			class="img cursor"
 			[matMenuTriggerFor]="menu"
 		/>
-	</span>
+	</span> -->
 </div>
-
+<!-- 
 <mat-menu #menu="matMenu">
 	<button mat-menu-item>
 		<mat-icon>person</mat-icon>
@@ -94,9 +106,9 @@
 
 		<span>Log Out</span>
 	</button>
-</mat-menu>
+</mat-menu> -->
 
-<mat-menu #admin="matMenu">
+<!-- <mat-menu #admin="matMenu">
 	<button mat-menu-item (click)="editCenter()">
 		<span>Center</span>
 	</button>
@@ -104,4 +116,4 @@
 	<button mat-menu-item (click)="viewUsers()">
 		<span>Users</span>
 	</button>
-</mat-menu>
+</mat-menu> -->

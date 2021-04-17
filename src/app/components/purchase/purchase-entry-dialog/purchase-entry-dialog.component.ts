@@ -18,9 +18,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Customer } from 'src/app/models/Customer';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from 'src/app/services/common-api.service';
-import { CustomerViewDialogComponent } from '../../customers/customer-view-dialog/customer-view-dialog.component';
+
 import * as xlsx from 'xlsx';
-import { InvoiceSuccessComponent } from '../../invoice-success/invoice-success.component';
 
 @Component({
 	selector: 'app-purchase-entry-dialog',
@@ -35,8 +34,6 @@ export class PurchaseEntryDialogComponent implements OnInit {
 	centerdata: any;
 
 	data: any;
-
-	@ViewChild('epltable', { static: false }) epltable: ElementRef;
 
 	constructor(
 		private _cdr: ChangeDetectorRef,
@@ -82,14 +79,80 @@ export class PurchaseEntryDialogComponent implements OnInit {
 		this.dialogRef.close();
 	}
 
-	exportToExcel() {
-		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-			this.epltable.nativeElement
+	async exportToExcel() {
+		const fileName = `Purchase_Order_Reports_${this.purchasemasterdata?.invoice_no}.xlsx`;
+
+		let reportData = JSON.parse(JSON.stringify(this.purchasedetailsdata));
+
+		reportData.forEach((e) => {
+			e['Product Code'] = e['product_code'];
+			delete e['product_code'];
+
+			e['Description'] = e['description'];
+			delete e['description'];
+
+			e['HSNcode'] = e['hsncode'];
+			delete e['hsncode'];
+
+			e['TAX'] = e['tax'];
+			delete e['tax'];
+
+			e['MRP'] = e['mrp'];
+			delete e['mrp'];
+
+			e['Purchase Price'] = e['purchase_price'];
+			delete e['purchase_price'];
+
+			e['Quantity'] = e['qty'];
+			delete e['qty'];
+
+			e['Total Value'] = e['total_value'];
+			delete e['total_value'];
+
+			delete e['id'];
+			delete e['batchdate'];
+			delete e['cgst'];
+			delete e['igst'];
+			delete e['packetsize'];
+
+			delete e['product_id'];
+			delete e['purchase_id'];
+
+			delete e['revision'];
+			delete e['sgst'];
+			delete e['stock_id'];
+			delete e['stock_pk'];
+			delete e['tax_value'];
+			delete e['taxable_value'];
+			delete e['taxrate'];
+			delete e['total_value'];
+		});
+
+		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Purchase Reports',
+					invoiceno: this.purchasemasterdata?.invoice_no,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			}
 		);
-		ws['!cols'] = [];
-		ws['!cols'][1] = { hidden: true };
-		const wb: xlsx.WorkBook = xlsx.utils.book_new();
-		xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-		xlsx.writeFile(wb, 'epltable.xlsx');
+
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
+
+		xlsx.writeFile(wb1, fileName);
 	}
 }

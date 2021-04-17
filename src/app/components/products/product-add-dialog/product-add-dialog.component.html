@@ -67,7 +67,7 @@
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
-					<mat-label>Packet Size</mat-label>
+					<mat-label>Pack Size</mat-label>
 					<input
 						matInput
 						type="number"
@@ -116,54 +116,13 @@
 		>
 			<div>
 				<mat-form-field class="mat-width-ext">
-					<mat-label>Current Stock</mat-label>
-					<input
-						matInput
-						type="number"
-						formControlName="currentstock"
-						required
-						numeric
-					/>
-					<mat-error>This field is required</mat-error>
+					<mat-label>Min. Qty</mat-label>
+					<input matInput type="number" formControlName="minqty" numeric />
+
+					<mat-hint>Minimum in stock expexted</mat-hint>
 				</mat-form-field>
 			</div>
 
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Min. Qty</mat-label>
-					<input
-						matInput
-						type="number"
-						formControlName="minqty"
-						required
-						numeric
-					/>
-					<mat-error>This field is required</mat-error>
-				</mat-form-field>
-			</div>
-		</div>
-		<div
-			style="
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 10px;
-				padding-top: 16px;
-			"
-		>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Unit/Price</mat-label>
-					<input
-						matInput
-						type="number"
-						formControlName="unit_price"
-						required
-						numeric
-						decimals="2"
-					/>
-					<mat-error>This field is required</mat-error>
-				</mat-form-field>
-			</div>
 			<div>
 				<mat-form-field class="mat-width-100">
 					<mat-label>MRP</mat-label>
@@ -171,7 +130,6 @@
 						matInput
 						type="number"
 						formControlName="mrp"
-						placeholder="Mrp"
 						required
 						numeric
 						decimals="2"
@@ -204,44 +162,12 @@
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
-					<mat-label>Sale Price</mat-label>
-					<input
-						matInput
-						type="number"
-						formControlName="salesprice"
-						numeric
-						decimals="2"
-					/>
-				</mat-form-field>
-			</div>
-		</div>
-		<div
-			style="
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 10px;
-				padding-top: 16px;
-			"
-		>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Max. Disc (%)</mat-label>
-					<input
-						matInput
-						type="number"
-						formControlName="maxdiscount"
-						required
-					/>
-					<mat-hint matTooltip="Info about the action">Hint: Max 100</mat-hint>
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
 					<mat-label>Rack #</mat-label>
-					<input matInput type="text" formControlName="rackno" required />
+					<input matInput type="text" formControlName="rackno" />
 				</mat-form-field>
 			</div>
 		</div>
+
 		<div style="text-align: center" class="error" style="padding: 16px 0px">
 			{{ responsemsg }}
 		</div>

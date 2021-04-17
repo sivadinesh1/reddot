@@ -26,6 +26,8 @@ import { Product } from 'src/app/models/Product';
 import { ProductEditDialogComponent } from 'src/app/components/products/product-edit-dialog/product-edit-dialog.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import * as xlsx from 'xlsx';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-view-products',
@@ -225,4 +227,53 @@ export class ViewProductsPage implements OnInit {
 				}
 			});
 	}
+
+	async exportCompletedPurchaseToExcel() {
+		const fileName = `Full_Stock_List_${moment().format('DD-MM-YYYY')}.xlsx`;
+
+		this._commonApiService
+			.fetchFullProductInventoryReports({ centerid: this.center_id })
+			.subscribe((reportdata: any) => {
+				let reportData = JSON.parse(JSON.stringify(reportdata.body));
+
+				const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+				const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+				xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+				//then add ur Title txt
+				xlsx.utils.sheet_add_json(
+					wb1.Sheets.sheet1,
+					[
+						{
+							header: 'Full Stock Report on ' + moment().format('DD-MM-YYYY'),
+						},
+					],
+					{
+						skipHeader: true,
+						origin: 'A1',
+					}
+				);
+
+				//start frm A2 here
+				xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+					skipHeader: false,
+					origin: 'A2',
+				});
+
+				xlsx.writeFile(wb1, fileName);
+			});
+	}
 }
+
+// available_stock: 0
+// description: "Bolt Hex (M12X1.75X25X8.8)"
+// hsncode: "73181900"
+// mrp: "19"
+// name: "Swaraj"
+// packetsize: 0
+// product_code: "000011104P03"
+// product_id: 63355
+// purchase_price: "11.76"
+// rackno: ""
+// taxrate: 18
+// unit: "Pcs"

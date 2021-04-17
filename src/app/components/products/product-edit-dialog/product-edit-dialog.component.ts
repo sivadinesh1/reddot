@@ -68,6 +68,7 @@ export class ProductEditDialogComponent implements OnInit {
 		private dialogRef: MatDialogRef<ProductEditDialogComponent>,
 		private _authservice: AuthenticationService
 	) {
+		// checkda
 		const currentUser = this._authservice.currentUserValue;
 		this.center_id = currentUser.center_id;
 		this.currentStep = 0;
@@ -88,16 +89,16 @@ export class ProductEditDialogComponent implements OnInit {
 			unit: [this.product.uom, Validators.required],
 			packetsize: [this.product.packetsize, Validators.required],
 			hsncode: [this.product.hsncode, [patternValidator(HSNCODE_REGEX)]],
-			taxrate: [this.product.taxrate, Validators.required],
+			taxrate: [this.product.taxrate.toString(), Validators.required],
 			minqty: [
 				this.product.minqty === null ? 0 : this.product.minqty,
 				Validators.required,
 			],
 
-			unit_price: [this.product.unit_price, Validators.required],
+			unit_price: [this.product.unit_price],
 			mrp: [this.product.mrp, Validators.required],
 			purchase_price: [this.product.purchase_price, Validators.required],
-			salesprice: [this.product.salesprice, Validators.required],
+			salesprice: [this.product.salesprice],
 			maxdiscount: [this.product.maxdiscount, [patternValidator(DISC_REGEX)]],
 
 			currentstock: [this.product.currentstock],
@@ -115,6 +116,10 @@ export class ProductEditDialogComponent implements OnInit {
 	ngOnInit() {}
 
 	submit() {
+		this.submitForm.patchValue({
+			unit_price: this.submitForm.value.purchase_price,
+		});
+
 		this._commonApiService
 			.updateProduct(this.submitForm.value)
 			.subscribe((data: any) => {
@@ -132,7 +137,7 @@ export class ProductEditDialogComponent implements OnInit {
 	isProdExists() {
 		if (this.submitForm.value.product_code.length > 0) {
 			this._commonApiService
-				.isProdExists(this.submitForm.value.product_code)
+				.isProdExists(this.submitForm.value.product_code, this.center_id)
 				.subscribe((data: any) => {
 					if (data.result.length > 0) {
 						if (data.result[0].id > 0) {

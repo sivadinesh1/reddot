@@ -12,25 +12,6 @@
 			<div>&nbsp;Edit Product</div>
 		</div>
 
-		<!-- <div class="screen-header">
-			<div>
-				<span (click)="searchProducts()">
-					<span style="font-size: 16px; color: #797979; cursor: pointer;">
-						Search Products
-					</span>
-					>
-				</span>
-			</div>
-			<div>
-				&nbsp;Edit Product
-			</div>
-			<div class="addbtn">
-				<button appPreventDoubleClick [throttleTime]="2000" (throttledClick)="addProduct()" mat-raised-button color="primary">
-					+ Add Product
-				</button>
-			</div>
-		</div> -->
-
 		<form [formGroup]="submitForm">
 			<ng-template matStepLabel>Basic Info</ng-template>
 			<div class="prod-info">
@@ -50,12 +31,7 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Description</mat-label>
-						<input
-							matInput
-							placeholder="Description"
-							formControlName="description"
-							required
-						/>
+						<input matInput formControlName="description" required />
 						<mat-error>This field is required</mat-error>
 					</mat-form-field>
 				</div>
@@ -89,7 +65,6 @@
 							type="number"
 							matInput
 							formControlName="packetsize"
-							placeholder="Packet Size"
 							required
 						/>
 						<mat-error>This field is required</mat-error>
@@ -98,25 +73,13 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>HSN Code</mat-label>
-						<input
-							type="text"
-							matInput
-							formControlName="hsncode"
-							placeholder="HSN Code"
-							required
-						/>
+						<input type="text" matInput formControlName="hsncode" required />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Tax Rate</mat-label>
-						<input
-							type="number"
-							matInput
-							formControlName="taxrate"
-							placeholder="Tax Rate"
-							required
-						/>
+						<input type="number" matInput formControlName="taxrate" required />
 						<mat-error>This field is required</mat-error>
 					</mat-form-field>
 				</div>
@@ -124,13 +87,9 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Min. Qty</mat-label>
-						<input
-							matInput
-							formControlName="minqty"
-							placeholder="Min Stock Qty"
-							required
-						/>
-						<mat-error>This field is required</mat-error>
+						<input matInput formControlName="minqty" />
+
+						<mat-hint>Minimum in stock expexted</mat-hint>
 					</mat-form-field>
 				</div>
 
@@ -141,7 +100,6 @@
 							type="number"
 							matInput
 							formControlName="unit_price"
-							placeholder="Unit Price"
 							required
 						/>
 					</mat-form-field>
@@ -149,14 +107,8 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>MRP</mat-label>
-						<input
-							type="number"
-							matInput
-							formControlName="mrp"
-							placeholder="Mrp"
-							readonly
-						/>
-						<mat-hint>Use Purchase screen to change MRP</mat-hint>
+						<input type="number" matInput formControlName="mrp" />
+						<!-- <mat-hint>Use Purchase screen to change MRP</mat-hint> -->
 					</mat-form-field>
 				</div>
 				<div>
@@ -166,7 +118,6 @@
 							type="number"
 							matInput
 							formControlName="purchase_price"
-							placeholder="Purchase PRice"
 							required
 						/>
 					</mat-form-field>
@@ -174,36 +125,21 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Sale Price</mat-label>
-						<input
-							type="number"
-							matInput
-							formControlName="salesprice"
-							placeholder="Sale Price"
-						/>
+						<input type="number" matInput formControlName="salesprice" />
 					</mat-form-field>
 				</div>
 
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Max. Discount</mat-label>
-						<input
-							type="number"
-							matInput
-							formControlName="maxdiscount"
-							placeholder="Max Discount"
-						/>
+						<input type="number" matInput formControlName="maxdiscount" />
 					</mat-form-field>
 				</div>
 
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Rack #</mat-label>
-						<input
-							type="number"
-							matInput
-							formControlName="rackno"
-							placeholder="Rack #"
-						/>
+						<input type="number" matInput formControlName="rackno" />
 					</mat-form-field>
 				</div>
 			</div>

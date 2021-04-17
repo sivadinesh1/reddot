@@ -1,6 +1,6 @@
 export const environment = {
-  production: true,
-  restApiUrl: 'http://onecloud.squapl.com:5005',
+	production: true,
+	restApiUrl: 'https://demo.squapl.com:8440',
 };
 
 export const errorApiUrl = 'http://localhost:5555';

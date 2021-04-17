@@ -82,3 +82,27 @@
 	// padding-right: 0.3rem !important;
 	cursor: pointer;
 }
+
+// .wrapper:last-child {
+// 	margin-top: auto;
+// }
+
+.bottom {
+	width: 100%;
+	background-color: #656565;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	display: flex;
+	color: #f3f3f3;
+}
+
+.fname {
+	font-size: 14px;
+	text-transform: capitalize;
+}
+
+.role {
+	font-size: 10px;
+	text-transform: lowercase;
+}

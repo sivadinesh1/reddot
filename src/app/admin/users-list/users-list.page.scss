@@ -2,7 +2,7 @@
 	display: grid;
 	width: 94%;
 	margin: 0 auto;
-	padding: 16px;
+	padding: 0px 16px;
 }
 
 .row1 {
@@ -17,9 +17,12 @@
 .header {
 	display: flex;
 	justify-content: space-between;
-	padding: 0px 0px 10px 0px;
+
+	align-items: center;
+
 	font-size: 20px;
 	color: #222222;
+	padding-bottom: 50px;
 }
 
 .center-message {
@@ -93,7 +96,8 @@ td.mat-column-actions {
 			height: auto;
 			position: relative;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+				0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 			background-color: #fff;
 			border-radius: 3px;
 			+ .mat-row {
@@ -152,7 +156,7 @@ td.mat-column-actions {
 }
 
 .list-item {
-    display: grid;
+	display: grid;
 	grid-template-columns: 1fr 1fr 1fr 1fr;
 	padding: 9px;
 	border-bottom: 1px solid #e7e7e7;

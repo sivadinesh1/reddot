@@ -113,7 +113,8 @@ export class LoginPage implements OnInit {
 			.subscribe(async (data) => {
 				if (data.result === 'success') {
 					let role = data.role;
-
+					this.responsemsg = '';
+				
 					this.authenticationService.fetchPermissions(
 						data.obj.center_id,
 						data.obj.role_id
@@ -125,19 +126,21 @@ export class LoginPage implements OnInit {
 						this.invalidLogin = false;
 					} else {
 						this.router.navigate([`/home/dashboard`]);
-
+						this.authenticationService.setCurrentMenu('HOME');
 						this.invalidLogin = false;
 					}
+					this._cdr.detectChanges();
 				} else if (data.result === 'error') {
 					this.invalidLogin = true;
-
-					if (data.statusCode === '600') {
+					if (data.statusCode === '601') {
+						this.responsemsg = 'User not Found.';
+					} else if (data.statusCode === '600') {
 						this.responsemsg = 'Login Failed. Invalid Credentials';
 					} else if (data.statusCode === '100') {
 						this.responsemsg = 'Login Failed. Database Connection Error';
 					}
+					this._cdr.detectChanges();
 				}
-				this._cdr.markForCheck();
 			});
 	}
 

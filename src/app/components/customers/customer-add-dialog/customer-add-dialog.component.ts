@@ -19,6 +19,7 @@ import {
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { AlertController } from '@ionic/angular';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'app-customer-add-dialog',
@@ -36,14 +37,16 @@ export class CustomerAddDialogComponent implements OnInit {
 	isLinear = true;
 
 	cexists: any;
+	executed: boolean;
 
-	discountType = ['NET', 'GROSS'];
+	discountType = ['NET'];
 	responseMsg;
 
 	constructor(
 		private _cdr: ChangeDetectorRef,
 		private _router: Router,
 		private _formBuilder: FormBuilder,
+		private _snackBar: MatSnackBar,
 		public alertController: AlertController,
 		private dialogRef: MatDialogRef<CustomerAddDialogComponent>,
 		private _route: ActivatedRoute,
@@ -82,10 +85,7 @@ export class CustomerAddDialogComponent implements OnInit {
 			],
 			whatsapp: [
 				'',
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
+				Validators.compose([PhoneValidator.invalidCountryPhone(country)]),
 			],
 			email: ['', [patternValidator(EMAIL_REGEX)]],
 
@@ -104,6 +104,7 @@ export class CustomerAddDialogComponent implements OnInit {
 
 	ngOnInit() {
 		this.responseMsg = '';
+		this.executed = false;
 	}
 
 	isCustomerExists() {
@@ -127,6 +128,7 @@ export class CustomerAddDialogComponent implements OnInit {
 
 	onSubmit() {
 		if (!this.submitForm.valid) {
+			this.openSnackBar('Please check all fields', '');
 			return false;
 		}
 
@@ -181,5 +183,26 @@ export class CustomerAddDialogComponent implements OnInit {
 			gsteighteen: 0,
 			gsttwentyeight: 0,
 		});
+	}
+
+	openSnackBar(message: string, action: string) {
+		this._snackBar.open(message, action, {
+			duration: 2000,
+			panelClass: ['mat-toolbar', 'mat-primary'],
+		});
+	}
+
+	prepopulate() {
+		if (!this.executed) {
+			this.submitForm.patchValue({
+				gstfive: this.submitForm.value.gstzero,
+				gsttwelve: this.submitForm.value.gstzero,
+				gsteighteen: this.submitForm.value.gstzero,
+				gsttwentyeight: this.submitForm.value.gstzero,
+			});
+		}
+
+		this.executed = true;
+		this._cdr.markForCheck();
 	}
 }

@@ -11,6 +11,8 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Observable } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { User } from 'src/app/models/User';
+import { ModalController } from '@ionic/angular';
+import { SettingsDialogComponent } from '../settings/settings-dialog/settings-dialog.component';
 
 interface Page {
 	link: string;
@@ -63,6 +65,16 @@ export class LeftMenuComponent implements OnInit {
 			name: 'Customers',
 			link: '/home/view-customers',
 			icon: '/assets/images/svg/customers.svg',
+		},
+		{
+			name: 'Sale Returns',
+			link: '/home/search-return-sales',
+			icon: '/assets/images/svg/return.svg',
+		},
+		{
+			name: 'Stock Issue',
+			link: 'home/sales/edit/si',
+			icon: '/assets/images/svg/bullet-list.svg',
 		},
 		{
 			name: 'Purchase',
@@ -143,6 +155,7 @@ export class LeftMenuComponent implements OnInit {
 		private _sidenavService: SidenavService,
 		private _authservice: AuthenticationService,
 		private _router: Router,
+		private _modalcontroller: ModalController,
 		private _route: ActivatedRoute,
 		private _cdr: ChangeDetectorRef
 	) {
@@ -203,5 +216,40 @@ export class LeftMenuComponent implements OnInit {
 		}
 
 		this._cdr.markForCheck();
+	}
+
+	async openSettings() {
+		const modal = await this._modalcontroller.create({
+			component: SettingsDialogComponent,
+			componentProps: {
+				center_id: this.userdata.center_id,
+				role_id: this.userdata.role_id,
+			},
+			cssClass: 'select-modal',
+		});
+
+		modal.onDidDismiss().then((result) => {
+			console.log('The result:', result);
+			this._cdr.markForCheck();
+		});
+
+		await modal.present();
+	}
+
+	goAdmin() {
+		this._router.navigate([`/home/admin`]);
+	}
+
+	async logout() {
+		await this._authservice.logOut();
+		this._router.navigateByUrl('');
+	}
+
+	viewUsers() {
+		this._router.navigate(['home/users-list']);
+	}
+
+	editCenter() {
+		this._router.navigate([`/home/center/edit`, this.userdata.center_id]);
 	}
 }

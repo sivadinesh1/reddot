@@ -7,7 +7,7 @@
 		<div class="vendor">
 			<div style="display: grid">
 				<div>
-					<mat-form-field class="example-full-width">
+					<mat-form-field style="width: 380px">
 						<mat-label>Select or Add Vendor</mat-label>
 						<input
 							matInput
@@ -108,9 +108,10 @@
 					<div
 						style="
 							display: grid;
-							grid-template-columns: 1fr 1fr;
+							grid-template-columns: 1fr 1fr 1fr;
 							top: 12px;
 							position: relative;
+							gap: 10px;
 						"
 					>
 						<div>
@@ -160,12 +161,33 @@
 								</mat-error>
 							</mat-form-field>
 						</div>
+						<div>
+							<mat-form-field class="mat-input-wrapper">
+								<mat-label>Received Date</mat-label>
+								<input
+									matInput
+									readonly
+									required
+									tabindex="13"
+									[matDatepicker]="pickerrcvd"
+									formControlName="orderrcvddt"
+									(focus)="pickerrcvd.open()"
+									[max]="maxDate"
+								/>
+								<mat-datepicker-toggle
+									tabindex="-1"
+									matSuffix
+									[for]="pickerrcvd"
+								></mat-datepicker-toggle>
+								<mat-datepicker tabindex="-1" #pickerrcvd></mat-datepicker>
+							</mat-form-field>
+						</div>
 					</div>
 				</div>
 			</div>
 			<div class="vendor-left">
 				<div>
-					<mat-form-field class="mat-input-wrapper">
+					<mat-form-field style="width: 125px">
 						<mat-label>Order #</mat-label>
 						<input
 							matInput
@@ -184,7 +206,7 @@
 					</mat-form-field>
 				</div>
 				<div>
-					<mat-form-field class="mat-input-wrapper">
+					<mat-form-field style="width: 125px">
 						<mat-label>Order date</mat-label>
 						<input
 							matInput
@@ -205,7 +227,7 @@
 				</div>
 
 				<div>
-					<mat-form-field class="mat-input-wrapper">
+					<mat-form-field style="width: 125px">
 						<mat-label>Lr #</mat-label>
 						<input
 							matInput
@@ -225,7 +247,7 @@
 				</div>
 
 				<div>
-					<mat-form-field class="mat-input-wrapper">
+					<mat-form-field style="width: 125px">
 						<mat-label>Lr date</mat-label>
 						<input
 							matInput
@@ -246,78 +268,53 @@
 				</div>
 
 				<div>
-					<mat-form-field class="mat-input-wrapper">
-						<mat-label>Received Date</mat-label>
+					<mat-form-field style="width: 125px">
+						<mat-label># of Boxes</mat-label>
 						<input
 							matInput
-							readonly
-							required
-							tabindex="13"
-							[matDatepicker]="pickerrcvd"
-							formControlName="orderrcvddt"
-							(focus)="pickerrcvd.open()"
-							[max]="maxDate"
+							tabindex="14"
+							type="number"
+							formControlName="noofboxes"
+							appSelectOnFocus
 						/>
-						<mat-datepicker-toggle
-							tabindex="-1"
-							matSuffix
-							[for]="pickerrcvd"
-						></mat-datepicker-toggle>
-						<mat-datepicker tabindex="-1" #pickerrcvd></mat-datepicker>
 					</mat-form-field>
 				</div>
-				<div style="display: grid; grid-column: 2/-1">
-					<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr">
-						<div>
-							<mat-form-field class="mat-input-wrapper-short">
-								<mat-label># of Boxes</mat-label>
-								<input
-									matInput
-									tabindex="14"
-									type="number"
-									formControlName="noofboxes"
-									appSelectOnFocus
-								/>
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field class="mat-input-wrapper-short">
-								<mat-label>Transportation Cost</mat-label>
-								<input
-									matInput
-									type="number"
-									tabindex="15"
-									formControlName="transport_charges"
-									appSelectOnFocus
-								/>
-							</mat-form-field>
-						</div>
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>Transportation Cost</mat-label>
+						<input
+							matInput
+							type="number"
+							tabindex="15"
+							formControlName="transport_charges"
+							appSelectOnFocus
+						/>
+					</mat-form-field>
+				</div>
 
-						<div>
-							<mat-form-field class="mat-input-wrapper-short">
-								<mat-label>Unloading Cost</mat-label>
-								<input
-									matInput
-									type="number"
-									tabindex="16"
-									formControlName="unloading_charges"
-									appSelectOnFocus
-								/>
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field class="mat-input-wrapper-short">
-								<mat-label>TDS</mat-label>
-								<input
-									matInput
-									type="number"
-									tabindex="17"
-									formControlName="misc_charges"
-									appSelectOnFocus
-								/>
-							</mat-form-field>
-						</div>
-					</div>
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>Unloading Cost</mat-label>
+						<input
+							matInput
+							type="number"
+							tabindex="16"
+							formControlName="unloading_charges"
+							appSelectOnFocus
+						/>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>TDS</mat-label>
+						<input
+							matInput
+							type="number"
+							tabindex="17"
+							formControlName="misc_charges"
+							appSelectOnFocus
+						/>
+					</mat-form-field>
 				</div>
 			</div>
 		</div>

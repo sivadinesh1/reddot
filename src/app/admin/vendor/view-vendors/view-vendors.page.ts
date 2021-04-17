@@ -151,8 +151,10 @@ export class ViewVendorsPage implements OnInit {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '80%';
-		dialogConfig.height = '80%';
+		dialogConfig.width = '500px';
+		dialogConfig.height = '100%';
+		dialogConfig.position = { top: '0', right: '0' };
+		dialogConfig.panelClass = 'app-full-bleed-dialog';
 
 		const dialogRef = this._dialog.open(VendorAddDialogComponent, dialogConfig);
 

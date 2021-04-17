@@ -107,8 +107,11 @@ export class UsersListPage implements OnInit {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '400px';
-		dialogConfig.height = '70%';
+
+		dialogConfig.width = '500px';
+		dialogConfig.height = '100%';
+		dialogConfig.position = { top: '0', right: '0' };
+		dialogConfig.panelClass = 'app-full-bleed-dialog';
 
 		const dialogRef = this._dialog.open(AddUserComponent, dialogConfig);
 
@@ -124,17 +127,7 @@ export class UsersListPage implements OnInit {
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
-					const dialogConfigSuccess = new MatDialogConfig();
-					dialogConfigSuccess.disableClose = false;
-					dialogConfigSuccess.autoFocus = true;
-					dialogConfigSuccess.width = '25%';
-					dialogConfigSuccess.height = '25%';
-					dialogConfigSuccess.data = 'New User added successfully';
-
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					this.init();
 				}
 			});
 	}

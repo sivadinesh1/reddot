@@ -1,73 +1,94 @@
 <div class="login-content">
 	<div class="left">
-		<div>
-			<h1 class="auth-title">Helping wholesalers and distributors</h1>
-			<div style="font-size: 20px">
-				Manage orders, Purhase & Inventory with simple accounting
-			</div>
-			<div style="font-size: 12px; color: crimson">
-				Last Build: 5-April-2020 10.20AM
+		<div class="logo-section">
+			<img
+				src="/assets/images/svg/launchpad-logo.svg"
+				width="200px"
+				height="72px"
+				alt=""
+			/>
+			<div style="text-align: left; font-size: 1.1rem; font-weight: 400">
+				Ph: +91 97316 16386
 			</div>
 		</div>
+		<div>
+			<div
+				style="font-size: 40px; font-weight: 300; padding: 48px 32px 32px 32px"
+			>
+				Manage orders, Purhase & Inventory with simple accounting
+			</div>
+			<div
+				style="
+					font-weight: 400;
+					font-size: 21px;
+					padding: 0rem 0rem 1rem 0rem;
+					color: #480000;
+					font-weight: 300;
+					font-style: italic;
+				"
+			>
+				Helping wholesalers and distributors
+			</div>
+
+			<img src="/assets/images/svg/tractor.svg" height="300px" alt="" />
+		</div>
+		<div class="footer">Trusted by leading Autoparts dealers & retailers</div>
 	</div>
 	<div class="right">
-		<form [formGroup]="loginForm" (ngSubmit)="doLogin()" class="inputs-list">
-			<mat-form-field class="example-full-width">
-				<mat-label>Mobile Number</mat-label>
-				<input matInput formControlName="phone" required />
+		<div>&nbsp;</div>
+		<div class="login">
+			<form [formGroup]="loginForm" (ngSubmit)="doLogin()" class="inputs-list">
+				<div class="login-txt">Login to your account</div>
+				<mat-form-field class="example-full-width">
+					<mat-label>Mobile Number</mat-label>
+					<input matInput formControlName="phone" required />
 
-				<mat-error *ngIf="loginForm.get('phone').hasError('required')">
-					Phone # is <strong>required</strong>
-				</mat-error>
-				<mat-error
-					*ngIf="loginForm.get('phone').hasError('invalidCountryPhone')"
-				>
-					Wrong phone # <strong>format</strong>
-				</mat-error>
-			</mat-form-field>
+					<mat-error *ngIf="loginForm.get('phone').hasError('required')">
+						Phone # is <strong>required</strong>
+					</mat-error>
+					<mat-error
+						*ngIf="loginForm.get('phone').hasError('invalidCountryPhone')"
+					>
+						Wrong phone # <strong>format</strong>
+					</mat-error>
+				</mat-form-field>
 
-			<mat-form-field class="example-full-width">
-				<mat-label>Password</mat-label>
-				<input
-					matInput
-					placeholder="Password"
-					[type]="hide ? 'password' : 'text'"
-					formControlName="password"
-					required
-				/>
-				<mat-icon matSuffix style="cursor: pointer" (click)="hide = !hide"
-					>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon
-				>
-				<mat-error *ngIf="loginForm.get('password').hasError('required')">
-					Password is <strong>required</strong>
-				</mat-error>
-			</mat-form-field>
+				<mat-form-field class="example-full-width form-field-gap">
+					<mat-label>Password</mat-label>
+					<input
+						matInput
+						placeholder="Password"
+						[type]="hide ? 'password' : 'text'"
+						formControlName="password"
+						required
+					/>
+					<mat-icon matSuffix style="cursor: pointer" (click)="hide = !hide"
+						>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon
+					>
+					<mat-error *ngIf="loginForm.get('password').hasError('required')">
+						Password is <strong>required</strong>
+					</mat-error>
+				</mat-form-field>
 
-			<div class="error">{{ responsemsg }}</div>
+				<div class="error">{{ this.responsemsg }}</div>
 
-			<ion-button
-				class="login-btn"
-				type="submit"
-				expand="block"
-				[disabled]="!loginForm.valid"
-				>Log In</ion-button
-			>
-			<ion-row class="other-auth-options-row">
 				<ion-button
-					class="forgot-btn"
-					fill="clear"
-					[routerLink]="['/auth/forgot-password']"
+					class="login-btn"
+					type="submit"
+					expand="block"
+					[disabled]="!loginForm.valid"
+					>Sign In</ion-button
 				>
-					Forgot Password?
-				</ion-button>
-				<ion-button
-					class="signup-btn"
-					fill="clear"
-					[routerLink]="['/auth/signup']"
-				>
-					Sign Up!
-				</ion-button>
-			</ion-row>
-		</form>
+				<ion-row class="other-auth-options-row">
+					<ion-button fill="clear" [routerLink]="['/auth/forgot-password']">
+						Forgot Password?
+					</ion-button>
+					<ion-button fill="clear" [routerLink]="['/auth/signup']">
+						SignUp
+					</ion-button>
+				</ion-row>
+			</form>
+		</div>
+		<div>&#169; 2021 All Rights Reserved</div>
 	</div>
 </div>

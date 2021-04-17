@@ -2,8 +2,16 @@
 	<div class="content">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goEnquiryScreen()" style="cursor: pointer">
-					INQUIRIES&nbsp;&nbsp;&nbsp;+
+				<div class="btn-grad" (click)="goEnquiryScreen()">
+					<mat-icon
+						style="
+							font-size: 30px;
+							width: 30px !important;
+							height: 30px !important;
+						"
+						>add_circle_outline</mat-icon
+					>
+					<span style="padding-left: 10px; font-size: 20px">Enquiry</span>
 				</div>
 				<div class="customers" style="padding-top: 20px; text-align: right">
 					<mat-form-field class="width">
@@ -82,7 +90,7 @@
 
 				<div class="search-btn" style="padding-top: 20px">
 					<button
-						mat-raised-button
+						mat-stroked-button
 						[disabled]="!submitForm.valid"
 						color="primary"
 						style="font-size: 1rem"
@@ -94,40 +102,11 @@
 			</div>
 		</form>
 
-		<div style="display: flex; justify-content: space-between">
-			<div
-				style="
-					align-self: center;
-					font-size: 16px;
-					padding: 16px 16px 0px 32px;
-					color: darkblue;
-				"
-			>
-				All Inquiries ({{(enquiries$| async)?.length }}) records
-			</div>
-			<div>
-				<button mat-button color="accent" (click)="openBackOrder()"></button>
-				<span
-					(click)="openBackOrder()"
-					style="
-						color: red;
-						background-color: powderblue;
-						padding: 10px 16px;
-						position: relative;
-						top: 10px;
-						cursor: pointer;
-					"
-				>
-					Backorder Report
-				</span>
-			</div>
-		</div>
-
 		<div
 			style="
 				width: 94%;
 				margin: 0 auto;
-				padding: 16px 0px 100px 0px;
+				padding: 36px 0px 100px 0px;
 				position: relative;
 				display: grid;
 			"
@@ -147,30 +126,23 @@
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 					</mat-tab>
 
-					<!-- <mat-tab label="In Progress ({{(draftEnquiries$| async)?.length }})">
-						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-					</mat-tab> -->
-
 					<mat-tab
-						label="Ready to Invoice ({{(invoiceReadyEnquiries$| async)?.length }})"
+						label="To Invoice ({{(invoiceReadyEnquiries$| async)?.length }})"
 					>
 						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 					</mat-tab>
 
 					<mat-tab
-						label="Closed Inquiry ({{(fullfilledEnquiries$| async)?.length }})"
+						label="Closed/Cancelled ({{(fullfilledEnquiries$| async)?.length }})"
 					>
 						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 					</mat-tab>
-
-					<mat-tab
-						label="Cancelled Inquiry ({{(cancelledEnquiries$| async)?.length }})"
-					>
-						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+					<mat-tab label="Backorders">
+						<!-- <ng-template [ngTemplateOutlet]="MsgRef"></ng-template> -->
+						<ng-template [ngTemplateOutlet]="BackorderHeader"></ng-template>
+						<ng-template [ngTemplateOutlet]="BackorderList"></ng-template>
 					</mat-tab>
 				</mat-tab-group>
 			</div>
@@ -179,7 +151,7 @@
 				style="
 					position: absolute;
 					justify-self: flex-end;
-					top: 16px;
+					top: 38px;
 					z-index: 1;
 				"
 			>
@@ -202,6 +174,41 @@
 		</div>
 	</div>
 
+	<ng-template #BackorderHeader>
+		<div class="heading">
+			Past 30 days missed items - <i>{{back_order_lst?.length}} rows</i>
+		</div>
+		<div class="table-header">
+			<div class="th1">Enquiry Date</div>
+			<div class="th1">Customer Name</div>
+			<div class="th1">Product Info</div>
+			<div class="th1">Avl Qty</div>
+			<div class="th2">Notes</div>
+			<div class="th3">Ask Qty</div>
+			<div class="th4">Given Qty</div>
+			<div class="th5">Reason</div>
+		</div>
+	</ng-template>
+	<ng-template #BackorderList>
+		<div
+			*ngFor="let item of back_order_lst;let idx = index; let isOdd = odd; let isEven = even;"
+		>
+			<div class="tbl-detail" [class.odd]="isOdd" [class.even]="isEven">
+				<div class="tc1">{{item.order_date}}</div>
+				<div class="tc1">{{item.customer_name}}</div>
+				<div class="tc2" style="cursor: pointer; color: blue">
+					<div class="pcode">{{item.product_code}}</div>
+					<div class="pdesc">{{item.description}}</div>
+				</div>
+				<div class="tc2">{{item.available_stock}}</div>
+				<div class="tc2">{{item.notes}}</div>
+				<div class="tc3">{{item.askqty}}</div>
+				<div class="tc4">{{item.giveqty}}</div>
+				<div class="tc5">{{item.reason}}</div>
+			</div>
+		</div>
+	</ng-template>
+
 	<ng-template #MsgRef>
 		<div class="header">
 			<div>#</div>
@@ -209,7 +216,7 @@
 			<div>CUSTOMER</div>
 			<div>INQUIRED ON</div>
 			<div>ITEMS</div>
-			<div>&nbsp;</div>
+			<div>STATUS</div>
 
 			<div>&nbsp;</div>
 		</div>
@@ -226,29 +233,56 @@
 			<div>
 				<div *ngIf="item.estatus === 'O' ">New</div>
 				<div *ngIf="item.estatus === 'D' ">Verification in progress</div>
+				<div
+					*ngIf="item.estatus === 'P' "
+					style="display: flex; align-items: center"
+					(click)="moveToSale(item)"
+				>
+					<mat-icon [ngStyle]="{'color':'blue'}">edit </mat-icon
+					><span style="color: blue; cursor: pointer">Start Invoicing</span>
+				</div>
+				<div *ngIf="item.estatus === 'E' ">Closed</div>
+				<div
+					*ngIf="item.estatus === 'X' "
+					style="height: 38px; display: flex; align-items: center"
+				>
+					Cancelled
+				</div>
 			</div>
 			<div>
-				<div *ngIf="item.estatus === 'O' ">
+				<div *ngIf="item.estatus === 'O' || item.estatus === 'D' ">
 					<div style="display: flex; justify-content: space-evenly">
-						<span class="icon-style" (click)="delete(item)"
-							><mat-icon>delete_outline </mat-icon></span
-						>
-						<span class="icon-style" (click)="processEnquiry(item)"
-							><mat-icon>edit </mat-icon></span
+						<span class="icon-style"
+							><mat-icon
+								#tooltip="matTooltip"
+								matTooltip="Edit/Modify Enquiry"
+								matTooltipClass="tooltip"
+								(mousedown)="tooltip.hide()"
+								(click)="processEnquiry(item)"
+								>edit
+							</mat-icon></span
 						>
 						<span class="icon-style" (click)="openDialog(item)"
-							><mat-icon [ngStyle]="{'color':'#6d78d2'}"
+							><mat-icon
+								[ngStyle]="{'color':'#6d78d2'}"
+								matTooltip="View Enquiry"
+								matTooltipClass="tooltip"
 								>remove_red_eye
+							</mat-icon></span
+						>
+						<span class="icon-style" (click)="delete(item)"
+							><mat-icon
+								[ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
+								matTooltip="Delete Enquiry"
+								matTooltipClass="tooltip"
+								>delete_outline
 							</mat-icon></span
 						>
 					</div>
 				</div>
 
-				<div *ngIf="item.estatus === 'D' ">
+				<!-- <div *ngIf="item.estatus === 'D' ">
 					<div style="display: flex; justify-content: space-evenly">
-						<span class="icon-style" (click)="delete(item)"
-							><mat-icon>delete_outline </mat-icon></span
-						>
 						<span class="icon-style" (click)="processEnquiry(item)"
 							><mat-icon>edit </mat-icon></span
 						>
@@ -258,25 +292,38 @@
 								>remove_red_eye
 							</mat-icon></span
 						>
+						<span class="icon-style" (click)="delete(item)"
+							><mat-icon [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
+								>delete_outline
+							</mat-icon></span
+						>
 					</div>
-				</div>
-
+				</div> -->
+				<!-- ready to invoice tab -->
 				<div *ngIf="item.estatus === 'P' ">
 					<div style="display: flex; justify-content: space-evenly">
-						<span class="icon-style" (click)="delete(item)"
-							><mat-icon>delete_outline </mat-icon></span
-						>
-						<span class="icon-style" (click)="moveToSale(item)"
+						<!-- <span class="icon-style" (click)="moveToSale(item)"
 							><mat-icon>edit </mat-icon></span
-						>
+						> -->
 						<span class="icon-style" (click)="openDialog(item)"
-							><mat-icon [ngStyle]="{'color':'#6d78d2'}"
+							><mat-icon
+								[ngStyle]="{'color':'#6d78d2'}"
+								matTooltip="View Enquiry"
+								matTooltipClass="tooltip"
 								>remove_red_eye
+							</mat-icon></span
+						>
+						<span class="icon-style" (click)="delete(item)"
+							><mat-icon
+								[ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
+								matTooltip="Delete Enquiry"
+								matTooltipClass="tooltip"
+								>delete_outline
 							</mat-icon></span
 						>
 					</div>
 				</div>
-
+				<!-- Executed / Cancelled -->
 				<div *ngIf="item.estatus === 'E' ">
 					<div
 						style="
@@ -288,7 +335,10 @@
 						(click)="openDialog(item)"
 					>
 						<span class="icon-style"
-							><mat-icon [ngStyle]="{'color':'#6d78d2'}"
+							><mat-icon
+								[ngStyle]="{'color':'#6d78d2'}"
+								matTooltip="View Enquiry"
+								matTooltipClass="tooltip"
 								>remove_red_eye
 							</mat-icon></span
 						>
@@ -297,19 +347,13 @@
 			</div>
 		</div>
 
-		<!-- <div *ngIf="(enquiries$| async)?.length === 0">No records found, try other search combinations!!!</div> -->
 		<div
 			class="no-records"
 			*ngIf="tabIndex === 0 && (newEnquiries$| async)?.length === 0"
 		>
-			No item in status "New Inquiry"
+			No item in status "Order Queue"
 		</div>
-		<!-- <div
-			class="no-records"
-			*ngIf="tabIndex === 1 && (draftEnquiries$| async)?.length === 0"
-		>
-			No item in status "In Progress"
-		</div> -->
+
 		<div
 			class="no-records"
 			*ngIf="tabIndex === 1 && (invoiceReadyEnquiries$| async)?.length === 0"
@@ -320,15 +364,7 @@
 			class="no-records"
 			*ngIf="tabIndex === 2 && (fullfilledEnquiries$| async)?.length === 0"
 		>
-			No item in status "Closed Inquiry"
-		</div>
-		<div
-			class="no-records"
-			*ngIf="tabIndex === 3 && (cancelledEnquiries$| async)?.length === 0"
-		>
-			No item in status "Cancelled Inquiry"
+			No item in status "Closed/Cancelled Enquiry"
 		</div>
 	</ng-template>
 </ion-content>
-
-<!-- return to customer, replace items, scrapt return  -->

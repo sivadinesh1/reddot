@@ -28,6 +28,7 @@ import { CustomerEditShippingAddressComponent } from 'src/app/components/custome
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 import { DefaultDiscountsComponent } from 'src/app/components/customers/discount/default-discounts/default-discounts.component';
 import { BrandDiscountsComponent } from 'src/app/components/customers/discount/brand-discounts/brand-discounts.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'app-view-customer',
@@ -73,6 +74,7 @@ export class ViewCustomerPage implements OnInit {
 		private _authservice: AuthenticationService,
 		private _cdr: ChangeDetectorRef,
 		private _dialog: MatDialog,
+		private _snackBar: MatSnackBar,
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
 		private _router: Router
@@ -127,6 +129,7 @@ export class ViewCustomerPage implements OnInit {
 		dialogConfig.width = '500px';
 		dialogConfig.height = '100%';
 		dialogConfig.position = { top: '0', right: '0' };
+		dialogConfig.panelClass = 'app-full-bleed-dialog';
 
 		const dialogRef = this._dialog.open(
 			CustomerAddDialogComponent,
@@ -144,17 +147,7 @@ export class ViewCustomerPage implements OnInit {
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
-					const dialogConfigSuccess = new MatDialogConfig();
-					dialogConfigSuccess.disableClose = false;
-					dialogConfigSuccess.autoFocus = true;
-					dialogConfigSuccess.width = '25%';
-					dialogConfigSuccess.height = '25%';
-					dialogConfigSuccess.data = 'Customer added successfully';
-
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					this.openSnackBar('Customer added successfully', '');
 				}
 			});
 	}
@@ -388,5 +381,12 @@ export class ViewCustomerPage implements OnInit {
 						}
 					});
 			});
+	}
+
+	openSnackBar(message: string, action: string) {
+		this._snackBar.open(message, action, {
+			duration: 2000,
+			panelClass: ['mat-toolbar', 'mat-primary'],
+		});
 	}
 }

@@ -1,86 +1,76 @@
-/** @format */
-
-// Custom variables
-// Note:  These ones were added by us and have nothing to do with Ionic CSS Custom Properties
-:host {
-	--page-margin: var(--app-broad-margin);
-	--page-background: var(--app-background-shade);
-}
-
-// Note:  All the CSS variables defined below are overrides of Ionic elements CSS Custom Properties
 .login-content {
-	--background: var(--page-background);
-	--padding-start: var(--page-margin);
-	--padding-end: var(--page-margin);
-	--padding-top: var(--page-margin);
-	--padding-bottom: var(--page-margin);
-
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	height: 100vh;
+	min-height: 100vh;
+	overflow-y: auto;
 
-	.auth-title {
-		color: var(--ion-color-dark);
-		font-weight: bold;
-		margin-top: calc(var(--page-margin) / 2);
-		margin-bottom: calc(var(--page-margin) * (3 / 2));
-		letter-spacing: 0.6px;
-		font-size: 42px;
-	}
-
-	.inputs-list {
-		--ion-item-background: var(--page-background);
-
-		.input-item {
-			--padding-start: 0px;
-			--padding-end: 0px;
-			--inner-padding-end: 0px;
-		}
-
-		.error-container {
-			.error-message {
-				margin: calc(var(--page-margin) / 2) 0px;
-				display: flex;
-				align-items: center;
-				color: var(--ion-color-danger);
-				font-size: 14px;
-
-				ion-icon {
-					padding-inline-end: calc(var(--page-margin) / 2);
-				}
-			}
-		}
-	}
-
-	.login-btn {
-		margin: calc(var(--page-margin) / 2) 0px;
-	}
-
-	.left {
+	.left,
+	.right {
+		display: grid;
 		text-align: center;
-		width: 80%;
+		width: 100%;
+		grid-template-rows: 80px 1fr 50px;
 		text-align: center;
-		align-self: center;
-		justify-content: center;
+		background-color: #f9f2f2;
 		margin: 0 auto;
 	}
 
 	.right {
-		display: grid;
-		width: 80%;
-		text-align: center;
-		align-self: center;
-		justify-content: center;
-		margin: 0 auto;
+		grid-template-rows: 80px 1fr 30px;
+		background-color: #fff;
+		.login {
+			display: grid;
+			width: 60%;
+			margin: 0 auto;
+			align-content: center;
+		}
+		.footer {
+			font-size: 12px;
+			color: #444;
+			align-items: center;
+		}
 	}
-}
 
-.example-form {
-	min-width: 150px;
-	max-width: 500px;
-	width: 100%;
+	// .right {
+	// 	display: grid;
+	// 	width: 80%;
+	// 	text-align: center;
+	// 	align-self: center;
+	// 	justify-content: center;
+	// 	margin: 0 auto;
+	// }
 }
 
 .example-full-width {
 	width: 100%;
+}
+
+.logo-section {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	padding-left: 24px;
+
+	.section-left {
+		background-color: #f9f2f2;
+	}
+}
+
+.footer {
+	font-size: 20px;
+	font-weight: 200;
+	color: #505050;
+	background-color: #f9f2f2;
+	align-items: center;
+}
+
+.login-txt {
+	text-align: left;
+	padding-bottom: 1.2rem;
+	font-size: 1.4rem;
+	font-weight: 400;
+}
+.other-auth-options-row {
+	display: flex;
+	justify-content: space-between;
 }

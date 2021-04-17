@@ -125,7 +125,6 @@ export class AccountsReceivablesComponent implements OnInit {
 
 	// filter customers as we type
 	filtercustomer(value: any) {
-		debugger;
 		if (typeof value == 'object') {
 			return this.customer_lis.filter(
 				(customer) =>
@@ -133,7 +132,6 @@ export class AccountsReceivablesComponent implements OnInit {
 			);
 		} else if (typeof value == 'string') {
 			return this.customer_lis.filter((customer) => {
-				debugger;
 				customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0;
 			});
 		}

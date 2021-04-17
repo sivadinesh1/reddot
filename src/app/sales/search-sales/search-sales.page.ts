@@ -351,14 +351,22 @@ export class SearchSalesPage implements OnInit {
 		this._cdr.markForCheck();
 	}
 
+	// two types of delete, (i) Sale Details lineitem, (ii) Sale Master both
+	// are different scenarios, just recording it. Only 'DRAFT(D)' or 'STOCKISSUE(D)' STATUS ARE DELETED
+	// first delete sale details(update audit) then delete sale master
 	delete(item) {
 		this._commonApiService.deleteSaleData(item.id).subscribe((data: any) => {
 			if (data.result === 'success') {
 				this._commonApiService
 					.deleteSaleMaster(item.id)
 					.subscribe((data1: any) => {
-						this.openSnackBar('Deleted Successfully', '');
-						this.init();
+						//  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
+						this._commonApiService
+							.deleteItemHistory(item.id)
+							.subscribe((data: any) => {
+								this.openSnackBar('Deleted Successfully', '');
+								this.init();
+							});
 					});
 			}
 		});
@@ -367,7 +375,7 @@ export class SearchSalesPage implements OnInit {
 	async presentAlertConfirm(item) {
 		const alert = await this.alertController.create({
 			header: 'Confirm!',
-			message: 'Are you sure to Delete?',
+			message: 'Permantently removes sale. Are you sure to Delete?',
 			buttons: [
 				{
 					text: 'Cancel',

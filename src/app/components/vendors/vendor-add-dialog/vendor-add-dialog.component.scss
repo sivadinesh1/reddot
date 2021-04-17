@@ -2,25 +2,9 @@
 
 .content {
 	display: grid;
-	width: 94%;
+	width: 100%;
 	margin: 0 auto;
-	padding: 16px;
-}
-
-// .vendor-info {
-// 	display: grid;
-// 	grid-template-columns: auto auto auto auto;
-// 	grid-gap: 10px;
-// 	width: 100%;
-// }
-
-.screen-header {
-	display: flex;
-	padding: 8px 0px;
-	font-size: 18px;
-	font-weight: 500;
-	color: #222222;
-	justify-content: space-between;
+	padding: 3rem 1rem 1rem 1rem;
 }
 
 .mat-width-ext {
@@ -30,7 +14,7 @@
 .vendor-info,
 .vendor-info1 {
 	display: grid;
-	grid-template-columns: auto auto;
+	grid-template-columns: auto;
 	grid-gap: 16px;
 	padding: 1rem;
 }

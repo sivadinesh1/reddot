@@ -2,7 +2,7 @@
 	display: grid;
 	width: 100%;
 	margin: 0 auto;
-	padding: 8px;
+	padding: 3rem 1rem 1rem 1rem;
 }
 
 .mat-width-ext {
@@ -14,14 +14,14 @@
 	cursor: pointer;
 }
 
-.screen-header {
-	display: flex;
-	padding: 8px 0px;
-	font-size: 18px;
-	font-weight: 500;
-	color: #222222;
-	justify-content: space-between;
-}
+// .screen-header {
+// 	display: flex;
+// 	padding: 8px 0px;
+// 	font-size: 18px;
+// 	font-weight: 500;
+// 	color: #222222;
+// 	justify-content: space-between;
+// }
 
 .customer-info,
 .customer-info1 {
@@ -36,5 +36,5 @@
 }
 
 .mat-width-disc {
-	width: 100px;
+	width: 60px;
 }

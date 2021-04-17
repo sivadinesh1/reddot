@@ -2,46 +2,69 @@
 	<div class="content">
 		<div class="head">
 			<div>
-				<div class="heading">List of Active Products</div>
+				<div class="container">
+					<input
+						type="text"
+						(keyup)="openDialog($event.target.value)"
+						placeholder="Search by Product Code / Description "
+						class="search_bar"
+					/>
+
+					<img
+						src="../../assets/images/svg/search.svg"
+						width="24px"
+						height="24px"
+						class="button"
+					/>
+				</div>
 			</div>
-			<div class="add-btn">
-				<button
-					appPreventDoubleClick
-					(throttledClick)="add()"
-					[throttleTime]="500"
-					mat-raised-button
-					color="primary"
+			<div class="full-download" (click)="exportCompletedPurchaseToExcel()">
+				<span style="font-size: 18px; font-weight: 400; color: blue">
+					Download Full Stock
+				</span>
+				<img
+					src="/assets/images/svg/download-excel.svg"
+					style="cursor: pointer; position: relative; top: 12px"
+					width="32px"
+					height="32px"
+				/>
+			</div>
+			<div class="btn-grad add-btn" (click)="add()">
+				<mat-icon
+					style="
+						font-size: 30px;
+						width: 30px !important;
+						height: 30px !important;
+						color: #fff !important;
+					"
+					>add_circle_outline</mat-icon
 				>
-					+ Add Product
-				</button>
+				<span style="padding-left: 10px; font-size: 20px">Product</span>
 			</div>
 		</div>
-
-		<div class="row1">
-			<div class="search_box">
-				<ion-searchbar
-					autofocus
-					debounce="300"
-					placeholder="Search by part number / description"
-					#mySearchbar
-					show-cancel-button="focus"
-					(ionClear)="reset()"
-					(ionInput)="openDialog($event.target.value)"
-				></ion-searchbar>
-			</div>
-			<div class="row-cnt">
-				&nbsp;&nbsp;
-				<span *ngIf="pageLength >= 50" style="font-size: 14px; color: #797979">
-					Matches: {{ pageLength }} +
-				</span>
-				<span *ngIf="pageLength < 50" style="font-size: 14px; color: #797979">
-					Matches: {{ pageLength }}
-				</span>
-			</div>
-		</div>
-
-		<ng-container>
-			<div class="example-container mat-elevation-z8">
+		<br /><br />
+		<ng-container *ngIf="isTableHasData">
+			<div
+				class="example-container mat-elevation-z8"
+				style="width: 90%; display: grid; margin: 0 auto"
+			>
+				<div class="row1">
+					<div class="row-cnt">
+						&nbsp;&nbsp;
+						<span
+							*ngIf="pageLength >= 50"
+							style="font-size: 14px; color: #4a4ccf"
+						>
+							Showing {{ pageLength }} + matching records
+						</span>
+						<span
+							*ngIf="pageLength < 50"
+							style="font-size: 14px; color: #4a4ccf"
+						>
+							Showing {{ pageLength }} matching records
+						</span>
+					</div>
+				</div>
 				<div class="example-table-container" #epltable>
 					<table mat-table [dataSource]="dataSource" multiTemplateDataRows>
 						<ng-container matColumnDef="productcode">

@@ -2,14 +2,14 @@
 <div>
 	<app-header></app-header>
 	<mat-sidenav-container fullscreen style="margin-top: 56px">
-		<mat-sidenav mode="side" opened>
+		<mat-sidenav #sidenav mode="side" [opened]="true">
 			<app-left-menu></app-left-menu>
 		</mat-sidenav>
-		<mat-sidenav-content class="main-content">
-			<div>
-				<ion-router-outlet></ion-router-outlet>
-			</div>
+		<mat-sidenav-content class="main_content">
+			<ion-router-outlet></ion-router-outlet>
 		</mat-sidenav-content>
 	</mat-sidenav-container>
 </div>
 <!-- </ion-content> -->
+
+<!-- mode="side" [opened]="false" [disableClose]="true" -->

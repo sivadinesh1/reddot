@@ -28,6 +28,7 @@ import {
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { SaleReturnViewComponent } from 'src/app/components/returns/sale-return-view/sale-return-view.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'app-search-return-sales',
@@ -101,6 +102,7 @@ export class SearchReturnSalesPage implements OnInit {
 		private _route: ActivatedRoute,
 		public alertController: AlertController,
 		public _dialog: MatDialog,
+		private _snackBar: MatSnackBar,
 		private _authservice: AuthenticationService
 	) {
 		this.submitForm = this._fb.group({
@@ -285,7 +287,13 @@ export class SearchReturnSalesPage implements OnInit {
 				this._commonApiService
 					.deleteSaleMaster(item.id)
 					.subscribe((data1: any) => {
-						this.init();
+						//  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
+						this._commonApiService
+							.deleteItemHistory(item.id)
+							.subscribe((data: any) => {
+								this.openSnackBar('Deleted Successfully', '');
+								this.init();
+							});
 					});
 			}
 		});
@@ -294,7 +302,7 @@ export class SearchReturnSalesPage implements OnInit {
 	async presentAlertConfirm(item) {
 		const alert = await this.alertController.create({
 			header: 'Confirm!',
-			message: 'Are you sure to Delete?',
+			message: 'Removes sale permanently. Are you sure to Delete?',
 			buttons: [
 				{
 					text: 'Cancel',
@@ -315,6 +323,13 @@ export class SearchReturnSalesPage implements OnInit {
 		});
 
 		await alert.present();
+	}
+
+	openSnackBar(message: string, action: string) {
+		this._snackBar.open(message, action, {
+			duration: 2000,
+			panelClass: ['mat-toolbar', 'mat-primary'],
+		});
 	}
 
 	async tabClick($event) {

@@ -116,8 +116,13 @@
 								<div style="text-align: left; cursor: pointer">
 									<div>
 										<button mat-menu-item (click)="edit(element)">
-											<mat-icon>edit </mat-icon>
-											<span>Edit</span>
+											<mat-icon
+												#tooltip="matTooltip"
+												matTooltip="Edit/Modify Vendor Details"
+												matTooltipClass="tooltip"
+												(mousedown)="tooltip.hide()"
+												>edit
+											</mat-icon>
 										</button>
 									</div>
 								</div>
@@ -132,8 +137,13 @@
 								data-label="Name"
 							>
 								<button mat-menu-item (click)="delete(element)">
-									<mat-icon>delete</mat-icon>
-									<span>Delete </span>
+									<mat-icon
+										#tooltip="matTooltip"
+										matTooltip="Delete Vendor Details"
+										matTooltipClass="tooltip"
+										(mousedown)="tooltip.hide()"
+										>delete</mat-icon
+									>
 								</button>
 							</td>
 						</ng-container>

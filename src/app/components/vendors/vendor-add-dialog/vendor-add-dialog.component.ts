@@ -52,24 +52,8 @@ export class VendorAddDialogComponent implements OnInit {
 		private _authservice: AuthenticationService,
 		private _commonApiService: CommonApiService
 	) {
-		// const currentUser = this._authservice.currentUserValue;
-		// this.center_id = currentUser.center_id;
-
-		this.userdata$ = this._authservice.currentUser;
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
-
-				this.submitForm.patchValue({
-					center_id: data.center_id,
-				});
-
-				this._cdr.markForCheck();
-			});
-
 		this.submitForm = this._formBuilder.group({
-			center_id: [this.center_id],
+			center_id: [''],
 			name: ['', Validators.required],
 			address1: [''],
 			address2: [''],
@@ -107,6 +91,19 @@ export class VendorAddDialogComponent implements OnInit {
 			],
 			email: ['', [patternValidator(EMAIL_REGEX)]],
 		});
+
+		this.userdata$ = this._authservice.currentUser;
+		this.userdata$
+			.pipe(filter((data) => data !== null))
+			.subscribe((data: any) => {
+				this.userdata = data;
+
+				this.submitForm.patchValue({
+					center_id: this.userdata.center_id,
+				});
+
+				this._cdr.markForCheck();
+			});
 
 		this._commonApiService.getStates().subscribe((data: any) => {
 			this.statesdata = data;

@@ -80,9 +80,9 @@ export class ProductAddDialogComponent implements OnInit {
 			hsncode: [''],
 
 			taxrate: ['', Validators.required],
-			minqty: ['', Validators.required],
+			minqty: [''],
 
-			unit_price: ['', Validators.required],
+			unit_price: [''],
 			mrp: ['', Validators.required],
 			purchase_price: ['', Validators.required],
 			maxdiscount: [''],
@@ -124,7 +124,10 @@ export class ProductAddDialogComponent implements OnInit {
 	isProdExists() {
 		if (this.submitForm.value.product_code.length > 0) {
 			this._commonApiService
-				.isProdExists(this.submitForm.value.product_code)
+				.isProdExists(
+					this.submitForm.value.product_code,
+					this.userdata.center_id
+				)
 				.subscribe((data: any) => {
 					if (data.result.length > 0) {
 						if (data.result[0].id > 0) {
@@ -146,6 +149,11 @@ export class ProductAddDialogComponent implements OnInit {
 			this._cdr.markForCheck();
 			return false;
 		}
+
+		// assign PP to UP (until strong use case arise)
+		this.submitForm.patchValue({
+			unit_price: this.submitForm.value.purchase_price,
+		});
 
 		this._commonApiService
 			.addProduct(this.submitForm.value)

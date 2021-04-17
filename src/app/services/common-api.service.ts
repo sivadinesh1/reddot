@@ -383,6 +383,14 @@ export class CommonApiService {
 		);
 	}
 
+	inactivateCSA(submitForm) {
+		return this.httpClient.post<any>(
+			this.restApiUrl + '/api/admin/inactivate-csa',
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
 	insertCustomerShippingAddress(objectForm): Observable<any> {
 		return this.httpClient.post<any>(
 			`${this.restApiUrl}/api/admin/insert-customer-shipping-address`,
@@ -595,6 +603,12 @@ export class CommonApiService {
 		);
 	}
 
+	deleteItemHistory(saleid) {
+		return this.httpClient.get(
+			`${this.restApiUrl}/api/stock/delete-item-history/${saleid}`
+		);
+	}
+
 	deleteSaleDetails(submitForm) {
 		return this.httpClient.post<any>(
 			this.restApiUrl + '/api/stock/delete-sale-details',
@@ -614,9 +628,9 @@ export class CommonApiService {
 	}
 
 	// end
-	isProdExists(pCode) {
+	isProdExists(pCode, centerid) {
 		return this.httpClient.get(
-			`${this.restApiUrl}/api/admin/prod-exists/${pCode}`
+			`${this.restApiUrl}/api/admin/prod-exists/${pCode}/${centerid}`
 		);
 	}
 
@@ -725,6 +739,14 @@ export class CommonApiService {
 	}
 
 	// REPORTS SECTION
+	fetchFullProductInventoryReports(submitForm) {
+		return this.httpClient.post<any>(
+			this.restApiUrl + '/api/reports/full-inventory-report',
+			submitForm,
+			{ observe: 'response' }
+		);
+	}
+
 	fetchProductInventoryReports(submitForm) {
 		return this.httpClient.post<any>(
 			this.restApiUrl + '/api/reports/inventory-report',

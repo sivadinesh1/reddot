@@ -185,7 +185,6 @@ export class AccountsPaymentsPage implements OnInit {
 	}
 
 	filtercustomer(value: any) {
-		debugger;
 		if (typeof value == 'object') {
 			return this.customer_lis.filter(
 				(customer) =>

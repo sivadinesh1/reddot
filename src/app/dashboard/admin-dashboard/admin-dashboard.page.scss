@@ -23,7 +23,9 @@
 
 .canvas {
 	display: grid;
-	grid-template-columns: 3fr 1fr;
+	grid-template-columns: 1fr;
+	width: 80%;
+	margin: 0 auto;
 }
 
 .rectangle {

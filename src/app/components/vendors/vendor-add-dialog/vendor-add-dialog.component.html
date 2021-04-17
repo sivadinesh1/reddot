@@ -1,17 +1,32 @@
-<div class="content">
-	<div class="screen-header">
-		<div>Add New Vendor</div>
-		<div>
-			<img
-				class="cursor"
-				src="/assets/images/svg/close.svg"
-				(click)="close()"
-				width="20px"
-				height="20px"
-			/>
-		</div>
+<div
+	style="
+		height: 42px;
+		width: 500px;
+		background-color: #fff;
+		box-shadow: 0px 0px 9px -5px rgb(0 0 0 / 70%);
+		display: flex;
+		position: fixed;
+		justify-content: space-between;
+		align-items: center;
+		z-index: 2;
+		top: -1px;
+		padding: 1rem;
+		font-weight: 500;
+	"
+>
+	<div>Add New Vendor</div>
+	<div>
+		<img
+			class="cursor"
+			src="/assets/images/svg/close.svg"
+			(click)="close()"
+			width="16px"
+			height="16px"
+		/>
 	</div>
+</div>
 
+<div class="content">
 	<form class="myForm" [formGroup]="submitForm" (ngSubmit)="onSubmit()">
 		<div class="vendor-info">
 			<div class="name">
@@ -30,14 +45,14 @@
 
 			<div>
 				<mat-form-field class="mat-width-ext">
-					<mat-label>GST</mat-label>
+					<mat-label>GST (Optional)</mat-label>
 					<input type="text" matInput formControlName="gst" placeholder="GST" />
-					<mat-error>Missing or wrong format</mat-error>
+					<mat-hint>Goods and Services Tax</mat-hint>
 				</mat-form-field>
 			</div>
 
 			<div>
-				<div style="padding: 0px 0px 16px 0px">BILLING & SHIPPING ADDRESS</div>
+				<div style="padding: 16px 0px 16px 0px">BILLING & SHIPPING ADDRESS</div>
 				<div class="address1">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 1</mat-label>
@@ -81,6 +96,9 @@
 							formControlName="district"
 							required
 						/>
+						<mat-error *ngIf="submitForm.get('district').hasError('required')">
+							This field is <strong>required</strong>
+						</mat-error>
 					</mat-form-field>
 				</div>
 
@@ -98,8 +116,10 @@
 				<div class="pin">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Pin</mat-label>
-						<input matInput placeholder="State" formControlName="pin" />
-						<mat-error>Missing or wrong format</mat-error>
+						<input matInput formControlName="pin" required />
+						<mat-error *ngIf="submitForm.get('pin').hasError('required')">
+							This field is <strong>required</strong>
+						</mat-error>
 					</mat-form-field>
 				</div>
 			</div>
@@ -124,7 +144,7 @@
 
 				<div>
 					<mat-form-field class="mat-width-ext">
-						<mat-label>Landline</mat-label>
+						<mat-label>Landline (Optional)</mat-label>
 						<input type="number" matInput formControlName="mobile2" />
 						<mat-error>Missing or wrong format</mat-error>
 					</mat-form-field>
@@ -132,12 +152,11 @@
 
 				<div>
 					<mat-form-field class="mat-width-ext">
-						<mat-label>Whatsapp</mat-label>
+						<mat-label>Whatsapp (Optional)</mat-label>
 						<input
 							type="number"
 							matInput
 							formControlName="whatsapp"
-							required
 							placeholder="Whatsapp"
 						/>
 						<mat-error>Missing or wrong format</mat-error>
@@ -146,7 +165,7 @@
 
 				<div>
 					<mat-form-field class="mat-width-ext">
-						<mat-label>Email</mat-label>
+						<mat-label>Email (Optional)</mat-label>
 						<input
 							type="text"
 							matInput

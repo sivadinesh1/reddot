@@ -128,7 +128,6 @@ export class SalesPage {
 	cust_discount_type: any;
 	mode: string;
 	id: string;
-	fromEnquiry: any;
 
 	testTotal: any;
 	invoiceid: any;
@@ -187,6 +186,13 @@ export class SalesPage {
 	question = '+ Add Customer"';
 	ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
+	// 3 Entry Ways. Via (i)Enquiry to Sale (ii) draft/completed Sale (iii) New Sale
+	// (i && iii) - ignore customerchange flag, if (ii) process customer change flag
+	// onload store customer id & check during submit. Handling Customer change for draft/completed sale
+	orig_customerid: string;
+	isFreshSale = false;
+	fromEnquiry: any;
+
 	constructor(
 		private _modalcontroller: ModalController,
 		private _pickerctrl: PickerController,
@@ -218,31 +224,31 @@ export class SalesPage {
 
 				this.ready = 1;
 
+				// data change
+				this._route.data.subscribe((data) => {
+					this._authservice.setCurrentMenu('SALE');
+					this.selInvType = 'gstinvoice';
+					this.listArr = [];
+					this.cancel();
+					this.rawSalesData = data['rawsalesdata'];
+				});
+				// param change
+				this._route.params.subscribe((params) => {
+					this.clicked = false;
+
+					this.id = params['id'];
+					this.mode = params['mode'];
+
+					if (this.userdata !== undefined) {
+						this.initialize();
+						this.submitForm.patchValue({
+							center_id: this.userdata.center_id,
+						});
+					}
+				});
+
 				this._cdr.markForCheck();
 			});
-
-		// data change
-		this._route.data.subscribe((data) => {
-			this._authservice.setCurrentMenu('SALE');
-			this.selInvType = 'gstinvoice';
-			this.listArr = [];
-			this.cancel();
-			this.rawSalesData = data['rawsalesdata'];
-		});
-		// param change
-		this._route.params.subscribe((params) => {
-			this.clicked = false;
-
-			this.id = params['id'];
-			this.mode = params['mode'];
-
-			if (this.userdata !== undefined) {
-				this.initialize();
-				this.submitForm.patchValue({
-					center_id: this.userdata.center_id,
-				});
-			}
-		});
 	}
 
 	basicinit() {
@@ -293,6 +299,9 @@ export class SalesPage {
 			roundoff: [0],
 			retail_customer_name: [''],
 			retail_customer_address: [''],
+			retail_customer_phone: [''],
+			hasCustomerChange: [''],
+			old_customer_id: [''],
 		});
 	}
 
@@ -300,13 +309,15 @@ export class SalesPage {
 		this.init();
 
 		if (this.id === '0') {
+			// id ===0 means fresh sale
+			this.isFreshSale = true;
 			this.getInvoiceSequence(this.userdata.center_id, 'gstinvoice');
 		}
 
 		// comes from MOVE TO SALE: Enquiry -> sale process
 		if (this.mode === 'enquiry') {
 			this.getInvoiceSequence(this.userdata.center_id, 'gstinvoice');
-
+			// id refers to enquiry id, also recorded as orderno in sales table
 			this.submitForm.patchValue({
 				enqref: this.id,
 				orderno: this.id,
@@ -325,6 +336,9 @@ export class SalesPage {
 					});
 
 					this.customername = custData[0].name;
+					// record orignal customer id from enquiry, can ignore while submitting
+					// as there will be no reference in ledger/payment tables
+					this.orig_customerid = custData[0].id;
 					this.iscustomerselected = true;
 
 					this.setTaxLabel(custData[0].code);
@@ -372,11 +386,12 @@ export class SalesPage {
 		if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
 			if (this.rawSalesData[0] !== undefined) {
 				if (this.rawSalesData[0].id !== 0) {
-					this.breadmenu = 'Edit Sale #' + this.rawSalesData[0].id;
+					this.breadmenu = 'Modifying Sale #' + this.rawSalesData[0].id;
 					this.selInvType = this.rawSalesData[0].sale_type;
 					this.orig_selInvType = this.rawSalesData[0].sale_type;
 					this.stock_issue_ref = this.rawSalesData[0].stock_issue_ref;
 					this.stock_issue_date_ref = this.rawSalesData[0].stock_issue_date_ref;
+					this.orig_customerid = this.rawSalesData[0].customer_id; //capture customer id while loading
 
 					this.submitForm.patchValue({
 						salesid: this.rawSalesData[0].id,
@@ -437,6 +452,7 @@ export class SalesPage {
 						retail_customer_name: this.rawSalesData[0].retail_customer_name,
 						retail_customer_address: this.rawSalesData[0]
 							.retail_customer_address,
+						retail_customer_phone: this.rawSalesData[0].retail_customer_phone,
 					});
 
 					if (
@@ -770,15 +786,6 @@ export class SalesPage {
 					this.setItemDesc(this.autoTrigger2.activeOption.value, 'tab');
 				}
 			});
-
-		// const stickyHeaderOptions = {
-		//   rootMargin: "0px 0px -20px 0px"
-		// };
-
-		// const appearOptions = {
-		//   threshold: 0,
-		//   rootMargin: "0px 0px -200px 0px"
-		// };
 	}
 
 	deleteProduct(idx) {
@@ -1214,6 +1221,20 @@ export class SalesPage {
 						this._cdr.markForCheck();
 						this.spinner.show();
 
+						// Check if customer changed and set status
+						// shoun't be fresh sale or movetosale(enquiry-sale)
+
+						if (!this.isFreshSale && !this.fromEnquiry) {
+							if (
+								this.orig_customerid !== this.submitForm.value.customerctrl.id
+							) {
+								this.submitForm.patchValue({
+									hasCustomerChange: 'YS',
+									old_customer_id: this.orig_customerid,
+								});
+							}
+						}
+
 						this._commonApiService
 							.saveSaleOrder(this.submitForm.value)
 							.subscribe((data: any) => {
@@ -1366,14 +1387,6 @@ export class SalesPage {
 				console.log('object');
 
 				if (data.body.result === 'success') {
-					// this.submitForm.patchValue({
-					//   invoiceno: data.invoiceNo,
-					//   invoicetype: "gstinvoice",
-					//   invoicedate: new Date(new NullToQuotePipe().transform(moment().format('DD-MM-YYYY')).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
-					// });
-					// this.selInvType = "gstinvoice";
-
-					// this.presentAlert('Converted to sale invoice!!');
 					this.convertToInvoiceSuccess(
 						data.body.invoiceNo,
 						moment().format('DD-MM-YYYY')
@@ -1588,19 +1601,6 @@ export class SalesPage {
 			// }
 		});
 	}
-
-	// clearInput() {
-	//   this.submitForm.patchValue({
-	//     customer: null,
-	//     customerctrl: null
-	//   });
-	//   this.customer_lis = null;
-	//   this.customerdata = null;
-
-	//   this.iscustomerselected = false;
-	//   this._cdr.markForCheck();
-
-	// }
 
 	clearProdInput() {
 		this.submitForm.patchValue({

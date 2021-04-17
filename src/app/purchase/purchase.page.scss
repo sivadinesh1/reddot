@@ -1,17 +1,17 @@
 .screen-header {
 	display: flex;
 	font-weight: 400;
-	padding: 10px;
+	padding: 1rem;
 	width: 100%;
 }
 
 .vendor {
 	display: grid;
-	// grid-template-columns: 400px 1fr 1fr 1fr 1fr;
-	grid-template-columns: minmax(410px, 450px) 1fr;
-	gap: 100px;
+
+	grid-template-columns: 1fr 1fr;
+	gap: 60px;
 	padding: 2rem 1rem;
-	width: 94%;
+	width: 99%;
 	margin: 0 auto;
 	border: 0px solid;
 }
@@ -223,7 +223,7 @@
 		grid-template-columns: 1fr 120px minmax(80px, 100px) 150px;
 		align-items: center;
 		grid-gap: 10px;
-		background-color: #e8e8e8;
+		background-color: #ffffee;
 		padding: 1.2rem;
 		align-self: center;
 	}

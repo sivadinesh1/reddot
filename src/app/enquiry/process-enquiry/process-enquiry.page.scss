@@ -24,7 +24,7 @@
 	display: grid;
 	width: 90%;
 	margin: 0 auto;
-	padding-bottom: 16px;
+	padding-top: 16px;
 
 	.cust-header {
 		display: grid;
@@ -248,7 +248,7 @@ td.mat-column-actions {
 .content {
 	display: grid;
 	width: 90%;
-	grid-template-columns: 30px 30px 130px 200px 80px 80px 100px 1fr 100px 100px;
+	grid-template-columns: 30px 30px 130px 200px 80px 80px 80px 80px 1fr 60px 50px;
 	align-items: center;
 	border-bottom: 2px solid rgb(173, 173, 173);
 	color: #666666;
@@ -263,7 +263,7 @@ td.mat-column-actions {
 .list-item {
 	display: grid;
 	width: 90%;
-	grid-template-columns: 30px 30px 130px 200px 80px 80px 100px 1fr 100px 100px;
+	grid-template-columns: 30px 30px 130px 200px 80px 80px 80px 80px 1fr 60px 50px;
 	align-self: center;
 	border-bottom: 1px solid #e0d9d9;
 	font-size: 13px;
@@ -301,4 +301,29 @@ td.mat-column-actions {
 .num-format-cell-style {
 	padding-right: 10px;
 	align-self: center;
+}
+
+.main-add {
+	display: grid;
+	grid-template-columns: 1fr 1fr minmax(80px, 100px) 120px;
+	align-items: center;
+	grid-gap: 10px;
+	background-color: #ffffee;
+	padding: 1rem;
+	align-self: center;
+	width: 70%;
+	margin: 0 auto;
+}
+
+.empty-add {
+	display: grid;
+	width: 100%;
+	position: fixed;
+	background-color: #ffffee;
+	bottom: 59px;
+	z-index: 2;
+}
+
+.example-full-width {
+	width: 100%;
 }

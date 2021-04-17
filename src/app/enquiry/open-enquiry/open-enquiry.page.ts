@@ -3,9 +3,6 @@ import {
 	OnInit,
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
-	AfterViewInit,
-	OnDestroy,
-	ViewEncapsulation,
 } from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
@@ -30,7 +27,6 @@ import { DeleteEnquiryDialogComponent } from 'src/app/components/delete-enquiry-
 import { EnquiryViewDialogComponent } from '../../components/enquiry/enquiry-view-dialog/enquiry-view-dialog.component';
 import { User } from 'src/app/models/User';
 import * as moment from 'moment';
-import { InvoiceSuccessComponent } from '../../components/invoice-success/invoice-success.component';
 
 @Component({
 	selector: 'app-open-enquiry',
@@ -44,7 +40,6 @@ export class OpenEnquiryPage implements OnInit {
 
 	readyforsale: any;
 	center_name: string;
-	// center_id: any;
 
 	userdata$: Observable<User>;
 	userdata: any;
@@ -62,6 +57,7 @@ export class OpenEnquiryPage implements OnInit {
 	todate = new Date();
 
 	filteredValues: any;
+	backorderValues: any;
 	timeline: any;
 
 	orderList = [
@@ -73,22 +69,18 @@ export class OpenEnquiryPage implements OnInit {
 	customer$: Observable<Customer[]>;
 	enquiries$: Observable<Enquiry[]>;
 
-	// draftEnquiries$: Observable<Enquiry[]>;
 	newEnquiries$: Observable<Enquiry[]>;
 
 	invoiceReadyEnquiries$: Observable<Enquiry[]>;
 	fullfilledEnquiries$: Observable<Enquiry[]>;
 
-	cancelledEnquiries$: Observable<Enquiry[]>;
-
 	filteredEnquiries$: Observable<Enquiry[]>;
-
-	test: any;
 
 	filteredCustomer: Observable<any[]>;
 	customer_lis: Customer[];
 
 	status: any;
+	back_order_lst: any;
 
 	constructor(
 		private _cdr: ChangeDetectorRef,
@@ -106,15 +98,7 @@ export class OpenEnquiryPage implements OnInit {
 
 		this.userdata$ = this._authservice.currentUser;
 
-		// this.userdata$
-		// 	.pipe(filter((data) => data !== null))
-		// 	.subscribe((data: any) => {
-		// 		this.userdata = data;
-		// 		//		this.init();
-		// 		this._cdr.markForCheck();
-		// 	});
-
-		const dateOffset = 24 * 60 * 60 * 1000 * 7;
+		const dateOffset = 24 * 60 * 60 * 1000 * 14;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.submitForm = this._fb.group({
@@ -127,8 +111,6 @@ export class OpenEnquiryPage implements OnInit {
 		});
 
 		this._route.params.subscribe((params) => {
-			// this.tabIndex = 0;
-
 			this.userdata$
 				.pipe(filter((data) => data !== null))
 				.subscribe((data: any) => {
@@ -142,9 +124,12 @@ export class OpenEnquiryPage implements OnInit {
 						this.todate.setTime(new Date().getTime());
 					} else if (this.timeline === 'weekly') {
 						//this.fromdate.setTime(this.minDate.getTime() - weekOffset);
-						this.fromdate.setTime(
-							moment().startOf('isoWeek').toDate().getTime()
-						);
+						// this.fromdate.setTime(
+						// 	moment().startOf('isoWeek').toDate().getTime()
+						// );
+						const dateOffset = 24 * 60 * 60 * 1000 * 14;
+						this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+
 						this.todate.setTime(new Date().getTime());
 					} else if (this.timeline === 'monthly') {
 						//this.fromdate.setTime(this.minDate.getTime() - monthOffset);
@@ -156,6 +141,8 @@ export class OpenEnquiryPage implements OnInit {
 						this.todate.setTime(new Date().getTime());
 					}
 
+					this.todate.setTime(new Date().getTime());
+
 					if (this.status === 'O' || this.status === 'D') {
 						this.tabClick(0);
 						this.tabIndex = 0;
@@ -164,7 +151,7 @@ export class OpenEnquiryPage implements OnInit {
 						this.tabClick(1);
 						this.tabIndex = 1;
 						this.search('P');
-					} else if (this.status === 'E') {
+					} else if (this.status === 'E' || this.status === 'X') {
 						this.tabClick(2);
 						this.tabIndex = 2;
 						this.search('E');
@@ -172,10 +159,6 @@ export class OpenEnquiryPage implements OnInit {
 
 					this._cdr.markForCheck();
 				});
-
-			// if (this.userdata !== undefined) {
-			// 	this.init();
-			// }
 
 			this._cdr.markForCheck();
 		});
@@ -236,7 +219,6 @@ export class OpenEnquiryPage implements OnInit {
 
 	async search(param) {
 		//main search
-		console.log('search called');
 
 		this.enquiries$ = this._commonApiService.searchEnquiries({
 			centerid: this.userdata.center_id,
@@ -256,6 +238,10 @@ export class OpenEnquiryPage implements OnInit {
 		if (param === 'O') {
 			this.filteredValues = value.filter(
 				(data: any) => data.estatus === 'O' || data.estatus === 'D'
+			);
+		} else if (param === 'E') {
+			this.filteredValues = value.filter(
+				(data: any) => data.estatus === 'E' || data.estatus === 'X'
 			);
 		} else {
 			this.filteredValues = value.filter((data: any) => data.estatus === param);
@@ -277,10 +263,11 @@ export class OpenEnquiryPage implements OnInit {
 			map((arr: any) => arr.filter((f) => f.estatus === 'P'))
 		);
 		this.fullfilledEnquiries$ = this.enquiries$.pipe(
-			map((arr: any) => arr.filter((f) => f.estatus === 'E'))
-		);
-		this.cancelledEnquiries$ = this.enquiries$.pipe(
-			map((arr: any) => arr.filter((f) => f.estatus === 'X'))
+			map((arr: any) =>
+				arr.filter((f) => {
+					return f.estatus === 'E' || f.estatus === 'X';
+				})
+			)
 		);
 
 		this._cdr.markForCheck();
@@ -296,29 +283,22 @@ export class OpenEnquiryPage implements OnInit {
 		this.tabIndex = 0;
 	}
 
-	initialise() {
-		// Status o - open
-		// this._commonApiService.getOpenEnquiries(this.center_id, 'O').subscribe((data: any) => {
-		//   this.openenq = data;
-		//   this._cdr.markForCheck();
-		// });
-		// // status p - order processed
-		// this._commonApiService.getOpenEnquiries(this.center_id, 'P').subscribe((data: any) => {
-		//   this.readyforsale = data;
-		//   this._cdr.markForCheck();
-		// });
+	populateBackOrders() {
+		this._commonApiService
+			.getBackOder(this.userdata.center_id)
+			.subscribe((data: any) => {
+				this.back_order_lst = data;
+				this._cdr.markForCheck();
+			});
 	}
 
 	processEnquiry(item) {
-		console.log('its getting called');
 		this._router.navigate(['/home/enquiry/process-enquiry', item.id]);
 	}
 
 	moveToSale(item) {
 		this._router.navigate([`/home/sales/enquiry/${item.id}`]);
 	}
-
-	logout() {}
 
 	goEnquiryScreen() {
 		this._router.navigateByUrl(`/home/enquiry`);
@@ -338,7 +318,6 @@ export class OpenEnquiryPage implements OnInit {
 	}
 
 	async tabClick($event) {
-		//	let value = await this.filteredEnquiries$.toPromise();
 		if (this.filteredEnquiries$ !== undefined) {
 			let value = await lastValueFrom(this.filteredEnquiries$);
 
@@ -346,14 +325,16 @@ export class OpenEnquiryPage implements OnInit {
 				this.filteredValues = value.filter((data: any) => {
 					return data.estatus === 'O' || data.estatus === 'D';
 				});
-				// } else if ($event.index === 1 || $event === 1) {
-				// 	this.filteredValues = value.filter((data: any) => data.estatus === 'D');
 			} else if ($event.index === 1 || $event === 1) {
 				this.filteredValues = value.filter((data: any) => data.estatus === 'P');
 			} else if ($event.index === 2 || $event === 2) {
-				this.filteredValues = value.filter((data: any) => data.estatus === 'E');
-			} else if ($event.index === 3 || $event === 3) {
-				this.filteredValues = value.filter((data: any) => data.estatus === 'X');
+				this.filteredValues = value.filter((data: any) => {
+					return data.estatus === 'E' || data.estatus === 'X';
+				});
+			}
+
+			if ($event.index === 3 || $event === 3) {
+				this.populateBackOrders();
 			}
 
 			this._cdr.markForCheck();

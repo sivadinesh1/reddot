@@ -31,13 +31,24 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { MatSort } from '@angular/material/sort';
 import { Observable, empty, of } from 'rxjs';
-import { FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
+import {
+	NgForm,
+	FormGroup,
+	Validators,
+	FormBuilder,
+	FormArray,
+} from '@angular/forms';
 import { Customer } from 'src/app/models/Customer';
 import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { CustomerViewDialogComponent } from 'src/app/components/customers/customer-view-dialog/customer-view-dialog.component';
 import { RequireMatch } from 'src/app/util/directives/requireMatch';
 import { User } from 'src/app/models/User';
+import { SuccessMessageDialogComponent } from './../../components/success-message-dialog/success-message-dialog.component';
+import { Product } from 'src/app/models/Product';
+import { ProductAddDialogComponent } from './../../components/products/product-add-dialog/product-add-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { IonContent } from '@ionic/angular';
 
 @Component({
 	selector: 'app-process-enquiry',
@@ -47,6 +58,7 @@ import { User } from 'src/app/models/User';
 })
 export class ProcessEnquiryPage implements OnInit {
 	submitForm: FormGroup;
+	submitForm1: FormGroup;
 
 	enqDetailsOrig: any;
 	selectedEnq: any;
@@ -56,6 +68,9 @@ export class ProcessEnquiryPage implements OnInit {
 	customer_lis: Customer[];
 
 	enqid: any;
+	selected_description = '';
+	selected_mrp = '';
+	lineItemData: any;
 
 	status: any;
 	isTableHasData = true;
@@ -72,6 +87,10 @@ export class ProcessEnquiryPage implements OnInit {
 	iscustomerselected = false;
 	productList$: Observable<any>[] = [];
 
+	product_lis: Product[];
+
+	@ViewChild('myForm1', { static: true }) myForm1: NgForm;
+
 	@ViewChild('epltable', { static: false }) epltable: ElementRef;
 
 	// TAB navigation for customer list
@@ -81,8 +100,14 @@ export class ProcessEnquiryPage implements OnInit {
 	@ViewChildren('typehead', { read: MatAutocompleteTrigger })
 	autoTriggerList: QueryList<MatAutocompleteTrigger>;
 
+	@ViewChildren('typehead2', { read: MatAutocompleteTrigger })
+	autoTrigger2: QueryList<MatAutocompleteTrigger>;
+
 	@ViewChildren(MatAutocompleteTrigger)
 	autocompletes: QueryList<MatAutocompleteTrigger>;
+
+	@ViewChild('qty', { static: true }) qty: any;
+	@ViewChild(IonContent, { static: false }) content: IonContent;
 
 	userdata$: Observable<User>;
 	userdata: any;
@@ -102,11 +127,12 @@ export class ProcessEnquiryPage implements OnInit {
 		private _commonApiService: CommonApiService,
 		private _dialog: MatDialog,
 		private _fb: FormBuilder,
+		private _fb1: FormBuilder,
 		private spinner: NgxSpinnerService,
-		private _cdr: ChangeDetectorRef
+		private _cdr: ChangeDetectorRef,
+		private _snackBar: MatSnackBar
 	) {
 		this.init();
-
 		this.userdata$ = this._authservice.currentUser;
 		this.userdata$
 			.pipe(filter((data) => data !== null))
@@ -114,17 +140,15 @@ export class ProcessEnquiryPage implements OnInit {
 				this.userdata = data;
 				this.ready = 1;
 
+				this._route.params.subscribe((params) => {
+					this.clicked = false;
+					this.enqid = params['enqid'];
+					this.enqDetailsOrig = [];
+					this.reloadEnqDetails('');
+				});
+
 				this._cdr.markForCheck();
 			});
-
-		this._route.params.subscribe((params) => {
-			this.init();
-			this.clicked = false;
-			this.enqid = params['enqid'];
-			if (this.userdata !== undefined) {
-				this.reloadEnqDetails();
-			}
-		});
 	}
 
 	get enquiries(): FormArray {
@@ -140,9 +164,59 @@ export class ProcessEnquiryPage implements OnInit {
 			customerctrl: [null, [Validators.required, RequireMatch]],
 			enquiries: this._fb.array([]),
 		});
+
+		this.submitForm1 = this._fb1.group({
+			enquiry_id: [this.enqid, Validators.required],
+
+			centerid: ['', Validators.required],
+			productctrl: [null, [RequireMatch]],
+			remarks: [''],
+
+			tempdesc: [''],
+
+			tempqty: [
+				'1',
+				[
+					Validators.required,
+					Validators.max(1000),
+					Validators.min(1),
+					Validators.pattern(/\-?\d*\.?\d{1,2}/),
+				],
+			],
+		});
+
+		this.searchProducts();
 	}
 
-	reloadEnqDetails() {
+	searchProducts() {
+		let search = '';
+		this.submitForm1.controls['productctrl'].valueChanges
+			.pipe(
+				debounceTime(300),
+				tap(() => (this.isLoading = true)),
+				switchMap((id) => {
+					console.log(id);
+					search = id;
+					if (id != null && id.length >= 0) {
+						return this._commonApiService.getProductInfo({
+							centerid: this.userdata.center_id,
+							searchstring: id,
+						});
+					} else {
+						return empty();
+					}
+				})
+			)
+
+			.subscribe((data: any) => {
+				this.isLoading = false;
+				this.product_lis = data.body;
+				this._cdr.markForCheck();
+			});
+	}
+
+	reloadEnqDetails(type) {
+		this.enqDetailsOrig = [];
 		this._commonApiService
 			.getEnquiryDetails(this.enqid)
 			.subscribe((data: any) => {
@@ -170,11 +244,20 @@ export class ProcessEnquiryPage implements OnInit {
 
 				this.spinner.hide();
 
+				if (type === 'loadingnow') {
+					let v1 = 220 + this.enqDetailsOrig.enquiryDetails.length * 70 + 70;
+					this.ScrollToPoint(0, v1);
+				} else {
+					this.ScrollToTop();
+				}
+
 				this._cdr.markForCheck();
 			});
 	}
 
 	populateEnquiry(enqList) {
+		this.enquiries.clear();
+
 		enqList.forEach((element, index) => {
 			let tmpGiveqty = 0;
 			// status (D) do not manipulate. default entered give qty
@@ -314,6 +397,10 @@ export class ProcessEnquiryPage implements OnInit {
 		this._cdr.markForCheck();
 	}
 
+	clearProdInput1() {
+		this._cdr.markForCheck();
+	}
+
 	async presentAlert(msg: string) {
 		const alert = await this.alertController.create({
 			header: 'Alert',
@@ -363,7 +450,7 @@ export class ProcessEnquiryPage implements OnInit {
 				if (data.body.result === 'success') {
 					if (param === 'additem') {
 						this.clicked = false;
-						this.openAddItem();
+						//	this.openAddItem();
 					} else {
 						this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
 					}
@@ -605,33 +692,33 @@ export class ProcessEnquiryPage implements OnInit {
 		await alert.present();
 	}
 
-	openAddItem() {
-		const dialogConfig = new MatDialogConfig();
-		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
-		dialogConfig.width = '80%';
-		dialogConfig.height = '80%';
-		dialogConfig.data = {
-			enquiry_id: this.enqid,
-			center_id: this.userdata.center_id,
-			customer_id: this.enqDetailsOrig.customerDetails[0].customer_id,
-		};
+	// openAddItem() {
+	// 	const dialogConfig = new MatDialogConfig();
+	// 	dialogConfig.disableClose = true;
+	// 	dialogConfig.autoFocus = true;
+	// 	dialogConfig.width = '80%';
+	// 	dialogConfig.height = '80%';
+	// 	dialogConfig.data = {
+	// 		enquiry_id: this.enqid,
+	// 		center_id: this.userdata.center_id,
+	// 		customer_id: this.enqDetailsOrig.customerDetails[0].customer_id,
+	// 	};
 
-		const dialogRef = this.dialog.open(AddMoreEnquiryComponent, dialogConfig);
+	// 	const dialogRef = this.dialog.open(AddMoreEnquiryComponent, dialogConfig);
 
-		dialogRef
-			.afterClosed()
-			.pipe(
-				filter((val) => !!val),
-				tap((val) => {
-					this.init();
-					this.reloadEnqDetails();
-					this._cdr.markForCheck();
-					this.clicked = false;
-				})
-			)
-			.subscribe();
-	}
+	// 	dialogRef
+	// 		.afterClosed()
+	// 		.pipe(
+	// 			filter((val) => !!val),
+	// 			tap((val) => {
+	// 				this.init();
+	// 				this.reloadEnqDetails();
+	// 				this._cdr.markForCheck();
+	// 				this.clicked = false;
+	// 			})
+	// 		)
+	// 		.subscribe();
+	// }
 
 	addCustomer() {
 		const dialogConfig = new MatDialogConfig();
@@ -793,5 +880,126 @@ export class ProcessEnquiryPage implements OnInit {
 			available_stock: formObject.available_stock,
 			rackno: formObject.rackno,
 		});
+	}
+
+	// enquiry_id: [this.enqid, Validators.required],
+	// 		customer: ['', Validators.required],
+	// 		centerid: ['', Validators.required],
+	// 		productctrl: [null, [RequireMatch]],
+	// 		remarks: [''],
+
+	// 		tempdesc: [''],
+	// 		tempmrp: [''],
+
+	// 		tempqty: [
+	// 			'1',
+
+	// 		],
+
+	// 		productarr: this._fb.array([]),
+	// enquiry_id, product_id, askqty, product_code, notes, status
+
+	onSubmit() {
+		// if (!this.submitForm1.valid) {
+		// 	return false;
+		// }
+
+		let form = {
+			center_id: this.userdata.center_id,
+			enquiry_id: +this.enqid,
+
+			askqty: this.submitForm1.value.tempqty,
+			product_code: this.submitForm1.value.productctrl.product_code,
+			notes: this.submitForm1.value.tempdesc,
+			status: 'O',
+		};
+
+		this._commonApiService.addMoreEnquiry(form).subscribe((data: any) => {
+			this.submitForm1.reset();
+			this.myForm1.resetForm();
+			this.reloadEnqDetails('loadingnow');
+
+			this.openSnackBar('Item added to Order queue', '');
+
+			this._cdr.markForCheck();
+		});
+	}
+
+	addProduct() {
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '50%';
+		dialogConfig.height = '100%';
+		dialogConfig.position = { top: '0', right: '0' };
+
+		const dialogRef = this._dialog.open(
+			ProductAddDialogComponent,
+			dialogConfig
+		);
+
+		dialogRef
+			.afterClosed()
+			.pipe(
+				filter((val) => !!val),
+				tap(() => {
+					this._cdr.markForCheck();
+				})
+			)
+			.subscribe((data: any) => {
+				if (data === 'success') {
+					const dialogConfigSuccess = new MatDialogConfig();
+					dialogConfigSuccess.disableClose = false;
+					dialogConfigSuccess.autoFocus = true;
+					dialogConfigSuccess.width = '25%';
+					dialogConfigSuccess.height = '25%';
+					dialogConfigSuccess.data = 'Product added successfully';
+
+					const dialogRef = this._dialog.open(
+						SuccessMessageDialogComponent,
+						dialogConfigSuccess
+					);
+				}
+			});
+	}
+
+	setItemDesc1(event, from) {
+		if (from === 'tab') {
+			this.submitForm1.patchValue({
+				tempdesc: event.description,
+				tempqty: event.qty === 0 ? 1 : event.qty,
+			});
+			this.lineItemData = event;
+			this.selected_description = event.description;
+			this.selected_mrp = event.mrp;
+
+			//this.qty && this.qty.nativeElement.focus();
+		} else {
+			this.submitForm1.patchValue({
+				tempdesc: event.option.value.description,
+				tempqty: event.option.value.qty === 0 ? 1 : event.option.value.qty,
+			});
+			this.lineItemData = event.option.value;
+			this.selected_description = event.option.value.description;
+			this.selected_mrp = event.option.value.mrp;
+			this.qty && this.qty.nativeElement.focus();
+		}
+
+		this._cdr.markForCheck();
+	}
+
+	openSnackBar(message: string, action: string) {
+		this._snackBar.open(message, action, {
+			duration: 2000,
+			panelClass: ['mat-toolbar', 'mat-primary'],
+		});
+	}
+
+	ScrollToPoint(X, Y) {
+		this.content.scrollToPoint(X, Y, 300);
+	}
+
+	ScrollToTop() {
+		this.content.scrollToTop(1500);
 	}
 }

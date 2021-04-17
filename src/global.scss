@@ -176,14 +176,11 @@ button {
 }
 
 .mat-tab-label-active {
-	color: blue !important;
+	color: #222 !important;
 }
 
-.empty-add {
-	text-align: center;
-	padding: 50px;
-	font-size: 22px;
-	color: #3d31e6;
+.mat-tab-label {
+	color: #12238c;
 }
 
 .no-records {
@@ -217,4 +214,69 @@ input[type='number'] {
 
 * {
 	box-sizing: border-box;
+}
+
+.tooltip {
+	background: rgb(80, 80, 88);
+	color: #fff;
+	padding: 0.5rem 1.2rem;
+	font-size: 14px;
+	font-weight: 400;
+	transform: translateY(-1px);
+
+	transition: 0.3s linear;
+	animation: odsoky 0.5s ease-in-out;
+}
+
+@keyframes odsoky {
+	0% {
+		transform: translateY(6px);
+	}
+
+	100% {
+		transform: translateY(1px);
+	}
+}
+
+.form-field-gap {
+	padding-top: 8px;
+}
+
+.btn-grad {
+	background-image: linear-gradient(
+		to right,
+		#0575e6 0%,
+		#021b79 51%,
+		#0575e6 100%
+	);
+}
+.btn-grad {
+	margin: 10px 24px 10px 24px;
+	// padding: 12px 45px;
+	text-align: center;
+	text-transform: capitalize;
+	transition: 0.5s;
+	background-size: 200% auto;
+	color: white;
+	box-shadow: 0 0 20px #eee;
+	border-radius: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 190px;
+	max-width: 200px;
+	height: 52px;
+	font-size: 18px;
+}
+
+.btn-grad:hover {
+	background-position: right center; /* change the direction of the change here */
+	color: #fff;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+// to remove padding in mat-dialog
+.app-full-bleed-dialog .mat-dialog-container {
+	padding: 0;
 }

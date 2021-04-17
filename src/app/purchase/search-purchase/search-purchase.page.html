@@ -3,7 +3,7 @@
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
 				<div
-					class="title"
+					class="btn-grad"
 					(click)="goPurchaseAddScreen()"
 					style="cursor: pointer"
 				>
@@ -80,16 +80,7 @@
 						<mat-datepicker #todate></mat-datepicker>
 					</mat-form-field>
 				</div>
-				<!-- <div>
-					<mat-form-field class="mat-width-ext" style="padding-top: 20px;">
-						<mat-label>Status</mat-label>
-						<mat-select formControlName="status" (selectionChange)="statusChange($event)" required value="{statusFlag}">
-							<mat-option *ngFor="let item of statusList" [value]="item.id">
-								{{item.value}}
-							</mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div> -->
+
 				<div class="search-btn" style="padding-top: 20px">
 					<button
 						mat-raised-button
@@ -104,25 +95,11 @@
 			</div>
 		</form>
 
-		<div style="display: flex; justify-content: space-between">
-			<div
-				style="
-					align-self: center;
-					font-size: 16px;
-					padding: 16px 16px 0px 32px;
-					color: darkblue;
-				"
-			>
-				All Orders ({{(purchases$| async)?.length }}) records
-			</div>
-			<div>&nbsp;</div>
-		</div>
-
 		<div
 			style="
 				width: 94%;
 				margin: 0 auto;
-				padding: 16px 0px 100px 0px;
+				padding: 32px 0px 100px 0px;
 				position: relative;
 				display: grid;
 			"
@@ -134,11 +111,6 @@
 					[(selectedIndex)]="tabIndex"
 					(selectedTabChange)="tabClick($event)"
 				>
-					<!-- <mat-tab label="All Orders ({{(purchases$| async)?.length }})">
-					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-				</mat-tab> -->
-
 					<mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
 						<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
@@ -157,7 +129,7 @@
 				style="
 					position: absolute;
 					justify-self: flex-end;
-					top: 16px;
+					top: 32px;
 					z-index: 1;
 				"
 			>
@@ -275,18 +247,32 @@
 			</div>
 			<div class="item cursor txt-center-align">
 				<mat-icon
+					#tooltip="matTooltip"
+					matTooltip="Edit/Modify Purchase Details"
+					matTooltipClass="tooltip"
+					(mousedown)="tooltip.hide()"
 					[ngStyle]="{'color':'blue'}"
 					(click)="goPurchaseEditScreen(item)"
 					>edit
 				</mat-icon>
 			</div>
 			<div class="item cursor" style="text-align: center">
-				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="openDialog(item)"
+				<mat-icon
+					#tooltip="matTooltip"
+					matTooltip="View Purchase Details"
+					matTooltipClass="tooltip"
+					(mousedown)="tooltip.hide()"
+					[ngStyle]="{'color':'#6d78d2'}"
+					(click)="openDialog(item)"
 					>remove_red_eye
 				</mat-icon>
 			</div>
 			<div class="item cursor txt-center-align" *ngIf="item.status === 'D'">
 				<mat-icon
+					#tooltip="matTooltip"
+					matTooltip="Delete Purchase Details"
+					matTooltipClass="tooltip"
+					(mousedown)="tooltip.hide()"
 					[ngStyle]="{'color':'#ff8484'}"
 					(click)="presentAlertConfirm(item)"
 					>delete
