@@ -5,10 +5,11 @@ import {
 	ViewChild,
 	ElementRef,
 	ChangeDetectionStrategy,
+	ViewEncapsulation,
 } from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonSearchbar } from '@ionic/angular';
+
 import { AuthenticationService } from '../../../services/authentication.service';
 import { filter, tap } from 'rxjs/operators';
 
@@ -34,6 +35,7 @@ import * as moment from 'moment';
 	templateUrl: './view-products.page.html',
 	styleUrls: ['./view-products.page.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	encapsulation: ViewEncapsulation.None,
 })
 export class ViewProductsPage implements OnInit {
 	productinfo: any;
@@ -46,8 +48,6 @@ export class ViewProductsPage implements OnInit {
 
 	userdata$: Observable<User>;
 	userdata: any;
-
-	@ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -108,9 +108,7 @@ export class ViewProductsPage implements OnInit {
 		);
 	}
 
-	ionViewDidEnter() {
-		this.searchbar.setFocus();
-	}
+	ionViewDidEnter() {}
 
 	openDialog(searchstring): void {
 		this._commonApiService
@@ -144,8 +142,6 @@ export class ViewProductsPage implements OnInit {
 	}
 
 	reset() {
-		this.searchbar.value = '';
-
 		this.dataSource.data = [];
 		this.pageLength = 0;
 		this.isTableHasData = false;
@@ -174,20 +170,7 @@ export class ViewProductsPage implements OnInit {
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
-					// const dialogConfigSuccess = new MatDialogConfig();
-					// dialogConfigSuccess.disableClose = false;
-					// dialogConfigSuccess.autoFocus = true;
-					// dialogConfigSuccess.width = '25%';
-					// dialogConfigSuccess.height = '25%';
-
 					this.openSnackBar('Product added successfully', '');
-
-					// dialogConfigSuccess.data = 'Product added successfully';
-
-					// const dialogRef = this._dialog.open(
-					// 	SuccessMessageDialogComponent,
-					// 	dialogConfigSuccess
-					// );
 				}
 			});
 	}

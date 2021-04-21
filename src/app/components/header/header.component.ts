@@ -86,7 +86,7 @@ export class HeaderComponent implements OnInit {
 	}
 
 	showNewSales() {
-		this._router.navigate([`home/sales/edit/0`]);
+		this._router.navigate([`home/sales/edit/0/TI`]);
 	}
 
 	viewDiscounts() {
@@ -110,7 +110,7 @@ export class HeaderComponent implements OnInit {
 	async showAddProductComp() {
 		const modal = await this._modalcontroller.create({
 			component: SearchDialogComponent,
-			componentProps: { center_id: this.userdata.center_id, customer_id: 0 },
+			componentProps: { center_id: this.userdata?.center_id, customer_id: 0 },
 			cssClass: 'select-modal',
 		});
 

@@ -1,24 +1,45 @@
 <div class="wrapper">
 	<div class="row1">
-		<span style="font-size: 1.5rem; color: #222; display: grid; align-content: center"> Settings </span>
+		<span
+			style="
+				font-size: 1.5rem;
+				color: #222;
+				display: grid;
+				align-content: center;
+			"
+		>
+			Settings
+		</span>
 	</div>
 
 	<div class="main-section">
 		<div class="side">
 			<mat-nav-list>
-				<a mat-list-item [routerLink]="['', { outlets: { settings: ['general-settings'] } }]">
+				<a
+					mat-list-item
+					[routerLink]="['', { outlets: { settings: ['general-settings'] } }]"
+				>
 					<span matLine>General</span>
 				</a>
 
-				<a mat-list-item [routerLink]="['', { outlets: { settings: ['permissions-settings'] } }]">
+				<a
+					mat-list-item
+					[routerLink]="[
+						'',
+						{ outlets: { settings: ['permissions-settings'] } }
+					]"
+				>
 					<span matLine>Permissions</span>
 				</a>
-				<a mat-list-item [routerLink]="['/detail']">
-					<span matLine>Title</span>
+				<a
+					mat-list-item
+					[routerLink]="['', { outlets: { settings: ['template-settings'] } }]"
+				>
+					<span matLine>Templates</span>
 				</a>
-				<a mat-list-item [routerLink]="['/detail']">
+				<!-- <a mat-list-item [routerLink]="['/detail']">
 					<span matLine>Title</span>
-				</a>
+				</a> -->
 			</mat-nav-list>
 		</div>
 		<div class="main">
@@ -30,6 +51,8 @@
 		<button mat-button matSuffix mat-icon-button type="button">
 			<mat-icon>close</mat-icon>
 		</button>
-		<button mat-stroked-button color="primary" type="button" (click)="save()">SAVE</button>
+		<button mat-stroked-button color="primary" type="button" (click)="save()">
+			SAVE
+		</button>
 	</div>
 </div>

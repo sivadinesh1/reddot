@@ -48,10 +48,12 @@ import { VendorAddDialogComponent } from '../components/vendors/vendor-add-dialo
 import { Observable } from 'rxjs';
 import { User } from '../models/User';
 
+import { ChangeDetectionStrategy } from '@angular/core';
 @Component({
 	selector: 'app-purchase',
 	templateUrl: './purchase.page.html',
 	styleUrls: ['./purchase.page.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PurchasePage implements OnInit {
 	breadmenu = 'New Purchase';
@@ -61,7 +63,7 @@ export class PurchasePage implements OnInit {
 	listArr = [];
 
 	total = '0.00';
-
+	items = Array.from({ length: 100000 }).map((_, i) => `Item #${i}`);
 	// test1: any;
 	vendor_state_code: any;
 	// center_state_code: any
@@ -164,10 +166,7 @@ export class PurchasePage implements OnInit {
 
 				this.ready = 1;
 
-				this._cdr.markForCheck();
-			});
-
-		// data change
+					// data change
 		this._route.data.subscribe((data) => {
 			this.clicked = false;
 			this._authservice.setCurrentMenu('PURCHASE');
@@ -187,6 +186,11 @@ export class PurchasePage implements OnInit {
 				});
 			}
 		});
+
+				this._cdr.markForCheck();
+			});
+
+	
 	}
 
 	ngOnInit() {}
@@ -551,10 +555,6 @@ export class PurchasePage implements OnInit {
 		this.total = tempArr
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 			.toFixed(2);
-		console.log(
-			'TCL: PurchasePage -> showAddProductComp -> this.total',
-			this.total
-		);
 
 		this.taxable_value = tempArrCostPrice
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
@@ -574,7 +574,8 @@ export class PurchasePage implements OnInit {
 			this.ScrollToTop();
 		}
 
-		this._cdr.markForCheck();
+		this.listArr = [...this.listArr];
+		this._cdr.detectChanges();
 	}
 
 	displayFn(obj: any): string | undefined {
@@ -1462,5 +1463,8 @@ export class PurchasePage implements OnInit {
 			duration: 2000,
 			panelClass: ['mat-toolbar', 'mat-primary'],
 		});
+	}
+	identify(index, item) {
+		return item.id;
 	}
 }

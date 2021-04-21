@@ -14,7 +14,7 @@ import {
 	FormBuilder,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { Sales } from '../../../models/Sales';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
@@ -235,10 +235,8 @@ export class SearchReturnSalesPage implements OnInit {
 
 		this.filteredSales$ = this.sales$;
 
-		// for initial load of first tab (ALL)
-		// this.filteredValues = await this.filteredSales$.toPromise();
+		let value = await lastValueFrom(this.filteredSales$);
 
-		let value = await this.filteredSales$.toPromise();
 		this.filteredValues = value.filter(
 			(data: any) => data.return_status === 'A'
 		);
@@ -333,7 +331,7 @@ export class SearchReturnSalesPage implements OnInit {
 	}
 
 	async tabClick($event) {
-		let value = await this.filteredSales$.toPromise();
+		let value = await lastValueFrom(this.filteredSales$);
 
 		if ($event.index === 0) {
 			this.filteredValues = value.filter(

@@ -2,21 +2,16 @@
 	<div class="content">
 		<div class="head">
 			<div>
-				<div class="container">
-					<input
-						type="text"
-						(keyup)="openDialog($event.target.value)"
-						placeholder="Search by Product Code / Description "
-						class="search_bar"
-					/>
-
-					<img
-						src="../../assets/images/svg/search.svg"
-						width="24px"
-						height="24px"
-						class="button"
-					/>
-				</div>
+				<ion-searchbar
+					autofocus
+					debounce="300"
+					placeholder="Search by part number / description"
+					#mySearchbar
+					class="search"
+					show-cancel-button="focus"
+					(ionClear)="reset()"
+					(ionInput)="openDialog($event.target.value)"
+				></ion-searchbar>
 			</div>
 			<div class="full-download" (click)="exportCompletedPurchaseToExcel()">
 				<span style="font-size: 18px; font-weight: 400; color: blue">
@@ -42,6 +37,7 @@
 				<span style="padding-left: 10px; font-size: 20px">Product</span>
 			</div>
 		</div>
+		<div></div>
 		<br /><br />
 		<ng-container *ngIf="isTableHasData">
 			<div

@@ -272,10 +272,8 @@ export class SearchSalesPage implements OnInit {
 
 		this.filteredSales$ = this.sales$;
 
-		// for initial load of first tab (ALL)
-		// this.filteredValues = await this.filteredSales$.toPromise();
+		let value = await lastValueFrom(this.filteredSales$);
 
-		let value = await this.filteredSales$.toPromise();
 		this.filteredValues = value.filter(
 			(data: any) => data.status === 'D' && data.sale_type === 'gstinvoice'
 		);
@@ -303,7 +301,11 @@ export class SearchSalesPage implements OnInit {
 		if (item.status === 'C') {
 			this.editCompletedSalesConfirm(item);
 		} else {
-			this._router.navigateByUrl(`/home/sales/edit/${item.id}`);
+			if (item.sale_type === 'stockissue') {
+				this._router.navigateByUrl(`/home/sales/edit/${item.id}/SI`);
+			} else {
+				this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
+			}
 		}
 	}
 
@@ -334,7 +336,7 @@ export class SearchSalesPage implements OnInit {
 	}
 
 	goSalesAddScreen() {
-		this._router.navigateByUrl(`/home/sales/edit/0`);
+		this._router.navigateByUrl(`/home/sales/edit/0/TI`);
 	}
 
 	toDateSelected($event) {
@@ -399,7 +401,7 @@ export class SearchSalesPage implements OnInit {
 	}
 
 	async tabClick($event) {
-		let value = await this.filteredSales$.toPromise();
+		let value = await lastValueFrom(this.filteredSales$);
 
 		if ($event.index === 0) {
 			this.filteredValues = value.filter(
@@ -452,7 +454,8 @@ export class SearchSalesPage implements OnInit {
 					text: 'Go to sales screen',
 					handler: () => {
 						console.log('Confirm Okay');
-						this._router.navigateByUrl(`/home/sales/edit/${item.id}`);
+
+						this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
 					},
 				},
 			],

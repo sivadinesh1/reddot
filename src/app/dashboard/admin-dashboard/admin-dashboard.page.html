@@ -1,7 +1,5 @@
 <ion-content>
 	<div class="content">
-		<div style="padding: 16px">Welcome back !!!</div>
-
 		<div class="canvas">
 			<div class="left">
 				<div style="display: flex; justify-content: flex-end; padding: 16px">
@@ -19,19 +17,9 @@
 											[ngModel]="dateF"
 											(dateChange)="opsFromDateEvent('change', $event)"
 										/>
-										<input
-											matEndDate
-											matInput
-											readonly
-											placeholder="End date"
-											[ngModel]="dateF"
-											(dateChange)="opsToDateEvent('change', $event)"
-										/>
+										<input matEndDate matInput readonly placeholder="End date" [ngModel]="dateF" (dateChange)="opsToDateEvent('change', $event)" />
 									</mat-date-range-input>
-									<mat-datepicker-toggle
-										matSuffix
-										[for]="picker"
-									></mat-datepicker-toggle>
+									<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 									<mat-date-range-picker #picker></mat-date-range-picker>
 								</mat-form-field>
 							</div>
@@ -39,62 +27,50 @@
 					</ng-container>
 
 					<ng-container *ngIf="!iscustomenquiry">
-						<div
-							class="timeline"
-							[ngClass]="{ selected: selectedOpsOption == 'yearly' }"
-							(click)="reloadOpsSummary('yearly')"
-						>
-							This year
-						</div>
-						<div
-							class="timeline"
-							[ngClass]="{ selected: selectedOpsOption == 'monthly' }"
-							(click)="reloadOpsSummary('monthly')"
-						>
-							This month
-						</div>
-						<div
-							class="timeline"
-							[ngClass]="{ selected: selectedOpsOption == 'weekly' }"
-							(click)="reloadOpsSummary('weekly')"
-						>
-							This week
-						</div>
-						<div
-							class="timeline"
-							[ngClass]="{ selected: selectedOpsOption == 'today' }"
-							(click)="reloadOpsSummary('today')"
-						>
-							Today
-						</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'yearly' }" (click)="reloadOpsSummary('yearly')">This year</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'monthly' }" (click)="reloadOpsSummary('monthly')">This month</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'weekly' }" (click)="reloadOpsSummary('weekly')">This week</div>
+						<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'today' }" (click)="reloadOpsSummary('today')">Today</div>
 					</ng-container>
-					<div
-						style="padding: 0px 0px 0px 10px"
-						*ngIf="!iscustomenquiry"
-						(click)="reloadOpsSummary('custom')"
-					>
-						<img
-							class="cursor"
-							src="/assets/images/svg/calendar.svg"
-							width="28px"
-							height="28px"
-						/>
+					<div style="padding: 10px 0px 0px 10px" *ngIf="!iscustomenquiry" (click)="reloadOpsSummary('custom')">
+						<img class="cursor" src="/assets/images/svg/calendar.svg" width="28px" height="28px" />
 					</div>
-					<div
-						style="padding: 0px 0px 0px 10px"
-						*ngIf="iscustomenquiry"
-						(click)="reloadOpsSummary('custom')"
-					>
-						<img
-							class="cursor"
-							src="/assets/images/svg/close.svg"
-							width="24px"
-							height="24px"
-						/>
+					<div style="padding: 0px 0px 0px 10px" *ngIf="iscustomenquiry" (click)="reloadOpsSummary('custom')">
+						<img class="cursor" src="/assets/images/svg/close.svg" width="24px" height="24px" />
 					</div>
 				</div>
 				<div class="section1">
-					<div class="card">
+					<mat-card class="example-card">
+						<mat-card-header>
+							<div mat-card-avatar class="example-header-image"></div>
+							<mat-card-title>Enquiry</mat-card-title>
+						</mat-card-header>
+
+						<mat-card-content>
+							<div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
+								<div (click)="navigateToInquiry('O')">
+									<div class="card-sub-data">Order Queue</div>
+									<div class="card-sub-head">{{this.enquirySummary?.new + this.enquirySummary?.draft}}</div>
+								</div>
+
+								<!-- <div (click)="navigateToInquiry('D')">
+									<div class="card-sub-head">{{this.enquirySummary?.draft}}</div>
+									<div class="card-sub-data">In Progress</div>
+								</div> -->
+								<div (click)="navigateToInquiry('P')">
+									<div class="card-sub-data">Ready</div>
+									<div class="card-sub-head">{{this.enquirySummary?.invoiceready}}</div>
+								</div>
+
+								<div (click)="navigateToInquiry('E')">
+									<div class="card-sub-data">Closed</div>
+									<div class="card-sub-head">{{this.enquirySummary?.executed}}</div>
+								</div>
+							</div>
+						</mat-card-content>
+					</mat-card>
+
+					<!-- <div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
 								<img
@@ -129,16 +105,33 @@
 								<div class="card-sub-data">Closed</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
-					<div class="card">
+					<mat-card class="example-card">
+						<mat-card-header>
+							<div mat-card-avatar class="example-header-sales-image"></div>
+							<mat-card-title>Sales</mat-card-title>
+						</mat-card-header>
+
+						<mat-card-content>
+							<div style="display: grid; grid-template-columns: 1fr 1fr">
+								<div>
+									<div class="card-sub-data">Draft</div>
+									<div class="card-sub-head">{{this.salesSummary?.draft}}</div>
+								</div>
+
+								<div>
+									<div class="card-sub-data">Completed</div>
+									<div class="card-sub-head">{{this.salesSummary?.completed}}</div>
+								</div>
+							</div>
+						</mat-card-content>
+					</mat-card>
+
+					<!-- <div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
-								<img
-									src="/assets/images/svg/sales.svg"
-									width="22px"
-									height="22px"
-								/>
+								<img src="/assets/images/svg/sales.svg" width="22px" height="22px" />
 							</div>
 							<div class="card-head">Sales</div>
 						</div>
@@ -149,22 +142,37 @@
 							</div>
 
 							<div>
-								<div class="card-sub-head">
-									{{this.salesSummary?.completed}}
-								</div>
+								<div class="card-sub-head">{{this.salesSummary?.completed}}</div>
 								<div class="card-sub-data">Completed</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
-					<div class="card">
+					<mat-card class="example-card">
+						<mat-card-header>
+							<div mat-card-avatar class="example-header-purchase-image"></div>
+							<mat-card-title>Purchase</mat-card-title>
+						</mat-card-header>
+
+						<mat-card-content>
+							<div style="display: grid; grid-template-columns: 1fr 1fr">
+								<div>
+									<div class="card-sub-data">Draft</div>
+									<div class="card-sub-head">{{this.purchaseSummary?.draft}}</div>
+								</div>
+
+								<div>
+									<div class="card-sub-data">Completed</div>
+									<div class="card-sub-head">{{this.purchaseSummary?.completed}}</div>
+								</div>
+							</div>
+						</mat-card-content>
+					</mat-card>
+
+					<!-- <div class="card">
 						<div style="display: grid; grid-template-columns: 60px 1fr">
 							<div class="rectangle">
-								<img
-									src="/assets/images/svg/purchase.svg"
-									width="22px"
-									height="22px"
-								/>
+								<img src="/assets/images/svg/purchase.svg" width="22px" height="22px" />
 							</div>
 							<div class="card-head">Purchase</div>
 						</div>
@@ -175,215 +183,75 @@
 							</div>
 
 							<div>
-								<div class="card-sub-head">
-									{{this.purchaseSummary?.completed}}
-								</div>
+								<div class="card-sub-head">{{this.purchaseSummary?.completed}}</div>
 								<div class="card-sub-data">Completed</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 				<div class="horizontal-spacer">&nbsp;</div>
+				<div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
+					<div>
+						<mat-card class="example-card">
+							<mat-card-header>
+								<mat-card-title style="font-size: 16px">Top 5 Payment Outstanding</mat-card-title>
+							</mat-card-header>
 
-				<div class="section2">
-					<div
-						style="
-							display: grid;
-							grid-template-columns: 1fr 1fr;
-							gap: 10px;
-							height: 200px;
-							width: 100%;
-						"
-					>
-						<div
-							style="
-								background-color: #3246d3;
-								display: grid;
-								align-content: center;
-							"
-						>
-							<div
-								style="
-									color: #fff;
-									opacity: 0.9;
-									font-size: 24px;
-									text-align: center;
-								"
-							>
-								{{this?.yearly_turnover | currency: "INR"}}
-							</div>
-							<div
-								style="
-									width: 100px;
-									height: 60px;
-									color: #fff;
-									opacity: 0.9;
-									padding: 10px;
-								"
-							>
-								Yearly Turnover
-							</div>
-						</div>
-						<div
-							style="
-								background-color: dodgerblue;
-								display: grid;
-								align-content: center;
-							"
-						>
-							<div
-								style="
-									color: #fff;
-									opacity: 0.9;
-									font-size: 24px;
-									text-align: left;
-									padding: 0px 10px;
-								"
-							>
-								{{this.centerSummary?.active_customers}}
-							</div>
-							<div
-								style="
-									width: 100px;
-									height: 60px;
-									color: #fff;
-									opacity: 0.9;
-									padding: 10px;
-								"
-							>
-								Enterprise Clients
-							</div>
-							<div
-								style="
-									color: #fff;
-									opacity: 0.9;
-									font-size: 24px;
-									text-align: left;
-									padding: 0px 10px;
-								"
-							>
-								{{this.centerSummary?.active_vendors}}
-							</div>
-							<div
-								style="
-									width: 100px;
-									height: 60px;
-									color: #fff;
-									opacity: 0.9;
-									padding: 10px;
-								"
-							>
-								Suppliers
-							</div>
-						</div>
+							<mat-card-content>
+								<div
+									*ngFor="let item of outstandingBalanceList ? outstandingBalanceList : []; let idx = index"
+									class="list-item"
+									style="color: blue; cursor: pointer"
+									(click)="goCustomerFinancials(item.id)"
+								>
+									<div style="text-align: left">{{ item.name }}</div>
+									<div>{{ item.balance_amt | currency: "INR"}}</div>
+								</div>
+							</mat-card-content>
+						</mat-card>
 					</div>
-					<div style="display: grid; background-color: #fff; width: 100%">
-						<div
-							style="
-								display: grid;
-								grid-template-columns: 1fr 1fr 1fr;
-								gap: 16px;
-							"
-						>
-							<div
-								style="
-									background-color: aliceblue;
-									display: grid;
-									place-content: center;
-								"
-							>
-								<div style="font-size: larger">
-									{{this.salesTotal | currency: "INR"}}
-								</div>
-								<div style="font-size: medium; opacity: 0.9">Today Sales</div>
-							</div>
-							<div
-								style="
-									background-color: #f5a5a5;
-									display: grid;
-									place-content: center;
-								"
-							>
-								<div style="font-size: larger">
-									{{this.centerReceivablesTotal | currency: "INR"}}
-								</div>
-								<div style="font-size: medium; opacity: 0.9">
-									Outstanding Total
-								</div>
-							</div>
-							<div
-								style="
-									background-color: aliceblue;
-									display: grid;
-									place-content: center;
-								"
-							>
-								<div style="font-size: larger">
-									{{this.paymentsTotal | currency: "INR"}}
-								</div>
-								<div style="font-size: medium; opacity: 0.9">
-									Payments Total
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+					<div>
+						<mat-card class="example-card">
+							<mat-card-header>
+								<mat-card-title style="font-size: 16px">Top 5 Clients</mat-card-title>
+							</mat-card-header>
 
-			<div
-				style="
-					display: grid;
-					grid-template-columns: 1fr 1fr;
-					width: 80%;
-					margin: 0 auto;
-					gap: 20px;
-				"
-			>
-				<div>
-					<div
-						style="
-							text-align: center;
-							font-size: 16px;
-							font-weight: 500;
-							color: #234;
-							background-color: mediumturquoise;
-							padding: 10px 0px;
-						"
-					>
-						Top 5 Payment Outstanding
+							<mat-card-content>
+								<div
+									*ngFor="let item of topClientsList ? topClientsList : []; let idx = index"
+									class="list-item"
+									style="color: blue; cursor: pointer"
+									(click)="goCustomerFinancials(item.id)"
+								>
+									<div style="text-align: left">{{ item.customer_name }}</div>
+									<div>{{ item.sum_total }}</div>
+								</div>
+							</mat-card-content>
+						</mat-card>
 					</div>
-					<div
-						*ngFor="let item of outstandingBalanceList ? outstandingBalanceList : []; let idx = index"
-						class="list-item row-color"
-						(click)="goCustomerFinancials(item.id)"
-					>
-						<div style="text-align: left">{{ idx + 1 }}</div>
-						<div style="text-align: left">{{ item.name }}</div>
-						<div>{{ item.balance_amt }}</div>
-					</div>
-				</div>
+					<div>
+						<mat-card class="example-card">
+							<mat-card-header>
+								<mat-card-title style="font-size: 16px">Business Snapshot</mat-card-title>
+							</mat-card-header>
 
-				<div>
-					<div
-						style="
-							text-align: center;
-							font-size: 16px;
-							font-weight: 500;
-							color: #234;
-							background-color: mediumturquoise;
-							padding: 10px 0px;
-						"
-					>
-						Top 5 Clients
-					</div>
-					<div
-						*ngFor="let item of topClientsList ? topClientsList : []; let idx = index"
-						class="list-item row-color"
-						(click)="goCustomerFinancials(item.id)"
-					>
-						<div style="text-align: left">{{ idx + 1 }}</div>
-						<div style="text-align: left">{{ item.customer_name }}</div>
-						<div>{{ item.sum_total }}</div>
+							<mat-card-content>
+								<div class="list-item" style="color: blue; cursor: pointer">
+									<div style="text-align: left; padding: 8px">Yearly Turnover</div>
+									<div style="text-align: left; padding: 8px">{{this?.yearly_turnover | currency: "INR"}}</div>
+									<div style="text-align: left; padding: 8px">Active Customers</div>
+									<div style="text-align: left; padding: 8px">{{this.centerSummary?.active_customers}}</div>
+									<div style="text-align: left; padding: 8px">Active Vendors</div>
+									<div style="text-align: left; padding: 8px">{{this.centerSummary?.active_vendors}}</div>
+									<div style="text-align: left; padding: 8px">Total Sales</div>
+									<div style="text-align: left; padding: 8px">{{this.salesTotal | currency: "INR"}}</div>
+									<div style="text-align: left; padding: 8px">Outstanding Total</div>
+									<div style="text-align: left; padding: 8px">{{this.centerReceivablesTotal | currency: "INR"}}</div>
+									<div style="text-align: left; padding: 8px">Payments Total</div>
+									<div style="text-align: left; padding: 8px">{{this.paymentsTotal | currency: "INR"}}</div>
+								</div>
+							</mat-card-content>
+						</mat-card>
 					</div>
 				</div>
 			</div>

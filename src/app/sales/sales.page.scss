@@ -4,6 +4,7 @@
 	padding: 1rem;
 	width: 100%;
 	font-size: 14px;
+	justify-content: space-between;
 }
 
 .purchase-wrap {
@@ -214,7 +215,7 @@
 	justify-content: space-between;
 	bottom: 0px;
 	padding: 0.5rem 80px 0.5rem 1rem;
-	width: 100%;
+	width: calc(100vw - 176px);
 	height: auto;
 	background-color: #f7f9fd;
 	border-top: 1px solid #e6e6e6;

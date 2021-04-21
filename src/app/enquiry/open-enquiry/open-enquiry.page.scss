@@ -16,7 +16,7 @@
 	display: grid;
 	width: 100%;
 	margin: 0 auto;
-	grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 60px 200px 1fr 100px 300px 1fr;
 
 	align-items: center;
 	font-size: 14px;
@@ -154,4 +154,23 @@
 .tbl-detail:hover {
 	background-color: #e9e8f1;
 	opacity: 1;
+}
+
+.invoice {
+	color: #fff;
+	cursor: pointer;
+	padding: 10px 20px;
+	margin: 5px 16px;
+	background-color: royalblue;
+	border-radius: 61px;
+}
+
+.stock {
+	color: royalblue;
+	cursor: pointer;
+	padding: 10px 20px;
+	margin: 5px 16px;
+
+	border-radius: 61px;
+	border: 1px solid royalblue;
 }

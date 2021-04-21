@@ -1,36 +1,25 @@
 <div class="screen-header">
 	<div>Add New Product</div>
 	<div>
-		<img
-			class="cursor"
-			src="/assets/images/svg/close.svg"
-			(click)="close()"
-			width="20px"
-			height="20px"
-		/>
+		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
 	</div>
 </div>
 
-<div class="content">
+<div class="content1">
 	<form [formGroup]="submitForm" (ngSubmit)="onSubmit()">
 		<div class="code">
 			<mat-form-field class="mat-width-ext">
 				<mat-label>Product Item Code</mat-label>
-				<input
-					matInput
-					(blur)="isProdExists()"
-					formControlName="product_code"
-					required
-				/>
+				<input matInput formControlName="product_code" required autocomplete="off" />
 				<mat-error>This field is required</mat-error>
 			</mat-form-field>
 			<div *ngIf="pexists" class="error">Already Exists</div>
 		</div>
 		<!-- <div style="display: grid; grid-column: 2/-1"> -->
 		<div>
-			<mat-form-field class="mat-width-ext">
+			<mat-form-field class="mat-width-ext form-field-gap">
 				<mat-label>Product Description</mat-label>
-				<input matInput formControlName="description" required />
+				<input matInput formControlName="description" required autocomplete="off" />
 				<mat-error>This field is required</mat-error>
 			</mat-form-field>
 		</div>
@@ -46,14 +35,7 @@
 				<mat-error>This field is required</mat-error>
 			</mat-form-field>
 		</div>
-		<div
-			style="
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 10px;
-				padding-top: 16px;
-			"
-		>
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 16px">
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>UOM</mat-label>
@@ -68,29 +50,16 @@
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Pack Size</mat-label>
-					<input
-						matInput
-						type="number"
-						formControlName="packetsize"
-						required
-						numeric
-					/>
+					<input matInput type="number" formControlName="packetsize" required numeric autocomplete="off" />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
 		</div>
-		<div
-			style="
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 10px;
-				padding-top: 16px;
-			"
-		>
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 16px">
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>HSN Code</mat-label>
-					<input matInput formControlName="hsncode" required />
+					<input matInput formControlName="hsncode" required autocomplete="off" />
 					<mat-hint matTooltip="Info about the action">HSN Code value</mat-hint>
 				</mat-form-field>
 			</div>
@@ -106,19 +75,22 @@
 				</mat-form-field>
 			</div>
 		</div>
-		<div
-			style="
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 10px;
-				padding-top: 16px;
-			"
-		>
+		<div style="display: grid; grid-template-columns: 1fr; gap: 10px; padding-top: 16px">
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>Current Stock</mat-label>
+					<input matInput type="number" formControlName="currentstock" required numeric autocomplete="off" />
+					<mat-error>This field is required</mat-error>
+					<mat-hint>Current Stock in Hand</mat-hint>
+				</mat-form-field>
+			</div>
+		</div>
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 16px">
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Min. Qty</mat-label>
-					<input matInput type="number" formControlName="minqty" numeric />
-
+					<input matInput type="number" formControlName="minqty" required numeric autocomplete="off" />
+					<mat-error>This field is required</mat-error>
 					<mat-hint>Minimum in stock expexted</mat-hint>
 				</mat-form-field>
 			</div>
@@ -126,44 +98,23 @@
 			<div>
 				<mat-form-field class="mat-width-100">
 					<mat-label>MRP</mat-label>
-					<input
-						matInput
-						type="number"
-						formControlName="mrp"
-						required
-						numeric
-						decimals="2"
-					/>
+					<input matInput type="number" formControlName="mrp" required numeric decimals="2" autocomplete="off" />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
 		</div>
-		<div
-			style="
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 10px;
-				padding-top: 16px;
-			"
-		>
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 16px">
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Purchase Price</mat-label>
-					<input
-						matInput
-						type="number"
-						formControlName="purchase_price"
-						required
-						numeric
-						decimals="2"
-					/>
+					<input matInput type="number" formControlName="purchase_price" required numeric decimals="2" autocomplete="off" />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Rack #</mat-label>
-					<input matInput type="text" formControlName="rackno" />
+					<input matInput type="text" formControlName="rackno" autocomplete="off" />
 				</mat-form-field>
 			</div>
 		</div>
@@ -172,9 +123,7 @@
 			{{ responsemsg }}
 		</div>
 		<div style="text-align: center">
-			<button mat-raised-button color="primary" type="submit">
-				+ Add Product
-			</button>
+			<button mat-raised-button color="primary" type="submit">+ Add Product</button>
 		</div>
 	</form>
 </div>

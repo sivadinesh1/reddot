@@ -231,8 +231,6 @@ export class OpenEnquiryPage implements OnInit {
 
 		this.filteredEnquiries$ = this.enquiries$;
 
-		// for initial load of first tab (ALL)
-		// let value = await this.filteredEnquiries$.toPromise();
 		let value = await lastValueFrom(this.filteredEnquiries$);
 
 		if (param === 'O') {
@@ -296,8 +294,8 @@ export class OpenEnquiryPage implements OnInit {
 		this._router.navigate(['/home/enquiry/process-enquiry', item.id]);
 	}
 
-	moveToSale(item) {
-		this._router.navigate([`/home/sales/enquiry/${item.id}`]);
+	moveToSale(item, invoiceType) {
+		this._router.navigate([`/home/sales/enquiry/${item.id}/${invoiceType}`]);
 	}
 
 	goEnquiryScreen() {

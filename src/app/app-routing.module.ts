@@ -116,7 +116,7 @@ const routes: Routes = [
 			// },
 
 			{
-				path: 'sales/:mode/:id',
+				path: 'sales/:mode/:id/:saletype',
 				pathMatch: 'full',
 				loadChildren: () =>
 					import('./sales/sales.module').then((m) => m.SalesPageModule),
@@ -316,6 +316,14 @@ const routes: Routes = [
 			import(
 				'./settings/permissions-settings/permissions-settings.module'
 			).then((m) => m.PermissionsSettingsPageModule),
+		outlet: 'settings',
+	},
+	{
+		path: 'template-settings',
+		loadChildren: () =>
+			import('./settings/template-settings/template-settings.module').then(
+				(m) => m.TemplateSettingsPageModule
+			),
 		outlet: 'settings',
 	},
 ];

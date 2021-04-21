@@ -1,36 +1,10 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ViewChild,
-	ElementRef,
-	ViewChildren,
-	QueryList,
-	Inject,
-	HostListener,
-	ChangeDetectionStrategy,
-} from '@angular/core';
-import {
-	ModalController,
-	PickerController,
-	AlertController,
-} from '@ionic/angular';
+import { Component, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList, ChangeDetectionStrategy } from '@angular/core';
+import { ModalController, PickerController, AlertController } from '@ionic/angular';
 
 import { CommonApiService } from '../services/common-api.service';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-	FormArray,
-	FormGroupDirective,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray, FormGroupDirective } from '@angular/forms';
 
-import {
-	MatDialog,
-	MatDialogConfig,
-	DialogPosition,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 
 import { AuthenticationService } from '../services/authentication.service';
@@ -38,13 +12,7 @@ import { ChangeTaxComponent } from '../components/change-tax/change-tax.componen
 import { ChangeMrpComponent } from '../components/change-mrp/change-mrp.component';
 import { Route, ActivatedRoute, Router } from '@angular/router';
 import { NullToQuotePipe } from '../util/pipes/null-quote.pipe';
-import {
-	filter,
-	tap,
-	debounceTime,
-	switchMap,
-	startWith,
-} from 'rxjs/operators';
+import { filter, tap, debounceTime, switchMap, startWith } from 'rxjs/operators';
 import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -56,10 +24,7 @@ import { Customer } from 'src/app/models/Customer';
 import { Product } from '../models/Product';
 import { empty } from 'rxjs';
 import { RequireMatch } from '../util/directives/requireMatch';
-import {
-	MatAutocomplete,
-	MatAutocompleteTrigger,
-} from '@angular/material/autocomplete';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { IonContent } from '@ionic/angular';
 import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
 import { CustomerAddDialogComponent } from '../components/customers/customer-add-dialog/customer-add-dialog.component';
@@ -83,7 +48,6 @@ export class SalesPage {
 
 	total = '0.00';
 
-	// test1: any;
 	customer_state_code: any;
 	center_state_code: any;
 	i_gst: any;
@@ -106,9 +70,6 @@ export class SalesPage {
 
 	tax_percentage: any;
 	taxable_value: any;
-	//center_id: any;
-
-	stockissue = '';
 
 	removeRowArr = [];
 
@@ -128,6 +89,7 @@ export class SalesPage {
 	cust_discount_type: any;
 	mode: string;
 	id: string;
+	saletype: string;
 
 	testTotal: any;
 	invoiceid: any;
@@ -212,43 +174,58 @@ export class SalesPage {
 		this.basicinit();
 
 		this.userdata$ = this._authservice.currentUser;
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this._authservice.setCurrentMenu('SALE');
+			this.userdata = data;
+
+			this.submitForm.patchValue({
+				center_id: data.center_id,
+			});
+
+			this.ready = 1;
+
+			// data change
+			this._route.data.subscribe((data) => {
 				this._authservice.setCurrentMenu('SALE');
-				this.userdata = data;
+				this.selInvType = 'gstinvoice';
+				this.listArr = [];
+				this.cancel();
+				this.rawSalesData = data['rawsalesdata'];
+			});
+			// param change
+			this._route.params.subscribe((params) => {
+				this.clicked = false;
 
-				this.submitForm.patchValue({
-					center_id: data.center_id,
-				});
+				this.id = params['id'];
+				this.mode = params['mode'];
+				this.saletype = params['saletype'];
 
-				this.ready = 1;
-
-				// data change
-				this._route.data.subscribe((data) => {
-					this._authservice.setCurrentMenu('SALE');
+				if (this.saletype === 'SI') {
+					this.selInvType = 'stockissue';
+				} else if (this.saletype === 'TI') {
 					this.selInvType = 'gstinvoice';
-					this.listArr = [];
-					this.cancel();
-					this.rawSalesData = data['rawsalesdata'];
-				});
-				// param change
-				this._route.params.subscribe((params) => {
-					this.clicked = false;
+				}
 
-					this.id = params['id'];
-					this.mode = params['mode'];
+				if (this.userdata !== undefined) {
+					this.initialize();
+					this.submitForm.patchValue({
+						center_id: this.userdata.center_id,
+					});
 
-					if (this.userdata !== undefined) {
-						this.initialize();
+					if (this.saletype === 'SI') {
 						this.submitForm.patchValue({
-							center_id: this.userdata.center_id,
+							invoicetype: 'stockissue',
+						});
+					} else {
+						this.submitForm.patchValue({
+							invoicetype: 'gstinvoice',
 						});
 					}
-				});
-
-				this._cdr.markForCheck();
+				}
 			});
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	basicinit() {
@@ -285,15 +262,7 @@ export class SalesPage {
 			productctrl: [null, [RequireMatch]],
 			tempdesc: [''],
 			tempmrp: [0],
-			tempqty: [
-				'1',
-				[
-					Validators.required,
-					Validators.max(1000),
-					Validators.min(1),
-					Validators.pattern(/\-?\d*\.?\d{1,2}/),
-				],
-			],
+			tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
 			productarr: new FormControl(null),
 			roundoff: [0],
@@ -326,67 +295,57 @@ export class SalesPage {
 			this.fromEnquiry = true;
 
 			this.spinner.show();
-			this._commonApiService
-				.getCustomerData(this.id)
-				.subscribe((custData: any) => {
-					this.customerdata = custData[0];
+			this._commonApiService.getCustomerData(this.id).subscribe((custData: any) => {
+				this.customerdata = custData[0];
+
+				this.submitForm.patchValue({
+					customerctrl: custData[0],
+				});
+
+				this.customername = custData[0].name;
+				// record orignal customer id from enquiry, can ignore while submitting
+				// as there will be no reference in ledger/payment tables
+				this.orig_customerid = custData[0].id;
+				this.iscustomerselected = true;
+
+				this.setTaxLabel(custData[0].code);
+
+				let invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+
+				// prod details
+				this._commonApiService.getEnquiredProductData(this.userdata.center_id, this.customerdata.id, this.id, invdt).subscribe((prodData: any) => {
+					this.spinner.hide();
+					let proddata = prodData;
 
 					this.submitForm.patchValue({
-						customerctrl: custData[0],
+						orderdate:
+							proddata[0].enquiry_date === ''
+								? ''
+								: new Date(new NullToQuotePipe().transform(proddata[0].enquiry_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
+						//  orderdate: (proddata[0].enquiry_date !== '' || proddata[0].enquiry_date !== undefined) ? proddata[0].enquiry_date : ''
 					});
 
-					this.customername = custData[0].name;
-					// record orignal customer id from enquiry, can ignore while submitting
-					// as there will be no reference in ledger/payment tables
-					this.orig_customerid = custData[0].id;
-					this.iscustomerselected = true;
-
-					this.setTaxLabel(custData[0].code);
-
-					let invdt = moment(this.submitForm.value.invoicedate).format(
-						'DD-MM-YYYY'
-					);
-
-					// prod details
-					this._commonApiService
-						.getEnquiredProductData(
-							this.userdata.center_id,
-							this.customerdata.id,
-							this.id,
-							invdt
-						)
-						.subscribe((prodData: any) => {
-							this.spinner.hide();
-							let proddata = prodData;
-
-							this.submitForm.patchValue({
-								orderdate:
-									proddata[0].enquiry_date === ''
-										? ''
-										: new Date(
-												new NullToQuotePipe()
-													.transform(proddata[0].enquiry_date)
-													.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-										  ),
-								//  orderdate: (proddata[0].enquiry_date !== '' || proddata[0].enquiry_date !== undefined) ? proddata[0].enquiry_date : ''
-							});
-
-							proddata.forEach((element) => {
-								this.processItems(element, 'preload');
-							});
-
-							this._cdr.markForCheck();
-						});
+					proddata.forEach((element) => {
+						this.processItems(element, 'preload');
+					});
 
 					this._cdr.markForCheck();
 				});
+
+				this._cdr.markForCheck();
+			});
 		}
 
 		// raw sales data : which comes from regular sale screen and not from enquiry screen
 		if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
 			if (this.rawSalesData[0] !== undefined) {
 				if (this.rawSalesData[0].id !== 0) {
-					this.breadmenu = 'Modifying Sale #' + this.rawSalesData[0].id;
+					if (this.rawSalesData[0].sale_type === 'gstinvoice') {
+						this.breadmenu = 'Modify Sale #';
+					} else {
+						this.breadmenu = 'Modify Stock Issue #';
+					}
+
 					this.selInvType = this.rawSalesData[0].sale_type;
 					this.orig_selInvType = this.rawSalesData[0].sale_type;
 					this.stock_issue_ref = this.rawSalesData[0].stock_issue_ref;
@@ -397,43 +356,26 @@ export class SalesPage {
 						salesid: this.rawSalesData[0].id,
 						invoiceno: this.rawSalesData[0].invoice_no,
 						invoicetype: this.rawSalesData[0].sale_type,
-						invoicedate: new Date(
-							new NullToQuotePipe()
-								.transform(this.rawSalesData[0].invoice_date)
-								.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-						),
+						invoicedate: new Date(new NullToQuotePipe().transform(this.rawSalesData[0].invoice_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 
 						orderdate:
 							this.rawSalesData[0].order_date === ''
 								? ''
-								: new Date(
-										new NullToQuotePipe()
-											.transform(this.rawSalesData[0].order_date)
-											.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-								  ),
+								: new Date(new NullToQuotePipe().transform(this.rawSalesData[0].order_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 
 						lrno: this.rawSalesData[0].lr_no,
 
 						lrdate:
 							this.rawSalesData[0].lr_date === ''
 								? ''
-								: new Date(
-										new NullToQuotePipe()
-											.transform(this.rawSalesData[0].lr_date)
-											.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-								  ),
+								: new Date(new NullToQuotePipe().transform(this.rawSalesData[0].lr_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 						orderno: this.rawSalesData[0].order_no,
 						noofboxes: this.rawSalesData[0].no_of_boxes,
 
 						orderrcvddt:
-							this.rawSalesData[0].received_date === '' ||
-							this.rawSalesData[0].received_date === null
+							this.rawSalesData[0].received_date === '' || this.rawSalesData[0].received_date === null
 								? ''
-								: new Date(
-										new NullToQuotePipe()
-											.transform(this.rawSalesData[0].received_date)
-											.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-								  ),
+								: new Date(new NullToQuotePipe().transform(this.rawSalesData[0].received_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 
 						noofitems: this.rawSalesData[0].no_of_items,
 						totalqty: this.rawSalesData[0].total_qty,
@@ -450,56 +392,45 @@ export class SalesPage {
 						status: this.rawSalesData[0].status,
 						revision: this.rawSalesData[0].revision,
 						retail_customer_name: this.rawSalesData[0].retail_customer_name,
-						retail_customer_address: this.rawSalesData[0]
-							.retail_customer_address,
+						retail_customer_address: this.rawSalesData[0].retail_customer_address,
 						retail_customer_phone: this.rawSalesData[0].retail_customer_phone,
 					});
 
-					if (
-						this.rawSalesData[0].status === 'C' ||
-						this.rawSalesData[0].status === 'D'
-					) {
+					if (this.rawSalesData[0].status === 'C' || this.rawSalesData[0].status === 'D') {
 						this.editCompletedSales = true;
 					}
 
 					this._cdr.markForCheck();
 
-					this._commonApiService
-						.getCustomerDetails(
-							this.userdata.center_id,
-							this.rawSalesData[0].customer_id
-						)
-						.subscribe((custData: any) => {
-							this.customerdata = custData[0];
+					this._commonApiService.getCustomerDetails(this.userdata.center_id, this.rawSalesData[0].customer_id).subscribe((custData: any) => {
+						this.customerdata = custData[0];
 
-							this.submitForm.patchValue({
-								customerctrl: custData[0],
-							});
-
-							this.customername = custData[0].name;
-
-							this.iscustomerselected = true;
-
-							this.setTaxLabel(custData[0].code);
-
-							if (this.customername === 'Walk In') {
-								this.isRetailCustomer = 'Y';
-							} else {
-								this.isRetailCustomer = 'N';
-							}
-
-							this._cdr.markForCheck();
+						this.submitForm.patchValue({
+							customerctrl: custData[0],
 						});
 
-					this._commonApiService
-						.saleDetails(this.rawSalesData[0].id)
-						.subscribe((saleData: any) => {
-							let sData = saleData;
+						this.customername = custData[0].name;
 
-							sData.forEach((element) => {
-								this.processItems(element, 'preload');
-							});
+						this.iscustomerselected = true;
+
+						this.setTaxLabel(custData[0].code);
+
+						if (this.customername === 'Walk In') {
+							this.isRetailCustomer = 'Y';
+						} else {
+							this.isRetailCustomer = 'N';
+						}
+
+						this._cdr.markForCheck();
+					});
+
+					this._commonApiService.saleDetails(this.rawSalesData[0].id).subscribe((saleData: any) => {
+						let sData = saleData;
+
+						sData.forEach((element) => {
+							this.processItems(element, 'preload');
 						});
+					});
 
 					this._cdr.markForCheck();
 				}
@@ -514,45 +445,6 @@ export class SalesPage {
 		this.searchProducts();
 
 		this._cdr.markForCheck();
-	}
-
-	// calls when invoice type select changes
-	invoiceTypeChange(event) {
-		if (
-			this.id !== '0' &&
-			event.value === 'stockissue' &&
-			this.mode !== 'enquiry' &&
-			this.orig_selInvType !== 'stockissue'
-		) {
-			this.presentAlert('Invoiced Sale cannot move to Stock Issue');
-
-			this.submitForm.patchValue({
-				invoicetype: 'gstinvoice',
-			});
-			this._cdr.markForCheck();
-			return false;
-		} else {
-			if (
-				this.submitForm.value.invoiceno.startsWith('SI') &&
-				event.value === 'gstinvoice'
-			) {
-				this.presentAlert('Use Convert to Sale Invoice Option');
-				this.submitForm.patchValue({
-					invoicetype: 'stockissue',
-				});
-				this._cdr.markForCheck();
-				return false;
-			} else {
-				this.submitForm.patchValue({
-					invoicetype: event.value,
-				});
-
-				this.selInvType = event.value;
-			}
-
-			this._cdr.markForCheck();
-			// this.getInvoiceSequence(this.userdata.center_id, event.value);
-		}
 	}
 
 	searchCustomers() {
@@ -613,20 +505,15 @@ export class SalesPage {
 
 		if (this.cust_discount_type === 'NET') {
 			subtotal = temp.qty * temp.mrp;
-			taxableval =
-				(temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) /
-				(100 + temp.taxrate);
+			taxableval = (temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) / (100 + temp.taxrate);
 			discval = temp.qty * temp.mrp * (this.cust_discount_prcnt / 100);
 
 			totalval = (temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) / 100;
 		} else if (this.cust_discount_type === 'GROSS') {
 			subtotal = temp.qty * temp.mrp;
-			taxableval =
-				(temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) / 100;
+			taxableval = (temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) / 100;
 			discval = (temp.qty * temp.mrp * this.cust_discount_prcnt) / 100;
-			totalval =
-				((temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) / 100) *
-				(1 + temp.taxrate / 100);
+			totalval = ((temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) / 100) * (1 + temp.taxrate / 100);
 		}
 
 		// from product tbl
@@ -671,17 +558,10 @@ export class SalesPage {
 			return parseFloat(arr.unit_price);
 		});
 
-		this.total = tempArr
-			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			.toFixed(2);
-		console.log(
-			'TCL: PurchasePage -> showAddProductComp -> this.total',
-			this.total
-		);
+		this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+		console.log('TCL: PurchasePage -> showAddProductComp -> this.total', this.total);
 
-		this.taxable_value = tempArrCostPrice
-			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			.toFixed(2);
+		this.taxable_value = tempArrCostPrice.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
 		this.submitForm.patchValue({
 			taxable_value: this.taxable_value,
@@ -711,6 +591,34 @@ export class SalesPage {
 		this.iscustomerselected = false;
 
 		this._cdr.markForCheck();
+	}
+
+	async handleCustomerChange() {
+		this.clist && this.clist.nativeElement.focus();
+		const alert = await this.alertController.create({
+			header: 'Confirm!',
+			message: 'Customer change. Do you want to proceed? Revisit customer discount for accuracy',
+			buttons: [
+				{
+					text: 'Cancel',
+					role: 'cancel',
+					cssClass: 'secondary',
+					handler: (blah) => {
+						console.log('Confirm Cancel: blah');
+					},
+				},
+				{
+					text: 'Okay',
+					handler: () => {
+						console.log('Confirm Okay');
+
+						this.clearInput();
+					},
+				},
+			],
+		});
+
+		await alert.present();
 	}
 
 	sumTotalTax() {
@@ -762,10 +670,7 @@ export class SalesPage {
 
 		this.autoTrigger1 &&
 			this.autoTrigger1.panelClosingActions.subscribe((x) => {
-				if (
-					this.autoTrigger1.activeOption &&
-					this.autoTrigger1.activeOption.value !== undefined
-				) {
+				if (this.autoTrigger1.activeOption && this.autoTrigger1.activeOption.value !== undefined) {
 					this.submitForm.patchValue({
 						customerctrl: this.autoTrigger1.activeOption.value,
 					});
@@ -775,10 +680,7 @@ export class SalesPage {
 
 		this.autoTrigger2 &&
 			this.autoTrigger2.panelClosingActions.subscribe((x) => {
-				if (
-					this.autoTrigger2.activeOption &&
-					this.autoTrigger2.activeOption.value !== undefined
-				) {
+				if (this.autoTrigger2.activeOption && this.autoTrigger2.activeOption.value !== undefined) {
 					this.submitForm.patchValue({
 						productctrl: this.autoTrigger2.activeOption.value,
 					});
@@ -842,35 +744,21 @@ export class SalesPage {
 		}
 
 		if (this.mode === 'enquiry') {
-			if (
-				this.submitForm.value.invoicedate !== null &&
-				this.submitForm.value.orderdate !== '' &&
-				this.submitForm.value.orderdate != null
-			) {
-				if (
-					this.submitForm.value.orderno === '' &&
-					this.submitForm.value.orderdate != null
-				) {
+			if (this.submitForm.value.invoicedate !== null && this.submitForm.value.orderdate !== '' && this.submitForm.value.orderdate != null) {
+				if (this.submitForm.value.orderno === '' && this.submitForm.value.orderdate != null) {
 					this.orderNoEl && this.orderNoEl.nativeElement.focus();
 					this.presentAlert('Enquiry Date without Enquiry # not allowed');
 					return false;
 				}
 
-				if (
-					moment(this.submitForm.value.orderdate).format('DD-MM-YYYY') >
-					moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY')
-				) {
+				if (moment(this.submitForm.value.orderdate).format('DD-MM-YYYY') > moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY')) {
 					this.presentAlert('Invoice date should be after Enquiry date');
 					return false;
 				}
 			}
 		}
 
-		if (
-			this.submitForm.value.invoicedate !== null &&
-			this.submitForm.value.lrdate !== '' &&
-			this.submitForm.value.lrdate !== null
-		) {
+		if (this.submitForm.value.invoicedate !== null && this.submitForm.value.lrdate !== '' && this.submitForm.value.lrdate !== null) {
 			if (this.submitForm.value.lrno === '') {
 				this.presentAlert('Lr Date without Lr # not allowed');
 				return false;
@@ -957,9 +845,7 @@ export class SalesPage {
 					return parseFloat(arrItem.qty);
 				});
 
-				let tmpTotQty = tot_qty_check_Arr
-					.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-					.toFixed(2);
+				let tmpTotQty = tot_qty_check_Arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
 				this.submitForm.patchValue({
 					totalqty: tmpTotQty,
@@ -971,9 +857,7 @@ export class SalesPage {
 
 				this.submitForm.patchValue({
 					net_total: this.getNetTotal('rounding'),
-					roundoff: (
-						this.getNetTotal('rounding') - this.getNetTotal('withoutrounding')
-					).toFixed(2),
+					roundoff: (this.getNetTotal('rounding') - this.getNetTotal('withoutrounding')).toFixed(2),
 				});
 			}
 		}
@@ -1024,10 +908,7 @@ export class SalesPage {
 
 		dialogConfig.data = { invoiceid: invoice_id, invoicedate: invoice_date };
 
-		const dialogRef = this.dialog.open(
-			ConvertToSaleDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this.dialog.open(ConvertToSaleDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((data) => {
 			console.log('The dialog was closed');
@@ -1057,6 +938,7 @@ export class SalesPage {
 
 		if (+discVal <= 100 && discVal !== '') {
 			this.listArr[idx].disc_percent = $event.target.value;
+
 			this.qtyChange(idx);
 			this.listArr[idx].discerror = '';
 			this._cdr.detectChanges();
@@ -1082,67 +964,32 @@ export class SalesPage {
 
 	qtyChange(idx) {
 		if (this.cust_discount_type === 'NET') {
-			this.listArr[idx].sub_total = (
-				this.listArr[idx].qty * this.listArr[idx].mrp
-			).toFixed(2);
+			this.listArr[idx].sub_total = (this.listArr[idx].qty * this.listArr[idx].mrp).toFixed(2);
 
-			this.listArr[idx].total_value = (
-				(this.listArr[idx].qty *
-					this.listArr[idx].mrp *
-					(100 - this.listArr[idx].disc_percent)) /
-				100
-			).toFixed(2);
-			this.listArr[idx].disc_value = (
-				(this.listArr[idx].qty *
-					this.listArr[idx].mrp *
-					this.listArr[idx].disc_percent) /
-				100
-			).toFixed(2);
+			this.listArr[idx].total_value = ((this.listArr[idx].qty * this.listArr[idx].mrp * (100 - this.listArr[idx].disc_percent)) / 100).toFixed(2);
+
+			this.listArr[idx].disc_value = ((this.listArr[idx].qty * this.listArr[idx].mrp * this.listArr[idx].disc_percent) / 100).toFixed(2);
 
 			this.listArr[idx].taxable_value = (
-				(this.listArr[idx].qty *
-					this.listArr[idx].mrp *
-					(100 - this.listArr[idx].disc_percent)) /
+				(this.listArr[idx].qty * this.listArr[idx].mrp * (100 - this.listArr[idx].disc_percent)) /
 				(100 + this.listArr[idx].taxrate)
 			).toFixed(2);
-			this.listArr[idx].tax_value = (
-				this.listArr[idx].total_value - this.listArr[idx].taxable_value
-			).toFixed(2);
+			this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
 		} else {
-			this.listArr[idx].sub_total = (
-				this.listArr[idx].qty * this.listArr[idx].mrp
-			).toFixed(2);
+			this.listArr[idx].sub_total = (this.listArr[idx].qty * this.listArr[idx].mrp).toFixed(2);
 			this.listArr[idx].total_value = (
-				((this.listArr[idx].qty *
-					this.listArr[idx].mrp *
-					(100 - this.listArr[idx].disc_percent)) /
-					100) *
+				((this.listArr[idx].qty * this.listArr[idx].mrp * (100 - this.listArr[idx].disc_percent)) / 100) *
 				(1 + this.listArr[idx].taxrate / 100)
 			).toFixed(2);
 			this.listArr[idx].disc_value = (
-				((this.listArr[idx].qty *
-					this.listArr[idx].mrp *
-					this.listArr[idx].disc_percent) /
-					100) *
+				((this.listArr[idx].qty * this.listArr[idx].mrp * this.listArr[idx].disc_percent) / 100) *
 				(1 + this.listArr[idx].taxrate / 100)
 			).toFixed(2);
-			this.listArr[idx].taxable_value = (
-				(this.listArr[idx].qty *
-					this.listArr[idx].mrp *
-					(100 - this.listArr[idx].disc_percent)) /
-				100
-			).toFixed(2);
-			this.listArr[idx].tax_value = (
-				this.listArr[idx].total_value - this.listArr[idx].taxable_value
-			).toFixed(2);
+			this.listArr[idx].taxable_value = ((this.listArr[idx].qty * this.listArr[idx].mrp * (100 - this.listArr[idx].disc_percent)) / 100).toFixed(2);
+			this.listArr[idx].tax_value = (this.listArr[idx].total_value - this.listArr[idx].taxable_value).toFixed(2);
 		}
 
-		this.listArr[idx].margin =
-			this.listArr[idx].total_value / this.listArr[idx].qty -
-				this.listArr[idx].unit_price <
-			0
-				? 'marginNeg'
-				: '';
+		this.listArr[idx].margin = this.listArr[idx].total_value / this.listArr[idx].qty - this.listArr[idx].unit_price < 0 ? 'marginNeg' : '';
 
 		this.calc();
 
@@ -1158,15 +1005,9 @@ export class SalesPage {
 			return parseFloat(arr.unit_price) * parseFloat(arr.qty);
 		});
 
-		// this.testTotal = tempArr;
+		this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
-		this.total = tempArr
-			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			.toFixed(2);
-
-		this.taxable_value = tempArrCostPrice
-			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			.toFixed(2);
+		this.taxable_value = tempArrCostPrice.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
 		this.submitForm.patchValue({
 			taxable_value: this.taxable_value,
@@ -1225,9 +1066,7 @@ export class SalesPage {
 						// shoun't be fresh sale or movetosale(enquiry-sale)
 
 						if (!this.isFreshSale && !this.fromEnquiry) {
-							if (
-								this.orig_customerid !== this.submitForm.value.customerctrl.id
-							) {
+							if (this.orig_customerid !== this.submitForm.value.customerctrl.id) {
 								this.submitForm.patchValue({
 									hasCustomerChange: 'YS',
 									old_customer_id: this.orig_customerid,
@@ -1235,44 +1074,41 @@ export class SalesPage {
 							}
 						}
 
-						this._commonApiService
-							.saveSaleOrder(this.submitForm.value)
-							.subscribe((data: any) => {
-								this.spinner.hide();
-								// console.log('saveSaleOrder ' + JSON.stringify(data));
+						// Main Submit to BE
+						this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
+							this.spinner.hide();
+							// console.log('saveSaleOrder ' + JSON.stringify(data));
 
-								if (data.body.result === 'success') {
-									this.invoiceid = data.body.id;
+							if (data.body.result === 'success') {
+								this.invoiceid = data.body.id;
 
-									this.cancel();
+								this.cancel();
 
-									this.formRef.resetForm();
+								this.formRef.resetForm();
 
-									// reinit after successful insert
-									//  this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
-
-									this._cdr.markForCheck();
-									if (action === 'add') {
-										this.invoiceSuccess(this.invoiceid);
-										// invoice add dialog
-									} else {
-										//this.presentAlert('Saved to Draft!');
-										this.openSnackBar('Saved to Draft!', '');
-									}
-
-									this.submitForm.patchValue({
-										invoicedate: new Date(),
-									});
-
-									this.salesDashboard();
-								} else {
-									this.presentAlert(
-										'Error: Something went wrong Contact Admin!'
-									);
-								}
+								// reinit after successful insert
+								//  this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
 
 								this._cdr.markForCheck();
-							});
+								if (action === 'add') {
+									this.invoiceSuccess(this.invoiceid);
+									// invoice add dialog
+								} else {
+									//this.presentAlert('Saved to Draft!');
+									this.openSnackBar('Saved to Draft!', '');
+								}
+
+								this.submitForm.patchValue({
+									invoicedate: new Date(),
+								});
+
+								this.salesDashboard();
+							} else {
+								this.presentAlert('Error: Something went wrong Contact Admin!');
+							}
+
+							this._cdr.markForCheck();
+						});
 					},
 				},
 			],
@@ -1283,17 +1119,15 @@ export class SalesPage {
 
 	// Fn: to get & set invoiceno and invoice type
 	getInvoiceSequence(centerid, invoicetype) {
-		this._saleApiService
-			.getNxtSaleInvoiceNo(centerid, invoicetype)
-			.subscribe((data: any) => {
-				this.submitForm.patchValue({
-					invoiceno: data[0].NxtInvNo,
-					invoicetype: invoicetype,
-				});
-
-				this.selInvType = invoicetype;
-				this._cdr.markForCheck();
+		this._saleApiService.getNxtSaleInvoiceNo(centerid, invoicetype).subscribe((data: any) => {
+			this.submitForm.patchValue({
+				invoiceno: data[0].NxtInvNo,
+				// invoicetype: invoicetype,
 			});
+
+			// this.selInvType = invoicetype;
+			this._cdr.markForCheck();
+		});
 	}
 
 	async presentCancelConfirm() {
@@ -1387,10 +1221,7 @@ export class SalesPage {
 				console.log('object');
 
 				if (data.body.result === 'success') {
-					this.convertToInvoiceSuccess(
-						data.body.invoiceNo,
-						moment().format('DD-MM-YYYY')
-					);
+					this.convertToInvoiceSuccess(data.body.invoiceNo, moment().format('DD-MM-YYYY'));
 				}
 			});
 	}
@@ -1702,41 +1533,27 @@ export class SalesPage {
 			invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
 		}
 
-		if (
-			this.submitForm.value.tempdesc === '' ||
-			this.submitForm.value.tempdesc === null
-		) {
+		if (this.submitForm.value.tempdesc === '' || this.submitForm.value.tempdesc === null) {
 			this.submitForm.controls['tempdesc'].setErrors({ required: true });
 			this.submitForm.controls['tempdesc'].markAsTouched();
 
 			return false;
 		}
 
-		if (
-			this.submitForm.value.tempqty === '' ||
-			this.submitForm.value.tempqty === null ||
-			this.submitForm.value.tempqty === 0
-		) {
+		if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null || this.submitForm.value.tempqty === 0) {
 			this.submitForm.controls['tempqty'].setErrors({ required: true });
 			this.submitForm.controls['tempqty'].markAsTouched();
 
 			return false;
 		}
-		if (
-			this.submitForm.value.tempmrp === '' ||
-			this.submitForm.value.tempmrp === null ||
-			this.submitForm.value.tempmrp === 0
-		) {
+		if (this.submitForm.value.tempmrp === '' || this.submitForm.value.tempmrp === null || this.submitForm.value.tempmrp === 0) {
 			this.submitForm.controls['tempmrp'].setErrors({ required: true });
 			this.submitForm.controls['tempmrp'].markAsTouched();
 
 			return false;
 		}
 
-		if (
-			this.submitForm.value.customerctrl === '' ||
-			this.submitForm.value.customerctrl === null
-		) {
+		if (this.submitForm.value.customerctrl === '' || this.submitForm.value.customerctrl === null) {
 			this.submitForm.controls['customerctrl'].setErrors({ required: true });
 			this.submitForm.controls['customerctrl'].markAsTouched();
 
@@ -1771,15 +1588,16 @@ export class SalesPage {
 	}
 
 	setCustomerInfo(event, from) {
-		if (from === 'click' && event.option.value === 'new') {
-			this.addCustomer();
-		}
+		// below code seems not used
+		// if (from === 'click' && event.option.value === 'new') {
+		// 	this.addCustomer();
+		// }
 		if (event !== undefined) {
 			this.iscustomerselected = true;
 			if (from === 'tab') {
 				this.customer_state_code = event.code;
-				this.cust_discount_prcnt = event.discount;
-				this.cust_discount_type = event.discount_type;
+				// this.cust_discount_prcnt = event.discount;
+				// this.cust_discount_type = event.discount_type;
 				this.customerdata = event;
 
 				if (this.customerdata.name === 'Walk In') {
@@ -1792,8 +1610,8 @@ export class SalesPage {
 				this.setTaxLabel(this.customer_state_code);
 			} else {
 				this.customer_state_code = event.option.value.code;
-				this.cust_discount_prcnt = event.option.value.discount;
-				this.cust_discount_type = event.option.value.discount_type;
+				// this.cust_discount_prcnt = event.option.value.discount;
+				// this.cust_discount_type = event.option.value.discount_type;
 				this.customerdata = event.option.value;
 
 				if (this.customerdata.name === 'Walk In') {
@@ -1819,10 +1637,7 @@ export class SalesPage {
 		dialogConfig.data = this.customerdata;
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			CustomerViewDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('The dialog was closed');
@@ -1836,10 +1651,7 @@ export class SalesPage {
 		dialogConfig.width = '80%';
 		dialogConfig.height = '80%';
 
-		const dialogRef = this._dialog.open(
-			CustomerAddDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -1852,27 +1664,25 @@ export class SalesPage {
 			)
 			.subscribe((data: any) => {
 				if (data !== 'close') {
-					this._commonApiService
-						.getCustomerDetails(this.userdata.center_id, data.body.id)
-						.subscribe((custData: any) => {
-							this.customerdata = custData[0];
+					this._commonApiService.getCustomerDetails(this.userdata.center_id, data.body.id).subscribe((custData: any) => {
+						this.customerdata = custData[0];
 
-							this.customername = custData[0].name;
-							this.iscustomerselected = true;
+						this.customername = custData[0].name;
+						this.iscustomerselected = true;
 
-							this.setTaxLabel(custData[0].code);
+						this.setTaxLabel(custData[0].code);
 
-							this.setCustomerInfo(custData[0], 'tab');
+						this.setCustomerInfo(custData[0], 'tab');
 
-							this.submitForm.patchValue({
-								customerctrl: custData[0],
-							});
-
-							this.isCLoading = false;
-							this.autoTrigger1.closePanel();
-
-							this._cdr.markForCheck();
+						this.submitForm.patchValue({
+							customerctrl: custData[0],
 						});
+
+						this.isCLoading = false;
+						this.autoTrigger1.closePanel();
+
+						this._cdr.markForCheck();
+					});
 				} else {
 					this.iscustomerselected = false;
 					this.autoTrigger1.closePanel();
@@ -1909,10 +1719,7 @@ export class SalesPage {
 		dialogConfig.height = '100%';
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			ProductAddDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(ProductAddDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -1931,10 +1738,7 @@ export class SalesPage {
 					dialogConfigSuccess.height = '25%';
 					dialogConfigSuccess.data = 'Product added successfully';
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 				}
 			});
 	}
@@ -1951,3 +1755,7 @@ export class SalesPage {
 
 	// }
 }
+
+// KEY FIELDS
+// QTY, MRP, DISC(%), TAX(%), NET VALUE(2 TYPE CALC NET/GROSS)
+// TOTAL VALUE - VERTICAL SUMMARY OF ALL ROWS

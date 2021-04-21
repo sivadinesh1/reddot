@@ -198,11 +198,8 @@ export class SearchPurchasePage implements OnInit {
 
 		this.filteredPurchase$ = this.purchases$;
 
-		// for initial load of first tab (ALL)
-		// this.filteredValues = await this.filteredPurchase$.toPromise();
-
-		let value = await this.filteredPurchase$.toPromise();
-		this.filteredValues = value.filter((data: any) => data.status === 'D');
+		let value = await lastValueFrom(this.filteredPurchase$);
+		this.filteredValues = value.filter((data: any) => data.status === 'C');
 
 		// to calculate the count on each status
 		this.draftPurchase$ = this.purchases$.pipe(
@@ -217,11 +214,7 @@ export class SearchPurchasePage implements OnInit {
 	}
 
 	goPurchaseEditScreen(item) {
-		if (item.status === 'C') {
-			this.editCompletedPurchaseConfirm(item);
-		} else {
-			this._router.navigateByUrl(`/home/purchase/edit/${item.id}`);
-		}
+		this._router.navigateByUrl(`/home/purchase/edit/${item.id}`);
 	}
 
 	goPurchaseAddScreen() {
@@ -289,17 +282,20 @@ export class SearchPurchasePage implements OnInit {
 	}
 
 	async tabClick($event) {
-		let value = await this.filteredPurchase$.toPromise();
-
-		// if ($event.index === 0) {
-		//   this.filteredValues = value.filter((data: any) => (data.status === 'D' || data.status === 'C'));
-		// } else
+		let value = await lastValueFrom(this.filteredPurchase$);
 
 		if ($event.index === 0) {
-			this.filteredValues = value.filter((data: any) => data.status === 'D');
-		} else if ($event.index === 1) {
-			this.filteredValues = value.filter((data: any) => data.status === 'C');
+			this.filteredValues = value.filter(
+				(data: any) => data.status === 'D' || data.status === 'C'
+			);
 		}
+
+		// DnD
+		// if ($event.index === 0) {
+		// 	this.filteredValues = value.filter((data: any) => data.status === 'D');
+		// } else if ($event.index === 1) {
+		// 	this.filteredValues = value.filter((data: any) => data.status === 'C');
+		// }
 
 		this.calculateSumTotals();
 		this._cdr.markForCheck();
@@ -328,32 +324,6 @@ export class SearchPurchasePage implements OnInit {
 		// }).filter(function (val, i, arr) {
 		//   return arr.indexOf(val) === i;
 		// }).length;
-	}
-
-	async editCompletedPurchaseConfirm(item) {
-		const alert = await this.alertController.create({
-			header: 'Confirm!',
-			message: 'Editing completed purchase, Are you sure?',
-			buttons: [
-				{
-					text: 'Cancel',
-					role: 'cancel',
-					cssClass: 'secondary',
-					handler: (blah) => {
-						console.log('Confirm Cancel: blah');
-					},
-				},
-				{
-					text: 'Go to purchase screen',
-					handler: () => {
-						console.log('Confirm Okay');
-						this._router.navigateByUrl(`/home/purchase/edit/${item.id}`);
-					},
-				},
-			],
-		});
-
-		await alert.present();
 	}
 
 	openDialog(row): void {

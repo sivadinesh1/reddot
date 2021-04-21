@@ -21,15 +21,16 @@
 				<input
 					matInput
 					[matAutocomplete]="auto"
-					formControlName="customer"
+					formControlName="customerctrl"
 					required
 					matTooltip="Type to filter the Customer list"
 					matTooltipPosition="after"
+					autocomplete="off"
 				/>
 				<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
 					<mat-icon>close</mat-icon>
 				</button>
-				<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
+				<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
 					<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
 						<span>{{ customer.name }} </span>
 					</mat-option>
@@ -52,7 +53,7 @@
 							<div>
 								<mat-form-field class="example-full-width">
 									<mat-label>Amount Received</mat-label>
-									<input matInput type="number" (blur)="blurFn()" formControlName="receivedamount" />
+									<input matInput type="number" (blur)="blurFn()" formControlName="receivedamount" autocomplete="off" />
 									<mat-error *ngIf="product.controls['receivedamount'].hasError('required')"> Required field </mat-error>
 									<mat-error *ngIf="product.controls['receivedamount'].hasError('max')"> Paid mount exceeds invoice amount </mat-error>
 
@@ -72,6 +73,7 @@
 											formControlName="receiveddate"
 											required
 											(focus)="paymentdate.open()"
+											autocomplete="off"
 										/>
 										<mat-datepicker-toggle matSuffix [for]="paymentdate"></mat-datepicker-toggle>
 										<mat-datepicker #paymentdate></mat-datepicker>
@@ -95,13 +97,13 @@
 							<div>
 								<mat-form-field class="example-full-width">
 									<mat-label>Bank Reference#</mat-label>
-									<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" />
+									<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" autocomplete="off" />
 								</mat-form-field>
 							</div>
 							<div>
 								<mat-form-field class="example-full-width">
 									<mat-label>Notes</mat-label>
-									<input matInput type="text" formControlName="pymtref" />
+									<input matInput type="text" formControlName="pymtref" autocomplete="off" />
 								</mat-form-field>
 							</div>
 						</ng-container>
@@ -135,7 +137,7 @@
 			>
 				<div>
 					<div style="text-align: left; padding: 2px; color: #333333; font-size: 13px">
-						Credit Available: {{ this.customer?.credit_amt | currency: "INR" }}
+						Credit Available: {{ this.customer?.credit_amt | currency: 'INR' }}
 					</div>
 				</div>
 				<div style="display: flex; justify-content: flex-end">
@@ -160,7 +162,7 @@
 
 						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500">Balance Due</div>
 						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500; font-size: 13px">
-							{{ this.balancedue | currency: "INR" }}
+							{{ this.balancedue | currency: 'INR' }}
 						</div>
 					</div>
 				</div>

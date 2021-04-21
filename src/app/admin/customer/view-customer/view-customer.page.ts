@@ -29,6 +29,7 @@ import { SuccessMessageDialogComponent } from 'src/app/components/success-messag
 import { DefaultDiscountsComponent } from 'src/app/components/customers/discount/default-discounts/default-discounts.component';
 import { BrandDiscountsComponent } from 'src/app/components/customers/discount/brand-discounts/brand-discounts.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
 	selector: 'app-view-customer',
@@ -77,7 +78,8 @@ export class ViewCustomerPage implements OnInit {
 		private _snackBar: MatSnackBar,
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
-		private _router: Router
+		private _router: Router,
+		private _loadingService: LoadingService
 	) {
 		this.userdata$ = this._authservice.currentUser;
 
@@ -147,7 +149,7 @@ export class ViewCustomerPage implements OnInit {
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
-					this.openSnackBar('Customer added successfully', '');
+					this._loadingService.openSnackBar('Customer added successfully', '');
 				}
 			});
 	}
@@ -383,10 +385,5 @@ export class ViewCustomerPage implements OnInit {
 			});
 	}
 
-	openSnackBar(message: string, action: string) {
-		this._snackBar.open(message, action, {
-			duration: 2000,
-			panelClass: ['mat-toolbar', 'mat-primary'],
-		});
-	}
+	
 }

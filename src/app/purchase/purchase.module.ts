@@ -10,14 +10,16 @@ import { PurchasePage } from './purchase.page';
 import { SharedModule } from '../shared.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    SharedModule,
-    ReactiveFormsModule,
-    PurchasePageRoutingModule
-  ],
-  declarations: [PurchasePage]
+	imports: [
+		CommonModule,
+		FormsModule,
+		IonicModule,
+		SharedModule,
+
+		ReactiveFormsModule,
+		PurchasePageRoutingModule,
+	],
+
+	declarations: [PurchasePage],
 })
-export class PurchasePageModule { }
+export class PurchasePageModule {}

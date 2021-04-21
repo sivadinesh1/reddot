@@ -16,13 +16,7 @@
 >
 	<div>Add New Customer</div>
 	<div>
-		<img
-			class="cursor"
-			src="/assets/images/svg/close.svg"
-			(click)="close()"
-			width="16px"
-			height="16px"
-		/>
+		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
 	</div>
 </div>
 
@@ -31,12 +25,7 @@
 		<div class="name">
 			<mat-form-field class="mat-width-ext">
 				<mat-label>Name</mat-label>
-				<input
-					matInput
-					(blur)="isCustomerExists()"
-					formControlName="name"
-					required
-				/>
+				<input matInput (blur)="isCustomerExists()" formControlName="name" required autocomplete="off" />
 				<mat-error>This field is required</mat-error>
 			</mat-form-field>
 			<div *ngIf="cexists" class="error">Already Exists</div>
@@ -46,45 +35,36 @@
 			<div>
 				<mat-form-field class="mat-width-ext form-field-gap">
 					<mat-label>GST (Optional)</mat-label>
-					<input type="text" matInput formControlName="gst" />
+					<input type="text" matInput formControlName="gst" autocomplete="off" />
 					<mat-hint>Goods and Services Tax</mat-hint>
+					<mat-error *ngIf="submitForm.controls['gst'].hasError('patternInvalid')"> Invalid GST Number format </mat-error>
 				</mat-form-field>
 			</div>
 		</div>
 		<div>
-			<div style="padding: 16px 0px 3px 0px">
-				Primary Billing & Shipping Address
-			</div>
-			<div style="font-size: 12px; color: royalblue">
-				Add multiple shipping address via view customer page
-			</div>
+			<div style="padding: 16px 0px 3px 0px">Primary Billing & Shipping Address</div>
+			<div style="font-size: 12px; color: royalblue">Add multiple shipping address via view customer page</div>
 			<br />
 			<div class="address1">
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Address Line 1</mat-label>
-					<input matInput formControlName="address1" required />
-					<mat-error *ngIf="submitForm.get('address1').hasError('required')">
-						This field is <strong>required</strong>
-					</mat-error>
+					<input matInput formControlName="address1" required autocomplete="off" />
+					<mat-error *ngIf="submitForm.get('address1').hasError('required')"> This field is <strong>required</strong> </mat-error>
 				</mat-form-field>
 			</div>
 			<div class="address2">
 				<mat-form-field class="mat-width-ext form-field-gap">
 					<mat-label>Address Line 2</mat-label>
-					<input matInput formControlName="address2" required />
-					<mat-error *ngIf="submitForm.get('address2').hasError('required')">
-						This field is <strong>required</strong>
-					</mat-error>
+					<input matInput formControlName="address2" required autocomplete="off" />
+					<mat-error *ngIf="submitForm.get('address2').hasError('required')"> This field is <strong>required</strong> </mat-error>
 				</mat-form-field>
 			</div>
 
 			<div class="district">
 				<mat-form-field class="mat-width-ext form-field-gap">
 					<mat-label>District</mat-label>
-					<input matInput formControlName="district" required />
-					<mat-error *ngIf="submitForm.get('district').hasError('required')">
-						This field is <strong>required</strong>
-					</mat-error>
+					<input matInput formControlName="district" required autocomplete="off" />
+					<mat-error *ngIf="submitForm.get('district').hasError('required')"> This field is <strong>required</strong> </mat-error>
 				</mat-form-field>
 			</div>
 
@@ -102,10 +82,8 @@
 			<div class="pin">
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Pin Code</mat-label>
-					<input matInput formControlName="pin" required />
-					<mat-error *ngIf="submitForm.get('pin').hasError('required')">
-						This field is <strong>required</strong>
-					</mat-error>
+					<input matInput formControlName="pin" required autocomplete="off" />
+					<mat-error *ngIf="submitForm.get('pin').hasError('required')"> This field is <strong>required</strong> </mat-error>
 				</mat-form-field>
 			</div>
 		</div>
@@ -116,80 +94,45 @@
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Primary Mobile</mat-label>
-					<input
-						type="number"
-						matInput
-						formControlName="mobile"
-						required
-						numeric
-					/>
-					<mat-error *ngIf="submitForm.get('mobile').hasError('required')">
-						This field is <strong>required</strong>
-					</mat-error>
-					<mat-error
-						*ngIf="
-							submitForm.controls['mobile'].hasError('invalidCountryPhone')
-						"
-					>
-						Invalid mobile number
-					</mat-error>
+					<input type="number" matInput formControlName="mobile" required numeric autocomplete="off" />
+					<mat-error *ngIf="submitForm.get('mobile').hasError('required')"> This field is <strong>required</strong> </mat-error>
+					<mat-error *ngIf="submitForm.controls['mobile'].hasError('invalidCountryPhone')"> Invalid mobile number </mat-error>
 				</mat-form-field>
 			</div>
 
 			<div>
 				<mat-form-field class="mat-width-ext form-field-gap">
 					<mat-label>Secondary Mobile (Optional)</mat-label>
-					<input type="number" matInput formControlName="mobile2" numeric />
+					<input type="number" matInput formControlName="mobile2" numeric autocomplete="off" />
 				</mat-form-field>
 			</div>
 
 			<div>
 				<mat-form-field class="mat-width-ext form-field-gap">
 					<mat-label>Whatsapp (Optional)</mat-label>
-					<input type="number" matInput formControlName="whatsapp" numeric />
+					<input type="number" matInput formControlName="whatsapp" numeric autocomplete="off" />
 
-					<mat-error
-						*ngIf="
-							submitForm.controls['whatsapp'].hasError('invalidCountryPhone')
-						"
-					>
-						Invalid mobile number
-					</mat-error>
+					<mat-error *ngIf="submitForm.controls['whatsapp'].hasError('invalidCountryPhone')"> Invalid mobile number </mat-error>
 				</mat-form-field>
 			</div>
 
 			<div>
 				<mat-form-field class="mat-width-ext form-field-gap">
 					<mat-label>Landline (Optional)</mat-label>
-					<input
-						type="number"
-						matInput
-						formControlName="phone"
-						min="0"
-						numeric
-					/>
+					<input type="number" matInput formControlName="phone" min="0" numeric autocomplete="off" />
 				</mat-form-field>
 			</div>
 
 			<div>
 				<mat-form-field class="mat-width-ext form-field-gap">
 					<mat-label>Email (Optional)</mat-label>
-					<input type="text" matInput formControlName="email" />
+					<input type="text" matInput formControlName="email" autocomplete="off" />
 				</mat-form-field>
 			</div>
 		</div>
 
-		<div style="padding: 1rem 0rem; font-weight: 400">
-			Set Default Discount (Optional)
-		</div>
-		<div
-			style="
-				display: grid;
-				grid-gap: 16px;
-				padding: 1rem 0rem;
-				grid-template-columns: 1fr;
-			"
-		>
+		<div style="padding: 1rem 0rem; font-weight: 400">Set Default Discount (Optional)</div>
+		<div style="display: grid; grid-gap: 16px; padding: 1rem 0rem; grid-template-columns: 1fr">
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Discount Type</mat-label>
@@ -204,62 +147,31 @@
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (0%)</mat-label>
-						<input
-							type="text"
-							matInput
-							number
-							appSelectOnFocus
-							(change)="prepopulate()"
-							formControlName="gstzero"
-						/>
+						<input type="text" matInput number appSelectOnFocus (change)="prepopulate()" formControlName="gstzero" autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (5%)</mat-label>
-						<input
-							type="text"
-							matInput
-							number
-							appSelectOnFocus
-							formControlName="gstfive"
-						/>
+						<input type="text" matInput number appSelectOnFocus formControlName="gstfive" autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (12%)</mat-label>
-						<input
-							type="text"
-							matInput
-							number
-							appSelectOnFocus
-							formControlName="gsttwelve"
-						/>
+						<input type="text" matInput number appSelectOnFocus formControlName="gsttwelve" autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (18%)</mat-label>
-						<input
-							type="text"
-							matInput
-							number
-							appSelectOnFocus
-							formControlName="gsteighteen"
-						/>
+						<input type="text" matInput number appSelectOnFocus formControlName="gsteighteen" autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (28%)</mat-label>
-						<input
-							type="text"
-							matInput
-							number
-							appSelectOnFocus
-							formControlName="gsttwentyeight"
-						/>
+						<input type="text" matInput number appSelectOnFocus formControlName="gsttwentyeight" autocomplete="off" />
 					</mat-form-field>
 				</div>
 			</div>
@@ -268,11 +180,8 @@
 			{{ responseMsg }}
 		</div>
 		<div style="text-align: center">
-			<button mat-stroked-button type="button" (click)="clear()">Clear</button
-			>&nbsp;&nbsp;
-			<button mat-raised-button color="primary" type="submit">
-				+ Add Customer
-			</button>
+			<button mat-stroked-button type="button" (click)="clear()">Clear</button>&nbsp;&nbsp;
+			<button mat-raised-button color="primary" type="submit">+ Add Customer</button>
 		</div>
 	</form>
 </div>

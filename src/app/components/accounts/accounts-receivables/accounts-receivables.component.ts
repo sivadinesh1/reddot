@@ -1,17 +1,7 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ChangeDetectionStrategy,
-	Inject,
-} from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 
-import {
-	MatDialog,
-	MatDialogRef,
-	MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModalController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
@@ -84,13 +74,11 @@ export class AccountsReceivablesComponent implements OnInit {
 
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
-				this.init();
-				this._cdr.markForCheck();
-			});
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
+			this.init();
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
 			if (this.userdata !== undefined) {
@@ -101,46 +89,38 @@ export class AccountsReceivablesComponent implements OnInit {
 
 	async init() {
 		// onload list all active customers in the dropdown
-		this._commonApiService
-			.getAllActiveCustomers(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.customer_lis = data;
-				// autocomplete as typing
-				this.filteredCustomer = this.submitForm.controls[
-					'customer'
-				].valueChanges.pipe(
-					startWith(''),
-					map((customer) =>
-						customer ? this.filtercustomer(customer) : this.customer_lis.slice()
-					)
-				);
-			});
+		this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
+			this.customer_lis = data;
+
+			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
+				startWith(''),
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+			);
+		});
+
+		this._cdr.markForCheck();
 
 		// fetch all payment mode list
-		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(
-			this.userdata.center_id,
-			'A'
-		);
+		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(this.userdata.center_id, 'A');
 	}
 
 	// filter customers as we type
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter((customer) => {
-				customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0;
-			});
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
 		}
 	}
 
 	ngOnInit() {
 		// init form values
 		this.submitForm = this._fb.group({
-			customer: ['', Validators.required],
+			customerid: ['all'],
+			customerctrl: new FormControl({
+				value: 'Select a customer',
+				disabled: false,
+			}),
 			centerid: [this.userdata.center_id, Validators.required],
 			accountarr: this._fb.array([]),
 			invoicesplit: [],
@@ -194,9 +174,7 @@ export class AccountsReceivablesComponent implements OnInit {
 		this.invoicesplitArr = [];
 
 		// deep  copy to new value
-		this.origCustomerUnpaidInvoices = JSON.parse(
-			JSON.stringify(this.customerUnpaidInvoices)
-		);
+		this.origCustomerUnpaidInvoices = JSON.parse(JSON.stringify(this.customerUnpaidInvoices));
 
 		const ctrl = <FormArray>this.submitForm.controls['accountarr'];
 
@@ -206,12 +184,7 @@ export class AccountsReceivablesComponent implements OnInit {
 		ctrl.controls.forEach((x) => {
 			// get the itemmt value and need to parse the input to number
 
-			let parsed = parseFloat(
-				x.get('receivedamount').value === '' ||
-					x.get('receivedamount').value === null
-					? 0
-					: x.get('receivedamount').value
-			);
+			let parsed = parseFloat(x.get('receivedamount').value === '' || x.get('receivedamount').value === null ? 0 : x.get('receivedamount').value);
 			// add to total
 
 			this.summed += parsed;
@@ -222,30 +195,20 @@ export class AccountsReceivablesComponent implements OnInit {
 
 		// after iterating all the line items (in this case, there will be only one row) distribute the amount paid (customer credit if any) to all invoices
 		if (init == ctrl.controls.length) {
-			this.distributeBalance = +(
-				this.summed + this.customer.credit_amt
-			).toFixed(2);
+			this.distributeBalance = +(this.summed + this.customer.credit_amt).toFixed(2);
 
 			this.origCustomerUnpaidInvoices.map((e) => {
 				if (this.distributeBalance > 0) {
-					if (
-						e.bal_amount > 0 &&
-						+(e.bal_amount - this.distributeBalance).toFixed(2) <= 0
-					) {
+					if (e.bal_amount > 0 && +(e.bal_amount - this.distributeBalance).toFixed(2) <= 0) {
 						//excess distribution
 						e.paid_amount = e.bal_amount;
-						this.distributeBalance = +(
-							this.distributeBalance - e.bal_amount
-						).toFixed(2);
+						this.distributeBalance = +(this.distributeBalance - e.bal_amount).toFixed(2);
 						e.bal_amount = 0;
 						this.invoicesplitArr.push({
 							id: e.sale_id,
 							applied_amount: e.paid_amount,
 						});
-					} else if (
-						e.bal_amount > 0 &&
-						+(e.bal_amount - this.distributeBalance).toFixed(2) > 0
-					) {
+					} else if (e.bal_amount > 0 && +(e.bal_amount - this.distributeBalance).toFixed(2) > 0) {
 						//shortage distribution
 						e.paid_amount = this.distributeBalance;
 						e.bal_amount = +(e.bal_amount - this.distributeBalance).toFixed(2);
@@ -265,14 +228,10 @@ export class AccountsReceivablesComponent implements OnInit {
 	}
 
 	getBalanceDue() {
-		this.balancedue = (
-			+this.invoiceamount -
-			(+this.paidamount + this.customer.credit_amt + this.summed)
-		).toFixed(2);
+		this.balancedue = (+this.invoiceamount - (+this.paidamount + this.customer.credit_amt + this.summed)).toFixed(2);
 
 		if (+this.balancedue < 0) {
-			this.errmsg =
-				'Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit.';
+			this.errmsg = 'Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit.';
 			this._cdr.markForCheck();
 		} else {
 			this.errmsg = '';
@@ -295,17 +254,15 @@ export class AccountsReceivablesComponent implements OnInit {
 				});
 			}
 
-			this._commonApiService
-				.addBulkPymtReceived(this.submitForm.value)
-				.subscribe((data: any) => {
-					if (data.body === 'success') {
-						this.submitForm.reset();
-						this.dialogRef.close('close');
-					} else {
-						// todo nothing as of now
-					}
-					this._cdr.markForCheck();
-				});
+			this._commonApiService.addBulkPymtReceived(this.submitForm.value).subscribe((data: any) => {
+				if (data.body === 'success') {
+					this.submitForm.reset();
+					this.dialogRef.close('close');
+				} else {
+					// todo nothing as of now
+				}
+				this._cdr.markForCheck();
+			});
 		}
 	}
 
@@ -319,10 +276,10 @@ export class AccountsReceivablesComponent implements OnInit {
 
 		this.submitForm.patchValue({
 			customerid: event.option.value.id,
-			customer: event.option.value.name,
+			customerctrl: event.option.value.name,
 		});
 
-		this.customer = event.option.value;
+		// this.customer = event.option.value;
 
 		// get all unpaid invoices for a customer
 
@@ -330,9 +287,7 @@ export class AccountsReceivablesComponent implements OnInit {
 			.filter((e) => e.customer_id === event.option.value.id)
 			.filter((e1) => e1.payment_status != 'PAID');
 
-		this.origCustomerUnpaidInvoices = JSON.parse(
-			JSON.stringify(this.customerUnpaidInvoices)
-		);
+		this.origCustomerUnpaidInvoices = JSON.parse(JSON.stringify(this.customerUnpaidInvoices));
 
 		this.invoiceamount = this.customerUnpaidInvoices
 			.reduce(function (acc, curr) {
@@ -355,8 +310,7 @@ export class AccountsReceivablesComponent implements OnInit {
 
 	clearInput() {
 		this.submitForm.patchValue({
-			customerid: 'all',
-			customer: '',
+			customerctrl: null,
 		});
 		this._cdr.markForCheck();
 	}

@@ -20,6 +20,7 @@ import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { AlertController } from '@ionic/angular';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
 	selector: 'app-customer-add-dialog',
@@ -46,7 +47,7 @@ export class CustomerAddDialogComponent implements OnInit {
 		private _cdr: ChangeDetectorRef,
 		private _router: Router,
 		private _formBuilder: FormBuilder,
-		private _snackBar: MatSnackBar,
+		private _loadingService: LoadingService,
 		public alertController: AlertController,
 		private dialogRef: MatDialogRef<CustomerAddDialogComponent>,
 		private _route: ActivatedRoute,
@@ -128,7 +129,7 @@ export class CustomerAddDialogComponent implements OnInit {
 
 	onSubmit() {
 		if (!this.submitForm.valid) {
-			this.openSnackBar('Please check all fields', '');
+			this._loadingService.openSnackBar('Please check all fields', '');
 			return false;
 		}
 
@@ -185,12 +186,12 @@ export class CustomerAddDialogComponent implements OnInit {
 		});
 	}
 
-	openSnackBar(message: string, action: string) {
-		this._snackBar.open(message, action, {
-			duration: 2000,
-			panelClass: ['mat-toolbar', 'mat-primary'],
-		});
-	}
+	// openSnackBar(message: string, action: string) {
+	// 	this._snackBar.open(message, action, {
+	// 		duration: 2000,
+	// 		panelClass: ['mat-toolbar', 'mat-primary'],
+	// 	});
+	// }
 
 	prepopulate() {
 		if (!this.executed) {

@@ -2,13 +2,7 @@
 	<div class="screen-header">
 		<div>Payment Receivables</div>
 		<div>
-			<img
-				class="cursor"
-				src="/assets/images/svg/close.svg"
-				(click)="close()"
-				width="20px"
-				height="20px"
-			/>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
 		</div>
 	</div>
 	<div class="content">
@@ -26,25 +20,13 @@
 					required
 					matTooltip="Type to filter the Vendors list"
 					matTooltipPosition="after"
+					autocomplete="off"
 				/>
-				<button
-					mat-button
-					matSuffix
-					mat-icon-button
-					aria-label="Clear"
-					type="button"
-					(click)="clearInput()"
-				>
+				<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
 					<mat-icon>close</mat-icon>
 				</button>
-				<mat-autocomplete
-					#auto="matAutocomplete"
-					(optionSelected)="getPosts($event)"
-				>
-					<mat-option
-						*ngFor="let vendor of filteredVendor | async"
-						[value]="vendor"
-					>
+				<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
+					<mat-option *ngFor="let vendor of filteredVendor | async" [value]="vendor">
 						<span>{{ vendor.name }} </span>
 					</mat-option>
 				</mat-autocomplete>
@@ -66,24 +48,9 @@
 							<div>
 								<mat-form-field class="example-full-width">
 									<mat-label>Amount Received</mat-label>
-									<input
-										matInput
-										type="number"
-										(blur)="blurFn()"
-										formControlName="receivedamount"
-									/>
-									<mat-error
-										*ngIf="
-											product.controls['receivedamount'].hasError('required')
-										"
-									>
-										Required field
-									</mat-error>
-									<mat-error
-										*ngIf="product.controls['receivedamount'].hasError('max')"
-									>
-										Paid mount exceeds invoice amount
-									</mat-error>
+									<input matInput type="number" (blur)="blurFn()" formControlName="receivedamount" autocomplete="off" />
+									<mat-error *ngIf="product.controls['receivedamount'].hasError('required')"> Required field </mat-error>
+									<mat-error *ngIf="product.controls['receivedamount'].hasError('max')"> Paid mount exceeds invoice amount </mat-error>
 
 									<!-- <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon> -->
 								</mat-form-field>
@@ -101,19 +68,11 @@
 											formControlName="receiveddate"
 											required
 											(focus)="paymentdate.open()"
+											autocomplete="off"
 										/>
-										<mat-datepicker-toggle
-											matSuffix
-											[for]="paymentdate"
-										></mat-datepicker-toggle>
+										<mat-datepicker-toggle matSuffix [for]="paymentdate"></mat-datepicker-toggle>
 										<mat-datepicker #paymentdate></mat-datepicker>
-										<mat-error
-											*ngIf="
-												product.controls['receiveddate'].hasError('required')
-											"
-										>
-											Required field
-										</mat-error>
+										<mat-error *ngIf="product.controls['receiveddate'].hasError('required')"> Required field </mat-error>
 									</mat-form-field>
 								</ion-item>
 							</div>
@@ -122,10 +81,7 @@
 								<mat-form-field class="example-full-width">
 									<mat-label>Payment Mode</mat-label>
 									<mat-select formControlName="pymtmode">
-										<mat-option
-											*ngFor="let item of pymtmodes$ | async"
-											[value]="item.id"
-										>
+										<mat-option *ngFor="let item of pymtmodes$ | async" [value]="item.id">
 											{{ item.pymt_mode_name }}
 										</mat-option>
 									</mat-select>
@@ -136,18 +92,13 @@
 							<div>
 								<mat-form-field class="example-full-width">
 									<mat-label>Bank Reference#</mat-label>
-									<input
-										matInput
-										autofocus="*ngIf=idx === 1"
-										type="text"
-										formControlName="bankref"
-									/>
+									<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" autocomplete="off" />
 								</mat-form-field>
 							</div>
 							<div>
 								<mat-form-field class="example-full-width">
 									<mat-label>Notes</mat-label>
-									<input matInput type="text" formControlName="pymtref" />
+									<input matInput type="text" formControlName="pymtref" autocomplete="off" />
 								</mat-form-field>
 							</div>
 						</ng-container>
@@ -155,32 +106,17 @@
 				</div>
 			</div>
 
-			<div *ngIf="isvendorselected" style="padding: 16px 0px; color: #333333">
-				UNPAID INVOICES
-			</div>
-			<div
-				style="
-					display: grid;
-					grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-					background-color: #f1f1f1;
-					padding: 6px;
-				"
-				*ngIf="isvendorselected"
-			>
+			<div *ngIf="isvendorselected" style="padding: 16px 0px; color: #333333">UNPAID INVOICES</div>
+			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; background-color: #f1f1f1; padding: 6px" *ngIf="isvendorselected">
 				<div class="theader">Invoice Date</div>
 				<div class="theader">Invoice #</div>
 				<div class="theader m-curr-field">Invoice Amount</div>
-				<div class="theader" style="text-align: left; padding-left: 16px">
-					Payment Mode
-				</div>
+				<div class="theader" style="text-align: left; padding-left: 16px">Payment Mode</div>
 				<div class="theader m-curr-field">Paid Amount</div>
 				<div class="theader m-curr-field">Balance Amount</div>
 			</div>
 			<div *ngIf="isvendorselected">
-				<div
-					*ngFor="let item of origVendorUnpaidInvoices"
-					style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr"
-				>
+				<div *ngFor="let item of origVendorUnpaidInvoices" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr">
 					<div style="padding: 4px 4px 4px 6px; font-size: 13px">
 						{{ item.invoice_date }}
 					</div>
@@ -201,137 +137,38 @@
 			</div>
 
 			<div
-				style="
-					display: grid;
-					grid-template-columns: 2fr 4fr;
-					margin-top: 16px;
-					margin-bottom: 16px;
-					padding: 16px;
-					background-color: #fbfbfb;
-				"
+				style="display: grid; grid-template-columns: 2fr 4fr; margin-top: 16px; margin-bottom: 16px; padding: 16px; background-color: #fbfbfb"
 				*ngIf="isvendorselected"
 			>
 				<div>
-					<div
-						style="
-							text-align: left;
-							padding: 2px;
-							color: #333333;
-							font-size: 13px;
-						"
-					>
+					<div style="text-align: left; padding: 2px; color: #333333; font-size: 13px">
 						Credit Available: {{ this.vendor?.credit_amt | currency: 'INR' }}
 					</div>
 				</div>
 				<div style="display: flex; justify-content: flex-end">
 					<div style="display: grid; grid-template-columns: 1fr 1fr">
-						<div
-							style="
-								text-align: right;
-								padding: 2px;
-								color: #333333;
-								font-size: 13px;
-							"
-						>
-							Invoice(s) Total
-						</div>
-						<div
-							style="
-								text-align: right;
-								padding: 2px;
-								color: #333333;
-								font-size: 13px;
-							"
-						>
+						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px">Invoice(s) Total</div>
+						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px">
 							{{ this.invoiceamount }}
 						</div>
 
-						<div
-							*ngIf="this.invoice?.paid_amount !== 0.0"
-							style="
-								text-align: right;
-								padding: 2px;
-								color: #333333;
-								font-size: 13px;
-							"
-						>
+						<div *ngIf="this.invoice?.paid_amount !== 0.0" style="text-align: right; padding: 2px; color: #333333; font-size: 13px">
 							Received Payments
 						</div>
-						<div
-							*ngIf="this.invoice?.paid_amount !== 0.0"
-							style="
-								text-align: right;
-								padding: 2px;
-								color: red;
-								font-size: 13px;
-							"
-						>
+						<div *ngIf="this.invoice?.paid_amount !== 0.0" style="text-align: right; padding: 2px; color: red; font-size: 13px">
 							(-) {{ this.paidamount }}
 						</div>
 
-						<div
-							style="
-								text-align: right;
-								padding: 2px;
-								color: #333333;
-								font-size: 13px;
-							"
-						>
-							Now Paying
-						</div>
-						<div
-							style="
-								text-align: right;
-								padding: 2px;
-								color: red;
-								font-size: 13px;
-							"
-						>
-							(-) {{ this.summed }}
-						</div>
+						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px">Now Paying</div>
+						<div style="text-align: right; padding: 2px; color: red; font-size: 13px">(-) {{ this.summed }}</div>
 
-						<div
-							*ngIf="this.vendor?.credit_amt !== 0.0"
-							style="
-								text-align: right;
-								padding: 2px;
-								color: #333333;
-								font-size: 13px;
-							"
-						>
-							Credits used
-						</div>
-						<div
-							*ngIf="this.vendor?.credit_amt !== 0.0"
-							style="
-								text-align: right;
-								padding: 2px;
-								color: red;
-								font-size: 13px;
-							"
-						>
+						<div *ngIf="this.vendor?.credit_amt !== 0.0" style="text-align: right; padding: 2px; color: #333333; font-size: 13px">Credits used</div>
+						<div *ngIf="this.vendor?.credit_amt !== 0.0" style="text-align: right; padding: 2px; color: red; font-size: 13px">
 							(-) {{ this.vendor?.credit_amt }}
 						</div>
 
-						<div
-							style="
-								text-align: right;
-								padding: 2px;
-								color: #000000;
-								font-weight: 500;
-							"
-						>
-							Balance Due
-						</div>
-						<div
-							style="
-								text-align: right;
-								padding: 2px;
-								color: #000000;
-								font-weight: 500;
-								font-size: 13px;
-							"
-						>
+						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500">Balance Due</div>
+						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500; font-size: 13px">
 							{{ this.balancedue | currency: 'INR' }}
 						</div>
 					</div>
@@ -341,16 +178,7 @@
 
 		<div style="text-align: center" class="error">{{ errmsg }}</div>
 		<div class="submit" *ngIf="isvendorselected">
-			<button
-				mat-raised-button
-				color="primary"
-				type="submit"
-				name="action"
-				class="cursor"
-				[disabled]="!submitForm.valid"
-			>
-				Add Receivables
-			</button>
+			<button mat-raised-button color="primary" type="submit" name="action" class="cursor" [disabled]="!submitForm.valid">Add Receivables</button>
 		</div>
 	</form>
 </div>

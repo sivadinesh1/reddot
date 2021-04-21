@@ -123,6 +123,7 @@ import { VendorPaymentDialogComponent } from './components/vendors/vendor-paymen
 import { AccountsPayablesComponent } from './components/accounts/accounts-payables/accounts-payables.component';
 import { ShowVendorStatementComponent } from './components/reports/show-vendor-statement/show-vendor-statement.component';
 import { SelectOnFocusDirective } from './util/directives/select-focus.directive';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 const components = [
 	NullToQuotePipe,
@@ -255,6 +256,7 @@ const matcomponents = [
 	MatBadgeModule,
 	MatTabsModule,
 	MatStepperModule,
+	ScrollingModule,
 ];
 
 @NgModule({

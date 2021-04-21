@@ -111,13 +111,14 @@
 					[(selectedIndex)]="tabIndex"
 					(selectedTabChange)="tabClick($event)"
 				>
-					<mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
+					<!-- DnD  -->
+					<!-- <mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
 						<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-					</mat-tab>
+					</mat-tab> -->
 
 					<mat-tab
-						label="Completed  ({{(fullfilledPurchase$| async)?.length }})"
+						label="Purchase Orders  ({{(fullfilledPurchase$| async)?.length }})"
 					>
 						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>

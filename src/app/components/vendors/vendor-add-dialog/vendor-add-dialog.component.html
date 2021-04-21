@@ -16,13 +16,7 @@
 >
 	<div>Add New Vendor</div>
 	<div>
-		<img
-			class="cursor"
-			src="/assets/images/svg/close.svg"
-			(click)="close()"
-			width="16px"
-			height="16px"
-		/>
+		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
 	</div>
 </div>
 
@@ -32,12 +26,7 @@
 			<div class="name">
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Name</mat-label>
-					<input
-						matInput
-						(blur)="isVendorExists()"
-						formControlName="name"
-						required
-					/>
+					<input matInput (blur)="isVendorExists()" formControlName="name" required autocomplete="off" />
 					<mat-error>This field is required</mat-error>
 				</mat-form-field>
 				<div *ngIf="vexists" class="error">Already Exists</div>
@@ -46,7 +35,7 @@
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>GST (Optional)</mat-label>
-					<input type="text" matInput formControlName="gst" placeholder="GST" />
+					<input type="text" matInput formControlName="gst" placeholder="GST" autocomplete="off" />
 					<mat-hint>Goods and Services Tax</mat-hint>
 				</mat-form-field>
 			</div>
@@ -56,49 +45,27 @@
 				<div class="address1">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 1</mat-label>
-						<input
-							matInput
-							placeholder="Address Line 1"
-							formControlName="address1"
-							required
-						/>
+						<input matInput placeholder="Address Line 1" formControlName="address1" required autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div class="address2">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 2</mat-label>
-						<input
-							matInput
-							placeholder="Address Line 2"
-							formControlName="address2"
-							required
-						/>
+						<input matInput placeholder="Address Line 2" formControlName="address2" required autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div class="address3">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Address Line 3</mat-label>
-						<input
-							matInput
-							placeholder="Address Line 3"
-							formControlName="address3"
-							required
-						/>
+						<input matInput placeholder="Address Line 3" formControlName="address3" required autocomplete="off" />
 					</mat-form-field>
 				</div>
 
 				<div class="district">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>District</mat-label>
-						<input
-							matInput
-							placeholder="District"
-							formControlName="district"
-							required
-						/>
-						<mat-error *ngIf="submitForm.get('district').hasError('required')">
-							This field is <strong>required</strong>
-						</mat-error>
+						<input matInput placeholder="District" formControlName="district" required autocomplete="off" />
+						<mat-error *ngIf="submitForm.get('district').hasError('required')"> This field is <strong>required</strong> </mat-error>
 					</mat-form-field>
 				</div>
 
@@ -116,10 +83,8 @@
 				<div class="pin">
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Pin</mat-label>
-						<input matInput formControlName="pin" required />
-						<mat-error *ngIf="submitForm.get('pin').hasError('required')">
-							This field is <strong>required</strong>
-						</mat-error>
+						<input matInput formControlName="pin" required autocomplete="off" />
+						<mat-error *ngIf="submitForm.get('pin').hasError('required')"> This field is <strong>required</strong> </mat-error>
 					</mat-form-field>
 				</div>
 			</div>
@@ -130,14 +95,14 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Primary Contact #</mat-label>
-						<input type="number" matInput formControlName="phone" required />
+						<input type="number" matInput formControlName="phone" required autocomplete="off" />
 						<mat-error>Missing or wrong format</mat-error>
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Secondary Contact #</mat-label>
-						<input type="number" matInput formControlName="mobile" required />
+						<input type="number" matInput formControlName="mobile" required autocomplete="off" />
 						<mat-error>Missing or wrong format</mat-error>
 					</mat-form-field>
 				</div>
@@ -145,7 +110,7 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Landline (Optional)</mat-label>
-						<input type="number" matInput formControlName="mobile2" />
+						<input type="number" matInput formControlName="mobile2" autocomplete="off" />
 						<mat-error>Missing or wrong format</mat-error>
 					</mat-form-field>
 				</div>
@@ -153,12 +118,7 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Whatsapp (Optional)</mat-label>
-						<input
-							type="number"
-							matInput
-							formControlName="whatsapp"
-							placeholder="Whatsapp"
-						/>
+						<input type="number" matInput formControlName="whatsapp" placeholder="Whatsapp" autocomplete="off" />
 						<mat-error>Missing or wrong format</mat-error>
 					</mat-form-field>
 				</div>
@@ -166,12 +126,7 @@
 				<div>
 					<mat-form-field class="mat-width-ext">
 						<mat-label>Email (Optional)</mat-label>
-						<input
-							type="text"
-							matInput
-							formControlName="email"
-							placeholder="Email"
-						/>
+						<input type="text" matInput formControlName="email" placeholder="Email" autocomplete="off" />
 						<mat-error>Missing or wrong format</mat-error>
 					</mat-form-field>
 				</div>
@@ -179,9 +134,7 @@
 		</div>
 
 		<div style="text-align: center">
-			<button mat-raised-button color="primary" type="submit">
-				+ Add New Vendor
-			</button>
+			<button mat-raised-button color="primary" type="submit">+ Add New Vendor</button>
 		</div>
 	</form>
 </div>

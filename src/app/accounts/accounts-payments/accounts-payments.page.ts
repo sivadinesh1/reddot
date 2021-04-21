@@ -1,10 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ViewChild,
-	ElementRef,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Observable, lastValueFrom } from 'rxjs';
 import { Customer } from 'src/app/models/Customer';
 import { User } from 'src/app/models/User';
@@ -20,12 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CustomerPaymentDialogComponent } from 'src/app/components/customers/customer-payment-dialog/customer-payment-dialog.component';
 import { AccountsReceivablesComponent } from 'src/app/components/accounts/accounts-receivables/accounts-receivables.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { filter, tap, map, startWith } from 'rxjs/operators';
 import * as xlsx from 'xlsx';
 import * as moment from 'moment';
@@ -76,16 +65,7 @@ export class AccountsPaymentsPage implements OnInit {
 	@ViewChild('epltable1', { static: false }) epltable1: ElementRef;
 
 	// table display columns
-	saleInvoiceDisplayedColumns: string[] = [
-		'invoicedate',
-		'invoiceno',
-		'customername',
-		'nettotal',
-		'paymentstatus',
-		'paidamt',
-		'balamt',
-		'paybtn',
-	];
+	saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
 	paymentDisplayedColumns: string[] = [
 		'customername',
 		'pymtdate',
@@ -97,15 +77,7 @@ export class AccountsPaymentsPage implements OnInit {
 		'pymtref',
 		'paidamt',
 	];
-	pymtTxnDisplayedColumns: string[] = [
-		'custname',
-		'pymtno',
-		'pymtdate',
-		'paidamt',
-		'paymode',
-		'bankref',
-		'payref',
-	];
+	pymtTxnDisplayedColumns: string[] = ['custname', 'pymtno', 'pymtdate', 'paidamt', 'paymode', 'bankref', 'payref'];
 
 	// data sources
 	paymentdataSource = new MatTableDataSource<any>();
@@ -150,16 +122,14 @@ export class AccountsPaymentsPage implements OnInit {
 			searchtype: new FormControl('all'),
 		});
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this._authservice.setCurrentMenu('RECEIVABLES');
-				this.userdata = data;
-				this.ready = 1;
-				this.init();
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this._authservice.setCurrentMenu('RECEIVABLES');
+			this.userdata = data;
+			this.ready = 1;
+			this.init();
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
 			if (this.userdata !== undefined) {
@@ -186,15 +156,9 @@ export class AccountsPaymentsPage implements OnInit {
 
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
 		}
 	}
 
@@ -205,20 +169,14 @@ export class AccountsPaymentsPage implements OnInit {
 			//this.reloadTransactionsByCenter(this.userdata.center_id);
 		}
 
-		this._commonApiService
-			.getAllActiveCustomers(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.customer_lis = data;
+		this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
+			this.customer_lis = data;
 
-				this.filteredCustomer = this.submitForm.controls[
-					'customerctrl'
-				].valueChanges.pipe(
-					startWith(''),
-					map((customer) =>
-						customer ? this.filtercustomer(customer) : this.customer_lis.slice()
-					)
-				);
-			});
+			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
+				startWith(''),
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+			);
+		});
 	}
 
 	getPosts(event) {
@@ -356,20 +314,18 @@ export class AccountsPaymentsPage implements OnInit {
 	}
 
 	reloadTransactionsByCenter(center_id) {
-		this._commonApiService
-			.getPymtTransactionsByCenter(center_id)
-			.subscribe((data: any) => {
-				this.pymttransactionsdataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
-
-				this.pymttransactionsdataSource.sort = this.sort;
-				this.pageLength = data.length;
-
-				this._cdr.markForCheck();
+		this._commonApiService.getPymtTransactionsByCenter(center_id).subscribe((data: any) => {
+			this.pymttransactionsdataSource.data = data.map((el) => {
+				var o = Object.assign({}, el);
+				o.isExpanded = false;
+				return o;
 			});
+
+			this.pymttransactionsdataSource.sort = this.sort;
+			this.pageLength = data.length;
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	reloadSaleInvoiceByCenter() {
@@ -461,8 +417,7 @@ export class AccountsPaymentsPage implements OnInit {
 
 	clearPendingPymtCustomers() {
 		this.submitForm.patchValue({
-			customerid: 'all',
-			customerctrl: 'All Customers',
+			customerctrl: null,
 		});
 		this._cdr.markForCheck();
 		this.searchPendingPayments();
@@ -490,23 +445,18 @@ export class AccountsPaymentsPage implements OnInit {
 	}
 
 	goCustomerFinancials(customer_id) {
-		this._router.navigate([
-			`/home/financials-customer/${this.userdata.center_id}/${customer_id}`,
-		]);
+		this._router.navigate([`/home/financials-customer/${this.userdata.center_id}/${customer_id}`]);
 	}
 
 	addPayments() {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
+		dialogConfig.autoFocus = false;
 		dialogConfig.width = '80%';
 		dialogConfig.height = '80%';
 		dialogConfig.data = { invoicesdata: this.invoicesdata };
 
-		const dialogRef = this._dialog.open(
-			AccountsReceivablesComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(AccountsReceivablesComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -523,50 +473,42 @@ export class AccountsPaymentsPage implements OnInit {
 	addPaymentsBillToBill(element) {
 		let success = 0;
 
-		this._commonApiService
-			.getCustomerDetails(this.userdata.center_id, element.customer_id)
-			.subscribe((customerdata) => {
-				const dialogConfig = new MatDialogConfig();
-				dialogConfig.disableClose = true;
-				dialogConfig.autoFocus = true;
-				dialogConfig.width = '80%';
-				dialogConfig.height = '80%';
-				dialogConfig.data = {
-					customerdata: customerdata[0],
-					invoicedata: element,
-				};
+		this._commonApiService.getCustomerDetails(this.userdata.center_id, element.customer_id).subscribe((customerdata) => {
+			const dialogConfig = new MatDialogConfig();
+			dialogConfig.disableClose = true;
+			dialogConfig.autoFocus = true;
+			dialogConfig.width = '80%';
+			dialogConfig.height = '80%';
+			dialogConfig.data = {
+				customerdata: customerdata[0],
+				invoicedata: element,
+			};
 
-				const dialogRef = this._dialog.open(
-					CustomerPaymentDialogComponent,
-					dialogConfig
-				);
+			const dialogRef = this._dialog.open(CustomerPaymentDialogComponent, dialogConfig);
 
-				dialogRef
-					.afterClosed()
-					.pipe(
-						filter((val) => !!val),
-						tap(() => {
-							this.init();
+			dialogRef
+				.afterClosed()
+				.pipe(
+					filter((val) => !!val),
+					tap(() => {
+						this.init();
 
-							this._cdr.markForCheck();
-						})
-					)
-					.subscribe((data: any) => {
-						if (data === 'success') {
-							const dialogConfigSuccess = new MatDialogConfig();
-							dialogConfigSuccess.disableClose = false;
-							dialogConfigSuccess.autoFocus = true;
-							dialogConfigSuccess.width = '25%';
-							dialogConfigSuccess.height = '25%';
-							dialogConfigSuccess.data = 'Add receivables succesful';
+						this._cdr.markForCheck();
+					})
+				)
+				.subscribe((data: any) => {
+					if (data === 'success') {
+						const dialogConfigSuccess = new MatDialogConfig();
+						dialogConfigSuccess.disableClose = false;
+						dialogConfigSuccess.autoFocus = true;
+						dialogConfigSuccess.width = '25%';
+						dialogConfigSuccess.height = '25%';
+						dialogConfigSuccess.data = 'Add receivables succesful';
 
-							const dialogRef = this._dialog.open(
-								SuccessMessageDialogComponent,
-								dialogConfigSuccess
-							);
-						}
-					});
-			});
+						const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+					}
+				});
+		});
 	}
 
 	showCustomerStatement() {
@@ -576,9 +518,7 @@ export class AccountsPaymentsPage implements OnInit {
 	exportPendingPaymentsToExcel() {
 		const fileName = 'Pending_Receivables_Reports.xlsx';
 
-		let reportData = JSON.parse(
-			JSON.stringify(this.saleInvoicedataSource.data)
-		);
+		let reportData = JSON.parse(JSON.stringify(this.saleInvoicedataSource.data));
 
 		reportData.forEach((e) => {
 			e['Customer Name'] = e['customer_name'];
@@ -616,12 +556,8 @@ export class AccountsPaymentsPage implements OnInit {
 			[
 				{
 					header: 'Pending Receivables Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{
@@ -692,12 +628,8 @@ export class AccountsPaymentsPage implements OnInit {
 			[
 				{
 					header: 'Received Payments Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{

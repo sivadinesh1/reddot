@@ -26,7 +26,7 @@
 			<span style="font-size: 16px; color: blue"> {{ product_code }} </span>
 		</div>
 		<div>
-			<span> Records: {{ resultList.length }} </span>
+			<span> Records: {{ resultList?.length }} </span>
 		</div>
 	</div>
 	<div #epltable>
@@ -86,7 +86,7 @@
 					<td style="text-align: right">{{ item?.txn_date }}</td>
 				</tr>
 
-				<tr *ngIf="resultList.length === 0">
+				<tr *ngIf="resultList?.length === 0">
 					<span style="color: blue">No Records</span>
 				</tr>
 			</tbody>

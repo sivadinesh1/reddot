@@ -151,8 +151,7 @@ td.mat-column-actions {
 			height: auto;
 			position: relative;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
-				0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 			background-color: #fff;
 			border-radius: 3px;
 			+ .mat-row {
@@ -220,7 +219,8 @@ td.mat-column-actions {
 	justify-content: space-between;
 	bottom: 0px;
 
-	width: 100%;
+	padding: 0.5rem 80px 0.5rem 1rem;
+	width: calc(100vw - 176px);
 	height: auto;
 	background-color: #ffffff;
 	border-top: 1px solid #f1f1f1;

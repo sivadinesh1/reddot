@@ -26,7 +26,7 @@
 						<div>
 							<mat-form-field class="example-full-width">
 								<mat-label>Amount Received</mat-label>
-								<input matInput type="number" formControlName="receivedamount" />
+								<input matInput type="number" formControlName="receivedamount" autocomplete="off" />
 								<mat-error *ngIf="product.controls['receivedamount'].hasError('required')"> Required field </mat-error>
 								<mat-error *ngIf="product.controls['receivedamount'].hasError('max')"> Paid mount exceeds invoice amount </mat-error>
 
@@ -46,6 +46,7 @@
 										formControlName="receiveddate"
 										required
 										(focus)="paymentdate.open()"
+										autocomplete="off"
 									/>
 									<mat-datepicker-toggle matSuffix [for]="paymentdate"></mat-datepicker-toggle>
 									<mat-datepicker #paymentdate></mat-datepicker>
@@ -69,13 +70,13 @@
 						<div>
 							<mat-form-field class="example-full-width">
 								<mat-label>Bank Reference#</mat-label>
-								<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" />
+								<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" autocomplete="off" />
 							</mat-form-field>
 						</div>
 						<div>
 							<mat-form-field class="example-full-width">
 								<mat-label>Notes</mat-label>
-								<input matInput type="text" formControlName="pymtref" />
+								<input matInput type="text" formControlName="pymtref" autocomplete="off" />
 							</mat-form-field>
 						</div>
 					</ng-container>
@@ -107,7 +108,7 @@
 
 					<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500">Balance Due</div>
 					<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500; font-size: 13px">
-						{{ this.balancedue | currency: "INR" }}
+						{{ this.balancedue | currency: 'INR' }}
 					</div>
 				</div>
 			</div>

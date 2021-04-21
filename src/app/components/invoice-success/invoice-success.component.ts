@@ -60,7 +60,17 @@ export class InvoiceSuccessComponent implements OnInit {
 		this.data = invoice_id;
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.cancel();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.cancel();
+		});
+	}
 
 	cancel() {
 		this.dialogRef.close();

@@ -1,10 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ViewChild,
-	ElementRef,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { User } from 'src/app/models/User';
@@ -17,12 +11,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { filter, tap, map, startWith } from 'rxjs/operators';
 import { Vendor } from 'src/app/models/Vendor';
 import { VendorPaymentDialogComponent } from 'src/app/components/vendors/vendor-payment-dialog/vendor-payment-dialog.component';
@@ -74,16 +63,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 	@ViewChild('epltable1', { static: false }) epltable1: ElementRef;
 
 	// table display columns
-	purchaseInvoiceDisplayedColumns: string[] = [
-		'invoicedate',
-		'invoiceno',
-		'vendorname',
-		'nettotal',
-		'paymentstatus',
-		'paidamt',
-		'balamt',
-		'paybtn',
-	];
+	purchaseInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'vendorname', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
 	paymentDisplayedColumns: string[] = [
 		'vendorname',
 		'pymtdate',
@@ -138,16 +118,14 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			searchtype: new FormControl('all'),
 		});
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this._authservice.setCurrentMenu('PAYMENTS');
-				this.userdata = data;
-				this.ready = 1;
-				this.init();
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this._authservice.setCurrentMenu('PAYMENTS');
+			this.userdata = data;
+			this.ready = 1;
+			this.init();
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
 			if (this.userdata !== undefined) {
@@ -174,14 +152,9 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 
 	filtervendor(value: any) {
 		if (typeof value == 'object') {
-			return this.vendor_lis.filter(
-				(vendor) =>
-					vendor.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-			);
+			return this.vendor_lis.filter((vendor) => vendor.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
 		} else if (typeof value == 'string') {
-			return this.vendor_lis.filter(
-				(vendor) => vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0
-			);
+			return this.vendor_lis.filter((vendor) => vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
 		}
 	}
 
@@ -190,22 +163,16 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			this.reloadPurchaseInvoiceByCenter();
 		}
 
-		this._commonApiService
-			.getAllActiveVendors(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.vendor_lis = data;
+		this._commonApiService.getAllActiveVendors(this.userdata.center_id).subscribe((data: any) => {
+			this.vendor_lis = data;
 
-				this.filteredVendor = this.submitForm.controls[
-					'vendorctrl'
-				].valueChanges.pipe(
-					startWith(''),
-					map((vendor) =>
-						vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
-					)
-				);
+			this.filteredVendor = this.submitForm.controls['vendorctrl'].valueChanges.pipe(
+				startWith(''),
+				map((vendor) => (vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()))
+			);
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 	}
 
 	getPosts(event) {
@@ -409,24 +376,19 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 	}
 
 	goVendorFinancials(vendor_id) {
-		this._router.navigate([
-			`/home/financials-vendor/${this.userdata.center_id}/${vendor_id}`,
-		]);
+		this._router.navigate([`/home/financials-vendor/${this.userdata.center_id}/${vendor_id}`]);
 	}
 
 	// can be deleted not used
 	addPayments() {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
+		dialogConfig.autoFocus = false;
 		dialogConfig.width = '80%';
 		dialogConfig.height = '80%';
 		dialogConfig.data = { invoicesdata: this.invoicesdata };
 
-		const dialogRef = this._dialog.open(
-			AccountsPayablesComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(AccountsPayablesComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -443,50 +405,42 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 	addPaymentsBillToBill(element) {
 		let success = 0;
 
-		this._commonApiService
-			.getVendorDetails(this.userdata.center_id, element.vendor_id)
-			.subscribe((vendordata) => {
-				const dialogConfig = new MatDialogConfig();
-				dialogConfig.disableClose = true;
-				dialogConfig.autoFocus = true;
-				dialogConfig.width = '80%';
-				dialogConfig.height = '80%';
-				dialogConfig.data = {
-					vendordata: vendordata[0],
-					invoicedata: element,
-				};
+		this._commonApiService.getVendorDetails(this.userdata.center_id, element.vendor_id).subscribe((vendordata) => {
+			const dialogConfig = new MatDialogConfig();
+			dialogConfig.disableClose = true;
+			dialogConfig.autoFocus = true;
+			dialogConfig.width = '80%';
+			dialogConfig.height = '80%';
+			dialogConfig.data = {
+				vendordata: vendordata[0],
+				invoicedata: element,
+			};
 
-				const dialogRef = this._dialog.open(
-					VendorPaymentDialogComponent,
-					dialogConfig
-				);
+			const dialogRef = this._dialog.open(VendorPaymentDialogComponent, dialogConfig);
 
-				dialogRef
-					.afterClosed()
-					.pipe(
-						filter((val) => !!val),
-						tap(() => {
-							this.init();
+			dialogRef
+				.afterClosed()
+				.pipe(
+					filter((val) => !!val),
+					tap(() => {
+						this.init();
 
-							this._cdr.markForCheck();
-						})
-					)
-					.subscribe((data: any) => {
-						if (data === 'success') {
-							const dialogConfigSuccess = new MatDialogConfig();
-							dialogConfigSuccess.disableClose = false;
-							dialogConfigSuccess.autoFocus = true;
-							dialogConfigSuccess.width = '25%';
-							dialogConfigSuccess.height = '25%';
-							dialogConfigSuccess.data = 'Add Payments succesful';
+						this._cdr.markForCheck();
+					})
+				)
+				.subscribe((data: any) => {
+					if (data === 'success') {
+						const dialogConfigSuccess = new MatDialogConfig();
+						dialogConfigSuccess.disableClose = false;
+						dialogConfigSuccess.autoFocus = true;
+						dialogConfigSuccess.width = '25%';
+						dialogConfigSuccess.height = '25%';
+						dialogConfigSuccess.data = 'Add Payments succesful';
 
-							const dialogRef = this._dialog.open(
-								SuccessMessageDialogComponent,
-								dialogConfigSuccess
-							);
-						}
-					});
-			});
+						const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+					}
+				});
+		});
 	}
 
 	showVendorStatement() {
@@ -541,12 +495,8 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			[
 				{
 					header: 'Pending Payments Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{
@@ -618,12 +568,8 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			[
 				{
 					header: 'Pending Payments Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{

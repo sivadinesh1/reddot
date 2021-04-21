@@ -216,7 +216,7 @@
 			<div>CUSTOMER</div>
 			<div>INQUIRED ON</div>
 			<div>ITEMS</div>
-			<div>STATUS</div>
+			<div>&nbsp;</div>
 
 			<div>&nbsp;</div>
 		</div>
@@ -236,10 +236,11 @@
 				<div
 					*ngIf="item.estatus === 'P' "
 					style="display: flex; align-items: center"
-					(click)="moveToSale(item)"
 				>
-					<mat-icon [ngStyle]="{'color':'blue'}">edit </mat-icon
-					><span style="color: blue; cursor: pointer">Start Invoicing</span>
+					<span class="invoice" (click)="moveToSale(item,'TI')">INVOICE</span>
+					<span class="stock" (click)="moveToSale(item, 'SI')"
+						>STOCK ISSUE</span
+					>
 				</div>
 				<div *ngIf="item.estatus === 'E' ">Closed</div>
 				<div

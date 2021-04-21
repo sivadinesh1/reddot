@@ -73,7 +73,7 @@ export class LeftMenuComponent implements OnInit {
 		},
 		{
 			name: 'Stock Issue',
-			link: 'home/sales/edit/si',
+			link: 'home/sales/edit/0/SI',
 			icon: '/assets/images/svg/bullet-list.svg',
 		},
 		{
