@@ -2,13 +2,7 @@
 	<div class="search-wrap">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div
-					class="btn-grad"
-					(click)="goPurchaseAddScreen()"
-					style="cursor: pointer"
-				>
-					PURCHASE&nbsp;&nbsp;&nbsp;+
-				</div>
+				<div class="btn-grad" (click)="goPurchaseAddScreen()" style="cursor: pointer">PURCHASE&nbsp;&nbsp;&nbsp;+</div>
 				<div class="vendors">
 					<mat-form-field class="width">
 						<mat-label>Search</mat-label>
@@ -20,20 +14,10 @@
 							matTooltip="Type to filter the Vendor list"
 							matTooltipPosition="after"
 						/>
-						<button
-							mat-button
-							matSuffix
-							mat-icon-button
-							aria-label="Clear"
-							type="button"
-							(click)="clearInput()"
-						>
+						<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
 							<mat-icon>close</mat-icon>
 						</button>
-						<mat-autocomplete
-							#auto="matAutocomplete"
-							(optionSelected)="getPosts($event)"
-						>
+						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
 							<mat-option *ngFor="let vendor of vendor_lis" [value]="vendor">
 								<span>{{ vendor.name }} </span>
 							</mat-option>
@@ -53,10 +37,7 @@
 							(focus)="fromdate.open()"
 							(dateChange)="fromDateSelected($event)"
 						/>
-						<mat-datepicker-toggle
-							matSuffix
-							[for]="fromdate"
-						></mat-datepicker-toggle>
+						<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
 						<mat-datepicker #fromdate></mat-datepicker>
 					</mat-form-field>
 				</div>
@@ -73,67 +54,34 @@
 							required
 							(dateChange)="toDateSelected($event)"
 						/>
-						<mat-datepicker-toggle
-							matSuffix
-							[for]="todate"
-						></mat-datepicker-toggle>
+						<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
 						<mat-datepicker #todate></mat-datepicker>
 					</mat-form-field>
 				</div>
 
 				<div class="search-btn" style="padding-top: 20px">
-					<button
-						mat-raised-button
-						[disabled]="!submitForm.valid"
-						color="primary"
-						style="font-size: 1rem"
-						(click)="search()"
-					>
-						Search
-					</button>
+					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search()">Search</button>
 				</div>
 			</div>
 		</form>
 
-		<div
-			style="
-				width: 94%;
-				margin: 0 auto;
-				padding: 32px 0px 100px 0px;
-				position: relative;
-				display: grid;
-			"
-			[@.disabled]="true"
-		>
+		<div style="width: 94%; margin: 0 auto; padding: 32px 0px 100px 0px; position: relative; display: grid" [@.disabled]="true">
 			<div>
-				<mat-tab-group
-					color="primary"
-					[(selectedIndex)]="tabIndex"
-					(selectedTabChange)="tabClick($event)"
-				>
+				<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
 					<!-- DnD  -->
 					<!-- <mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
 						<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 					</mat-tab> -->
 
-					<mat-tab
-						label="Purchase Orders  ({{(fullfilledPurchase$| async)?.length }})"
-					>
+					<mat-tab label="Purchase Orders  ({{(fullfilledPurchase$| async)?.length }})">
 						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 					</mat-tab>
 				</mat-tab-group>
 			</div>
 
-			<div
-				style="
-					position: absolute;
-					justify-self: flex-end;
-					top: 32px;
-					z-index: 1;
-				"
-			>
+			<div style="position: absolute; justify-self: flex-end; top: 32px; z-index: 1">
 				<form [formGroup]="submitForm">
 					<mat-form-field class="readonly-wrapper">
 						<mat-label>Show</mat-label>
@@ -143,9 +91,7 @@
 							value="{orderDefaultFlag}"
 							[disableControl]="this.submitForm.value.searchtype !== 'all'"
 						>
-							<mat-option *ngFor="let item of orderList" [value]="item.id">
-								{{item.value}}
-							</mat-option>
+							<mat-option *ngFor="let item of orderList" [value]="item.id"> {{item.value}} </mat-option>
 						</mat-select>
 					</mat-form-field>
 				</form>
@@ -165,28 +111,16 @@
 			<div>&nbsp;</div>
 			<div class="txt-center-align">REVISION</div>
 			<div class="txt-center-align">
-				<img
-					src="/assets/images/svg/download-excel.svg"
-					style="cursor: pointer"
-					width="32px"
-					height="32px"
-					(click)="exportDraftPurchaseToExcel()"
-				/>
+				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportDraftPurchaseToExcel()" />
 			</div>
 		</div>
 		<div class="headerRow">
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">
-				&nbsp;
-			</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">
-				{{this.sumNumItems}}
-			</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">
-				{{this.sumTotalValue | number:'1.2-2'}}
-			</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">&nbsp;</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">{{this.sumNumItems}}</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">{{this.sumTotalValue.toLocaleString('en-IN')}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
@@ -201,8 +135,8 @@
 			<div>VENDOR NAME</div>
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
-			<div class="txt-center-align">STATUS</div>
-			<div>&nbsp;</div>
+			<!-- <div class="txt-center-align">STATUS</div> -->
+
 			<div class="txt-center-align">REVISION</div>
 			<div class="txt-center-align">
 				<img
@@ -213,21 +147,16 @@
 					(click)="exportCompletedPurchaseToExcel()"
 				/>
 			</div>
+			<div>&nbsp;</div>
 		</div>
 		<div class="headerRow">
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">
-				&nbsp;
-			</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">
-				{{this.sumNumItems}}
-			</div>
-			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">
-				{{this.sumTotalValue | number:'1.2-2'}}
-			</div>
-			<div>&nbsp;</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">&nbsp;</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">{{this.sumNumItems}}</div>
+			<div class="txt-right-align" style="font-size: 14px; font-weight: 500">{{this.sumTotalValue | pricePipe}}</div>
+			<!-- <div>&nbsp;</div> -->
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 		</div>
@@ -240,12 +169,8 @@
 			<div class="item">{{item.received_date}}</div>
 			<div class="item">{{item.vendor_name}}</div>
 			<div class="item txt-right-align">{{item.no_of_items}}</div>
-			<div class="item txt-right-align">
-				{{item.net_total | number:'1.2-2'}}
-			</div>
-			<div class="item txt-center-align">
-				{{item.status === 'D' ? 'Draft' : 'Completed'}}
-			</div>
+			<div class="item txt-right-align">{{item.net_total.toLocaleString('en-IN')}}</div>
+			<!-- <div class="item txt-center-align">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div> -->
 			<div class="item cursor txt-center-align">
 				<mat-icon
 					#tooltip="matTooltip"

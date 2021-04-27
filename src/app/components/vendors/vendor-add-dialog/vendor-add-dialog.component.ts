@@ -1,21 +1,11 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ViewChild,
-	ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from '../../../services/common-api.service';
 import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 
-import {
-	GSTN_REGEX,
-	PINCODE_REGEX,
-	EMAIL_REGEX,
-} from '../../../util/helper/patterns';
+import { GSTN_REGEX, PINCODE_REGEX, EMAIL_REGEX } from '../../../util/helper/patterns';
 import { country } from '../../../util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -64,69 +54,54 @@ export class VendorAddDialogComponent implements OnInit {
 			pin: ['', [patternValidator(PINCODE_REGEX)]],
 
 			gst: ['', [patternValidator(GSTN_REGEX)]],
-			phone: [
-				'',
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
-			],
-			mobile: [
-				'',
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
-			],
-			mobile2: [
-				'',
-				Validators.compose([PhoneValidator.invalidCountryPhone(country)]),
-			],
-			whatsapp: [
-				'',
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
-			],
+			phone: ['', Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
+			mobile: ['', Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
+			mobile2: ['', Validators.compose([PhoneValidator.invalidCountryPhone(country)])],
+			whatsapp: ['', Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
 			email: ['', [patternValidator(EMAIL_REGEX)]],
 		});
 
 		this.userdata$ = this._authservice.currentUser;
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
 
-				this.submitForm.patchValue({
-					center_id: this.userdata.center_id,
-				});
-
-				this._cdr.markForCheck();
+			this.submitForm.patchValue({
+				center_id: this.userdata.center_id,
 			});
+
+			this._cdr.markForCheck();
+		});
 
 		this._commonApiService.getStates().subscribe((data: any) => {
 			this.statesdata = data;
 		});
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
+		});
+	}
 
 	isVendorExists() {
 		if (this.submitForm.value.name.length > 0) {
-			this._commonApiService
-				.isVendorExists(this.submitForm.value.name, this.userdata.center_id)
-				.subscribe((data: any) => {
-					if (data.result.length > 0) {
-						if (data.result[0].id > 0) {
-							this.vexists = true;
-						}
-					} else {
-						this.vexists = false;
+			this._commonApiService.isVendorExists(this.submitForm.value.name, this.userdata.center_id).subscribe((data: any) => {
+				if (data.result.length > 0) {
+					if (data.result[0].id > 0) {
+						this.vexists = true;
 					}
+				} else {
+					this.vexists = false;
+				}
 
-					this._cdr.markForCheck();
-				});
+				this._cdr.markForCheck();
+			});
 		}
 	}
 
@@ -139,13 +114,11 @@ export class VendorAddDialogComponent implements OnInit {
 			return false;
 		}
 
-		this._commonApiService
-			.addVendor(this.submitForm.value)
-			.subscribe((data: any) => {
-				if (data.body.result === 'success') {
-					this.dialogRef.close('success');
-				}
-			});
+		this._commonApiService.addVendor(this.submitForm.value).subscribe((data: any) => {
+			if (data.body.result === 'success') {
+				this.dialogRef.close('success');
+			}
+		});
 	}
 
 	addVendor() {

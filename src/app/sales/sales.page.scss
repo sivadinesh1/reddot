@@ -286,3 +286,13 @@
 	max-width: 340px;
 	gap: 20px;
 }
+
+.buttonCss {
+	button.alert-button:nth-child(1) {
+		color: red;
+	}
+
+	button.alert-button:nth-child(2) {
+		color: green;
+	}
+}

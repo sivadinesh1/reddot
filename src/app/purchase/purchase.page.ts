@@ -1,26 +1,8 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ViewChild,
-	ElementRef,
-	ViewChildren,
-	QueryList,
-} from '@angular/core';
-import {
-	ModalController,
-	PickerController,
-	AlertController,
-} from '@ionic/angular';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { ModalController, PickerController, AlertController } from '@ionic/angular';
 
 import { CommonApiService } from '../services/common-api.service';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-	FormArray,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -49,6 +31,7 @@ import { Observable } from 'rxjs';
 import { User } from '../models/User';
 
 import { ChangeDetectionStrategy } from '@angular/core';
+import { InventoryReportsDialogComponent } from '../components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
 @Component({
 	selector: 'app-purchase',
 	templateUrl: './purchase.page.html',
@@ -113,6 +96,7 @@ export class PurchasePage implements OnInit {
 
 	selected_description = '';
 	selected_mrp = '';
+	orig_mrp = 0;
 
 	ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
@@ -136,6 +120,33 @@ export class PurchasePage implements OnInit {
 
 	@ViewChild(IonContent, { static: false }) content: IonContent;
 
+	draftConfirm = [
+		{
+			text: 'Cancel',
+			role: 'cancel',
+			cssClass: 'secondary',
+			handler: (blah) => {
+				console.log('Confirm Cancel: blah');
+			},
+		},
+		{
+			text: 'Purchase Orders',
+			cssClass: 'secondary',
+			handler: () => {
+				console.log('Confirm Cancel: blah');
+				this.mainSubmit('add', 'back');
+			},
+		},
+		{
+			text: 'Add Items',
+			cssClass: 'primary',
+			handler: () => {
+				console.log('Confirm Okay');
+				this.mainSubmit('add', 'stay');
+			},
+		},
+	];
+
 	constructor(
 		private _modalcontroller: ModalController,
 		private _pickerctrl: PickerController,
@@ -154,43 +165,39 @@ export class PurchasePage implements OnInit {
 		this.init();
 
 		this.userdata$ = this._authservice.currentUser;
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this._authservice.setCurrentMenu('PURCHASE');
-				this.userdata = data;
-
-				this.submitForm.patchValue({
-					centerid: data.center_id,
-				});
-
-				this.ready = 1;
-
-					// data change
-		this._route.data.subscribe((data) => {
-			this.clicked = false;
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
 			this._authservice.setCurrentMenu('PURCHASE');
-			this.listArr = [];
-			this.rawPurchaseData = data['rawpurchasedata'];
-		});
+			this.userdata = data;
 
-		// param change
-		this._route.params.subscribe((params) => {
-			this.clicked = false;
-
-			if (this.userdata !== undefined) {
-				this.initialize();
-				this.clearInput();
-				this.submitForm.patchValue({
-					center_id: this.userdata.center_id,
-				});
-			}
-		});
-
-				this._cdr.markForCheck();
+			this.submitForm.patchValue({
+				centerid: data.center_id,
 			});
 
-	
+			this.ready = 1;
+
+			// data change
+			this._route.data.subscribe((data) => {
+				this.clicked = false;
+				this._authservice.setCurrentMenu('PURCHASE');
+				this.listArr = [];
+				this.rawPurchaseData = data['rawpurchasedata'];
+			});
+
+			// param change
+			this._route.params.subscribe((params) => {
+				this.clicked = false;
+
+				if (this.userdata !== undefined) {
+					this.initialize();
+					this.clearInput();
+					this.submitForm.patchValue({
+						center_id: this.userdata.center_id,
+					});
+				}
+			});
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	ngOnInit() {}
@@ -200,52 +207,37 @@ export class PurchasePage implements OnInit {
 		this.vendorselected = false;
 
 		// navigating from list purchase page
-		if (
-			this.rawPurchaseData[0] !== undefined &&
-			this.rawPurchaseData[0].id !== 0
-		) {
+		this.buildRawPurchaseData();
+	}
+
+	buildRawPurchaseData() {
+		if (this.rawPurchaseData[0] !== undefined && this.rawPurchaseData[0].id !== 0) {
 			this.spinner.show();
 			this.breadmenu = 'Edit Purchase #' + this.rawPurchaseData[0].id;
 
 			this.submitForm.patchValue({
 				purchaseid: this.rawPurchaseData[0].id,
 				invoiceno: this.rawPurchaseData[0].invoice_no,
-				invoicedate: new Date(
-					new NullToQuotePipe()
-						.transform(this.rawPurchaseData[0].invoice_date)
-						.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-				),
+				invoicedate: new Date(new NullToQuotePipe().transform(this.rawPurchaseData[0].invoice_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 
 				orderdate:
 					this.rawPurchaseData[0].order_date === ''
 						? ''
-						: new Date(
-								new NullToQuotePipe()
-									.transform(this.rawPurchaseData[0].order_date)
-									.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-						  ),
+						: new Date(new NullToQuotePipe().transform(this.rawPurchaseData[0].order_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 
 				lrno: this.rawPurchaseData[0].lr_no,
 
 				lrdate:
 					this.rawPurchaseData[0].lr_date === ''
 						? ''
-						: new Date(
-								new NullToQuotePipe()
-									.transform(this.rawPurchaseData[0].lr_date)
-									.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-						  ),
+						: new Date(new NullToQuotePipe().transform(this.rawPurchaseData[0].lr_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 				orderno: this.rawPurchaseData[0].order_no,
 				noofboxes: this.rawPurchaseData[0].no_of_boxes,
 
 				orderrcvddt:
 					this.rawPurchaseData[0].received_date === ''
 						? ''
-						: new Date(
-								new NullToQuotePipe()
-									.transform(this.rawPurchaseData[0].received_date)
-									.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-						  ),
+						: new Date(new NullToQuotePipe().transform(this.rawPurchaseData[0].received_date).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 
 				noofitems: this.rawPurchaseData[0].no_of_items,
 				totalqty: this.rawPurchaseData[0].total_qty,
@@ -265,38 +257,31 @@ export class PurchasePage implements OnInit {
 
 			this._cdr.markForCheck();
 
-			this._commonApiService
-				.getVendorDetails(
-					this.userdata.center_id,
-					this.rawPurchaseData[0].vendor_id
-				)
-				.subscribe((vendData: any) => {
-					this.vendordata = vendData[0];
-					this.vendor_state_code = vendData[0].code;
+			this._commonApiService.getVendorDetails(this.userdata.center_id, this.rawPurchaseData[0].vendor_id).subscribe((vendData: any) => {
+				this.vendordata = vendData[0];
+				this.vendor_state_code = vendData[0].code;
 
-					this.submitForm.patchValue({
-						vendorctrl: vendData[0],
-					});
-
-					this.vendorname = vendData[0].name;
-					this.vendorstate = vendData[0].state;
-					this.vendorselected = true;
-					this.setTaxLabel();
-					this.setTaxSegment(vendData[0].taxrate);
-
-					this._cdr.markForCheck();
+				this.submitForm.patchValue({
+					vendorctrl: vendData[0],
 				});
 
-			this._commonApiService
-				.purchaseDetails(this.rawPurchaseData[0].id)
-				.subscribe((purchaseData: any) => {
-					this.spinner.hide();
-					let pData = purchaseData;
+				this.vendorname = vendData[0].name;
+				this.vendorstate = vendData[0].state;
+				this.vendorselected = true;
+				this.setTaxLabel();
+				this.setTaxSegment(vendData[0].taxrate);
 
-					pData.forEach((element) => {
-						this.processItems(element, 'preload');
-					});
+				this._cdr.markForCheck();
+			});
+
+			this._commonApiService.purchaseDetails(this.rawPurchaseData[0].id).subscribe((purchaseData: any) => {
+				this.spinner.hide();
+				let pData = purchaseData;
+
+				pData.forEach((element) => {
+					this.processItems(element, 'preload');
 				});
+			});
 
 			this._cdr.markForCheck();
 		}
@@ -333,15 +318,8 @@ export class PurchasePage implements OnInit {
 			productctrl: [null, [RequireMatch]],
 			tempdesc: [''],
 			temppurchaseprice: [''],
-			tempqty: [
-				'1',
-				[
-					Validators.required,
-					Validators.max(1000),
-					Validators.min(1),
-					Validators.pattern(/\-?\d*\.?\d{1,2}/),
-				],
-			],
+			tempmrp: [''],
+			tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 
 			productarr: new FormControl(null, Validators.required),
 			roundoff: [0],
@@ -355,10 +333,7 @@ export class PurchasePage implements OnInit {
 	ngAfterViewInit() {
 		this.autoTrigger &&
 			this.autoTrigger.panelClosingActions.subscribe((x) => {
-				if (
-					this.autoTrigger.activeOption &&
-					this.autoTrigger.activeOption.value !== undefined
-				) {
+				if (this.autoTrigger.activeOption && this.autoTrigger.activeOption.value !== undefined) {
 					this.submitForm.patchValue({
 						productctrl: this.autoTrigger.activeOption.value,
 					});
@@ -368,10 +343,7 @@ export class PurchasePage implements OnInit {
 
 		this.autoTrigger1 &&
 			this.autoTrigger1.panelClosingActions.subscribe((x) => {
-				if (
-					this.autoTrigger1.activeOption &&
-					this.autoTrigger1.activeOption.value !== undefined
-				) {
+				if (this.autoTrigger1.activeOption && this.autoTrigger1.activeOption.value !== undefined) {
 					this.submitForm.patchValue({
 						vendorctrl: this.autoTrigger1.activeOption.value,
 					});
@@ -456,31 +428,74 @@ export class PurchasePage implements OnInit {
 	}
 
 	// type/search product code
-	setItemDesc(event, from) {
+	async setItemDesc(event, from) {
+		let onlyProductCodeArr = this.listArr.map((element) => {
+			return element.product_code;
+		});
+
 		if (from === 'tab') {
+			this.lineItemData = event;
+		} else {
+			this.lineItemData = event.option.value;
+		}
+
+		let isduplicate = onlyProductCodeArr.includes(this.lineItemData.product_code);
+		let proceed = false;
+
+		if (isduplicate) {
+			var index = onlyProductCodeArr.indexOf(this.lineItemData.product_code);
+			
+			const alert = await this.alertController.create({
+				header: 'Confirm!',
+				message: `The Item already added ROW # (${index + 1}). Do you want to add again?`,
+				buttons: [
+					{
+						text: 'Cancel',
+						role: 'cancel',
+						cssClass: 'secondary',
+						handler: (blah) => {
+							console.log('Confirm Cancel: blah');
+							this.clearProdInput();
+						},
+					},
+					{
+						text: 'Continue to Add',
+						handler: () => {
+							console.log('Confirm Okay');
+							proceed = true;
+							this.addLineItemData(event, from);
+						},
+					},
+				],
+			});
+
+			await alert.present();
+		} else {
+			this.addLineItemData(event, from);
+		}
+		this._cdr.markForCheck();
+	}
+
+	addLineItemData(event, from) {
+		if (from === 'tab') {
+			this.orig_mrp = event.mrp;
 			this.submitForm.patchValue({
 				tempdesc: event.description,
 				tempqty: event.qty === 0 ? 1 : event.qty,
-				temppurchaseprice:
-					event.purchase_price === 'null'
-						? '0'
-						: event.purchase_price === '0.00'
-						? '0'
-						: event.purchase_price,
+				tempmrp: event.mrp,
+				temppurchaseprice: event.purchase_price === 'null' ? '0' : event.purchase_price === '0.00' ? '0' : event.purchase_price,
 			});
 			this.lineItemData = event;
 			this.selected_description = event.description;
 			this.selected_mrp = event.mrp;
 		} else {
+			this.orig_mrp = event.option.value.mrp;
 			this.submitForm.patchValue({
 				tempdesc: event.option.value.description,
 				tempqty: event.option.value.qty === 0 ? 1 : event.option.value.qty,
+				tempmrp: event.option.value.mrp,
 				temppurchaseprice:
-					event.option.value.purchase_price === 'null'
-						? '0'
-						: event.option.value.purchase_price === '0.00'
-						? '0'
-						: event.option.value.purchase_price,
+					event.option.value.purchase_price === 'null' ? '0' : event.option.value.purchase_price === '0.00' ? '0' : event.option.value.purchase_price,
 			});
 			this.lineItemData = event.option.value;
 			this.selected_description = event.option.value.description;
@@ -488,8 +503,6 @@ export class PurchasePage implements OnInit {
 
 			this.qty && this.qty.nativeElement.focus();
 		}
-
-		this._cdr.markForCheck();
 	}
 
 	processItems(temp, type) {
@@ -519,20 +532,13 @@ export class PurchasePage implements OnInit {
 			unit_price: temp.purchase_price,
 			purchase_price: temp.purchase_price,
 			mrp: temp.mrp,
-			mrp_change_flag: 'N',
+			mrp_change_flag: temp.mrp_change_flag,
 			taxrate: temp.taxrate,
 
-			tax_value: (
-				temp.purchase_price *
-				temp.qty *
-				(temp.taxrate / 100)
-			).toFixed(2),
+			tax_value: (temp.purchase_price * temp.qty * (temp.taxrate / 100)).toFixed(2),
 
 			taxable_value: temp.purchase_price * temp.qty,
-			total_value: (
-				temp.purchase_price * temp.qty +
-				(temp.purchase_price * temp.qty * temp.taxrate) / 100
-			).toFixed(2),
+			total_value: (temp.purchase_price * temp.qty + (temp.purchase_price * temp.qty * temp.taxrate) / 100).toFixed(2),
 
 			igst: this.igst,
 			cgst: this.cgst,
@@ -552,13 +558,9 @@ export class PurchasePage implements OnInit {
 			return parseFloat(arr.purchase_price);
 		});
 
-		this.total = tempArr
-			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			.toFixed(2);
+		this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
-		this.taxable_value = tempArrCostPrice
-			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			.toFixed(2);
+		this.taxable_value = tempArrCostPrice.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
 		this.submitForm.patchValue({
 			taxable_value: this.taxable_value,
@@ -589,7 +591,7 @@ export class PurchasePage implements OnInit {
 	clearProdInput() {
 		this.submitForm.patchValue({
 			productctrl: null,
-
+			tempmrp: 0,
 			tempdesc: null,
 			tempqty: 1,
 		});
@@ -628,9 +630,7 @@ export class PurchasePage implements OnInit {
 		if (this.i_gst) {
 			this.igstTotal = this.listArr
 				.map((item) => {
-					return (
-						(item.purchase_price * item.qty * parseFloat(item.taxrate)) / 100
-					);
+					return (item.purchase_price * item.qty * parseFloat(item.taxrate)) / 100;
 				})
 				.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 				.toFixed(2);
@@ -732,18 +732,12 @@ export class PurchasePage implements OnInit {
 			return false;
 		}
 
-		if (
-			this.submitForm.value.orderrcvddt == '' ||
-			this.submitForm.value.orderrcvddt == null
-		) {
+		if (this.submitForm.value.orderrcvddt == '' || this.submitForm.value.orderrcvddt == null) {
 			this.presentAlert('Enter Received Date!');
 			return false;
 		}
 
-		if (
-			this.submitForm.value.invoicedate !== null &&
-			this.submitForm.value.orderdate !== ''
-		) {
+		if (this.submitForm.value.invoicedate !== null && this.submitForm.value.orderdate !== '') {
 			if (this.submitForm.value.orderno === '') {
 				this.orderNoEl.nativeElement.focus();
 				this.presentAlert('Order Date without Order # not allowed');
@@ -756,10 +750,7 @@ export class PurchasePage implements OnInit {
 			}
 		}
 
-		if (
-			this.submitForm.value.invoicedate !== null &&
-			this.submitForm.value.lrdate !== ''
-		) {
+		if (this.submitForm.value.invoicedate !== null && this.submitForm.value.lrdate !== '') {
 			if (this.submitForm.value.lrno === '') {
 				this.presentAlert('Lr Date without Lr # not allowed');
 				return false;
@@ -828,9 +819,7 @@ export class PurchasePage implements OnInit {
 					return parseFloat(arrItem.qty);
 				});
 
-				let tmpTotQty = tot_qty_check_Arr
-					.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-					.toFixed(2);
+				let tmpTotQty = tot_qty_check_Arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
 				this.submitForm.patchValue({
 					totalqty: tmpTotQty,
@@ -850,9 +839,7 @@ export class PurchasePage implements OnInit {
 
 				this.submitForm.patchValue({
 					net_total: this.getNetTotal('rounding'),
-					roundoff: (
-						this.getNetTotal('rounding') - this.getNetTotal('withoutrounding')
-					).toFixed(2),
+					roundoff: (this.getNetTotal('rounding') - this.getNetTotal('withoutrounding')).toFixed(2),
 				});
 			}
 		}
@@ -922,18 +909,10 @@ export class PurchasePage implements OnInit {
 	qtyChange(idx) {
 		this.listArr[idx].total_value = (
 			this.listArr[idx].purchase_price * this.listArr[idx].qty +
-			(this.listArr[idx].purchase_price *
-				this.listArr[idx].qty *
-				this.listArr[idx].taxrate) /
-				100
+			(this.listArr[idx].purchase_price * this.listArr[idx].qty * this.listArr[idx].taxrate) / 100
 		).toFixed(2);
-		this.listArr[idx].taxable_value = (
-			this.listArr[idx].qty * this.listArr[idx].purchase_price
-		).toFixed(2);
-		this.listArr[idx].tax_value = (
-			this.listArr[idx].taxable_value *
-			(this.listArr[idx].taxrate / 100)
-		).toFixed(2);
+		this.listArr[idx].taxable_value = (this.listArr[idx].qty * this.listArr[idx].purchase_price).toFixed(2);
+		this.listArr[idx].tax_value = (this.listArr[idx].taxable_value * (this.listArr[idx].taxrate / 100)).toFixed(2);
 
 		this.calc();
 
@@ -952,12 +931,8 @@ export class PurchasePage implements OnInit {
 		// this.total = "" + tempArr;
 
 		// this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
-		this.total = tempArr
-			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			.toFixed(2);
-		this.taxable_value = tempArrCostPrice
-			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			.toFixed(2);
+		this.total = tempArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
+		this.taxable_value = tempArrCostPrice.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2);
 
 		this.submitForm.patchValue({
 			taxable_value: this.taxable_value,
@@ -978,83 +953,86 @@ export class PurchasePage implements OnInit {
 
 		const alert = await this.alertController.create({
 			header: 'Confirm!',
-			message: 'Do You want to save!!!',
-			buttons: [
-				{
-					text: 'Cancel',
-					role: 'cancel',
-					cssClass: 'secondary',
-					handler: (blah) => {
-						console.log('Confirm Cancel: blah');
-					},
-				},
-				{
-					text: 'Okay',
-					handler: () => {
-						console.log('Confirm Okay');
-
-						this.executeDeletes();
-
-						if (action === 'add') {
-							this.submitForm.patchValue({
-								status: 'C',
-							});
-						} else if (action === 'draft') {
-							this.submitForm.patchValue({
-								status: 'D',
-							});
-						}
-
-						//main submit
-						this.clicked = true; // disable all buttons after submission
-						this._cdr.markForCheck();
-						this.spinner.show();
-
-						this._commonApiService
-							.savePurchaseOrder(this.submitForm.value)
-							.subscribe((data: any) => {
-								this.spinner.hide();
-								console.log('savePurchaseOrder ' + JSON.stringify(data));
-
-								if (data.body.result === 'success') {
-									this.submitForm.reset();
-									this.init();
-									this.vendordata = null;
-									this.submitForm.patchValue({
-										productarr: [],
-									});
-									this.vendorname = '';
-									this.vendorselected = false;
-
-									this.listArr = [];
-
-									this.total = '0.00';
-									this.igstTotal = '0.00';
-									this.cgstTotal = '0.00';
-									this.sgstTotal = '0.00';
-
-									this._cdr.markForCheck();
-									if (action === 'add') {
-										this.openSnackBar('Items Added!', '');
-									} else {
-										this.openSnackBar('Saved to Draft!', '');
-									}
-
-									this.purchaseDashboard();
-								} else {
-									this.presentAlert(
-										'Error: Something went wrong Contact Admin!'
-									);
-								}
-
-								this._cdr.markForCheck();
-							});
-					},
-				},
-			],
+			message: 'Save & Continue to',
+			cssClass: 'buttonCss',
+			buttons: this.draftConfirm,
 		});
 
 		await alert.present();
+	}
+
+	mainSubmit(action, navto) {
+		this.executeDeletes();
+
+		if (action === 'add') {
+			this.submitForm.patchValue({
+				status: 'C',
+			});
+		} else if (action === 'draft') {
+			this.submitForm.patchValue({
+				status: 'D',
+			});
+		}
+
+		//main submit
+		this.clicked = true; // disable all buttons after submission
+		this._cdr.markForCheck();
+		this.spinner.show();
+
+		this._commonApiService.savePurchaseOrder(this.submitForm.value).subscribe((data: any) => {
+			this.spinner.hide();
+			this.clicked = false;
+			//	console.log('savePurchaseOrder ' + JSON.stringify(data));
+
+			if (data.body.result === 'success') {
+				if (navto === 'back') {
+					this.submitForm.reset();
+					this.init();
+					this.vendordata = null;
+					this.submitForm.patchValue({
+						productarr: [],
+					});
+					this.vendorname = '';
+					this.vendorselected = false;
+
+					this.listArr = [];
+
+					this.total = '0.00';
+					this.igstTotal = '0.00';
+					this.cgstTotal = '0.00';
+					this.sgstTotal = '0.00';
+				}
+				this._cdr.markForCheck();
+				if (action === 'add') {
+					this.listArr = [];
+
+					// add to the submitform purchaseid
+					// reset listArr,
+					// call raspurchaseid
+					// set mode to edit
+					this.submitForm.patchValue({
+						purchaseid: data.body.id,
+					});
+					this._commonApiService.purchaseMasterData(data.body.id).subscribe((data) => {
+						this.rawPurchaseData = data;
+						this._cdr.markForCheck();
+						this.buildRawPurchaseData();
+					});
+
+					this.openSnackBar('Items Added!', '');
+				} else {
+					this.openSnackBar('Saved to Draft!', '');
+				}
+
+				if (navto === 'back') {
+					this.purchaseDashboard();
+				}
+			} else {
+				this.presentAlert('Error: Something went wrong Contact Admin!');
+			}
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	checkedRow(idx: number) {
@@ -1153,14 +1131,14 @@ export class PurchasePage implements OnInit {
 	}
 
 	async editMrp() {
-		// this.presentTaxValueChangeConfirm();
-
 		const modalTax = await this._modalcontroller.create({
 			component: ChangeMrpComponent,
 			componentProps: { pArry: this.listArr, rArry: this.removeRowArr },
 			cssClass: 'tax-edit-modal',
 		});
 
+		// when pop up close with new mrp value, set those value to the line item.
+		// will always be single row mrp edit
 		modalTax.onDidDismiss().then((result) => {
 			console.log('The result:', result);
 
@@ -1256,10 +1234,7 @@ export class PurchasePage implements OnInit {
 		dialogConfig.data = this.vendordata;
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			VendorViewDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(VendorViewDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('The dialog was closed');
@@ -1286,25 +1261,23 @@ export class PurchasePage implements OnInit {
 			)
 			.subscribe((data: any) => {
 				if (data !== 'close') {
-					this._commonApiService
-						.getVendorDetails(this.userdata.center_id, data.body.id)
-						.subscribe((vendData: any) => {
-							this.vendordata = vendData[0];
+					this._commonApiService.getVendorDetails(this.userdata.center_id, data.body.id).subscribe((vendData: any) => {
+						this.vendordata = vendData[0];
 
-							this.vendorname = vendData[0].name;
-							this.vendorselected = true;
+						this.vendorname = vendData[0].name;
+						this.vendorselected = true;
 
-							this.setVendorInfo(vendData[0], 'tab');
+						this.setVendorInfo(vendData[0], 'tab');
 
-							this.submitForm.patchValue({
-								vendorctrl: vendData[0],
-							});
-
-							this.isVLoading = false;
-							this.autoTrigger1.closePanel();
-
-							this._cdr.markForCheck();
+						this.submitForm.patchValue({
+							vendorctrl: vendData[0],
 						});
+
+						this.isVLoading = false;
+						this.autoTrigger1.closePanel();
+
+						this._cdr.markForCheck();
+					});
 				} else {
 					this.vendorselected = false;
 					this.autoTrigger1.closePanel();
@@ -1316,7 +1289,7 @@ export class PurchasePage implements OnInit {
 			});
 	}
 
-	add() {
+	async add() {
 		let invdt = '';
 		if (this.submitForm.value.invoicedate === null) {
 			invdt = moment().format('DD-MM-YYYY');
@@ -1324,10 +1297,7 @@ export class PurchasePage implements OnInit {
 			invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
 		}
 
-		if (
-			this.submitForm.value.tempdesc === '' ||
-			this.submitForm.value.tempdesc === null
-		) {
+		if (this.submitForm.value.tempdesc === '' || this.submitForm.value.tempdesc === null) {
 			this.submitForm.controls['tempdesc'].setErrors({ required: true });
 			this.submitForm.controls['tempdesc'].markAsTouched();
 
@@ -1347,20 +1317,21 @@ export class PurchasePage implements OnInit {
 			return false;
 		}
 
-		if (
-			this.submitForm.value.tempqty === '' ||
-			this.submitForm.value.tempqty === null
-		) {
+		if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null) {
 			this.submitForm.controls['tempqty'].setErrors({ required: true });
 			this.submitForm.controls['tempqty'].markAsTouched();
 
 			return false;
 		}
 
-		if (
-			this.submitForm.value.customerctrl === '' ||
-			this.submitForm.value.vendorctrl === null
-		) {
+		if (this.submitForm.value.tempmrp === '' || this.submitForm.value.tempmrp === null || this.submitForm.value.tempmrp === 0) {
+			this.submitForm.controls['tempmrp'].setErrors({ required: true });
+			this.submitForm.controls['tempmrp'].markAsTouched();
+
+			return false;
+		}
+
+		if (this.submitForm.value.customerctrl === '' || this.submitForm.value.vendorctrl === null) {
 			this.submitForm.controls['vendorctrl'].setErrors({ required: true });
 			this.submitForm.controls['vendorctrl'].markAsTouched();
 
@@ -1370,18 +1341,65 @@ export class PurchasePage implements OnInit {
 		// this line over writes default qty vs entered qty
 		this.lineItemData.qty = this.submitForm.value.tempqty;
 		this.lineItemData.purchase_price = this.submitForm.value.temppurchaseprice;
+		this.lineItemData.mrp = this.submitForm.value.tempmrp;
 
+		if (this.orig_mrp !== this.submitForm.value.tempmrp) {
+			this.lineItemData.mrp_change_flag = 'Y';
+		} else {
+			this.lineItemData.mrp_change_flag = 'N';
+		}
+
+		// let onlyProductCodeArr = this.listArr.map((element) => {
+		// 	return element.product_code;
+		// });
+
+		// let isduplicate = onlyProductCodeArr.includes(this.lineItemData.product_code);
+		// let proceed = false;
+
+		// if (isduplicate) {
+		// 	const alert = await this.alertController.create({
+		// 		header: 'Confirm!',
+		// 		message: 'The Item already added. Do you want to add again?',
+		// 		buttons: [
+		// 			{
+		// 				text: 'Cancel',
+		// 				role: 'cancel',
+		// 				cssClass: 'secondary',
+		// 				handler: (blah) => {
+		// 					console.log('Confirm Cancel: blah');
+		// 				},
+		// 			},
+		// 			{
+		// 				text: 'Continue to Add',
+		// 				handler: () => {
+		// 					console.log('Confirm Okay');
+		// 					proceed = true;
+		// 					this.itemAdd(this.lineItemData);
+		// 				},
+		// 			},
+		// 		],
+		// 	});
+
+		// 	await alert.present();
+		// } else {
+		this.itemAdd(this.lineItemData);
+		// }
+	}
+
+	itemAdd(lineItemData) {
 		this.processItems(this.lineItemData, 'loadingnow');
 
 		this.submitForm.patchValue({
 			productctrl: '',
 			tempdesc: '',
+			tempmrp: 0,
 			temppurchaseprice: '',
 			tempqty: 1,
 		});
 
 		this.submitForm.controls['tempdesc'].setErrors(null);
 		this.submitForm.controls['tempqty'].setErrors(null);
+		this.submitForm.controls['tempmrp'].setErrors(null);
 		this.submitForm.controls['temppurchaseprice'].setErrors(null);
 		this.submitForm.controls['productctrl'].setErrors(null);
 		this.plist && this.plist.nativeElement.focus();
@@ -1466,5 +1484,19 @@ export class PurchasePage implements OnInit {
 	}
 	identify(index, item) {
 		return item.id;
+	}
+
+	async showInventoryReportsDialog(product_code, product_id) {
+		const modal = await this._modalcontroller.create({
+			component: InventoryReportsDialogComponent,
+			componentProps: { center_id: this.userdata.center_id, product_code: product_code, product_id: product_id },
+			cssClass: 'select-modal',
+		});
+
+		modal.onDidDismiss().then((result) => {
+			this._cdr.markForCheck();
+		});
+
+		await modal.present();
 	}
 }

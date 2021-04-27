@@ -102,7 +102,17 @@ export class ProductAddDialogComponent implements OnInit {
 		});
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
+		});
+	}
 
 	isProdExists() {
 		this.pexists = false;

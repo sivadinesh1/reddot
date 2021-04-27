@@ -1,17 +1,7 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ChangeDetectionStrategy,
-	Inject,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 
-import {
-	MatDialog,
-	MatDialogRef,
-	MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModalController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
@@ -23,6 +13,7 @@ import { filter, startWith, map, distinctUntilChanged } from 'rxjs/operators';
 
 import { CurrencyPipe } from '@angular/common';
 import { Vendor } from 'src/app/models/Vendor';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
 	selector: 'app-accounts-payables',
@@ -79,19 +70,18 @@ export class AccountsPayablesComponent implements OnInit {
 		private _router: Router,
 		private _route: ActivatedRoute,
 		private _cdr: ChangeDetectorRef,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
+		private _loadingService: LoadingService
 	) {
 		this.invoicesdata = data.invoicesdata;
 
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
-				this.init();
-				this._cdr.markForCheck();
-			});
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
+			this.init();
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
 			if (this.userdata !== undefined) {
@@ -102,39 +92,25 @@ export class AccountsPayablesComponent implements OnInit {
 
 	async init() {
 		// onload list all active vendors in the dropdown
-		this._commonApiService
-			.getAllActiveVendors(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.vendor_lis = data;
-				// autocomplete as typing
-				this.filteredVendor = this.submitForm.controls[
-					'vendor'
-				].valueChanges.pipe(
-					startWith(''),
-					map((vendor) =>
-						vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
-					)
-				);
-			});
+		this._commonApiService.getAllActiveVendors(this.userdata.center_id).subscribe((data: any) => {
+			this.vendor_lis = data;
+			// autocomplete as typing
+			this.filteredVendor = this.submitForm.controls['vendor'].valueChanges.pipe(
+				startWith(''),
+				map((vendor) => (vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()))
+			);
+		});
 
 		// fetch all payment mode list
-		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(
-			this.userdata.center_id,
-			'A'
-		);
+		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(this.userdata.center_id, 'A');
 	}
 
 	// filter vendors as we type
 	filtervendor(value: any) {
 		if (typeof value == 'object') {
-			return this.vendor_lis.filter(
-				(vendor) =>
-					vendor.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-			);
+			return this.vendor_lis.filter((vendor) => vendor.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
 		} else if (typeof value == 'string') {
-			return this.vendor_lis.filter(
-				(vendor) => vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0
-			);
+			return this.vendor_lis.filter((vendor) => vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
 		}
 	}
 
@@ -149,6 +125,16 @@ export class AccountsPayablesComponent implements OnInit {
 			appliedamount: [],
 			creditsused: 'NO',
 			creditusedamount: 0,
+		});
+
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
 		});
 	}
 
@@ -195,9 +181,7 @@ export class AccountsPayablesComponent implements OnInit {
 		this.invoicesplitArr = [];
 
 		// deep  copy to new value
-		this.origVendorUnpaidInvoices = JSON.parse(
-			JSON.stringify(this.vendorUnpaidInvoices)
-		);
+		this.origVendorUnpaidInvoices = JSON.parse(JSON.stringify(this.vendorUnpaidInvoices));
 
 		const ctrl = <FormArray>this.submitForm.controls['accountarr'];
 
@@ -207,12 +191,7 @@ export class AccountsPayablesComponent implements OnInit {
 		ctrl.controls.forEach((x) => {
 			// get the itemmt value and need to parse the input to number
 
-			let parsed = parseFloat(
-				x.get('receivedamount').value === '' ||
-					x.get('receivedamount').value === null
-					? 0
-					: x.get('receivedamount').value
-			);
+			let parsed = parseFloat(x.get('receivedamount').value === '' || x.get('receivedamount').value === null ? 0 : x.get('receivedamount').value);
 			// add to total
 
 			this.summed += parsed;
@@ -223,30 +202,20 @@ export class AccountsPayablesComponent implements OnInit {
 
 		// after iterating all the line items (in this case, there will be only one row) distribute the amount paid (vendor credit if any) to all invoices
 		if (init == ctrl.controls.length) {
-			this.distributeBalance = +(this.summed + this.vendor.credit_amt).toFixed(
-				2
-			);
+			this.distributeBalance = +(this.summed + this.vendor.credit_amt).toFixed(2);
 
 			this.origVendorUnpaidInvoices.map((e) => {
 				if (this.distributeBalance > 0) {
-					if (
-						e.bal_amount > 0 &&
-						+(e.bal_amount - this.distributeBalance).toFixed(2) <= 0
-					) {
+					if (e.bal_amount > 0 && +(e.bal_amount - this.distributeBalance).toFixed(2) <= 0) {
 						//excess distribution
 						e.paid_amount = e.bal_amount;
-						this.distributeBalance = +(
-							this.distributeBalance - e.bal_amount
-						).toFixed(2);
+						this.distributeBalance = +(this.distributeBalance - e.bal_amount).toFixed(2);
 						e.bal_amount = 0;
 						this.invoicesplitArr.push({
 							id: e.purchase_id,
 							applied_amount: e.paid_amount,
 						});
-					} else if (
-						e.bal_amount > 0 &&
-						+(e.bal_amount - this.distributeBalance).toFixed(2) > 0
-					) {
+					} else if (e.bal_amount > 0 && +(e.bal_amount - this.distributeBalance).toFixed(2) > 0) {
 						//shortage distribution
 						e.paid_amount = this.distributeBalance;
 						e.bal_amount = +(e.bal_amount - this.distributeBalance).toFixed(2);
@@ -266,14 +235,10 @@ export class AccountsPayablesComponent implements OnInit {
 	}
 
 	getBalanceDue() {
-		this.balancedue = (
-			+this.invoiceamount -
-			(+this.paidamount + this.vendor.credit_amt + this.summed)
-		).toFixed(2);
+		this.balancedue = (+this.invoiceamount - (+this.paidamount + this.vendor.credit_amt + this.summed)).toFixed(2);
 
 		if (+this.balancedue < 0) {
-			this.errmsg =
-				'Amount paid is more than invoice outstanding. Excess amount will be moved to vendor credit.';
+			this.errmsg = 'Amount paid is more than invoice outstanding. Excess amount will be moved to vendor credit.';
 			this._cdr.markForCheck();
 		} else {
 			this.errmsg = '';
@@ -296,17 +261,16 @@ export class AccountsPayablesComponent implements OnInit {
 				});
 			}
 
-			this._commonApiService
-				.addBulkVendorPymtReceived(this.submitForm.value)
-				.subscribe((data: any) => {
-					if (data.body === 'success') {
-						this.submitForm.reset();
-						this.dialogRef.close('close');
-					} else {
-						// todo nothing as of now
-					}
-					this._cdr.markForCheck();
-				});
+			this._commonApiService.addBulkVendorPymtReceived(this.submitForm.value).subscribe((data: any) => {
+				if (data.body === 'success') {
+					this.submitForm.reset();
+					this.dialogRef.close('close');
+					this._loadingService.openSnackBar('Payments Recorded Successfully', '');
+				} else {
+					// todo nothing as of now
+				}
+				this._cdr.markForCheck();
+			});
 		}
 	}
 
@@ -327,13 +291,9 @@ export class AccountsPayablesComponent implements OnInit {
 
 		// get all unpaid invoices for a vendor
 
-		this.vendorUnpaidInvoices = this.invoicesdata
-			.filter((e) => e.vendor_id === event.option.value.id)
-			.filter((e1) => e1.payment_status != 'PAID');
+		this.vendorUnpaidInvoices = this.invoicesdata.filter((e) => e.vendor_id === event.option.value.id).filter((e1) => e1.payment_status != 'PAID');
 
-		this.origVendorUnpaidInvoices = JSON.parse(
-			JSON.stringify(this.vendorUnpaidInvoices)
-		);
+		this.origVendorUnpaidInvoices = JSON.parse(JSON.stringify(this.vendorUnpaidInvoices));
 
 		this.invoiceamount = this.vendorUnpaidInvoices
 			.reduce(function (acc, curr) {

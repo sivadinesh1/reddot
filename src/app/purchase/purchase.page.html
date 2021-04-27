@@ -270,7 +270,13 @@
 							<div class="txt-align">
 								<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
 							</div>
-							<div class="item2">{{item.product_code}}</div>
+							<div
+								class="item2"
+								style="color: rgb(2, 2, 193); cursor: pointer"
+								(click)="showInventoryReportsDialog(item.product_code, item.product_id)"
+							>
+								{{item.product_code}}
+							</div>
 
 							<div class="item2">{{item.product_desc}}</div>
 							<div style="text-align: right">{{item.hsncode}}</div>
@@ -399,13 +405,31 @@
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
+							<mat-label>MRP</mat-label>
+							<input
+								matInput
+								type="number"
+								min="1"
+								max="100000"
+								tabindex="5"
+								formControlName="tempmrp"
+								required
+								appSelectOnFocus
+								autocomplete="off"
+							/>
+
+							<mat-error *ngIf="submitForm.controls['tempmrp'].hasError('required')"> Required feild </mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="example-full-width">
 							<mat-label>Qty</mat-label>
 							<input
 								matInput
 								type="number"
 								min="1"
 								max="9999"
-								tabindex="5"
+								tabindex="6"
 								formControlName="tempqty"
 								required
 								#qty
@@ -438,7 +462,7 @@
 					</div>
 					<div>
 						<div style="color: #666666; text-align: right; font-size: 14px">Total</div>
-						<div style="text-align: right" class="align-self-center left-pad20 fsize32 fweight500">{{this.total | number:'1.2-2'}}</div>
+						<div style="text-align: right; font-size: 22px" class="align-self-center left-pad20 fweight500">{{this.total | number:'1.2-2'}}</div>
 					</div>
 				</div>
 			</div>
@@ -451,7 +475,7 @@
 			<div class="footer" *ngIf="vendorselected">
 				<div>
 					<div style="font-size: 12px; color: #797979">Net Total</div>
-					<div style="font-size: 32px">{{getNetTotal("rounding")}}</div>
+					<div style="font-size: 22px">{{getNetTotal("rounding")}}</div>
 				</div>
 				<div class="submit">
 					<button

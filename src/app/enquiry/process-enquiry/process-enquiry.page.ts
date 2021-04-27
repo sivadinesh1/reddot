@@ -1,13 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ChangeDetectionStrategy,
-	ViewChild,
-	ElementRef,
-	QueryList,
-	ViewChildren,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
@@ -19,25 +10,13 @@ import { ModalController, AlertController, IonSearchbar } from '@ionic/angular';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { AddMoreEnquiryComponent } from 'src/app/components/add-more-enquiry/add-more-enquiry.component';
-import {
-	filter,
-	tap,
-	catchError,
-	debounceTime,
-	switchMap,
-} from 'rxjs/operators';
+import { filter, tap, catchError, debounceTime, switchMap } from 'rxjs/operators';
 import * as xlsx from 'xlsx';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { MatSort } from '@angular/material/sort';
 import { Observable, empty, of } from 'rxjs';
-import {
-	NgForm,
-	FormGroup,
-	Validators,
-	FormBuilder,
-	FormArray,
-} from '@angular/forms';
+import { NgForm, FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { Customer } from 'src/app/models/Customer';
 import { CustomerAddDialogComponent } from 'src/app/components/customers/customer-add-dialog/customer-add-dialog.component';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -108,6 +87,7 @@ export class ProcessEnquiryPage implements OnInit {
 
 	@ViewChild('qty', { static: true }) qty: any;
 	@ViewChild(IonContent, { static: false }) content: IonContent;
+	@ViewChild('plist', { static: true }) plist: any;
 
 	userdata$: Observable<User>;
 	userdata: any;
@@ -134,21 +114,25 @@ export class ProcessEnquiryPage implements OnInit {
 	) {
 		this.init();
 		this.userdata$ = this._authservice.currentUser;
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
-				this.ready = 1;
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
+			this.ready = 1;
 
-				this._route.params.subscribe((params) => {
-					this.clicked = false;
-					this.enqid = params['enqid'];
-					this.enqDetailsOrig = [];
-					this.reloadEnqDetails('');
+			this._route.params.subscribe((params) => {
+				this.clicked = false;
+				this.enqid = params['enqid'];
+
+				this.submitForm1.patchValue({
+					enquiry_id: params['enqid'],
+					centerid: this.userdata.center_id,
 				});
-
+				this.enqDetailsOrig = [];
+				this.reloadEnqDetails('');
 				this._cdr.markForCheck();
 			});
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	get enquiries(): FormArray {
@@ -166,23 +150,15 @@ export class ProcessEnquiryPage implements OnInit {
 		});
 
 		this.submitForm1 = this._fb1.group({
-			enquiry_id: [this.enqid, Validators.required],
+			enquiry_id: ['', Validators.required],
 
-			centerid: ['', Validators.required],
-			productctrl: [null, [RequireMatch]],
+			centerid: [''],
+			productctrl: [null, [Validators.required, RequireMatch]],
 			remarks: [''],
 
 			tempdesc: [''],
 
-			tempqty: [
-				'1',
-				[
-					Validators.required,
-					Validators.max(1000),
-					Validators.min(1),
-					Validators.pattern(/\-?\d*\.?\d{1,2}/),
-				],
-			],
+			tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 		});
 
 		this.searchProducts();
@@ -195,7 +171,6 @@ export class ProcessEnquiryPage implements OnInit {
 				debounceTime(300),
 				tap(() => (this.isLoading = true)),
 				switchMap((id) => {
-					console.log(id);
 					search = id;
 					if (id != null && id.length >= 0) {
 						return this._commonApiService.getProductInfo({
@@ -217,42 +192,37 @@ export class ProcessEnquiryPage implements OnInit {
 
 	reloadEnqDetails(type) {
 		this.enqDetailsOrig = [];
-		this._commonApiService
-			.getEnquiryDetails(this.enqid)
-			.subscribe((data: any) => {
-				this.enqDetailsOrig = data;
+		this._commonApiService.getEnquiryDetails(this.enqid).subscribe((data: any) => {
+			this.enqDetailsOrig = data;
 
-				this._commonApiService
-					.getCustomerDetails(
-						this.userdata.center_id,
-						this.enqDetailsOrig.customerDetails[0].customer_id
-					)
-					.subscribe((custData: any) => {
-						this.customerdata = custData[0];
+			this._commonApiService
+				.getCustomerDetails(this.userdata.center_id, this.enqDetailsOrig.customerDetails[0].customer_id)
+				.subscribe((custData: any) => {
+					this.customerdata = custData[0];
 
-						this.submitForm.patchValue({
-							customerctrl: custData[0],
-						});
-
-						this.customername = custData[0].name;
-						this.iscustomerselected = true;
+					this.submitForm.patchValue({
+						customerctrl: custData[0],
 					});
 
-				this.status = this.enqDetailsOrig.customerDetails[0].estatus;
+					this.customername = custData[0].name;
+					this.iscustomerselected = true;
+				});
 
-				this.populateEnquiry(this.enqDetailsOrig.enquiryDetails);
+			this.status = this.enqDetailsOrig.customerDetails[0].estatus;
 
-				this.spinner.hide();
+			this.populateEnquiry(this.enqDetailsOrig.enquiryDetails);
 
-				if (type === 'loadingnow') {
-					let v1 = 220 + this.enqDetailsOrig.enquiryDetails.length * 70 + 70;
-					this.ScrollToPoint(0, v1);
-				} else {
-					this.ScrollToTop();
-				}
+			this.spinner.hide();
 
-				this._cdr.markForCheck();
-			});
+			if (type === 'loadingnow') {
+				let v1 = 220 + this.enqDetailsOrig.enquiryDetails.length * 70 + 70;
+				this.ScrollToPoint(0, v1);
+			} else {
+				this.ScrollToTop();
+			}
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	populateEnquiry(enqList) {
@@ -278,11 +248,7 @@ export class ProcessEnquiryPage implements OnInit {
 			this.autoTriggerList.forEach((e, idx) => {
 				e.panelClosingActions.subscribe((x) => {
 					if (this.autoTriggerList.toArray()[idx].activeOption) {
-						this.setItemDesc(
-							this.autoTriggerList.toArray()[idx].activeOption.value,
-							idx,
-							'tab'
-						);
+						this.setItemDesc(this.autoTriggerList.toArray()[idx].activeOption.value, idx, 'tab');
 					}
 					console.log('is it calling..' + JSON.stringify(x));
 				});
@@ -420,10 +386,7 @@ export class ProcessEnquiryPage implements OnInit {
 
 		this.executeDeletes();
 
-		if (
-			this.enqDetailsOrig.customerDetails[0].customer_id !==
-			this.customerdata.id
-		) {
+		if (this.enqDetailsOrig.customerDetails[0].customer_id !== this.customerdata.id) {
 			this.updateCustomerDetailsinEnquiry();
 		}
 
@@ -443,22 +406,20 @@ export class ProcessEnquiryPage implements OnInit {
 			return false;
 		}
 
-		this._commonApiService
-			.draftEnquiry(this.submitForm.value.enquiries)
-			.subscribe((data: any) => {
-				this.spinner.hide();
-				if (data.body.result === 'success') {
-					if (param === 'additem') {
-						this.clicked = false;
-						//	this.openAddItem();
-					} else {
-						this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
-					}
+		this._commonApiService.draftEnquiry(this.submitForm.value.enquiries).subscribe((data: any) => {
+			this.spinner.hide();
+			if (data.body.result === 'success') {
+				if (param === 'additem') {
+					this.clicked = false;
+					//	this.openAddItem();
 				} else {
+					this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
 				}
+			} else {
+			}
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 	}
 
 	displayProdFn(obj: any): string | undefined | any {
@@ -510,10 +471,7 @@ export class ProcessEnquiryPage implements OnInit {
 			return false;
 		}
 
-		if (
-			this.enqDetailsOrig.customerDetails[0].customer_id !==
-			this.customerdata.id
-		) {
+		if (this.enqDetailsOrig.customerDetails[0].customer_id !== this.customerdata.id) {
 			this.updateCustomerDetailsinEnquiry();
 		}
 
@@ -521,27 +479,23 @@ export class ProcessEnquiryPage implements OnInit {
 		this.clicked = true; // disable all buttons after submission
 		this._cdr.markForCheck();
 		this.spinner.show();
-		this._commonApiService
-			.moveToSale(this.submitForm.value.enquiries)
-			.subscribe((data: any) => {
-				this.spinner.hide();
-				if (data.body.result === 'success') {
-					this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
-				} else {
-				}
+		this._commonApiService.moveToSale(this.submitForm.value.enquiries).subscribe((data: any) => {
+			this.spinner.hide();
+			if (data.body.result === 'success') {
+				this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
+			} else {
+			}
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 	}
 
 	updateCustomerDetailsinEnquiry() {
-		this._commonApiService
-			.updateCustomerDetailsinEnquiry(this.customerdata.id, this.enqid)
-			.subscribe((data: any) => {
-				if (data.body.result === 'success') {
-					// do nothing
-				}
-			});
+		this._commonApiService.updateCustomerDetailsinEnquiry(this.customerdata.id, this.enqid).subscribe((data: any) => {
+			if (data.body.result === 'success') {
+				// do nothing
+			}
+		});
 	}
 
 	openEnquiry() {
@@ -727,10 +681,7 @@ export class ProcessEnquiryPage implements OnInit {
 		dialogConfig.width = '80%';
 		dialogConfig.height = '80%';
 
-		const dialogRef = this._dialog.open(
-			CustomerAddDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -743,25 +694,23 @@ export class ProcessEnquiryPage implements OnInit {
 			)
 			.subscribe((data: any) => {
 				if (data !== 'close') {
-					this._commonApiService
-						.getCustomerDetails(this.userdata.center_id, data.body.id)
-						.subscribe((custData: any) => {
-							this.customerdata = custData[0];
+					this._commonApiService.getCustomerDetails(this.userdata.center_id, data.body.id).subscribe((custData: any) => {
+						this.customerdata = custData[0];
 
-							this.customername = custData[0].name;
-							this.iscustomerselected = true;
+						this.customername = custData[0].name;
+						this.iscustomerselected = true;
 
-							this.setCustomerInfo(custData[0], 'tab');
+						this.setCustomerInfo(custData[0], 'tab');
 
-							this.submitForm.patchValue({
-								customerctrl: custData[0],
-							});
-
-							this.isCLoading = false;
-							this.autoTrigger1.closePanel();
-
-							this._cdr.markForCheck();
+						this.submitForm.patchValue({
+							customerctrl: custData[0],
 						});
+
+						this.isCLoading = false;
+						this.autoTrigger1.closePanel();
+
+						this._cdr.markForCheck();
+					});
 				} else {
 					this.iscustomerselected = false;
 					this.autoTrigger1.closePanel();
@@ -782,10 +731,7 @@ export class ProcessEnquiryPage implements OnInit {
 		dialogConfig.data = this.customerdata;
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			CustomerViewDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('The dialog was closed');
@@ -807,9 +753,7 @@ export class ProcessEnquiryPage implements OnInit {
 	}
 
 	exportToExcel() {
-		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-			this.epltable.nativeElement
-		);
+		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(this.epltable.nativeElement);
 		ws['!cols'] = [];
 		ws['!cols'][1] = { hidden: true };
 		ws['!cols'][4] = { hidden: true };
@@ -917,8 +861,12 @@ export class ProcessEnquiryPage implements OnInit {
 		this._commonApiService.addMoreEnquiry(form).subscribe((data: any) => {
 			this.submitForm1.reset();
 			this.myForm1.resetForm();
+			this.submitForm1.patchValue({
+				enquiry_id: this.enqid,
+				centerid: this.userdata.center_id,
+			});
 			this.reloadEnqDetails('loadingnow');
-
+			this.plist && this.plist.nativeElement.focus();
 			this.openSnackBar('Item added to Order queue', '');
 
 			this._cdr.markForCheck();
@@ -933,10 +881,7 @@ export class ProcessEnquiryPage implements OnInit {
 		dialogConfig.height = '100%';
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			ProductAddDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(ProductAddDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -955,10 +900,7 @@ export class ProcessEnquiryPage implements OnInit {
 					dialogConfigSuccess.height = '25%';
 					dialogConfigSuccess.data = 'Product added successfully';
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 				}
 			});
 	}

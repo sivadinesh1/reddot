@@ -1,9 +1,7 @@
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
 	<div class="screen-header" style="padding-bottom: 16px">
 		<div>
-			<span style="color: #310ac0; cursor: pointer" (click)="openEnquiry()"
-				>Back to Enquiry Summary</span
-			>
+			<span style="color: #310ac0; cursor: pointer" (click)="openEnquiry()">Back to Enquiry Summary</span>
 			/
 			<span style="color: #797979">Order Processing #{{enqid}}</span>
 		</div>
@@ -15,113 +13,48 @@
 				<div class="cust-header">
 					<div>
 						<mat-form-field style="width: 320px; padding-right: 10px">
-							<input
-								matInput
-								[matAutocomplete]="auto"
-								formControlName="customerctrl"
-								#typehead1
-								required
-								matTooltipPosition="after"
-							/>
-							<button
-								mat-button
-								matSuffix
-								mat-icon-button
-								type="button"
-								(click)="clearInput()"
-							>
+							<input matInput [matAutocomplete]="auto" formControlName="customerctrl" #typehead1 required matTooltipPosition="after" />
+							<button mat-button matSuffix mat-icon-button type="button" (click)="clearInput()">
 								<mat-icon>close</mat-icon>
 							</button>
 							<mat-label class="placeholder">Select or Add Customer</mat-label>
 
-							<mat-autocomplete
-								#auto="matAutocomplete"
-								[displayWith]="displayFn"
-								(optionSelected)="setCustomerInfo($event, 'click')"
-							>
-								<mat-option *ngIf="isCLoading" class="is-loading"
-									><mat-spinner diameter="20"></mat-spinner
-								></mat-option>
+							<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="setCustomerInfo($event, 'click')">
+								<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 								<ng-container *ngIf="!isCLoading">
-									<mat-option
-										*ngFor="let customer of customer_lis"
-										[value]="customer"
-									>
+									<mat-option *ngFor="let customer of customer_lis" [value]="customer">
 										<span>{{ customer.name }} </span>
 									</mat-option>
-									<mat-option style="background-color: #f2f2f2" value="new"
-										>+ New Customer</mat-option
-									>
+									<mat-option style="background-color: #f2f2f2" value="new">+ New Customer</mat-option>
 								</ng-container>
 							</mat-autocomplete>
-							<mat-error
-								*ngIf="submitForm.controls['customerctrl'].hasError('required')"
-							>
-								Please enter a value
-							</mat-error>
-							<mat-error
-								*ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"
-							>
-								Customer does not exist
-							</mat-error>
+							<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('required')"> Please enter a value </mat-error>
+							<mat-error *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"> Customer does not exist </mat-error>
 							<mat-hint *ngIf="iscustomerselected">
-								<span
-									(click)="openDialog($event)"
-									style="font-size: 12px; color: #310ac0; cursor: pointer"
-									>View Customer Details</span
-								>
+								<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Customer Details</span>
 							</mat-hint>
 						</mat-form-field>
 					</div>
 
-					<div
-						*ngIf="iscustomerselected"
-						style="
-							font-size: 12px;
-							color: #666666;
-							padding: 0.5rem 0.5rem 0.5rem 0px;
-						"
-					>
+					<div *ngIf="iscustomerselected" style="font-size: 12px; color: #666666; padding: 0.5rem 0.5rem 0.5rem 0px">
 						<div style="font-weight: 500; font-size: 14px">BILLING ADDRESS</div>
 						<div>{{customerdata.address1 | nullquote}}</div>
 						<div>{{customerdata.address2 | nullquote}}</div>
 
-						<div>
-							{{customerdata.district | nullquote}}, {{customerdata.pin |
-							nullquote}}
-						</div>
+						<div>{{customerdata.district | nullquote}}, {{customerdata.pin | nullquote}}</div>
 					</div>
 
-					<div
-						*ngIf="iscustomerselected"
-						style="
-							padding: 0.5rem 0.5rem 0.5rem 0px;
-							font-size: 12px;
-							color: #666666;
-						"
-					>
-						<div style="font-weight: 500; font-size: 14px">
-							SHIPPING ADDRESS
-						</div>
+					<div *ngIf="iscustomerselected" style="padding: 0.5rem 0.5rem 0.5rem 0px; font-size: 12px; color: #666666">
+						<div style="font-weight: 500; font-size: 14px">SHIPPING ADDRESS</div>
 						<div>{{customerdata.address1 | nullquote}}</div>
 						<div>{{customerdata.address2 | nullquote}}</div>
 
-						<div>
-							{{customerdata.district | nullquote}}, {{customerdata.pin |
-							nullquote}}
-						</div>
+						<div>{{customerdata.district | nullquote}}, {{customerdata.pin | nullquote}}</div>
 						<div></div>
 					</div>
-					<div
-						*ngIf="iscustomerselected"
-						style="
-							padding: 0.5rem 0.5rem 0.5rem 0px;
-							font-size: 12px;
-							color: #666666;
-						"
-					>
+					<div *ngIf="iscustomerselected" style="padding: 0.5rem 0.5rem 0.5rem 0px; font-size: 12px; color: #666666">
 						<div style="font-weight: 500; font-size: 14px">Remarks</div>
-						<div>{{enqDetailsOrig.customerDetails[0].remarks}}</div>
+						<div>{{customerdata?.remarks}}</div>
 					</div>
 				</div>
 
@@ -133,9 +66,7 @@
 			<table>
 				<thead>
 					<tr class="content">
-						<th style="text-align: center; padding-left: 5px; font-weight: 500">
-							#
-						</th>
+						<th style="text-align: center; padding-left: 5px; font-weight: 500">#</th>
 						<th style="text-align: left; padding-left: 5px; font-weight: 500">
 							<img
 								class="cursor"
@@ -147,36 +78,20 @@
 							/>
 						</th>
 
-						<th style="text-align: left; padding-left: 5px; font-weight: 500">
-							Item Code
-						</th>
-						<th style="text-align: left; padding-left: 10px; font-weight: 500">
-							Item Description
-						</th>
-						<th style="text-align: right; padding-left: 10px; font-weight: 500">
-							MRP
-						</th>
-						<th style="text-align: right; padding-right: 5px; font-weight: 500">
-							In Stock
-						</th>
-						<th style="text-align: left; padding-left: 5px; font-weight: 500">
-							Rack #
-						</th>
-						<th style="text-align: right; padding-right: 5px; font-weight: 500">
-							Alloted Qty
-						</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Code</th>
+						<th style="text-align: left; padding-left: 10px; font-weight: 500">Item Description</th>
+						<th style="text-align: right; padding-left: 10px; font-weight: 500">MRP</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">In Stock</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">Rack #</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">Alloted Qty</th>
 						<!-- <th
 							[hidden]="true"
 							style="text-align: right; padding-right: 5px; font-weight: 500"
 						>
 							Alloted Qty
 						</th> -->
-						<th style="text-align: left; padding-left: 5px; font-weight: 500">
-							Notes
-						</th>
-						<th style="text-align: right; padding-right: 5px; font-weight: 500">
-							Req. Qty
-						</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">Notes</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">Req. Qty</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
@@ -193,11 +108,7 @@
 								<td style="text-align: left; padding-left: 5px">
 									<div class="txt-align">
 										<span>
-											<mat-checkbox
-												#myCheckbox
-												formControlName="check_box"
-												(click)="checkedDelRow(idx)"
-											></mat-checkbox>
+											<mat-checkbox #myCheckbox formControlName="check_box" (click)="checkedDelRow(idx)"></mat-checkbox>
 										</span>
 									</div>
 								</td>
@@ -205,11 +116,7 @@
 								<td style="text-align: left; padding-left: 5px">
 									<div class="left-align" style="cursor: pointer">
 										<div>
-											<mat-form-field
-												floatLabel="never"
-												class="example-full-width"
-												style="margin-bottom: -1.25em"
-											>
+											<mat-form-field floatLabel="never" class="example-full-width" style="margin-bottom: -1.25em">
 												<input
 													matInput
 													[matAutocomplete]="auto1"
@@ -220,14 +127,7 @@
 													placeholder="Item Code"
 												/>
 
-												<button
-													mat-button
-													matSuffix
-													mat-icon-button
-													aria-label="Clear"
-													type="button"
-													(click)="clearProdInput(idx)"
-												>
+												<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput(idx)">
 													<mat-icon>close</mat-icon>
 												</button>
 
@@ -237,83 +137,29 @@
 													panelWidth="auto"
 													(optionSelected)="setItemDesc($event, idx, 'click')"
 												>
-													<mat-option *ngIf="isLoading" class="is-loading"
-														><mat-spinner diameter="20"></mat-spinner
-													></mat-option>
+													<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 													<!-- <ng-container *ngIf="!isLoading"> -->
-													<ng-container
-														*ngIf="productList$[idx] |async as results"
-													>
+													<ng-container *ngIf="productList$[idx] |async as results">
 														<mat-option
 															*ngFor="let product of results"
 															[value]="product"
-															style="
-																padding-top: 15px;
-																height: 3.3em !important;
-																padding-bottom: 15px;
-															"
+															style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px"
 														>
-															<div
-																style="
-																	display: grid;
-																	grid-template-columns: 1fr 80px;
-																"
-															>
+															<div style="display: grid; grid-template-columns: 1fr 80px">
 																<div>
-																	<div
-																		style="
-																			font-size: 15px;
-																			padding: 2px;
-																			line-height: 1em;
-																		"
-																	>
+																	<div style="font-size: 15px; padding: 2px; line-height: 1em">
 																		{{ product.product_code }} &nbsp;&nbsp;
-																		<span style="color: blue"
-																			>MRP: {{ product.mrp | currency:
-																			"INR"}}</span
-																		>
+																		<span style="color: blue">MRP: {{ product.mrp | currency: "INR"}}</span>
 																	</div>
-																	<div
-																		style="
-																			font-size: 14px;
-																			padding: 2px;
-																			line-height: 1em;
-																			color: grey;
-																		"
-																	>
-																		{{ product.description }}
-																	</div>
+																	<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ product.description }}</div>
 																</div>
 																<div>
-																	<div
-																		style="
-																			font-size: 15px;
-																			padding: 2px;
-																			line-height: 1em;
-																			text-align: right;
-																			color: grey;
-																		"
-																	>
+																	<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right; color: grey">
 																		{{ product.name }}
 																	</div>
-																	<div
-																		style="
-																			font-size: 14px;
-																			padding: 2px;
-																			line-height: 1em;
-																			text-align: right;
-																			color: blue;
-																		"
-																	>
-																		<span>
-																			<img
-																				src="/assets/images/svg/sales.svg"
-																				width="18px"
-																				height="18px"
-																		/></span>
-																		<span>
-																			&nbsp;{{ product.available_stock }}
-																		</span>
+																	<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
+																		<span> <img src="/assets/images/svg/sales.svg" width="18px" height="18px" /></span>
+																		<span> &nbsp;{{ product.available_stock }} </span>
 																	</div>
 																</div>
 															</div>
@@ -326,32 +172,16 @@
 									</div>
 								</td>
 
-								<td style="text-align: left; padding-left: 10px">
-									{{item.value.product_desc}}
-								</td>
-								<td style="text-align: right; padding-left: 10px">
-									{{item.value.mrp}}
-								</td>
+								<td style="text-align: left; padding-left: 10px">{{item.value.product_desc}}</td>
+								<td style="text-align: right; padding-left: 10px">{{item.value.mrp}}</td>
 								<td style="text-align: right">
-									<span
-										*ngIf="item.value.available_stock <= 0"
-										style="color: red"
-									>
-										{{item.value.available_stock}}
-									</span>
-									<span *ngIf="item.value.available_stock > 0">
-										{{item.value.available_stock}}
-									</span>
+									<span *ngIf="item.value.available_stock <= 0" style="color: red"> {{item.value.available_stock}} </span>
+									<span *ngIf="item.value.available_stock > 0"> {{item.value.available_stock}} </span>
 								</td>
-								<td style="text-align: left; padding-left: 5px">
-									{{item.value.rackno}}
-								</td>
+								<td style="text-align: left; padding-left: 5px">{{item.value.rackno}}</td>
 
 								<td style="text-align: right; padding-right: 5px">
-									<mat-form-field
-										class="qty-width"
-										style="margin-bottom: -1.25em"
-									>
+									<mat-form-field class="qty-width" style="margin-bottom: -1.25em">
 										<input
 											matInput
 											type="number"
@@ -366,12 +196,8 @@
 									</mat-form-field>
 								</td>
 
-								<td style="text-align: left; padding-left: 5px">
-									{{item.value.notes}}
-								</td>
-								<td style="text-align: right; padding-right: 5px">
-									{{item.value.askqty}}
-								</td>
+								<td style="text-align: left; padding-left: 5px">{{item.value.notes}}</td>
+								<td style="text-align: right; padding-right: 5px">{{item.value.askqty}}</td>
 								<td style="text-align: center">
 									<mat-slide-toggle
 										style="display: inline"
@@ -400,92 +226,34 @@
 								#plist
 								matTooltipPosition="after"
 								tabindex="1"
+								required
 							/>
-							<mat-hint *ngIf="selected_description" matTooltip="Add product"
-								>{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint
-							>
+							<mat-hint *ngIf="selected_description" matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
 
-							<button
-								mat-button
-								matSuffix
-								mat-icon-button
-								aria-label="Clear"
-								type="button"
-								(click)="clearProdInput1()"
-							>
+							<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearProdInput1()">
 								<mat-icon>close</mat-icon>
 							</button>
 
-							<mat-autocomplete
-								#auto2="matAutocomplete"
-								[displayWith]="displayProdFn"
-								(optionSelected)="setItemDesc1($event, 'click')"
-							>
-								<mat-option *ngIf="isLoading" class="is-loading"
-									><mat-spinner diameter="20"></mat-spinner
-								></mat-option>
+							<mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayProdFn" (optionSelected)="setItemDesc1($event, 'click')">
+								<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
 								<ng-container *ngIf="!isLoading">
 									<mat-option
 										*ngFor="let product of product_lis"
 										[value]="product"
-										style="
-											padding-top: 15px;
-											height: 3.3em !important;
-											padding-bottom: 15px;
-										"
+										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px"
 									>
 										<div style="display: grid; grid-template-columns: 1fr 80px">
 											<div>
-												<div
-													style="
-														font-size: 15px;
-														padding: 2px;
-														line-height: 1em;
-													"
-												>
+												<div style="font-size: 15px; padding: 2px; line-height: 1em">
 													{{ product.product_code }} &nbsp;&nbsp;
-													<span style="color: blue"
-														>MRP: {{ product.mrp | currency: "INR"}}</span
-													>
+													<span style="color: blue">MRP: {{ product.mrp | currency: "INR"}}</span>
 												</div>
-												<div
-													style="
-														font-size: 14px;
-														padding: 2px;
-														line-height: 1em;
-														color: grey;
-													"
-												>
-													{{ product.description }}
-												</div>
+												<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ product.description }}</div>
 											</div>
 											<div>
-												<div
-													style="
-														font-size: 15px;
-														padding: 2px;
-														line-height: 1em;
-														text-align: right;
-														color: grey;
-													"
-												>
-													{{ product.name }}
-												</div>
-												<div
-													style="
-														font-size: 14px;
-														padding: 2px;
-														line-height: 1em;
-														text-align: right;
-														color: blue;
-													"
-												>
-													<span>
-														<img
-															src="/assets/images/svg/sales.svg"
-															width="18px"
-															height="18px"
-													/></span>
+												<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right; color: grey">{{ product.name }}</div>
+												<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
+													<span> <img src="/assets/images/svg/sales.svg" width="18px" height="18px" /></span>
 													<span> &nbsp;{{ product.available_stock }} </span>
 												</div>
 											</div>
@@ -494,30 +262,15 @@
 								</ng-container>
 							</mat-autocomplete>
 
-							<mat-error
-								*ngIf="submitForm1.controls['productctrl'].hasError('incorrect')"
-							>
-								Invalid product code
-							</mat-error>
+							<mat-error *ngIf="submitForm1.controls['productctrl'].hasError('incorrect')"> Invalid product code </mat-error>
+							<mat-error *ngIf="submitForm1.controls['productctrl'].hasError('required')"> Please select a value </mat-error>
 						</mat-form-field>
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
-							<input
-								matInput
-								type="text"
-								formControlName="tempdesc"
-								required
-								tabindex="2"
-							/>
-							<mat-placeholder class="placeholder"
-								>Item Description/Notes</mat-placeholder
-							>
-							<mat-error
-								*ngIf="submitForm1.controls['tempdesc'].hasError('required')"
-							>
-								Please enter a value
-							</mat-error>
+							<input matInput type="text" formControlName="tempdesc" required tabindex="2" />
+							<mat-placeholder class="placeholder">Item Description/Notes</mat-placeholder>
+							<mat-error *ngIf="submitForm1.controls['tempdesc'].hasError('required')"> Please enter a value </mat-error>
 						</mat-form-field>
 					</div>
 
@@ -540,13 +293,8 @@
 						</mat-form-field>
 					</div>
 					<div>
-						<button
-							mat-stroked-button
-							color="primary"
-							type="button"
-							tabindex="4"
-							(click)="onSubmit()"
-						>
+						<!-- <button mat-stroked-button color="primary" type="button"  >+ Add Item</button> -->
+						<button mat-raised-button color="primary" type="button" tabindex="4" class="cursor" (click)="onSubmit()" [disabled]="!submitForm1.valid">
 							+ Add Item
 						</button>
 					</div>
@@ -572,21 +320,11 @@
 					</span>
 					<span style="padding: 0px 10px">
 						<div style="font-size: 12px; color: #797979"># Items</div>
-						<div style="font-size: 24px">
-							{{this.submitForm.value.enquiries.length || 0 }}
-						</div>
+						<div style="font-size: 24px">{{this.submitForm.value.enquiries.length || 0 }}</div>
 					</span>
-					<span
-						style="padding: 0px 10px; display: grid; align-content: flex-end"
-					>
+					<span style="padding: 0px 10px; display: grid; align-content: flex-end">
 						<div style="font-size: 24px; display: flex">
-							<img
-								src="/assets/images/svg/download-excel.svg"
-								style="cursor: pointer"
-								width="32px"
-								height="32px"
-								(click)="exportToExcel()"
-							/>
+							<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportToExcel()" />
 						</div>
 					</span>
 				</div>

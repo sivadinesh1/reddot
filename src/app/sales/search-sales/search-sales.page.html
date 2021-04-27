@@ -2,40 +2,18 @@
 	<div class="search-wrap">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div
-					class="btn-grad"
-					(click)="goSalesAddScreen()"
-					style="cursor: pointer"
-				>
-					<mat-icon
-						style="
-							font-size: 30px;
-							width: 30px !important;
-							height: 30px !important;
-						"
-						>add_circle_outline</mat-icon
-					>
+				<div class="btn-grad" (click)="goSalesAddScreen()" style="cursor: pointer">
+					<mat-icon style="font-size: 30px; width: 30px !important; height: 30px !important">add_circle_outline</mat-icon>
 					<span style="padding-left: 10px; font-size: 20px">Sales</span>
 				</div>
 				<div style="justify-self: end">
-					<mat-radio-group
-						formControlName="searchtype"
-						class="example-radio-group"
-						(change)="radioClickHandle()"
-					>
-						<mat-radio-button
-							class="radio-button"
-							value="{{op.id}}"
-							*ngFor="let op of searchType"
-							[checked]="op.checked"
+					<mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
+						<mat-radio-button class="radio-button" value="{{op.id}}" *ngFor="let op of searchType" [checked]="op.checked"
 							>{{op.name}}</mat-radio-button
 						>
 					</mat-radio-group>
 				</div>
-				<div
-					class="inner-form"
-					*ngIf="this.submitForm.value.searchtype === 'all'"
-				>
+				<div class="inner-form" *ngIf="this.submitForm.value.searchtype === 'all'">
 					<div class="customers">
 						<mat-form-field style="width: 200px">
 							<mat-label>Customers</mat-label>
@@ -58,15 +36,8 @@
 							>
 								<mat-icon>close</mat-icon>
 							</button>
-							<mat-autocomplete
-								#auto="matAutocomplete"
-								panelWidth="auto"
-								(optionSelected)="getPosts($event)"
-							>
-								<mat-option
-									*ngFor="let customer of filteredCustomer | async"
-									[value]="customer"
-								>
+							<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
+								<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
 									<span>{{ customer.name }} </span>
 								</mat-option>
 							</mat-autocomplete>
@@ -86,10 +57,7 @@
 								required
 								(dateChange)="fromDateSelected($event)"
 							/>
-							<mat-datepicker-toggle
-								matSuffix
-								[for]="fromdate"
-							></mat-datepicker-toggle>
+							<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
 							<mat-datepicker #fromdate></mat-datepicker>
 						</mat-form-field>
 					</div>
@@ -107,10 +75,7 @@
 								required
 								(dateChange)="toDateSelected($event)"
 							/>
-							<mat-datepicker-toggle
-								matSuffix
-								[for]="todate"
-							></mat-datepicker-toggle>
+							<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
 							<mat-datepicker #todate></mat-datepicker>
 						</mat-form-field>
 					</div>
@@ -118,67 +83,32 @@
 					<div style="padding-top: 20px">
 						<mat-form-field style="width: 100%" class="readonly-wrapper">
 							<mat-label>Sale Type</mat-label>
-							<mat-select
-								formControlName="saletype"
-								required
-								value="{saletypeFlag}"
-								[disableControl]="this.submitForm.value.searchtype !== 'all'"
-							>
-								<mat-option *ngFor="let item of saletypeList" [value]="item.id">
-									{{item.value}}
-								</mat-option>
+							<mat-select formControlName="saletype" required value="{saletypeFlag}" [disableControl]="this.submitForm.value.searchtype !== 'all'">
+								<mat-option *ngFor="let item of saletypeList" [value]="item.id"> {{item.value}} </mat-option>
 							</mat-select>
 						</mat-form-field>
 					</div>
 				</div>
 
-				<div
-					class="inner-form"
-					*ngIf="this.submitForm.value.searchtype !== 'all'"
-				>
+				<div class="inner-form" *ngIf="this.submitForm.value.searchtype !== 'all'">
 					<div style="padding-top: 20px">
 						<mat-form-field style="width: 100%">
 							<mat-label>Invoice #</mat-label>
 							<input matInput type="text" #invno formControlName="invoiceno" />
-							<mat-error
-								*ngIf="submitForm.controls['invoiceno'].hasError('required')"
-							>
-								Please enter a value
-							</mat-error>
+							<mat-error *ngIf="submitForm.controls['invoiceno'].hasError('required')"> Please enter a value </mat-error>
 						</mat-form-field>
 					</div>
 				</div>
 
 				<div class="search-btn" style="padding-top: 20px">
-					<button
-						mat-stroked-button
-						[disabled]="!submitForm.valid"
-						color="primary"
-						style="font-size: 1rem"
-						(click)="search()"
-					>
-						Search
-					</button>
+					<button mat-stroked-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search()">Search</button>
 				</div>
 			</div>
 		</form>
 
-		<div
-			style="
-				width: 94%;
-				margin: 0 auto;
-				padding: 32px 0px 100px 0px;
-				position: relative;
-				display: grid;
-			"
-			[@.disabled]="true"
-		>
+		<div style="width: 94%; margin: 0 auto; padding: 32px 0px 100px 0px; position: relative; display: grid" [@.disabled]="true">
 			<div>
-				<mat-tab-group
-					color="primary"
-					[(selectedIndex)]="tabIndex"
-					(selectedTabChange)="tabClick($event)"
-				>
+				<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
 					<mat-tab label="Draft ({{(draftSales$| async)?.length }})">
 						<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
@@ -195,14 +125,7 @@
 					</mat-tab>
 				</mat-tab-group>
 			</div>
-			<div
-				style="
-					position: absolute;
-					justify-self: flex-end;
-					top: 32px;
-					z-index: 1;
-				"
-			>
+			<div style="position: absolute; justify-self: flex-end; top: 32px; z-index: 1">
 				<form [formGroup]="submitForm">
 					<mat-form-field class="readonly-wrapper">
 						<mat-label>Show</mat-label>
@@ -212,9 +135,7 @@
 							value="{orderDefaultFlag}"
 							[disableControl]="this.submitForm.value.searchtype !== 'all'"
 						>
-							<mat-option *ngFor="let item of orderList" [value]="item.id">
-								{{item.value}}
-							</mat-option>
+							<mat-option *ngFor="let item of orderList" [value]="item.id"> {{item.value}} </mat-option>
 						</mat-select>
 					</mat-form-field>
 				</form>
@@ -233,13 +154,7 @@
 			<div class="txt-right-align">TOTAL VALUE</div>
 			<div class="txt-center-align">STATUS</div>
 			<div>
-				<img
-					src="/assets/images/svg/download-excel.svg"
-					style="cursor: pointer"
-					width="32px"
-					height="32px"
-					(click)="exportDraftSalesToExcel()"
-				/>
+				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportDraftSalesToExcel()" />
 			</div>
 		</div>
 		<div class="headerRow" style="background-color: #dfdfdf">
@@ -248,12 +163,8 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 
-			<div style="font-size: 14px; font-weight: 500; text-align: right">
-				{{this.sumNumItems}}
-			</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right">
-				{{this.sumTotalValue | currency: "INR"}}
-			</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | pricePipe }}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 		</div>
@@ -285,12 +196,8 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 
-			<div style="font-size: 14px; font-weight: 500; text-align: right">
-				{{this.sumNumItems}}
-			</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right">
-				{{this.sumTotalValue | currency: "INR"}}
-			</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | pricePipe}}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 		</div>
@@ -309,13 +216,7 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>
-				<img
-					src="/assets/images/svg/download-excel.svg"
-					style="cursor: pointer"
-					width="32px"
-					height="32px"
-					(click)="exportCompletedSalesToExcel()"
-				/>
+				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportCompletedSalesToExcel()" />
 			</div>
 		</div>
 		<div class="headerRow" style="background-color: #dfdfdf">
@@ -324,12 +225,8 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 
-			<div style="font-size: 14px; font-weight: 500; text-align: right">
-				{{this.sumNumItems}}
-			</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right">
-				{{this.sumTotalValue | currency: "INR"}}
-			</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | pricePipe}}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
@@ -344,9 +241,7 @@
 			<div class="item">{{item.invoice_date}}</div>
 
 			<div class="item" style="text-align: right">{{item.no_of_items}}</div>
-			<div class="item" style="text-align: right">
-				{{item.net_total | currency: "INR"}}
-			</div>
+			<div class="item" style="text-align: right">{{item.net_total.toLocaleString('en-IN')}}</div>
 
 			<div class="item" style="text-align: center">
 				<mat-icon
@@ -371,11 +266,7 @@
 					>remove_red_eye
 				</mat-icon>
 			</div>
-			<div
-				class="item"
-				style="text-align: center"
-				*ngIf="item.sale_type === 'gstinvoice'"
-			>
+			<div class="item" style="text-align: center" *ngIf="item.sale_type === 'gstinvoice'">
 				<mat-icon
 					#tooltip="matTooltip"
 					matTooltip="Print Sale"
@@ -386,11 +277,7 @@
 					>print
 				</mat-icon>
 			</div>
-			<div
-				class="item"
-				style="text-align: center"
-				*ngIf="item.sale_type === 'stockissue'"
-			>
+			<div class="item" style="text-align: center" *ngIf="item.sale_type === 'stockissue'">
 				<mat-icon
 					#tooltip="matTooltip"
 					matTooltip="Print Estimate"
@@ -428,24 +315,9 @@
 			</div>
 		</div>
 
-		<div
-			class="no-records"
-			*ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0"
-		>
-			No item in status "Draft"
-		</div>
-		<div
-			class="no-records"
-			*ngIf="tabIndex === 1 && (fullfilledSales$| async)?.length === 0"
-		>
-			No item in status "Fullfilled"
-		</div>
-		<div
-			class="no-records"
-			*ngIf="tabIndex === 2 && (stockIssueSales$| async)?.length === 0"
-		>
-			No item in status "Stock Issue"
-		</div>
+		<div class="no-records" *ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0">No item in status "Draft"</div>
+		<div class="no-records" *ngIf="tabIndex === 1 && (fullfilledSales$| async)?.length === 0">No item in status "Fullfilled"</div>
+		<div class="no-records" *ngIf="tabIndex === 2 && (stockIssueSales$| async)?.length === 0">No item in status "Stock Issue"</div>
 	</ng-template>
 </ion-content>
 

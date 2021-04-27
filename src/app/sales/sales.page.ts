@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectorRef, ViewChild, ElementRef, ViewChildren, QueryList, ChangeDetectionStrategy, HostListener } from '@angular/core';
 import { ModalController, PickerController, AlertController } from '@ionic/angular';
 
 import { CommonApiService } from '../services/common-api.service';
@@ -34,6 +34,8 @@ import { User } from '../models/User';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductAddDialogComponent } from '../components/products/product-add-dialog/product-add-dialog.component';
 import { SuccessMessageDialogComponent } from '../components/success-message-dialog/success-message-dialog.component';
+import { E } from '@angular/cdk/keycodes';
+import { InventoryReportsDialogComponent } from '../components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
 
 @Component({
 	selector: 'app-sales',
@@ -154,6 +156,53 @@ export class SalesPage {
 	orig_customerid: string;
 	isFreshSale = false;
 	fromEnquiry: any;
+
+	draftConfirm = [
+		{
+			text: 'Cancel',
+			role: 'cancel',
+			cssClass: 'secondary',
+			handler: (blah) => {
+				console.log('Confirm Cancel: blah');
+			},
+		},
+		{
+			text: 'Sale Orders',
+			cssClass: 'secondary',
+			handler: () => {
+				console.log('Confirm Cancel: blah');
+				this.mainSubmit('draft', 'back');
+			},
+		},
+		{
+			text: 'Add Items',
+			cssClass: 'primary',
+			handler: () => {
+				console.log('Confirm Okay');
+				this.mainSubmit('draft', 'stay');
+			},
+		},
+	];
+
+	generateInvoiceConfirm = [
+		{
+			text: 'Cancel',
+			role: 'cancel',
+			cssClass: 'secondary',
+			handler: (blah) => {
+				console.log('Confirm Cancel: blah');
+			},
+		},
+
+		{
+			text: 'Okay',
+			cssClass: 'primary',
+			handler: () => {
+				console.log('Confirm Okay');
+				this.mainSubmit('add', 'back');
+			},
+		},
+	];
 
 	constructor(
 		private _modalcontroller: ModalController,
@@ -337,6 +386,10 @@ export class SalesPage {
 		}
 
 		// raw sales data : which comes from regular sale screen and not from enquiry screen
+		this.buildRawSaleData();
+	}
+
+	buildRawSaleData() {
 		if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
 			if (this.rawSalesData[0] !== undefined) {
 				if (this.rawSalesData[0].id !== 0) {
@@ -637,8 +690,10 @@ export class SalesPage {
 				sgst: 0,
 			});
 		} else {
+			// debugger;
 			this.cgstTotal = this.listArr
 				.map((item) => {
+					console.log('dinesh ' + item.tax_value / 2);
 					return item.tax_value / 2;
 				})
 				.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
@@ -823,8 +878,6 @@ export class SalesPage {
 			if (this.validateForms()) {
 				if (action === 'add') {
 					this.presentAlertConfirm('add');
-				} else if (action === 'print') {
-					this.presentAlertConfirm('print');
 				} else if (action === 'draft') {
 					this.presentAlertConfirm('draft');
 				}
@@ -1030,91 +1083,97 @@ export class SalesPage {
 	async presentAlertConfirm(action) {
 		const alert = await this.alertController.create({
 			header: 'Confirm!',
-			message: 'Do You want to save!!!',
-			buttons: [
-				{
-					text: 'Cancel',
-					role: 'cancel',
-					cssClass: 'secondary',
-					handler: (blah) => {
-						console.log('Confirm Cancel: blah');
-					},
-				},
-				{
-					text: 'Okay',
-					handler: () => {
-						console.log('Confirm Okay');
-
-						this.executeDeletes();
-
-						if (action === 'add' || action === 'print') {
-							this.submitForm.patchValue({
-								status: 'C',
-							});
-						} else if (action === 'draft') {
-							this.submitForm.patchValue({
-								status: 'D',
-							});
-						}
-
-						//main submit
-						this.clicked = true; // disable all buttons after submission
-						this._cdr.markForCheck();
-						this.spinner.show();
-
-						// Check if customer changed and set status
-						// shoun't be fresh sale or movetosale(enquiry-sale)
-
-						if (!this.isFreshSale && !this.fromEnquiry) {
-							if (this.orig_customerid !== this.submitForm.value.customerctrl.id) {
-								this.submitForm.patchValue({
-									hasCustomerChange: 'YS',
-									old_customer_id: this.orig_customerid,
-								});
-							}
-						}
-
-						// Main Submit to BE
-						this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
-							this.spinner.hide();
-							// console.log('saveSaleOrder ' + JSON.stringify(data));
-
-							if (data.body.result === 'success') {
-								this.invoiceid = data.body.id;
-
-								this.cancel();
-
-								this.formRef.resetForm();
-
-								// reinit after successful insert
-								//  this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
-
-								this._cdr.markForCheck();
-								if (action === 'add') {
-									this.invoiceSuccess(this.invoiceid);
-									// invoice add dialog
-								} else {
-									//this.presentAlert('Saved to Draft!');
-									this.openSnackBar('Saved to Draft!', '');
-								}
-
-								this.submitForm.patchValue({
-									invoicedate: new Date(),
-								});
-
-								this.salesDashboard();
-							} else {
-								this.presentAlert('Error: Something went wrong Contact Admin!');
-							}
-
-							this._cdr.markForCheck();
-						});
-					},
-				},
-			],
+			message: action === 'draft' ? 'Save & Continue to' : 'Are you sure to Generate/Update Invoice?',
+			cssClass: 'buttonCss',
+			buttons: action === 'draft' ? this.draftConfirm : this.generateInvoiceConfirm,
 		});
 
 		await alert.present();
+	}
+
+	mainSubmit(action, navto) {
+		this.executeDeletes();
+
+		if (action === 'add') {
+			this.submitForm.patchValue({
+				status: 'C',
+			});
+		} else if (action === 'draft') {
+			this.submitForm.patchValue({
+				status: 'D',
+			});
+		}
+
+		//main submit
+		this.clicked = true; // disable all buttons after submission
+		this._cdr.markForCheck();
+		this.spinner.show();
+
+		// Check if customer changed and set status
+		// shoun't be fresh sale or movetosale(enquiry-sale)
+
+		if (!this.isFreshSale && !this.fromEnquiry) {
+			if (this.orig_customerid !== this.submitForm.value.customerctrl.id) {
+				this.submitForm.patchValue({
+					hasCustomerChange: 'YS',
+					old_customer_id: this.orig_customerid,
+				});
+			}
+		}
+
+		// Main Submit to BE
+		this._commonApiService.saveSaleOrder(this.submitForm.value).subscribe((data: any) => {
+			this.spinner.hide();
+			// console.log('saveSaleOrder ' + JSON.stringify(data));
+
+			if (data.body.result === 'success') {
+				this.invoiceid = data.body.id;
+
+				// check
+				// this.cancel();
+				// this.formRef.resetForm();
+
+				// reinit after successful insert
+				//  this.getInvoiceSequence(this.userdata.center_id, "gstinvoice");
+
+				this._cdr.markForCheck();
+				if (action === 'add') {
+					this.cancel();
+					this.formRef.resetForm();
+					this.invoiceSuccess(this.invoiceid);
+					this.submitForm.patchValue({
+						invoicedate: new Date(),
+					});
+					// invoice add dialog
+				} else {
+					// Save as Draft & continue
+					//this.presentAlert('Saved to Draft!');
+					this.openSnackBar('Saved to Draft!', '');
+					this.clicked = false;
+
+					this.id = data.body.id;
+					this.mode = 'edit';
+					this.listArr = [];
+					this.submitForm.patchValue({
+						invoiceno: data.body.invoiceno,
+						salesid: data.body.id,
+					});
+					this._commonApiService.salesMasterData(data.body.id).subscribe((data) => {
+						this.rawSalesData = data;
+						this._cdr.markForCheck();
+						this.buildRawSaleData();
+					});
+				}
+
+				if (navto == 'back') {
+					this.salesDashboard();
+				}
+			} else {
+				this.presentAlert('Error: Something went wrong Contact Admin!');
+			}
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	// Fn: to get & set invoiceno and invoice type
@@ -1446,7 +1505,56 @@ export class SalesPage {
 		this._cdr.markForCheck();
 	}
 
-	setItemDesc(event, from) {
+	async setItemDesc(event, from) {
+		let onlyProductCodeArr = this.listArr.map((element) => {
+			return element.product_code;
+		});
+
+		if (from === 'tab') {
+			this.lineItemData = event;
+		} else {
+			this.lineItemData = event.option.value;
+		}
+
+		let isduplicate = onlyProductCodeArr.includes(this.lineItemData.product_code);
+		let proceed = false;
+
+		if (isduplicate) {
+			var index = onlyProductCodeArr.indexOf(this.lineItemData.product_code);
+
+			const alert = await this.alertController.create({
+				header: 'Confirm!',
+				message: `The Item already added ROW # (${index + 1}). Do you want to add again?`,
+				buttons: [
+					{
+						text: 'Cancel',
+						role: 'cancel',
+						cssClass: 'secondary',
+						handler: (blah) => {
+							console.log('Confirm Cancel: blah');
+							this.clearProdInput();
+						},
+					},
+					{
+						text: 'Continue to Add',
+						handler: () => {
+							console.log('Confirm Okay');
+							proceed = true;
+							this.addLineItemData(event, from);
+						},
+					},
+				],
+			});
+
+			await alert.present();
+		} else {
+			this.addLineItemData(event, from);
+		}
+
+		this._cdr.markForCheck();
+	}
+
+	addLineItemData(event, from) {
 		if (from === 'tab') {
 			this.submitForm.patchValue({
 				tempdesc: event.description,
@@ -1469,8 +1577,6 @@ export class SalesPage {
 			this.selected_mrp = event.option.value.mrp;
 			this.qty && this.qty.nativeElement.focus();
 		}
-
-		this._cdr.markForCheck();
 	}
 
 	displayFn(obj: any): string | undefined {
@@ -1525,7 +1631,7 @@ export class SalesPage {
 		this._router.navigateByUrl('/home/search-sales');
 	}
 
-	add() {
+	async add() {
 		let invdt = '';
 		if (this.submitForm.value.invoicedate === null) {
 			invdt = moment().format('DD-MM-YYYY');
@@ -1564,6 +1670,46 @@ export class SalesPage {
 		this.lineItemData.qty = this.submitForm.value.tempqty;
 		this.lineItemData.mrp = this.submitForm.value.tempmrp;
 
+		// check if product code already in the array, if present throw confirm to continue or cancel
+
+		// let onlyProductCodeArr = this.listArr.map((element) => {
+		// 	return element.product_code;
+		// });
+
+		// let isduplicate = onlyProductCodeArr.includes(this.lineItemData.product_code);
+		// let proceed = false;
+
+		// if (isduplicate) {
+		// 	const alert = await this.alertController.create({
+		// 		header: 'Confirm!',
+		// 		message: 'The Item already added. Do you want to add again?',
+		// 		buttons: [
+		// 			{
+		// 				text: 'Cancel',
+		// 				role: 'cancel',
+		// 				cssClass: 'secondary',
+		// 				handler: (blah) => {
+		// 					console.log('Confirm Cancel: blah');
+		// 				},
+		// 			},
+		// 			{
+		// 				text: 'Continue to Add',
+		// 				handler: () => {
+		// 					console.log('Confirm Okay');
+		// 					proceed = true;
+		// 					this.itemAdd(this.lineItemData);
+		// 				},
+		// 			},
+		// 		],
+		// 	});
+
+		// 	await alert.present();
+		// } else {
+		this.itemAdd(this.lineItemData);
+		// }
+	}
+
+	itemAdd(lineItemData) {
 		// lineitemdata is the input box row to add items
 		this.processItems(this.lineItemData, 'loadingnow');
 
@@ -1747,12 +1893,25 @@ export class SalesPage {
 		this.content.scrollToTop(1500);
 	}
 
+	async showInventoryReportsDialog(product_code, product_id) {
+		const modal = await this._modalcontroller.create({
+			component: InventoryReportsDialogComponent,
+			componentProps: { center_id: this.userdata.center_id, product_code: product_code, product_id: product_id },
+			cssClass: 'select-modal',
+		});
+
+		modal.onDidDismiss().then((result) => {
+			this._cdr.markForCheck();
+		});
+
+		await modal.present();
+	}
+
 	// @HostListener('window:beforeunload', ['$event'])
 	// beforeUnloadHander($event) {
-	//   $event.returnValue = 'Your changes will not be saved';
+	// 	$event.returnValue = 'Your changes will not be saved';
 
-	//   return true;
-
+	// 	return true;
 	// }
 }
 

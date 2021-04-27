@@ -1,20 +1,8 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ViewChild,
-	ChangeDetectionStrategy,
-	ElementRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, ElementRef } from '@angular/core';
 import { CommonApiService } from '../../services/common-api.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import * as moment from 'moment';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, lastValueFrom, of } from 'rxjs';
 import { Sales } from '../../models/Sales';
@@ -22,11 +10,7 @@ import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
 import { filter, map, startWith } from 'rxjs/operators';
 import { User } from 'src/app/models/User';
-import {
-	MatDialog,
-	MatDialogConfig,
-	DialogPosition,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
@@ -141,13 +125,11 @@ export class SearchSalesPage implements OnInit {
 
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
-				this.init();
-				this._cdr.markForCheck();
-			});
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
+			this.init();
+			this._cdr.markForCheck();
+		});
 
 		const dateOffset = 24 * 60 * 60 * 1000 * 7;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
@@ -160,52 +142,36 @@ export class SearchSalesPage implements OnInit {
 
 		this.permissions$ = this._authservice.currentPermisssion;
 
-		this.permissions$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.permissionsdata = data;
+		this.permissions$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.permissionsdata = data;
 
-				if (Array.isArray(this.permissionsdata)) {
-					this.deleteAccess = this.permissionsdata.filter(
-						(f) => f.resource === 'SALE' && f.operation === 'DELETE'
-					)[0].is_access;
-				}
+			if (Array.isArray(this.permissionsdata)) {
+				this.deleteAccess = this.permissionsdata.filter((f) => f.resource === 'SALE' && f.operation === 'DELETE')[0].is_access;
+			}
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 	}
 
 	// [{"id":4,"center_id":2,"role_id":1,"operation":"VIEW","resource":"SALE","is_access":"Y"},{"id":5,"center_id":2,"role_id":1,"operation":"EDIT","resource":"SALE","is_access":"Y"},{"id":6,"center_id":2,"role_id":1,"operation":"DELETE","resource":"SALE","is_access":"Y"}]
 
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.name.toLowerCase()));
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.toLowerCase()));
 		}
 	}
 
 	async init() {
-		this._commonApiService
-			.getAllActiveCustomers(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.customer_lis = data;
+		this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
+			this.customer_lis = data;
 
-				this.filteredCustomer = this.submitForm.controls[
-					'customerctrl'
-				].valueChanges.pipe(
-					startWith(''),
-					map((customer) =>
-						customer ? this.filtercustomer(customer) : this.customer_lis.slice()
-					)
-				);
-			});
+			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
+				startWith(''),
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+			);
+		});
 
 		this.search();
 		this._cdr.markForCheck();
@@ -248,10 +214,7 @@ export class SearchSalesPage implements OnInit {
 	}
 
 	async search() {
-		if (
-			this.submitForm.value.searchtype !== 'all' &&
-			this.submitForm.value.invoiceno.trim().length === 0
-		) {
+		if (this.submitForm.value.searchtype !== 'all' && this.submitForm.value.invoiceno.trim().length === 0) {
 			console.log('invoice number is mandatory');
 			this.submitForm.controls['invoiceno'].setErrors({ required: true });
 			this.submitForm.controls['invoiceno'].markAsTouched();
@@ -274,24 +237,12 @@ export class SearchSalesPage implements OnInit {
 
 		let value = await lastValueFrom(this.filteredSales$);
 
-		this.filteredValues = value.filter(
-			(data: any) => data.status === 'D' && data.sale_type === 'gstinvoice'
-		);
+		this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'gstinvoice');
 
 		// to calculate the count on each status
-		this.draftSales$ = this.sales$.pipe(
-			map((arr: any) =>
-				arr.filter((f) => f.status === 'D' && f.sale_type === 'gstinvoice')
-			)
-		);
-		this.stockIssueSales$ = this.sales$.pipe(
-			map((arr: any) =>
-				arr.filter((f) => f.status === 'D' && f.sale_type === 'stockissue')
-			)
-		);
-		this.fullfilledSales$ = this.sales$.pipe(
-			map((arr: any) => arr.filter((f) => f.status === 'C'))
-		);
+		this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.status === 'D' && f.sale_type === 'gstinvoice')));
+		this.stockIssueSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.status === 'D' && f.sale_type === 'stockissue')));
+		this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.status === 'C')));
 		this.calculateSumTotals();
 		this.tabIndex = 0;
 		this._cdr.markForCheck();
@@ -359,17 +310,13 @@ export class SearchSalesPage implements OnInit {
 	delete(item) {
 		this._commonApiService.deleteSaleData(item.id).subscribe((data: any) => {
 			if (data.result === 'success') {
-				this._commonApiService
-					.deleteSaleMaster(item.id)
-					.subscribe((data1: any) => {
-						//  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
-						this._commonApiService
-							.deleteItemHistory(item.id)
-							.subscribe((data: any) => {
-								this.openSnackBar('Deleted Successfully', '');
-								this.init();
-							});
+				this._commonApiService.deleteSaleMaster(item.id).subscribe((data1: any) => {
+					//  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
+					this._commonApiService.deleteItemHistory(item.id).subscribe((data: any) => {
+						this.openSnackBar('Deleted Successfully', '');
+						this.init();
 					});
+				});
 			}
 		});
 	}
@@ -404,15 +351,11 @@ export class SearchSalesPage implements OnInit {
 		let value = await lastValueFrom(this.filteredSales$);
 
 		if ($event.index === 0) {
-			this.filteredValues = value.filter(
-				(data: any) => data.status === 'D' && data.sale_type === 'gstinvoice'
-			);
+			this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'gstinvoice');
 		} else if ($event.index === 1) {
 			this.filteredValues = value.filter((data: any) => data.status === 'C');
 		} else if ($event.index === 2) {
-			this.filteredValues = value.filter(
-				(data: any) => data.status === 'D' && data.sale_type === 'stockissue'
-			);
+			this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'stockissue');
 		}
 
 		this.calculateSumTotals();
@@ -467,16 +410,13 @@ export class SearchSalesPage implements OnInit {
 	openDialog(row): void {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
+		dialogConfig.autoFocus = false;
 		dialogConfig.width = '50%';
 		dialogConfig.height = '100%';
 		dialogConfig.data = row;
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			SalesInvoiceDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(SalesInvoiceDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('The dialog was closed');
@@ -492,10 +432,7 @@ export class SearchSalesPage implements OnInit {
 		dialogConfig.data = row;
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			SalesReturnDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(SalesReturnDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			if (result === 'success') {
@@ -614,12 +551,8 @@ export class SearchSalesPage implements OnInit {
 			[
 				{
 					header: 'Completed Sale Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{
@@ -723,12 +656,8 @@ export class SearchSalesPage implements OnInit {
 			[
 				{
 					header: 'Stock Issue Sale Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{
@@ -830,12 +759,8 @@ export class SearchSalesPage implements OnInit {
 			[
 				{
 					header: 'Draft Sale Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{

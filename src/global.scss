@@ -243,12 +243,7 @@ input[type='number'] {
 }
 
 .btn-grad {
-	background-image: linear-gradient(
-		to right,
-		#0575e6 0%,
-		#021b79 51%,
-		#0575e6 100%
-	);
+	background-image: linear-gradient(to right, #0575e6 0%, #021b79 51%, #0575e6 100%);
 }
 .btn-grad {
 	margin: 10px 24px 10px 24px;
@@ -280,3 +275,23 @@ input[type='number'] {
 .app-full-bleed-dialog .mat-dialog-container {
 	padding: 0;
 }
+
+.alert-wrapper {
+	.alert-button:first-child {
+		color: red;
+	}
+}
+
+// .alertHeader {
+// 	color: #b52024 !important;
+//    // --color: #b52024 !important;
+//  }
+//  h2.alertHeader {
+//    color: #b52024 !important;
+//   // --color: #b52024 !important;
+//  }
+
+//  //this works for alertHeader when inspecting in the browser
+//  .alert-sub-title.sc-ion-alert-md, .alert-title.sc-ion-alert-md {
+//    color: #b32224;
+//  }

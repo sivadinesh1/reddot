@@ -1,9 +1,4 @@
-import {
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -12,12 +7,7 @@ import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { User } from '../../models/User';
-import {
-	FormBuilder,
-	FormControl,
-	FormGroup,
-	Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
 	selector: 'app-admin-dashboard',
@@ -64,31 +54,21 @@ export class AdminDashboardPage implements OnInit {
 		private _router: Router
 	) {
 		this.userdata$ = this._authservice.currentUser;
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this._authservice.setCurrentMenu('Home');
-				this.userdata = data;
-				this.reloadOpsSummary('today');
-				this.reloadSalesSummary();
-				this.reloadPurchaseSummary();
-				this.reloadSalesTotal(
-					moment().format('DD-MM-YYYY'),
-					moment().format('DD-MM-YYYY'),
-					'today'
-				);
-				this.reloadSalesTotal(
-					moment().startOf('year').format('DD-MM-YYYY'),
-					moment().format('DD-MM-YYYY'),
-					'yearly'
-				);
-				this.reloadCenterSummary();
-				this.reloadCenterReceivablesSummary();
-				this.reloadPaymentsByCustomer();
-				this.reloadOutstandingBalance();
-				this.reloadTopClients();
-				this._cdr.markForCheck();
-			});
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this._authservice.setCurrentMenu('Home');
+			this.userdata = data;
+			this.reloadOpsSummary('today');
+			this.reloadSalesSummary();
+			this.reloadPurchaseSummary();
+			this.reloadSalesTotal(moment().format('DD-MM-YYYY'), moment().format('DD-MM-YYYY'), 'today');
+			this.reloadSalesTotal(moment().startOf('year').format('DD-MM-YYYY'), moment().format('DD-MM-YYYY'), 'yearly');
+			this.reloadCenterSummary();
+			this.reloadCenterReceivablesSummary();
+			this.reloadPaymentsByCustomer();
+			this.reloadOutstandingBalance();
+			this.reloadTopClients();
+			this._cdr.markForCheck();
+		});
 	}
 
 	ngOnInit() {
@@ -196,33 +176,31 @@ export class AdminDashboardPage implements OnInit {
 	}
 
 	reloadOutstandingBalance() {
-		this._commonApiService
-			.getOutstandingBalance({ center_id: this.userdata.center_id, limit: 5 })
-			.subscribe((data: any) => {
-				this.outstandingBalanceList = data.body;
+		this._commonApiService.getOutstandingBalance({ center_id: this.userdata.center_id, limit: 5 }).subscribe((data: any) => {
+			this.outstandingBalanceList = data.body;
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
 		this._cdr.markForCheck();
 	}
 
 	reloadTopClients() {
-		this._commonApiService
-			.getTopClients({ center_id: this.userdata.center_id, limit: 5 })
-			.subscribe((data: any) => {
-				this.topClientsList = data.body;
+		this._commonApiService.getTopClients({ center_id: this.userdata.center_id, limit: 5 }).subscribe((data: any) => {
+			this.topClientsList = data.body;
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
 		this._cdr.markForCheck();
 	}
 
 	goCustomerFinancials(customer_id) {
-		this._router.navigate([
-			`/home/financials-customer/${this.userdata.center_id}/${customer_id}`,
-		]);
+		this._router.navigate([`/home/financials-customer/${this.userdata.center_id}/${customer_id}`]);
+	}
+
+	goAllCustomerOutstandingBalance() {
+		this._router.navigate([`/home/reports/all-customer-outstanding-balance-reports`]);
 	}
 
 	reloadCenterSummary() {
@@ -257,11 +235,9 @@ export class AdminDashboardPage implements OnInit {
 					.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 					.toFixed(2);
 
-				this.receivablesByCustomers = this.centerReceivablesSummary.filter(
-					(item) => {
-						return item.balance !== 0.0 || item.balance !== 0;
-					}
-				);
+				this.receivablesByCustomers = this.centerReceivablesSummary.filter((item) => {
+					return item.balance !== 0.0 || item.balance !== 0;
+				});
 
 				this._cdr.markForCheck();
 			});
@@ -306,8 +282,6 @@ export class AdminDashboardPage implements OnInit {
 	}
 
 	navigateToInquiry(param) {
-		this._router.navigate([
-			`/home/enquiry/open-enquiry/${param}/${this.selectedOpsOption}`,
-		]);
+		this._router.navigate([`/home/enquiry/open-enquiry/${param}/${this.selectedOpsOption}`]);
 	}
 }

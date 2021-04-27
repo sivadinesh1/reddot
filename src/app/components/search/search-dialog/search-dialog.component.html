@@ -3,11 +3,7 @@
 		<div style="position: relative; top: 16px">
 			<mat-form-field class="readonly-wrapper" style="position: absolute">
 				<mat-label>Search By</mat-label>
-				<mat-select
-					required
-					value="{{ searchByFlag }}"
-					(selectionChange)="handleSearchBy($event)"
-				>
+				<mat-select required value="{{ searchByFlag }}" (selectionChange)="handleSearchBy($event)">
 					<mat-option *ngFor="let item of searchBy" [value]="item.searchby">
 						{{ item.searchby }}
 					</mat-option>
@@ -26,12 +22,7 @@
 			></ion-searchbar>
 		</div>
 		<div class="close">
-			<img
-				src="/assets/images/svg/close.svg"
-				(click)="closeModal()"
-				width="20px"
-				height="20px"
-			/>
+			<img src="/assets/images/svg/close.svg" (click)="closeModal()" width="20px" height="20px" />
 		</div>
 	</div>
 
@@ -51,9 +42,7 @@
 					<div class="item2">
 						<div class="item21">
 							{{ item.product_code }}
-							<span
-								style="color: blue; cursor: pointer"
-								(click)="showInventoryReportsDialog(item.product_code)"
+							<span style="color: blue; cursor: pointer" (click)="showInventoryReportsDialog(item.product_code, item.product_id)"
 								>(View Transactions)</span
 							>
 						</div>
@@ -139,12 +128,8 @@
 	<div class="row3">
 		<div class="row-cnt">
 			<span *ngIf="resultList">
-				<span *ngIf="resultList.length >= 50">
-					Matches: {{ resultList.length }} +
-				</span>
-				<span *ngIf="resultList.length < 50">
-					Matches: {{ resultList.length }}
-				</span>
+				<span *ngIf="resultList.length >= 50"> Matches: {{ resultList.length }} + </span>
+				<span *ngIf="resultList.length < 50"> Matches: {{ resultList.length }} </span>
 			</span>
 		</div>
 		<div>

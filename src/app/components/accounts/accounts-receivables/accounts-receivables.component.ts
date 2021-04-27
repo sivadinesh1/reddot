@@ -12,6 +12,7 @@ import { User } from 'src/app/models/User';
 import { filter, startWith, map, distinctUntilChanged } from 'rxjs/operators';
 import { Customer } from 'src/app/models/Customer';
 import { CurrencyPipe } from '@angular/common';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
 	selector: 'app-accounts-receivables',
@@ -68,7 +69,8 @@ export class AccountsReceivablesComponent implements OnInit {
 		private _router: Router,
 		private _route: ActivatedRoute,
 		private _cdr: ChangeDetectorRef,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
+		private _loadingService: LoadingService
 	) {
 		this.invoicesdata = data.invoicesdata;
 
@@ -92,13 +94,11 @@ export class AccountsReceivablesComponent implements OnInit {
 		this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
 			this.customer_lis = data;
 
-			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
+			this.filteredCustomer = this.submitForm.controls['customer'].valueChanges.pipe(
 				startWith(''),
 				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
 			);
 		});
-
-		this._cdr.markForCheck();
 
 		// fetch all payment mode list
 		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(this.userdata.center_id, 'A');
@@ -107,20 +107,16 @@ export class AccountsReceivablesComponent implements OnInit {
 	// filter customers as we type
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter((customer) => customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.name.toLowerCase()));
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter((customer) => customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.toLowerCase()));
 		}
 	}
 
 	ngOnInit() {
 		// init form values
 		this.submitForm = this._fb.group({
-			customerid: ['all'],
-			customerctrl: new FormControl({
-				value: 'Select a customer',
-				disabled: false,
-			}),
+			customer: ['', Validators.required],
 			centerid: [this.userdata.center_id, Validators.required],
 			accountarr: this._fb.array([]),
 			invoicesplit: [],
@@ -128,6 +124,16 @@ export class AccountsReceivablesComponent implements OnInit {
 			appliedamount: [],
 			creditsused: 'NO',
 			creditusedamount: 0,
+		});
+
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
 		});
 	}
 
@@ -258,6 +264,7 @@ export class AccountsReceivablesComponent implements OnInit {
 				if (data.body === 'success') {
 					this.submitForm.reset();
 					this.dialogRef.close('close');
+					this._loadingService.openSnackBar('Payments Recorded Successfully', '');
 				} else {
 					// todo nothing as of now
 				}
@@ -276,10 +283,10 @@ export class AccountsReceivablesComponent implements OnInit {
 
 		this.submitForm.patchValue({
 			customerid: event.option.value.id,
-			customerctrl: event.option.value.name,
+			customer: event.option.value.name,
 		});
 
-		// this.customer = event.option.value;
+		this.customer = event.option.value;
 
 		// get all unpaid invoices for a customer
 
@@ -310,7 +317,8 @@ export class AccountsReceivablesComponent implements OnInit {
 
 	clearInput() {
 		this.submitForm.patchValue({
-			customerctrl: null,
+			customerid: 'all',
+			customer: '',
 		});
 		this._cdr.markForCheck();
 	}

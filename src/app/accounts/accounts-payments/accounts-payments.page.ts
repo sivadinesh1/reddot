@@ -65,7 +65,7 @@ export class AccountsPaymentsPage implements OnInit {
 	@ViewChild('epltable1', { static: false }) epltable1: ElementRef;
 
 	// table display columns
-	saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
+	saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paidamt', 'balamt', 'paybtn'];
 	paymentDisplayedColumns: string[] = [
 		'customername',
 		'pymtdate',
@@ -156,9 +156,9 @@ export class AccountsPaymentsPage implements OnInit {
 
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter((customer) => customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.name.toLowerCase()));
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter((customer) => customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.toLowerCase()));
 		}
 	}
 
@@ -185,7 +185,6 @@ export class AccountsPaymentsPage implements OnInit {
 			customerctrl: event.option.value.name,
 		});
 
-		this.tabIndex = 0;
 		this._cdr.markForCheck();
 	}
 

@@ -1,20 +1,5 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	ElementRef,
-	ViewChild,
-	AfterViewInit,
-} from '@angular/core';
-import {
-	FormBuilder,
-	FormControl,
-	Validators,
-	FormGroup,
-	FormArray,
-	NgForm,
-} from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators, FormGroup, FormArray, NgForm } from '@angular/forms';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ModalController, AlertController } from '@ionic/angular';
@@ -24,15 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 
 import { Observable } from 'rxjs';
-import {
-	filter,
-	map,
-	startWith,
-	debounceTime,
-	switchMap,
-	tap,
-	finalize,
-} from 'rxjs/operators';
+import { filter, map, startWith, debounceTime, switchMap, tap, finalize } from 'rxjs/operators';
 
 import { User } from '../models/User';
 import { Customer } from 'src/app/models/Customer';
@@ -114,19 +91,17 @@ export class EnquiryPage {
 	) {
 		this.basicinit();
 		this.userdata$ = this._authservice.currentUser;
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this._authservice.setCurrentMenu('ENQUIRY');
-				this.userdata = data;
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this._authservice.setCurrentMenu('ENQUIRY');
+			this.userdata = data;
 
-				this.submitForm.patchValue({
-					center_id: data.center_id,
-				});
-
-				//    this.init();
-				this._cdr.markForCheck();
+			this.submitForm.patchValue({
+				center_id: data.center_id,
 			});
+
+			//    this.init();
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
 			this.clicked = false;
@@ -154,15 +129,7 @@ export class EnquiryPage {
 
 			tempdesc: [''],
 
-			tempqty: [
-				'1',
-				[
-					Validators.required,
-					Validators.max(1000),
-					Validators.min(1),
-					Validators.pattern(/\-?\d*\.?\d{1,2}/),
-				],
-			],
+			tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 		});
 	}
 
@@ -240,10 +207,7 @@ export class EnquiryPage {
 		dialogConfig.width = '80%';
 		dialogConfig.height = '80%';
 
-		const dialogRef = this._dialog.open(
-			CustomerAddDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -256,25 +220,23 @@ export class EnquiryPage {
 			)
 			.subscribe((data: any) => {
 				if (data !== 'close') {
-					this._commonApiService
-						.getCustomerDetails(this.userdata.center_id, data.body.id)
-						.subscribe((custData: any) => {
-							this.customerdata = custData[0];
+					this._commonApiService.getCustomerDetails(this.userdata.center_id, data.body.id).subscribe((custData: any) => {
+						this.customerdata = custData[0];
 
-							this.customername = custData[0].name;
-							this.iscustomerselected = true;
+						this.customername = custData[0].name;
+						this.iscustomerselected = true;
 
-							this.setCustomerInfo(custData[0], 'tab');
+						this.setCustomerInfo(custData[0], 'tab');
 
-							this.submitForm.patchValue({
-								customerctrl: custData[0],
-							});
-
-							this.isCLoading = false;
-							this.autoTrigger1.closePanel();
-
-							this._cdr.markForCheck();
+						this.submitForm.patchValue({
+							customerctrl: custData[0],
 						});
+
+						this.isCLoading = false;
+						this.autoTrigger1.closePanel();
+
+						this._cdr.markForCheck();
+					});
 				} else {
 					this.iscustomerselected = false;
 					this.autoTrigger1.closePanel();
@@ -323,15 +285,7 @@ export class EnquiryPage {
 			checkbox: [false],
 			product_code: [''],
 			notes: ['', Validators.required],
-			quantity: [
-				1,
-				[
-					Validators.required,
-					Validators.max(1000),
-					Validators.min(1),
-					Validators.pattern(/\-?\d*\.?\d{1,2}/),
-				],
-			],
+			quantity: [1, [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
 		});
 	}
 
@@ -341,10 +295,7 @@ export class EnquiryPage {
 
 		this.autoTrigger &&
 			this.autoTrigger.panelClosingActions.subscribe((x) => {
-				if (
-					this.autoTrigger.activeOption &&
-					this.autoTrigger.activeOption.value !== undefined
-				) {
+				if (this.autoTrigger.activeOption && this.autoTrigger.activeOption.value !== undefined) {
 					this.submitForm.patchValue({
 						productctrl: this.autoTrigger.activeOption.value,
 					});
@@ -354,10 +305,7 @@ export class EnquiryPage {
 
 		this.autoTrigger1 &&
 			this.autoTrigger1.panelClosingActions.subscribe((x) => {
-				if (
-					this.autoTrigger1.activeOption &&
-					this.autoTrigger1.activeOption.value !== undefined
-				) {
+				if (this.autoTrigger1.activeOption && this.autoTrigger1.activeOption.value !== undefined) {
 					this.submitForm.patchValue({
 						customerctrl: this.autoTrigger1.activeOption.value,
 					});
@@ -380,10 +328,7 @@ export class EnquiryPage {
 		dialogConfig.data = this.customerdata;
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			CustomerViewDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerViewDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('The dialog was closed');
@@ -391,20 +336,14 @@ export class EnquiryPage {
 	}
 
 	add() {
-		if (
-			this.submitForm.value.tempdesc === '' ||
-			this.submitForm.value.tempdesc === null
-		) {
+		if (this.submitForm.value.tempdesc === '' || this.submitForm.value.tempdesc === null) {
 			this.submitForm.controls['tempdesc'].setErrors({ required: true });
 			this.submitForm.controls['tempdesc'].markAsTouched();
 
 			return false;
 		}
 
-		if (
-			this.submitForm.value.tempqty === '' ||
-			this.submitForm.value.tempqty === null
-		) {
+		if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null) {
 			this.submitForm.controls['tempqty'].setErrors({ required: true });
 			this.submitForm.controls['tempqty'].markAsTouched();
 
@@ -419,21 +358,12 @@ export class EnquiryPage {
 		control.push(
 			this._fb.group({
 				checkbox: [false],
-				product_code: [
-					this.submitForm.value.productctrl === null
-						? ''
-						: this.submitForm.value.productctrl.product_code,
-				],
+				product_code: [this.submitForm.value.productctrl === null ? '' : this.submitForm.value.productctrl.product_code],
 
 				notes: [this.submitForm.value.tempdesc, Validators.required],
 				quantity: [
 					this.submitForm.value.tempqty,
-					[
-						Validators.required,
-						Validators.max(1000),
-						Validators.min(1),
-						Validators.pattern(/\-?\d*\.?\d{1,2}/),
-					],
+					[Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)],
 				],
 			})
 		);
@@ -458,15 +388,9 @@ export class EnquiryPage {
 
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.name.toLowerCase()));
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.toLowerCase()));
 		}
 	}
 
@@ -513,9 +437,7 @@ export class EnquiryPage {
 	}
 
 	checkedRow(idx: number, $event) {
-		const faControl = (<FormArray>this.submitForm.controls['productarr']).at(
-			idx
-		);
+		const faControl = (<FormArray>this.submitForm.controls['productarr']).at(idx);
 		faControl['controls'].checkbox;
 
 		if (faControl.value.checkbox) {
@@ -558,31 +480,29 @@ export class EnquiryPage {
 		//main submit
 		this.clicked = true; // disable all buttons after submission
 		this._cdr.markForCheck();
-		this._commonApiService
-			.saveEnquiry(this.submitForm.value)
-			.subscribe((data: any) => {
-				console.log('object.SAVE ENQ. ' + JSON.stringify(data));
+		this._commonApiService.saveEnquiry(this.submitForm.value).subscribe((data: any) => {
+			console.log('object.SAVE ENQ. ' + JSON.stringify(data));
 
-				if (data.body.result === 'success') {
-					this.clearInput();
-					this.clearProdInput();
+			if (data.body.result === 'success') {
+				this.clearInput();
+				this.clearProdInput();
 
-					const control = <FormArray>this.submitForm.controls['productarr'];
-					control.clear();
+				const control = <FormArray>this.submitForm.controls['productarr'];
+				control.clear();
 
-					this.submitForm.reset();
-					this.myForm.resetForm();
+				this.submitForm.reset();
+				this.myForm.resetForm();
 
-					this.submitForm.patchValue({
-						center_id: data.center_id,
-					});
+				this.submitForm.patchValue({
+					center_id: data.center_id,
+				});
 
-					this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
-				} else {
-				}
+				this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
+			} else {
+			}
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 	}
 
 	reset() {

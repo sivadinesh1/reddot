@@ -1,16 +1,5 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Inject,
-} from '@angular/core';
-import {
-	FormGroup,
-	FormBuilder,
-	Validators,
-	AbstractControl,
-} from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -74,10 +63,7 @@ export class ProductEditDialogComponent implements OnInit {
 		this.currentStep = 0;
 		this.product = product;
 
-		this.brands$ = this._commonApiService.getAllActiveBrands(
-			this.center_id,
-			'A'
-		);
+		this.brands$ = this._commonApiService.getAllActiveBrands(this.center_id, 'A');
 
 		this.submitForm = this._formBuilder.group({
 			product_id: [this.product.product_id],
@@ -90,10 +76,7 @@ export class ProductEditDialogComponent implements OnInit {
 			packetsize: [this.product.packetsize, Validators.required],
 			hsncode: [this.product.hsncode, [patternValidator(HSNCODE_REGEX)]],
 			taxrate: [this.product.taxrate.toString(), Validators.required],
-			minqty: [
-				this.product.minqty === null ? 0 : this.product.minqty,
-				Validators.required,
-			],
+			minqty: [this.product.minqty === null ? 0 : this.product.minqty, Validators.required],
 
 			unit_price: [this.product.unit_price],
 			mrp: [this.product.mrp, Validators.required],
@@ -113,21 +96,29 @@ export class ProductEditDialogComponent implements OnInit {
 		});
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
+		});
+	}
 
 	submit() {
 		this.submitForm.patchValue({
 			unit_price: this.submitForm.value.purchase_price,
 		});
 
-		this._commonApiService
-			.updateProduct(this.submitForm.value)
-			.subscribe((data: any) => {
-				if (data.body.result === 'success') {
-					this.dialogRef.close('success');
-					this.searchProducts();
-				}
-			});
+		this._commonApiService.updateProduct(this.submitForm.value).subscribe((data: any) => {
+			if (data.body.result === 'success') {
+				this.dialogRef.close('success');
+				this.searchProducts();
+			}
+		});
 	}
 
 	addProduct() {
@@ -136,20 +127,18 @@ export class ProductEditDialogComponent implements OnInit {
 
 	isProdExists() {
 		if (this.submitForm.value.product_code.length > 0) {
-			this._commonApiService
-				.isProdExists(this.submitForm.value.product_code, this.center_id)
-				.subscribe((data: any) => {
-					if (data.result.length > 0) {
-						if (data.result[0].id > 0) {
-							this.pexists = true;
-							this.temppcode = data.result[0];
-						}
-					} else {
-						this.pexists = false;
+			this._commonApiService.isProdExists(this.submitForm.value.product_code, this.center_id).subscribe((data: any) => {
+				if (data.result.length > 0) {
+					if (data.result[0].id > 0) {
+						this.pexists = true;
+						this.temppcode = data.result[0];
 					}
+				} else {
+					this.pexists = false;
+				}
 
-					this._cdr.markForCheck();
-				});
+				this._cdr.markForCheck();
+			});
 		}
 	}
 

@@ -1,21 +1,10 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ViewChild,
-	ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from '../../../services/common-api.service';
 import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
-import {
-	GSTN_REGEX,
-	country,
-	PINCODE_REGEX,
-	EMAIL_REGEX,
-} from 'src/app/util/helper/patterns';
+import { GSTN_REGEX, country, PINCODE_REGEX, EMAIL_REGEX } from 'src/app/util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { AlertController } from '@ionic/angular';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -69,25 +58,10 @@ export class CustomerAddDialogComponent implements OnInit {
 			state_id: ['', Validators.required],
 			pin: ['', [patternValidator(PINCODE_REGEX)]],
 			gst: ['', [patternValidator(GSTN_REGEX)]],
-			phone: [
-				'',
-				Validators.compose([PhoneValidator.invalidCountryPhone(country)]),
-			],
-			mobile: [
-				'',
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
-			],
-			mobile2: [
-				'',
-				Validators.compose([PhoneValidator.invalidCountryPhone(country)]),
-			],
-			whatsapp: [
-				'',
-				Validators.compose([PhoneValidator.invalidCountryPhone(country)]),
-			],
+			phone: ['', Validators.compose([PhoneValidator.invalidCountryPhone(country)])],
+			mobile: ['', Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
+			mobile2: ['', Validators.compose([PhoneValidator.invalidCountryPhone(country)])],
+			whatsapp: ['', Validators.compose([PhoneValidator.invalidCountryPhone(country)])],
 			email: ['', [patternValidator(EMAIL_REGEX)]],
 
 			disctype: ['NET', Validators.required],
@@ -106,24 +80,32 @@ export class CustomerAddDialogComponent implements OnInit {
 	ngOnInit() {
 		this.responseMsg = '';
 		this.executed = false;
+
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
+		});
 	}
 
 	isCustomerExists() {
 		if (this.submitForm.value.name.length > 0) {
-			this._commonApiService
-				.isCustomerExists(this.submitForm.value.name, this.center_id)
-				.subscribe((data: any) => {
-					if (data.result.length > 0) {
-						if (data.result[0].id > 0) {
-							this.responseMsg = 'Customer Already Exists!';
-							this.cexists = true;
-						}
-					} else {
-						this.cexists = false;
+			this._commonApiService.isCustomerExists(this.submitForm.value.name, this.center_id).subscribe((data: any) => {
+				if (data.result.length > 0) {
+					if (data.result[0].id > 0) {
+						this.responseMsg = 'Customer Already Exists!';
+						this.cexists = true;
 					}
+				} else {
+					this.cexists = false;
+				}
 
-					this._cdr.markForCheck();
-				});
+				this._cdr.markForCheck();
+			});
 		}
 	}
 
@@ -139,13 +121,11 @@ export class CustomerAddDialogComponent implements OnInit {
 			return false;
 		}
 
-		this._commonApiService
-			.addCustomer(this.submitForm.value)
-			.subscribe((data: any) => {
-				if (data.body.result === 'success') {
-					this.dialogRef.close('success');
-				}
-			});
+		this._commonApiService.addCustomer(this.submitForm.value).subscribe((data: any) => {
+			if (data.body.result === 'success') {
+				this.dialogRef.close('success');
+			}
+		});
 	}
 
 	close() {

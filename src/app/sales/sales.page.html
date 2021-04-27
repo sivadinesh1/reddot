@@ -232,7 +232,13 @@
 						<div class="txt-align">
 							<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
 						</div>
-						<div class="item2">{{item.product_code}}</div>
+						<div
+							class="item2"
+							style="color: rgb(2, 2, 193); cursor: pointer"
+							(click)="showInventoryReportsDialog(item.product_code, item.product_id)"
+						>
+							{{item.product_code}}
+						</div>
 
 						<div class="item2">{{item.product_desc}}</div>
 
@@ -397,7 +403,7 @@
 					</div>
 					<div>
 						<div style="color: #666666; text-align: right; font-size: 14px">Total</div>
-						<div style="text-align: right" class="align-self-center left-pad20 fsize32 fweight500">{{this.total | number:'1.2-2'}}</div>
+						<div style="text-align: right; font-size: 22px" class="align-self-center left-pad20 fweight500">{{this.total | number:'1.2-2'}}</div>
 					</div>
 				</div>
 			</div>

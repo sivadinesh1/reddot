@@ -205,7 +205,10 @@
 									(click)="goCustomerFinancials(item.id)"
 								>
 									<div style="text-align: left">{{ item.name }}</div>
-									<div>{{ item.balance_amt | currency: "INR"}}</div>
+									<div>{{ item.balance_amt | pricePipe}}</div>
+								</div>
+								<div style="text-align: center; padding: 6px; border: 1px solid blue; cursor: pointer" (click)="goAllCustomerOutstandingBalance()">
+									All Customer Balance Report
 								</div>
 							</mat-card-content>
 						</mat-card>
@@ -224,7 +227,7 @@
 									(click)="goCustomerFinancials(item.id)"
 								>
 									<div style="text-align: left">{{ item.customer_name }}</div>
-									<div>{{ item.sum_total }}</div>
+									<div>{{ item.sum_total | pricePipe}}</div>
 								</div>
 							</mat-card-content>
 						</mat-card>
@@ -238,17 +241,17 @@
 							<mat-card-content>
 								<div class="list-item" style="color: blue; cursor: pointer">
 									<div style="text-align: left; padding: 8px">Yearly Turnover</div>
-									<div style="text-align: left; padding: 8px">{{this?.yearly_turnover | currency: "INR"}}</div>
+									<div style="text-align: left; padding: 8px">{{this?.yearly_turnover | pricePipe}}</div>
 									<div style="text-align: left; padding: 8px">Active Customers</div>
 									<div style="text-align: left; padding: 8px">{{this.centerSummary?.active_customers}}</div>
 									<div style="text-align: left; padding: 8px">Active Vendors</div>
 									<div style="text-align: left; padding: 8px">{{this.centerSummary?.active_vendors}}</div>
 									<div style="text-align: left; padding: 8px">Total Sales</div>
-									<div style="text-align: left; padding: 8px">{{this.salesTotal | currency: "INR"}}</div>
+									<div style="text-align: left; padding: 8px">{{this.salesTotal | pricePipe}}</div>
 									<div style="text-align: left; padding: 8px">Outstanding Total</div>
-									<div style="text-align: left; padding: 8px">{{this.centerReceivablesTotal | currency: "INR"}}</div>
+									<div style="text-align: left; padding: 8px">{{this.centerReceivablesTotal | pricePipe}}</div>
 									<div style="text-align: left; padding: 8px">Payments Total</div>
-									<div style="text-align: left; padding: 8px">{{this.paymentsTotal | currency: "INR"}}</div>
+									<div style="text-align: left; padding: 8px">{{this.paymentsTotal | pricePipe}}</div>
 								</div>
 							</mat-card-content>
 						</mat-card>

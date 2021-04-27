@@ -1,19 +1,6 @@
-import {
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	Inject,
-	OnInit,
-	ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import {
-	MatDialog,
-	MatDialogConfig,
-	MatDialogRef,
-	MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Customer } from 'src/app/models/Customer';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -54,29 +41,33 @@ export class SalesInvoiceDialogComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this._commonApiService
-			.getSaleMasterData(this.data.id)
-			.subscribe((data: any) => {
-				this.salemasterdata = data[0];
+		this._commonApiService.getSaleMasterData(this.data.id).subscribe((data: any) => {
+			this.salemasterdata = data[0];
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
-		this._commonApiService
-			.getSaleDetailsData(this.data.id)
-			.subscribe((data: any) => {
-				this.saledetailsdata = data;
+		this._commonApiService.getSaleDetailsData(this.data.id).subscribe((data: any) => {
+			this.saledetailsdata = data;
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
-		this._commonApiService
-			.getCustomerDetails(this.data.center_id, this.data.customer_id)
-			.subscribe((data: any) => {
-				this.customerdata = data[0];
+		this._commonApiService.getCustomerDetails(this.data.center_id, this.data.customer_id).subscribe((data: any) => {
+			this.customerdata = data[0];
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
+
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
+		});
 	}
 
 	close() {
@@ -84,9 +75,7 @@ export class SalesInvoiceDialogComponent implements OnInit {
 	}
 
 	exportToExcel() {
-		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-			this.epltable.nativeElement
-		);
+		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(this.epltable.nativeElement);
 		ws['!cols'] = [];
 		ws['!cols'][1] = { hidden: true };
 		const wb: xlsx.WorkBook = xlsx.utils.book_new();

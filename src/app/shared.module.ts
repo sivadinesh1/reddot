@@ -50,11 +50,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTabsModule } from '@angular/material/tabs';
-import {
-	MatStepperModule,
-	MatStep,
-	MatHorizontalStepper,
-} from '@angular/material/stepper';
+import { MatStepperModule, MatStep, MatHorizontalStepper } from '@angular/material/stepper';
 
 import { AddProductComponent } from './components/add-product/add-product.component';
 import { CurrencyPadComponent } from './components/currency-pad/currency-pad.component';
@@ -124,6 +120,7 @@ import { AccountsPayablesComponent } from './components/accounts/accounts-payabl
 import { ShowVendorStatementComponent } from './components/reports/show-vendor-statement/show-vendor-statement.component';
 import { SelectOnFocusDirective } from './util/directives/select-focus.directive';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { PricePipePipe } from './util/pipes/price-formatter.pipe';
 
 const components = [
 	NullToQuotePipe,
@@ -140,7 +137,7 @@ const components = [
 	EscapeHtmlPipe,
 	DayWeekPipe,
 	ZeroToValPipe,
-
+	PricePipePipe,
 	FilterPipe,
 
 	AddProductComponent,
@@ -260,20 +257,8 @@ const matcomponents = [
 ];
 
 @NgModule({
-	declarations: [
-		...components,
-		PreventCutCopyPasteDirective,
-		ArrowDivDirective,
-	],
-	imports: [
-		CommonModule,
-		ReactiveFormsModule,
-		FormsModule,
-		IonicModule,
-		RouterModule,
-		...matcomponents,
-		NgxSpinnerModule,
-	],
+	declarations: [...components, PreventCutCopyPasteDirective, ArrowDivDirective],
+	imports: [CommonModule, ReactiveFormsModule, FormsModule, IonicModule, RouterModule, ...matcomponents, NgxSpinnerModule],
 	exports: [...matcomponents, ...components, IonicModule, NgxSpinnerModule],
 	entryComponents: [
 		AddProductComponent,

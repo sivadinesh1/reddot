@@ -16,174 +16,170 @@ import { Customer } from 'src/app/models/Customer';
 import { CurrencyPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-customer-payment-dialog',
-  templateUrl: './customer-payment-dialog.component.html',
-  styleUrls: ['./customer-payment-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'app-customer-payment-dialog',
+	templateUrl: './customer-payment-dialog.component.html',
+	styleUrls: ['./customer-payment-dialog.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomerPaymentDialogComponent implements OnInit {
-  customerAdded = false;
-  submitForm: FormGroup;
-  customerData: any;
+	customerAdded = false;
+	submitForm: FormGroup;
+	customerData: any;
 
+	showDelIcon = false;
 
-  showDelIcon = false;
+	maxDate = new Date();
 
-  maxDate = new Date();
+	pymtmodes$: Observable<any>;
+	userdata: any;
 
+	userdata$: Observable<User>;
 
-  pymtmodes$: Observable<any>;
-  userdata: any;
+	customer: Customer;
+	invoice: any;
+	summed = 0;
 
-  userdata$: Observable<User>;
+	errmsg: any;
+	balancedue: any;
 
-  customer: Customer;
-  invoice: any;
-  summed = 0;
+	constructor(
+		private _fb: FormBuilder,
+		public dialog: MatDialog,
+		private currencyPipe: CurrencyPipe,
+		private dialogRef: MatDialogRef<CustomerPaymentDialogComponent>,
+		private _authservice: AuthenticationService,
+		@Inject(MAT_DIALOG_DATA) data: any,
+		private _modalcontroller: ModalController,
+		private _router: Router,
+		private _route: ActivatedRoute,
+		private _cdr: ChangeDetectorRef,
+		private _commonApiService: CommonApiService
+	) {
+		this.customer = data.customerdata;
+		this.invoice = data.invoicedata;
 
-  errmsg: any;
-  balancedue: any;
+		this.userdata$ = this._authservice.currentUser;
 
-  constructor(private _fb: FormBuilder, public dialog: MatDialog, private currencyPipe: CurrencyPipe,
-    private dialogRef: MatDialogRef<CustomerPaymentDialogComponent>,
-    private _authservice: AuthenticationService, @Inject(MAT_DIALOG_DATA) data: any,
-    private _modalcontroller: ModalController, private _router: Router, private _route: ActivatedRoute,
-    private _cdr: ChangeDetectorRef, private _commonApiService: CommonApiService
-  ) {
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
+			this.init();
+			this._cdr.markForCheck();
+		});
 
-    this.customer = data.customerdata;
-    this.invoice = data.invoicedata;
+		this._route.params.subscribe((params) => {
+			if (this.userdata !== undefined) {
+				this.init();
+			}
+		});
+	}
 
-    this.userdata$ = this._authservice.currentUser;
+	async init() {
+		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(this.userdata.center_id, 'A');
+	}
 
-    this.userdata$
-      .pipe(
-        filter((data) => data !== null))
-      .subscribe((data: any) => {
-        this.userdata = data;
-        this.init();
-        this._cdr.markForCheck();
-      });
+	ngOnInit() {
+		// init form values
+		this.submitForm = this._fb.group({
+			customer: [this.customer, Validators.required],
+			centerid: [this.userdata.center_id, Validators.required],
+			accountarr: this._fb.array([]),
+		});
 
+		// adds first record
+		this.addAccount();
 
-    this._route.params.subscribe(params => {
-      if (this.userdata !== undefined) {
-        this.init();
-      }
-    });
+		// subscribes to values chages of "accountarr"
+		this.submitForm.get('accountarr').valueChanges.subscribe((values) => {
+			this.checkTotalSum();
+			this._cdr.detectChanges();
+		});
 
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
 
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
+		});
+	}
 
-  }
+	// initialize the values
+	initAccount() {
+		return this._fb.group({
+			checkbox: [false],
+			sale_ref_id: [this.invoice.sale_id, [Validators.required]],
+			receivedamount: ['', [Validators.required, Validators.max(this.invoice.invoice_amt), Validators.min(0)]],
+			receiveddate: ['', Validators.required],
+			pymtmode: ['', Validators.required],
+			bankref: [''],
+			pymtref: [''],
+		});
+	}
 
-  async init() {
-    this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(this.userdata.center_id, "A");
-  }
+	get accountarr(): FormGroup {
+		return this.submitForm.get('accountarr') as FormGroup;
+	}
 
-  ngOnInit() {
-    // init form values
-    this.submitForm = this._fb.group({
-      customer: [this.customer, Validators.required],
-      centerid: [this.userdata.center_id, Validators.required],
-      accountarr: this._fb.array([])
+	addAccount() {
+		const control = <FormArray>this.submitForm.controls['accountarr'];
+		control.push(this.initAccount());
 
-    });
+		this._cdr.markForCheck();
+	}
 
-    // adds first record
-    this.addAccount();
+	ngAfterViewInit() {
+		this.getBalanceDue();
+	}
 
-    // subscribes to values chages of "accountarr"
-    this.submitForm.get('accountarr').valueChanges.subscribe(values => {
-      this.checkTotalSum();
-      this._cdr.detectChanges()
-    });
+	// method to calculate total payed now and balance due
+	checkTotalSum() {
+		this.summed = 0;
+		const ctrl = <FormArray>this.submitForm.controls['accountarr'];
+		// iterate each object in the form array
+		ctrl.controls.forEach((x) => {
+			// get the itemmt value and need to parse the input to number
 
+			let parsed = parseFloat(x.get('receivedamount').value === '' || x.get('receivedamount').value === null ? 0 : x.get('receivedamount').value);
+			// add to total
 
-  }
+			this.summed += parsed;
+			this.getBalanceDue();
 
-  // initialize the values
-  initAccount() {
-    return this._fb.group({
-      checkbox: [false],
-      sale_ref_id: [this.invoice.sale_id, [Validators.required]],
-      receivedamount: ['', [Validators.required, Validators.max(this.invoice.invoice_amt), Validators.min(0)]],
-      receiveddate: ['', Validators.required],
-      pymtmode: ['', Validators.required],
-      bankref: [''],
-      pymtref: [''],
-    });
-  }
+			// current set of paymnets + already paid amount > actual invocie amount then error
+			if (this.summed + this.invoice.paid_amount > this.invoice.invoice_amt) {
+				let val = this.currencyPipe.transform(this.summed + this.invoice.paid_amount - this.invoice.invoice_amt, 'INR');
+				this.errmsg = `Total payment exceeds invoice amount ` + val;
+				this._cdr.detectChanges();
+				return false;
+			} else {
+				this.errmsg = ``;
+				this._cdr.detectChanges();
+			}
+		});
+		return true;
+	}
 
-  get accountarr(): FormGroup {
-    return this.submitForm.get('accountarr') as FormGroup;
-  }
+	getBalanceDue() {
+		this.balancedue = this.invoice.invoice_amt - (this.invoice.paid_amount + this.summed);
+	}
 
-  addAccount() {
-    const control = <FormArray>this.submitForm.controls['accountarr'];
-    control.push(this.initAccount());
+	onSubmit() {
+		if (this.checkTotalSum()) {
+			this._commonApiService.addPymtReceived(this.submitForm.value).subscribe((data: any) => {
+				if (data.body === 'success') {
+					this.submitForm.reset();
+					this.dialogRef.close('success');
+				} else {
+					// todo nothing as of now
+				}
+				this._cdr.markForCheck();
+			});
+		}
+	}
 
-    this._cdr.markForCheck();
-
-  }
-
-  ngAfterViewInit() {
-    this.getBalanceDue();
-  }
-
-
-
-  // method to calculate total payed now and balance due
-  checkTotalSum() {
-    this.summed = 0;
-    const ctrl = <FormArray>this.submitForm.controls['accountarr'];
-    // iterate each object in the form array
-    ctrl.controls.forEach(x => {
-      // get the itemmt value and need to parse the input to number
-
-      let parsed = parseFloat((x.get('receivedamount').value === "" || x.get('receivedamount').value === null) ? 0 : x.get('receivedamount').value);
-      // add to total
-
-      this.summed += parsed;
-      this.getBalanceDue();
-
-      // current set of paymnets + already paid amount > actual invocie amount then error
-      if ((this.summed + this.invoice.paid_amount) > this.invoice.invoice_amt) {
-        let val = this.currencyPipe.transform(((this.summed + this.invoice.paid_amount) - this.invoice.invoice_amt), "INR");
-        this.errmsg = `Total payment exceeds invoice amount ` + val;
-        this._cdr.detectChanges();
-        return false;
-      } else {
-        this.errmsg = ``;
-        this._cdr.detectChanges();
-      }
-
-    });
-    return true;
-
-  }
-
-  getBalanceDue() {
-    this.balancedue = this.invoice.invoice_amt - (this.invoice.paid_amount + this.summed)
-  }
-
-  onSubmit() {
-    if (this.checkTotalSum()) {
-
-      this._commonApiService.addPymtReceived(this.submitForm.value).subscribe((data: any) => {
-
-        if (data.body === 'success') {
-          this.submitForm.reset();
-          this.dialogRef.close('success');
-        } else {
-          // todo nothing as of now
-        }
-        this._cdr.markForCheck();
-      });
-    }
-  }
-
-  close() {
-    this.dialogRef.close();
-  }
-
+	close() {
+		this.dialogRef.close();
+	}
 }

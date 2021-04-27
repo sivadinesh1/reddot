@@ -1,9 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -11,12 +6,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { Customer } from 'src/app/models/Customer';
 
 import { Observable, lastValueFrom } from 'rxjs';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Enquiry } from 'src/app/models/Enquiry';
 import { filter, map, startWith, tap } from 'rxjs/operators';
 import { Vendor } from 'src/app/models/Vendor';
@@ -111,54 +101,52 @@ export class OpenEnquiryPage implements OnInit {
 		});
 
 		this._route.params.subscribe((params) => {
-			this.userdata$
-				.pipe(filter((data) => data !== null))
-				.subscribe((data: any) => {
-					this.userdata = data;
-					this.init();
-					this.status = params['status'];
-					this.timeline = params['timeline'];
+			this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+				this.userdata = data;
+				this.init();
+				this.status = params['status'];
+				this.timeline = params['timeline'];
 
-					if (this.timeline === 'today') {
-						this.fromdate.setTime(new Date().getTime());
-						this.todate.setTime(new Date().getTime());
-					} else if (this.timeline === 'weekly') {
-						//this.fromdate.setTime(this.minDate.getTime() - weekOffset);
-						// this.fromdate.setTime(
-						// 	moment().startOf('isoWeek').toDate().getTime()
-						// );
-						const dateOffset = 24 * 60 * 60 * 1000 * 14;
-						this.fromdate.setTime(this.minDate.getTime() - dateOffset);
-
-						this.todate.setTime(new Date().getTime());
-					} else if (this.timeline === 'monthly') {
-						//this.fromdate.setTime(this.minDate.getTime() - monthOffset);
-						this.fromdate.setTime(moment().startOf('month').toDate().getTime());
-						this.todate.setTime(new Date().getTime());
-					} else if (this.timeline === 'yearly') {
-						//this.fromdate.setTime(this.minDate.getTime() - yearOffset);
-						this.fromdate.setTime(moment().toDate().getTime());
-						this.todate.setTime(new Date().getTime());
-					}
+				if (this.timeline === 'today') {
+					this.fromdate.setTime(new Date().getTime());
+					this.todate.setTime(new Date().getTime());
+				} else if (this.timeline === 'weekly') {
+					//this.fromdate.setTime(this.minDate.getTime() - weekOffset);
+					// this.fromdate.setTime(
+					// 	moment().startOf('isoWeek').toDate().getTime()
+					// );
+					const dateOffset = 24 * 60 * 60 * 1000 * 14;
+					this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 					this.todate.setTime(new Date().getTime());
+				} else if (this.timeline === 'monthly') {
+					//this.fromdate.setTime(this.minDate.getTime() - monthOffset);
+					this.fromdate.setTime(moment().startOf('month').toDate().getTime());
+					this.todate.setTime(new Date().getTime());
+				} else if (this.timeline === 'yearly') {
+					//this.fromdate.setTime(this.minDate.getTime() - yearOffset);
+					this.fromdate.setTime(moment().toDate().getTime());
+					this.todate.setTime(new Date().getTime());
+				}
 
-					if (this.status === 'O' || this.status === 'D') {
-						this.tabClick(0);
-						this.tabIndex = 0;
-						this.search('O');
-					} else if (this.status === 'P') {
-						this.tabClick(1);
-						this.tabIndex = 1;
-						this.search('P');
-					} else if (this.status === 'E' || this.status === 'X') {
-						this.tabClick(2);
-						this.tabIndex = 2;
-						this.search('E');
-					}
+				this.todate.setTime(new Date().getTime());
 
-					this._cdr.markForCheck();
-				});
+				if (this.status === 'O' || this.status === 'D') {
+					this.tabClick(0);
+					this.tabIndex = 0;
+					this.search('O');
+				} else if (this.status === 'P') {
+					this.tabClick(1);
+					this.tabIndex = 1;
+					this.search('P');
+				} else if (this.status === 'E' || this.status === 'X') {
+					this.tabClick(2);
+					this.tabIndex = 2;
+					this.search('E');
+				}
+
+				this._cdr.markForCheck();
+			});
 
 			this._cdr.markForCheck();
 		});
@@ -166,35 +154,23 @@ export class OpenEnquiryPage implements OnInit {
 
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.name.toLowerCase()));
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.toLowerCase()));
 		}
 	}
 
 	ngOnInit() {}
 
 	async init() {
-		this._commonApiService
-			.getAllActiveCustomers(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.customer_lis = data;
+		this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
+			this.customer_lis = data;
 
-				this.filteredCustomer = this.submitForm.controls[
-					'customerctrl'
-				].valueChanges.pipe(
-					startWith(''),
-					map((customer) =>
-						customer ? this.filtercustomer(customer) : this.customer_lis.slice()
-					)
-				);
-			});
+			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
+				startWith(''),
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+			);
+		});
 
 		this._cdr.markForCheck();
 	}
@@ -234,13 +210,9 @@ export class OpenEnquiryPage implements OnInit {
 		let value = await lastValueFrom(this.filteredEnquiries$);
 
 		if (param === 'O') {
-			this.filteredValues = value.filter(
-				(data: any) => data.estatus === 'O' || data.estatus === 'D'
-			);
+			this.filteredValues = value.filter((data: any) => data.estatus === 'O' || data.estatus === 'D');
 		} else if (param === 'E') {
-			this.filteredValues = value.filter(
-				(data: any) => data.estatus === 'E' || data.estatus === 'X'
-			);
+			this.filteredValues = value.filter((data: any) => data.estatus === 'E' || data.estatus === 'X');
 		} else {
 			this.filteredValues = value.filter((data: any) => data.estatus === param);
 		}
@@ -257,9 +229,7 @@ export class OpenEnquiryPage implements OnInit {
 		// this.draftEnquiries$ = this.enquiries$.pipe(
 		// 	map((arr: any) => arr.filter((f) => f.estatus === 'D'))
 		// );
-		this.invoiceReadyEnquiries$ = this.enquiries$.pipe(
-			map((arr: any) => arr.filter((f) => f.estatus === 'P'))
-		);
+		this.invoiceReadyEnquiries$ = this.enquiries$.pipe(map((arr: any) => arr.filter((f) => f.estatus === 'P')));
 		this.fullfilledEnquiries$ = this.enquiries$.pipe(
 			map((arr: any) =>
 				arr.filter((f) => {
@@ -282,12 +252,10 @@ export class OpenEnquiryPage implements OnInit {
 	}
 
 	populateBackOrders() {
-		this._commonApiService
-			.getBackOder(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.back_order_lst = data;
-				this._cdr.markForCheck();
-			});
+		this._commonApiService.getBackOder(this.userdata.center_id).subscribe((data: any) => {
+			this.back_order_lst = data;
+			this._cdr.markForCheck();
+		});
 	}
 
 	processEnquiry(item) {
@@ -347,10 +315,7 @@ export class OpenEnquiryPage implements OnInit {
 		dialogConfig.height = '40%';
 		dialogConfig.data = enquiry;
 
-		const dialogRef = this._dialog.open(
-			DeleteEnquiryDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(DeleteEnquiryDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -368,13 +333,9 @@ export class OpenEnquiryPage implements OnInit {
 					dialogConfigSuccess.autoFocus = true;
 					dialogConfigSuccess.width = '25%';
 					dialogConfigSuccess.height = '25%';
-					dialogConfigSuccess.data =
-						'Inquiry deleted and moved to cancelled status';
+					dialogConfigSuccess.data = 'Inquiry deleted and moved to cancelled status';
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 
 					this.init();
 				}
@@ -390,10 +351,7 @@ export class OpenEnquiryPage implements OnInit {
 		dialogConfig.data = row;
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			EnquiryViewDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(EnquiryViewDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('The dialog was closed');

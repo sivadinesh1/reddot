@@ -1,11 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ViewChild,
-	ChangeDetectionStrategy,
-	Inject,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
@@ -17,12 +10,7 @@ import { Vendor } from 'src/app/models/Vendor';
 import { LoadingService } from '../../loading/loading.service';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 
-import {
-	GSTN_REGEX,
-	EMAIL_REGEX,
-	PINCODE_REGEX,
-	country,
-} from '../../../util/helper/patterns';
+import { GSTN_REGEX, EMAIL_REGEX, PINCODE_REGEX, country } from '../../../util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -75,37 +63,13 @@ export class VendorEditDialogComponent implements OnInit {
 
 			gst: [this.vendor.gst, [patternValidator(GSTN_REGEX)]],
 
-			phone: [
-				this.vendor.phone,
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
-			],
+			phone: [this.vendor.phone, Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
 
-			mobile: [
-				this.vendor.mobile,
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
-			],
+			mobile: [this.vendor.mobile, Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
 
-			mobile2: [
-				this.vendor.mobile2,
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
-			],
+			mobile2: [this.vendor.mobile2, Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
 
-			whatsapp: [
-				this.vendor.whatsapp,
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				]),
-			],
+			whatsapp: [this.vendor.whatsapp, Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
 
 			email: [this.vendor.email, [patternValidator(EMAIL_REGEX)]],
 		});
@@ -115,22 +79,27 @@ export class VendorEditDialogComponent implements OnInit {
 		});
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
+		});
+	}
 
 	onSubmit() {
 		const changes = this.submitForm.value;
-		const updateVendor$ = this._commonApiService.updateVendor(
-			this.vendor.id,
-			changes
-		);
+		const updateVendor$ = this._commonApiService.updateVendor(this.vendor.id, changes);
 
-		this._loadingService
-			.showLoaderUntilCompleted(updateVendor$)
-			.subscribe((data: any) => {
-				console.log('object.. vendor updated ..');
-				this.openSnackBar('Vendor Updated Successfully', '');
-				this.dialogRef.close('success');
-			});
+		this._loadingService.showLoaderUntilCompleted(updateVendor$).subscribe((data: any) => {
+			console.log('object.. vendor updated ..');
+			this.openSnackBar('Vendor Updated Successfully', '');
+			this.dialogRef.close('success');
+		});
 	}
 
 	searchVendors() {

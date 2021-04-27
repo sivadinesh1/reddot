@@ -220,7 +220,7 @@
 
 	.left {
 		display: grid;
-		grid-template-columns: 1fr 120px minmax(80px, 100px) 150px;
+		grid-template-columns: 1fr 120px minmax(80px, 100px) minmax(80px, 100px) 150px;
 		align-items: center;
 		grid-gap: 10px;
 		background-color: #ffffee;

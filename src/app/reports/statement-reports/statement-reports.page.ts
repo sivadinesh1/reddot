@@ -133,12 +133,12 @@ export class StatementReportsPage implements OnInit {
 		if (typeof value == 'object') {
 			return this.customer_lis.filter(
 				(customer) =>
-					customer.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
+					customer.name.toLowerCase().match(value.name.toLowerCase())
 			);
 		} else if (typeof value == 'string') {
 			return this.customer_lis.filter(
 				(customer) =>
-					customer.name.toLowerCase().indexOf(value.toLowerCase()) === 0
+					customer.name.toLowerCase().match(value.toLowerCase())
 			);
 		}
 	}
