@@ -1,8 +1,10 @@
 .content {
 	display: grid;
-	width: 30%;
+	width: 100%;
 	margin: 0 auto;
-	padding: 16px;
+	padding: 2rem;
+	min-height: 500px;
+	height: auto;
 }
 
 .mat-width-ext {
@@ -21,4 +23,19 @@
 	grid-template-columns: auto;
 	gap: 16px;
 	padding-top: 16px;
+}
+
+.form {
+	min-height: 500px;
+}
+
+.wrapper {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	position: relative;
+	height: auto;
+	overflow-y: scroll;
+}
+.file-input {
+	display: none;
 }

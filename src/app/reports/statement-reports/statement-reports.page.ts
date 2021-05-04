@@ -1,33 +1,13 @@
-import {
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	Inject,
-	OnInit,
-	ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Customer } from 'src/app/models/Customer';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from 'src/app/services/common-api.service';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import * as xlsx from 'xlsx';
-import {
-	filter,
-	map,
-	startWith,
-	tap,
-	debounceTime,
-	switchMap,
-} from 'rxjs/operators';
+import { filter, map, startWith, tap, debounceTime, switchMap } from 'rxjs/operators';
 
 import { User } from '../../models/User';
 
@@ -57,6 +37,7 @@ export class StatementReportsPage implements OnInit {
 	ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
 	@ViewChild('epltable', { static: false }) epltable: ElementRef;
+	datafetch = false;
 
 	constructor(
 		private _cdr: ChangeDetectorRef,
@@ -70,20 +51,18 @@ export class StatementReportsPage implements OnInit {
 	) {
 		this.init();
 		this.userdata$ = this._authservice.currentUser;
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				// this._authservice.setCurrentMenu('SALE');
-				this.userdata = data;
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			// this._authservice.setCurrentMenu('SALE');
+			this.userdata = data;
 
-				this.statementForm.patchValue({
-					center_id: data.center_id,
-				});
-				this.getCustomers(this.userdata.center_id);
-				this.ready = 1;
-
-				this._cdr.markForCheck();
+			this.statementForm.patchValue({
+				center_id: data.center_id,
 			});
+			this.getCustomers(this.userdata.center_id);
+			this.ready = 1;
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	ngOnInit() {}
@@ -97,20 +76,14 @@ export class StatementReportsPage implements OnInit {
 	}
 
 	getCustomers(center_id) {
-		this._commonApiService
-			.getAllActiveCustomers(center_id)
-			.subscribe((data: any) => {
-				this.customer_lis = data;
+		this._commonApiService.getAllActiveCustomers(center_id).subscribe((data: any) => {
+			this.customer_lis = data;
 
-				this.filteredCustomer = this.statementForm.controls[
-					'customerctrl'
-				].valueChanges.pipe(
-					startWith(''),
-					map((customer) =>
-						customer ? this.filtercustomer(customer) : this.customer_lis.slice()
-					)
-				);
-			});
+			this.filteredCustomer = this.statementForm.controls['customerctrl'].valueChanges.pipe(
+				startWith(''),
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+			);
+		});
 	}
 
 	async init() {
@@ -122,7 +95,7 @@ export class StatementReportsPage implements OnInit {
 			enddate: [this.enddate, Validators.required],
 			customerid: ['all'],
 			customerctrl: new FormControl({
-				value: 'Select Customer',
+				value: 'All Customers',
 				disabled: false,
 			}),
 			searchtype: ['all'],
@@ -131,15 +104,9 @@ export class StatementReportsPage implements OnInit {
 
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().match(value.name.toLowerCase())
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.name.toLowerCase()));
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().match(value.toLowerCase())
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.toLowerCase()));
 		}
 	}
 
@@ -148,7 +115,8 @@ export class StatementReportsPage implements OnInit {
 			customerid: event.option.value.id,
 			customerctrl: event.option.value.name,
 		});
-
+		this.statementdata = [];
+		this.datafetch = false;
 		this._cdr.markForCheck();
 	}
 
@@ -160,25 +128,27 @@ export class StatementReportsPage implements OnInit {
 			enddate: this.statementForm.value.enddate,
 		};
 
-		if (this.statementForm.value.customerid === 'all') {
-			this.openSnackBar('Select a Customer', '');
-			return false;
-		}
+		// if (this.statementForm.value.customerid === 'all') {
+		// 	this.openSnackBar('Select a Customer', '');
+		// 	return false;
+		// }
 
 		this._commonApiService.getCustomerStatement(data).subscribe((data: any) => {
 			this.statementdata = data.body;
+			this.datafetch = true;
 
-			if (this.statementdata[0].txn_type === 'invoice') {
-				this.openingbalance =
-					this.statementdata[0].balance_amt - this.statementdata[0].credit_amt;
-			} else if (this.statementdata[0].txn_type === 'Payment') {
-				this.openingbalance =
-					this.statementdata[0].balance_amt - this.statementdata[0].debit_amt;
+			if (this.statementForm.value.customerid !== 'all') {
+				this.openingbalance = this.statementdata[0]?.balance_amt;
+				// if (this.statementdata[0].txn_type === 'invoice') {
+				// 	this.openingbalance = this.statementdata[0].balance_amt - this.statementdata[0].credit_amt;
+				// } else if (this.statementdata[0].txn_type === 'Payment') {
+				// 	this.openingbalance = this.statementdata[0].balance_amt - this.statementdata[0].debit_amt;
+				// }
 			}
 
-			this.closingbalance = this.statementdata[
-				this.statementdata.length - 1
-			].balance_amt;
+			if (this.statementForm.value.customerid !== 'all') {
+				this.closingbalance = this.statementdata[this.statementdata.length - 1]?.balance_amt;
+			}
 
 			this._cdr.markForCheck();
 		});
@@ -196,15 +166,15 @@ export class StatementReportsPage implements OnInit {
 			customerid: 'all',
 			customerctrl: '',
 		});
+		this.statementdata = [];
+		this.datafetch = false;
 		this._cdr.markForCheck();
 	}
 
 	exportToExcel() {
-		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-			this.epltable.nativeElement
-		);
+		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(this.epltable.nativeElement);
 		ws['!cols'] = [];
-		ws['!cols'][1] = { hidden: true };
+		// ws['!cols'][1] = { hidden: true };
 		const wb: xlsx.WorkBook = xlsx.utils.book_new();
 		xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
 		xlsx.writeFile(wb, 'epltable.xlsx');
