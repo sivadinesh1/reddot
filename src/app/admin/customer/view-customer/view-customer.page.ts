@@ -1,11 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ViewChild,
-	ChangeDetectionStrategy,
-	ElementRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy, ElementRef } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
@@ -30,6 +23,7 @@ import { DefaultDiscountsComponent } from 'src/app/components/customers/discount
 import { BrandDiscountsComponent } from 'src/app/components/customers/discount/brand-discounts/brand-discounts.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoadingService } from 'src/app/services/loading.service';
+import { HelperUtilsService } from 'src/app/services/helper-utils.service';
 
 @Component({
 	selector: 'app-view-customer',
@@ -55,20 +49,15 @@ export class ViewCustomerPage implements OnInit {
 	customerslist: any;
 	customersOriglist: any;
 
+	isloaded = false;
+	isactive = true;
+
 	@ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
-	@ViewChild('epltable', { static: false }) epltable: ElementRef;
 
-	displayedColumns: string[] = [
-		'name',
-		'address1',
-		'credit',
-
-		'lastpaiddate',
-		'actions',
-	];
+	displayedColumns: string[] = ['name', 'address1', 'credit', 'actions'];
 	dataSource = new MatTableDataSource<Customer>();
 
 	constructor(
@@ -79,18 +68,17 @@ export class ViewCustomerPage implements OnInit {
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
 		private _router: Router,
-		private _loadingService: LoadingService
+		private _loadingService: LoadingService,
+		public _helperUtilsService: HelperUtilsService,
 	) {
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.center_id = data.center_id;
-				this.ready = 1;
-				this.reloadCustomers();
-				this._cdr.markForCheck();
-			});
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.center_id = data.center_id;
+			this.ready = 1;
+			this.reloadCustomers();
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
 			this.init();
@@ -104,20 +92,20 @@ export class ViewCustomerPage implements OnInit {
 	}
 
 	reloadCustomers() {
-		this._commonApiService
-			.getAllActiveCustomers(this.center_id)
-			.subscribe((data: any) => {
-				this.arr = data;
-				// DnD - code to add a "key/Value" in every object of array
-				this.dataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
-
-				this.dataSource.sort = this.sort;
-				this.pageLength = data.length;
+		this.isloaded = false;
+		this._commonApiService.getAllActiveCustomers(this.center_id).subscribe((data: any) => {
+			this.arr = data;
+			this.isloaded = true;
+			// DnD - code to add a "key/Value" in every object of array
+			this.dataSource.data = data.map((el) => {
+				var o = Object.assign({}, el);
+				o.isExpanded = false;
+				return o;
 			});
+
+			this.dataSource.sort = this.sort;
+			this.pageLength = data.length;
+		});
 	}
 
 	ngOnInit() {
@@ -133,10 +121,7 @@ export class ViewCustomerPage implements OnInit {
 		dialogConfig.position = { top: '0', right: '0' };
 		dialogConfig.panelClass = 'app-full-bleed-dialog';
 
-		const dialogRef = this._dialog.open(
-			CustomerAddDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -145,7 +130,7 @@ export class ViewCustomerPage implements OnInit {
 				tap(() => {
 					this.reloadCustomers();
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
@@ -163,10 +148,7 @@ export class ViewCustomerPage implements OnInit {
 		dialogConfig.position = { top: '0', right: '0' };
 		dialogConfig.data = customer;
 
-		const dialogRef = this._dialog.open(
-			CustomerEditDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerEditDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -175,7 +157,7 @@ export class ViewCustomerPage implements OnInit {
 				tap(() => {
 					this.reloadCustomers();
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
@@ -186,10 +168,7 @@ export class ViewCustomerPage implements OnInit {
 					dialogConfigSuccess.height = '25%';
 					dialogConfigSuccess.data = 'Customer updated successfully';
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 				}
 			});
 	}
@@ -202,10 +181,7 @@ export class ViewCustomerPage implements OnInit {
 		dialogConfig.height = '80%';
 		dialogConfig.data = customer;
 
-		const dialogRef = this._dialog.open(
-			CustomerEditShippingAddressComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerEditShippingAddressComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -214,7 +190,7 @@ export class ViewCustomerPage implements OnInit {
 				tap(() => {
 					this.reloadCustomers();
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
@@ -225,18 +201,13 @@ export class ViewCustomerPage implements OnInit {
 					dialogConfigSuccess.height = '25%';
 					dialogConfigSuccess.data = 'Customer updated successfully';
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 				}
 			});
 	}
 
 	goCustomerFinancials(item) {
-		this._router.navigate([
-			`/home/financials-customer/${this.center_id}/${item.id}`,
-		]);
+		this._router.navigate([`/home/financials-customer/${this.center_id}/${item.id}`]);
 	}
 
 	reset() {
@@ -286,7 +257,7 @@ export class ViewCustomerPage implements OnInit {
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
+			},
 		);
 
 		//start frm A2 here
@@ -299,91 +270,73 @@ export class ViewCustomerPage implements OnInit {
 	}
 
 	editdefault(element) {
-		this._commonApiService
-			.getAllCustomerDefaultDiscounts(this.center_id, element.id)
-			.subscribe((data: any) => {
-				const dialogConfig = new MatDialogConfig();
-				dialogConfig.disableClose = true;
-				dialogConfig.autoFocus = true;
-				dialogConfig.width = '300px';
-				dialogConfig.height = '100%';
-				dialogConfig.data = data[0];
-				dialogConfig.position = { top: '0', right: '0' };
+		this._commonApiService.getAllCustomerDefaultDiscounts(this.center_id, element.id).subscribe((data: any) => {
+			const dialogConfig = new MatDialogConfig();
+			dialogConfig.disableClose = true;
+			dialogConfig.autoFocus = true;
+			dialogConfig.width = '300px';
+			dialogConfig.height = '100%';
+			dialogConfig.data = data[0];
+			dialogConfig.position = { top: '0', right: '0' };
 
-				const dialogRef = this._dialog.open(
-					DefaultDiscountsComponent,
-					dialogConfig
-				);
+			const dialogRef = this._dialog.open(DefaultDiscountsComponent, dialogConfig);
 
-				dialogRef
-					.afterClosed()
-					.pipe(
-						filter((val) => !!val),
-						tap(() => {
-							this.reloadCustomers();
-							this._cdr.markForCheck();
-						})
-					)
-					.subscribe((data: any) => {
-						if (data.body === 1) {
-							const dialogConfigSuccess = new MatDialogConfig();
-							dialogConfigSuccess.disableClose = false;
-							dialogConfigSuccess.autoFocus = true;
-							dialogConfigSuccess.width = '25%';
-							dialogConfigSuccess.height = '25%';
-							dialogConfigSuccess.data = 'Discount updated successfully';
+			dialogRef
+				.afterClosed()
+				.pipe(
+					filter((val) => !!val),
+					tap(() => {
+						this.reloadCustomers();
+						this._cdr.markForCheck();
+					}),
+				)
+				.subscribe((data: any) => {
+					if (data.body === 1) {
+						const dialogConfigSuccess = new MatDialogConfig();
+						dialogConfigSuccess.disableClose = false;
+						dialogConfigSuccess.autoFocus = true;
+						dialogConfigSuccess.width = '25%';
+						dialogConfigSuccess.height = '25%';
+						dialogConfigSuccess.data = 'Discount updated successfully';
 
-							const dialogRef = this._dialog.open(
-								SuccessMessageDialogComponent,
-								dialogConfigSuccess
-							);
-						}
-					});
-			});
+						const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+					}
+				});
+		});
 	}
 
 	manageBrandDiscounts(element) {
-		this._commonApiService
-			.getAllCustomerDefaultDiscounts(this.center_id, element.id)
-			.subscribe((data: any) => {
-				const dialogConfig = new MatDialogConfig();
-				dialogConfig.disableClose = true;
-				dialogConfig.autoFocus = true;
-				dialogConfig.width = '80%';
-				dialogConfig.height = '80%';
-				dialogConfig.data = element;
+		this._commonApiService.getAllCustomerDefaultDiscounts(this.center_id, element.id).subscribe((data: any) => {
+			const dialogConfig = new MatDialogConfig();
+			dialogConfig.disableClose = true;
+			dialogConfig.autoFocus = true;
+			dialogConfig.width = '80%';
+			dialogConfig.height = '80%';
+			dialogConfig.data = data;
 
-				const dialogRef = this._dialog.open(
-					BrandDiscountsComponent,
-					dialogConfig
-				);
+			const dialogRef = this._dialog.open(BrandDiscountsComponent, dialogConfig);
 
-				dialogRef
-					.afterClosed()
-					.pipe(
-						filter((val) => !!val),
-						tap(() => {
-							this.reloadCustomers();
-							this._cdr.markForCheck();
-						})
-					)
-					.subscribe((data: any) => {
-						if (data === 'success') {
-							const dialogConfigSuccess = new MatDialogConfig();
-							dialogConfigSuccess.disableClose = false;
-							dialogConfigSuccess.autoFocus = true;
-							dialogConfigSuccess.width = '25%';
-							dialogConfigSuccess.height = '25%';
-							dialogConfigSuccess.data = 'Discounts successfull';
+			dialogRef
+				.afterClosed()
+				.pipe(
+					filter((val) => !!val),
+					tap(() => {
+						this.reloadCustomers();
+						this._cdr.markForCheck();
+					}),
+				)
+				.subscribe((data: any) => {
+					if (data === 'success') {
+						const dialogConfigSuccess = new MatDialogConfig();
+						dialogConfigSuccess.disableClose = false;
+						dialogConfigSuccess.autoFocus = true;
+						dialogConfigSuccess.width = '25%';
+						dialogConfigSuccess.height = '25%';
+						dialogConfigSuccess.data = 'Discounts successfull';
 
-							const dialogRef = this._dialog.open(
-								SuccessMessageDialogComponent,
-								dialogConfigSuccess
-							);
-						}
-					});
-			});
+						const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
+					}
+				});
+		});
 	}
-
-	
 }

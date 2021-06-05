@@ -124,21 +124,21 @@ button {
 }
 
 .row-color {
-	background: rgb(241, 241, 241);
+	background: #fff;
 }
 .row-color:nth-of-type(even) {
-	background: rgb(226, 226, 226);
+	background: #f4f5f7;
 }
 .row-color:hover {
-	background: rgb(195, 194, 194);
-	cursor: pointer;
+	// background: rgb(195, 194, 194);
+	border: 2px solid #0268ce;
 }
 
 .row-color-nohover {
-	background: rgb(241, 241, 241);
+	background: #fff;
 }
 .row-color-nohover:nth-of-type(even) {
-	background: rgb(226, 226, 226);
+	background: #f4f5f7;
 }
 
 .plain-row-color-nohover:hover {
@@ -172,7 +172,7 @@ button {
 			overflow: visible;
 		}
 	}
-	background-color: #fafbfc;
+	background-color: #faf9f299;
 }
 
 .mat-tab-label-active {
@@ -242,7 +242,8 @@ input[type='number'] {
 	padding-top: 8px;
 }
 
-.btn-grad {
+.btn-grad,
+.btn-grad-no-margin {
 	background-image: linear-gradient(to right, #0575e6 0%, #021b79 51%, #0575e6 100%);
 }
 .btn-grad {
@@ -260,11 +261,35 @@ input[type='number'] {
 	justify-content: center;
 	min-width: 190px;
 	max-width: 200px;
-	height: 52px;
+	height: 42px;
+	font-size: 18px;
+}
+
+.btn-grad-no-margin {
+	text-align: center;
+	text-transform: capitalize;
+	transition: 0.5s;
+	background-size: 200% auto;
+	color: white;
+	box-shadow: 0 0 20px #eee;
+	border-radius: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 190px;
+	max-width: 200px;
+	height: 42px;
 	font-size: 18px;
 }
 
 .btn-grad:hover {
+	background-position: right center; /* change the direction of the change here */
+	color: #fff;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.btn-grad-no-margin:hover {
 	background-position: right center; /* change the direction of the change here */
 	color: #fff;
 	text-decoration: none;
@@ -282,6 +307,18 @@ input[type='number'] {
 	}
 }
 
+.add-icon {
+	font-size: 24px;
+	width: 24px !important;
+	height: 24px !important;
+	color: #fff !important;
+}
+
+.add-icon-label {
+	padding-left: 5px;
+	font-size: 18px;
+}
+
 // .alertHeader {
 // 	color: #b52024 !important;
 //    // --color: #b52024 !important;
@@ -295,3 +332,20 @@ input[type='number'] {
 //  .alert-sub-title.sc-ion-alert-md, .alert-title.sc-ion-alert-md {
 //    color: #b32224;
 //  }
+
+.searchbar-input {
+	background: #fff !important;
+	border-radius: 30px !important;
+	height: 40px !important;
+	max-width: 400px;
+	font-size: 1rem !important;
+	border: 1px solid transparent;
+}
+
+.example-table-container1 {
+	width: 100% !important;
+}
+
+.w-100 {
+	max-width: 100px;
+}

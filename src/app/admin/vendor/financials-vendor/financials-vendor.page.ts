@@ -1,10 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ViewChild,
-	ElementRef,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { User } from 'src/app/models/User';
@@ -19,12 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ShowStatementComponent } from 'src/app/components/reports/show-statement/show-statement.component';
 import { VendorPaymentDialogComponent } from 'src/app/components/vendors/vendor-payment-dialog/vendor-payment-dialog.component';
 import { ShowVendorStatementComponent } from 'src/app/components/reports/show-vendor-statement/show-vendor-statement.component';
@@ -89,23 +78,8 @@ export class FinancialsVendorPage implements OnInit {
 	@ViewChild('epltable1', { static: false }) epltable1: ElementRef;
 
 	// table display columns
-	displayedColumns: string[] = [
-		'ledgerdate',
-		'ledgerrefid',
-		'type',
-		'creditamt',
-		'debitamt',
-		'balamt',
-	];
-	purchaseInvoiceDisplayedColumns: string[] = [
-		'invoicedate',
-		'invoiceno',
-		'nettotal',
-		'paymentstatus',
-		'paidamt',
-		'balamt',
-		'paybtn',
-	];
+	displayedColumns: string[] = ['ledgerdate', 'ledgerrefid', 'type', 'creditamt', 'debitamt', 'balamt'];
+	purchaseInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
 
 	paymentDisplayedColumns: string[] = [
 		'pymtdate',
@@ -137,20 +111,18 @@ export class FinancialsVendorPage implements OnInit {
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
 		private _router: Router,
-		private _fb: FormBuilder
+		private _fb: FormBuilder,
 	) {
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.center_id = data.center_id;
-				this.ready = 1;
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.center_id = data.center_id;
+			this.ready = 1;
 
-				this.init();
+			this.init();
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
 		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
@@ -231,17 +203,15 @@ export class FinancialsVendorPage implements OnInit {
 	}
 
 	reloadVendorLedger() {
-		this._commonApiService
-			.getLedgerVendor(this.center_id, this.vendor_id)
-			.subscribe((data: any) => {
-				this.totalOutstandingBalance = data[0]?.balance_amt | 0;
+		this._commonApiService.getLedgerVendor(this.center_id, this.vendor_id).subscribe((data: any) => {
+			this.totalOutstandingBalance = data[0]?.balance_amt | 0;
 
-				this.ledgerdataSource.data = data;
+			this.ledgerdataSource.data = data;
 
-				this.ledgerdataSource.sort = this.sort;
-				this.pageLength = data.length;
-				this._cdr.markForCheck();
-			});
+			this.ledgerdataSource.sort = this.sort;
+			this.pageLength = data.length;
+			this._cdr.markForCheck();
+		});
 	}
 
 	ngOnInit() {}
@@ -394,21 +364,19 @@ export class FinancialsVendorPage implements OnInit {
 	}
 
 	reloadPymtTransactionByVendor() {
-		this._commonApiService
-			.getPymtTransactionByVendor(this.center_id, this.vendor_id)
-			.subscribe((data: any) => {
-				// DnD - code to add a "key/Value" in every object of array
-				this.pymttransactionsdataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
-
-				this.pymttransactionsdataSource.sort = this.sort;
-				this.pageLength = data.length;
-
-				this._cdr.markForCheck();
+		this._commonApiService.getPymtTransactionByVendor(this.center_id, this.vendor_id).subscribe((data: any) => {
+			// DnD - code to add a "key/Value" in every object of array
+			this.pymttransactionsdataSource.data = data.map((el) => {
+				var o = Object.assign({}, el);
+				o.isExpanded = false;
+				return o;
 			});
+
+			this.pymttransactionsdataSource.sort = this.sort;
+			this.pageLength = data.length;
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	viewAllVendors() {
@@ -426,10 +394,7 @@ export class FinancialsVendorPage implements OnInit {
 			invoicedata: element,
 		};
 
-		const dialogRef = this._dialog.open(
-			VendorPaymentDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(VendorPaymentDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -438,7 +403,7 @@ export class FinancialsVendorPage implements OnInit {
 				tap(() => {
 					this.init();
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				console.log('object dinesh ');
@@ -448,23 +413,18 @@ export class FinancialsVendorPage implements OnInit {
 					dialogConfigSuccess.autoFocus = true;
 					dialogConfigSuccess.width = '25%';
 					dialogConfigSuccess.height = '25%';
-					dialogConfigSuccess.data = 'Add receivables succesful';
+					dialogConfigSuccess.data = 'Receivables add succesfully';
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 				}
 			});
 	}
 
 	updateVendorCreditBalance() {
-		this._commonApiService
-			.getVendorDetails(this.center_id, this.vendor_id)
-			.subscribe((data: any) => {
-				this.vendor_credit_amount = data.credit_amt;
-				this._cdr.markForCheck();
-			});
+		this._commonApiService.getVendorDetails(this.center_id, this.vendor_id).subscribe((data: any) => {
+			this.vendor_credit_amount = data.credit_amt;
+			this._cdr.markForCheck();
+		});
 	}
 
 	openDialog(): void {
@@ -482,10 +442,7 @@ export class FinancialsVendorPage implements OnInit {
 
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			ShowVendorStatementComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(ShowVendorStatementComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('The dialog was closed');

@@ -41,6 +41,10 @@ const routes: Routes = [
 				path: 'search-sales',
 				loadChildren: () => import('./sales/search-sales/search-sales.module').then((m) => m.SearchSalesPageModule),
 			},
+			{
+				path: 'search-stock-issues',
+				loadChildren: () => import('./stockissue/search-stock-issues/search-stock-issues.module').then((m) => m.SearchStockIssuesPageModule),
+			},
 
 			{
 				path: 'reports-home',
@@ -167,7 +171,7 @@ const routes: Routes = [
 						path: 'all-customer-outstanding-balance-reports',
 						loadChildren: () =>
 							import('./reports/all-customer-outstanding-reports/all-customer-outstanding-reports.module').then(
-								(m) => m.AllCustomerOutstandingReportsPageModule
+								(m) => m.AllCustomerOutstandingReportsPageModule,
 							),
 					},
 					{
@@ -184,6 +188,16 @@ const routes: Routes = [
 						loadChildren: () => import('./reports/item-wise-sale-reports/item-wise-sale-reports.module').then((m) => m.ItemWiseSaleReportsPageModule),
 					},
 				],
+			},
+			{
+				path: 'customer-accounts-statement',
+				loadChildren: () =>
+					import('./accounts/customer-accounts-statement/customer-accounts-statement.module').then((m) => m.CustomerAccountsStatementPageModule),
+			},
+			{
+				path: 'vpurchase-accounts-statement',
+				loadChildren: () =>
+					import('./accounts/vpurchase-accounts-statement/vpurchase-accounts-statement.module').then((m) => m.VpurchaseAccountsStatementPageModule),
 			},
 		],
 	},
@@ -226,10 +240,15 @@ const routes: Routes = [
 		outlet: 'settings',
 	},
 	{
+		path: 'bank-settings',
+		loadChildren: () => import('./settings/bank-settings/bank-settings.module').then((m) => m.BankSettingsPageModule),
+		outlet: 'settings',
+	},
+	{
 		path: 'all-customer-outstanding-reports',
 		loadChildren: () =>
 			import('./reports/all-customer-outstanding-reports/all-customer-outstanding-reports.module').then(
-				(m) => m.AllCustomerOutstandingReportsPageModule
+				(m) => m.AllCustomerOutstandingReportsPageModule,
 			),
 	},
 ];

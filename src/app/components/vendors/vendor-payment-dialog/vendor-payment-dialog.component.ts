@@ -1,17 +1,7 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ChangeDetectionStrategy,
-	Inject,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 
-import {
-	MatDialog,
-	MAT_DIALOG_DATA,
-	MatDialogRef,
-} from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ModalController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
@@ -50,6 +40,8 @@ export class VendorPaymentDialogComponent implements OnInit {
 
 	errmsg: any;
 	balancedue: any;
+	bankList: any;
+	iswarning = false;
 
 	constructor(
 		private _fb: FormBuilder,
@@ -62,20 +54,18 @@ export class VendorPaymentDialogComponent implements OnInit {
 		private _router: Router,
 		private _route: ActivatedRoute,
 		private _cdr: ChangeDetectorRef,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
 	) {
 		this.vendor = data.vendordata;
 		this.invoice = data.invoicedata;
 
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
-				this.init();
-				this._cdr.markForCheck();
-			});
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
+			this.init();
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
 			if (this.userdata !== undefined) {
@@ -85,10 +75,7 @@ export class VendorPaymentDialogComponent implements OnInit {
 	}
 
 	async init() {
-		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(
-			this.userdata.center_id,
-			'A'
-		);
+		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(this.userdata.center_id, 'A');
 	}
 
 	ngOnInit() {
@@ -97,6 +84,9 @@ export class VendorPaymentDialogComponent implements OnInit {
 			vendor: [this.vendor, Validators.required],
 			centerid: [this.userdata.center_id, Validators.required],
 			accountarr: this._fb.array([]),
+			bank_id: '',
+			bank_name: '',
+			createdby: this.userdata.userid,
 		});
 
 		// adds first record
@@ -107,6 +97,8 @@ export class VendorPaymentDialogComponent implements OnInit {
 			this.checkTotalSum();
 			this._cdr.detectChanges();
 		});
+
+		this.reloadBankDetails();
 	}
 
 	// initialize the values
@@ -114,14 +106,7 @@ export class VendorPaymentDialogComponent implements OnInit {
 		return this._fb.group({
 			checkbox: [false],
 			purchase_ref_id: [this.invoice.purchase_id, [Validators.required]],
-			receivedamount: [
-				'',
-				[
-					Validators.required,
-					Validators.max(this.invoice.invoice_amt),
-					Validators.min(0),
-				],
-			],
+			receivedamount: ['', [Validators.required, Validators.max(this.invoice.invoice_amt), Validators.min(0)]],
 			receiveddate: ['', Validators.required],
 			pymtmode: ['', Validators.required],
 			bankref: [''],
@@ -152,12 +137,7 @@ export class VendorPaymentDialogComponent implements OnInit {
 		ctrl.controls.forEach((x) => {
 			// get the itemmt value and need to parse the input to number
 
-			let parsed = parseFloat(
-				x.get('receivedamount').value === '' ||
-					x.get('receivedamount').value === null
-					? 0
-					: x.get('receivedamount').value
-			);
+			let parsed = parseFloat(x.get('receivedamount').value === '' || x.get('receivedamount').value === null ? 0 : x.get('receivedamount').value);
 			// add to total
 
 			this.summed += parsed;
@@ -165,10 +145,7 @@ export class VendorPaymentDialogComponent implements OnInit {
 
 			// current set of paymnets + already paid amount > actual invocie amount then error
 			if (this.summed + this.invoice.paid_amount > this.invoice.invoice_amt) {
-				let val = this.currencyPipe.transform(
-					this.summed + this.invoice.paid_amount - this.invoice.invoice_amt,
-					'INR'
-				);
+				let val = this.currencyPipe.transform(this.summed + this.invoice.paid_amount - this.invoice.invoice_amt, 'INR');
 				this.errmsg = `Total payment exceeds invoice amount ` + val;
 				this._cdr.detectChanges();
 				return false;
@@ -180,28 +157,78 @@ export class VendorPaymentDialogComponent implements OnInit {
 		return true;
 	}
 
+	reloadBankDetails() {
+		this._commonApiService.getBanks(this.userdata.center_id).subscribe((data: any) => {
+			this.bankList = data.result;
+
+			this._cdr.markForCheck();
+		});
+	}
+
 	getBalanceDue() {
-		this.balancedue =
-			this.invoice.invoice_amt - (this.invoice.paid_amount + this.summed);
+		this.balancedue = this.invoice.invoice_amt - (this.invoice.paid_amount + this.summed);
 	}
 
 	onSubmit() {
 		if (this.checkTotalSum()) {
-			this._commonApiService
-				.addVendorPymtReceived(this.submitForm.value)
-				.subscribe((data: any) => {
-					if (data.body === 'success') {
-						this.submitForm.reset();
-						this.dialogRef.close('success');
-					} else {
-						// todo nothing as of now
-					}
+			let form = {
+				centerid: this.userdata.center_id,
+				bankref: this.submitForm.value.accountarr[0].bankref,
+				vendorid: this.submitForm.value.vendor.id,
+			};
+			this._commonApiService.getVendorPaymentBankRef(form).subscribe((data: any) => {
+				if (data.body.result[0].count > 0) {
+					// warning
+					this.iswarning = true;
 					this._cdr.markForCheck();
-				});
+				} else if (data.body.result1.length === 1) {
+					// check if the last paid amount is the same is current paid amount and if yes throw a warning.
+					if (data.body.result1[0].payment_now_amt === this.submitForm.value.accountarr[0].receivedamount) {
+						this.iswarning = true;
+						this._cdr.markForCheck();
+					} else {
+						this.finalSubmit();
+					}
+				} else {
+					this.finalSubmit();
+				}
+			});
+		}
+	}
+
+	finalSubmit() {
+		if (this.checkTotalSum()) {
+			this._commonApiService.addVendorPymtReceived(this.submitForm.value).subscribe((data: any) => {
+				if (data.body === 'success') {
+					this.submitForm.reset();
+					this.dialogRef.close('success');
+				} else {
+					// todo nothing as of now
+				}
+				this._cdr.markForCheck();
+			});
 		}
 	}
 
 	close() {
 		this.dialogRef.close();
+	}
+
+	cancel() {
+		this.iswarning = false;
+	}
+
+	handleChange(event) {
+		if (event.value === '0') {
+			this.submitForm.patchValue({
+				bank_name: '',
+				bank_id: 0,
+			});
+		} else {
+			this.submitForm.patchValue({
+				bank_name: event.value.bankname,
+				bank_id: event.value.id,
+			});
+		}
 	}
 }

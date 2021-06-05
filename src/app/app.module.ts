@@ -23,6 +23,7 @@ import { registerLocaleData, CurrencyPipe } from '@angular/common';
 
 import localeIn from '@angular/common/locales/en-IN';
 import { HomePageModule } from './home/home.module';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 registerLocaleData(localeIn);
 // import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
@@ -42,6 +43,7 @@ registerLocaleData(localeIn);
 		//   preserveScrollPosition: true
 		// }),
 		AppRoutingModule,
+		NgxSkeletonLoaderModule,
 		BrowserAnimationsModule,
 	],
 	exports: [BrowserModule],

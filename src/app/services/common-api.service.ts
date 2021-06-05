@@ -56,7 +56,7 @@ export class CommonApiService {
 			.pipe(
 				map((res) => {
 					return res.body;
-				})
+				}),
 			);
 	}
 
@@ -65,7 +65,7 @@ export class CommonApiService {
 		return of(states.filter((x) => x && x.toLowerCase().indexOf(name) >= 0)).pipe(
 			map((result) => {
 				return result.map((x) => ({ state: x, name: x }));
-			})
+			}),
 		);
 	}
 
@@ -541,6 +541,10 @@ export class CommonApiService {
 		return this.httpClient.post(`${this.restApiUrl}/api/accounts/get-payments-customer`, submitForm, { observe: 'response' });
 	}
 
+	getPaymentsOverviewByCustomer(submitForm) {
+		return this.httpClient.post(`${this.restApiUrl}/api/accounts/get-payments-overview-customer`, submitForm, { observe: 'response' });
+	}
+
 	getPaymentsByVendor(submitForm) {
 		return this.httpClient.post(`${this.restApiUrl}/api/purchaseaccounts/get-payments-vendor`, submitForm, { observe: 'response' });
 	}
@@ -555,6 +559,10 @@ export class CommonApiService {
 
 	getPaymentsByCenter(submitForm) {
 		return this.httpClient.post(`${this.restApiUrl}/api/accounts/get-payments-center`, submitForm, { observe: 'response' });
+	}
+
+	getPaymentsOverviewByCenter(submitForm) {
+		return this.httpClient.post(`${this.restApiUrl}/api/accounts/get-payments-overview-center`, submitForm, { observe: 'response' });
 	}
 
 	getVendorPaymentsByCenter(submitForm) {
@@ -634,6 +642,39 @@ export class CommonApiService {
 	uploadCompanyLogo(submitForm: any, centerid: string, position: string) {
 		console.log('123');
 		return this.httpClient.post(`${this.restApiUrl}/api/upload/add/${centerid}/${position}`, submitForm);
+	}
+
+	// zoom testing
+	createMeeting() {
+		return this.httpClient.post(`${this.restApiUrl}/api/create-meeting`, {}, { observe: 'response' });
+	}
+
+	getBanks(centerid) {
+		return this.httpClient.get(`${this.restApiUrl}/api/accounts/banks-list/${centerid}`);
+	}
+
+	insertBank(form) {
+		return this.httpClient.post(`${this.restApiUrl}/api/admin/add-bank`, form, { observe: 'response' });
+	}
+
+	updateBank(form) {
+		return this.httpClient.post(`${this.restApiUrl}/api/admin/update-bank`, form, { observe: 'response' });
+	}
+
+	getPaymentBankRef(form) {
+		return this.httpClient.post(`${this.restApiUrl}/api/accounts/pymt-bank-ref-exist`, form, { observe: 'response' });
+	}
+
+	getVendorPaymentBankRef(form) {
+		return this.httpClient.post(`${this.restApiUrl}/api/accounts/vendor-pymt-bank-ref-exist`, form, { observe: 'response' });
+	}
+
+	getCustomerClosingBalanceStatement(statementForm) {
+		return this.httpClient.post(`${this.restApiUrl}/api/reports/customer-closing-balance-statement`, statementForm, { observe: 'response' });
+	}
+
+	getCustomerOpeningBalanceStatement(statementForm) {
+		return this.httpClient.post(`${this.restApiUrl}/api/reports/customer-opening-balance-statement`, statementForm, { observe: 'response' });
 	}
 }
 

@@ -131,9 +131,9 @@
 			</div>
 		</div>
 
-		<div style="padding: 1rem 0rem; font-weight: 400">Set Default Discount (Optional)</div>
+		<div style="padding: 1rem 0rem; font-weight: 400">Set Base Discount (Optional)</div>
 		<div style="display: grid; grid-gap: 16px; padding: 1rem 0rem; grid-template-columns: 1fr">
-			<div>
+			<!-- <div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>Discount Type</mat-label>
 					<mat-select formControlName="disctype" required>
@@ -142,36 +142,51 @@
 						</mat-option>
 					</mat-select>
 				</mat-form-field>
-			</div>
+			</div> -->
 			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr">
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (0%)</mat-label>
-						<input type="text" matInput number appSelectOnFocus (change)="prepopulate()" formControlName="gstzero" autocomplete="off" />
+						<input type="text" matInput number appSelectOnFocus (change)="prepopulate()" formControlName="gstzero" 
+						min="0"
+						max="100"
+						autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (5%)</mat-label>
-						<input type="text" matInput number appSelectOnFocus formControlName="gstfive" autocomplete="off" />
+						<input type="text" matInput number appSelectOnFocus formControlName="gstfive" 
+						min="0"
+						max="100"
+						autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (12%)</mat-label>
-						<input type="text" matInput number appSelectOnFocus formControlName="gsttwelve" autocomplete="off" />
+						<input type="text" matInput number appSelectOnFocus formControlName="gsttwelve" 
+						min="0"
+						max="100"
+						autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (18%)</mat-label>
-						<input type="text" matInput number appSelectOnFocus formControlName="gsteighteen" autocomplete="off" />
+						<input type="text" matInput number appSelectOnFocus formControlName="gsteighteen" 
+						min="0"
+						max="100"
+						autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field class="mat-width-disc">
 						<mat-label>GST (28%)</mat-label>
-						<input type="text" matInput number appSelectOnFocus formControlName="gsttwentyeight" autocomplete="off" />
+						<input type="text" matInput number appSelectOnFocus formControlName="gsttwentyeight" 
+						min="0"
+						max="100"
+						autocomplete="off" />
 					</mat-form-field>
 				</div>
 			</div>
@@ -180,7 +195,7 @@
 			{{ responseMsg }}
 		</div>
 		<div style="text-align: center">
-			<button mat-stroked-button type="button" (click)="clear()">Clear</button>&nbsp;&nbsp;
+			
 			<button mat-raised-button color="primary" type="submit">+ Add Customer</button>
 		</div>
 	</form>

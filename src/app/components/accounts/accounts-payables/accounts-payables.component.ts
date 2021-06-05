@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, Inject }
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
@@ -58,6 +58,8 @@ export class AccountsPayablesComponent implements OnInit {
 
 	invoicesplitArr = [];
 	advanceCreditUsed = 0;
+	bankList: any;
+	iswarning = false;
 
 	constructor(
 		private _fb: FormBuilder,
@@ -71,7 +73,8 @@ export class AccountsPayablesComponent implements OnInit {
 		private _route: ActivatedRoute,
 		private _cdr: ChangeDetectorRef,
 		private _commonApiService: CommonApiService,
-		private _loadingService: LoadingService
+		private _loadingService: LoadingService,
+		public alertController: AlertController,
 	) {
 		this.invoicesdata = data.invoicesdata;
 
@@ -97,7 +100,7 @@ export class AccountsPayablesComponent implements OnInit {
 			// autocomplete as typing
 			this.filteredVendor = this.submitForm.controls['vendor'].valueChanges.pipe(
 				startWith(''),
-				map((vendor) => (vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()))
+				map((vendor) => (vendor ? this.filtervendor(vendor) : this.vendor_lis.slice())),
 			);
 		});
 
@@ -125,6 +128,9 @@ export class AccountsPayablesComponent implements OnInit {
 			appliedamount: [],
 			creditsused: 'NO',
 			creditusedamount: 0,
+			bank_id: '',
+			bank_name: '',
+			createdby: this.userdata.userid,
 		});
 
 		this.dialogRef.keydownEvents().subscribe((event) => {
@@ -136,6 +142,8 @@ export class AccountsPayablesComponent implements OnInit {
 		this.dialogRef.backdropClick().subscribe((event) => {
 			this.close();
 		});
+
+		this.reloadBankDetails();
 	}
 
 	// on blur of received amount
@@ -173,6 +181,14 @@ export class AccountsPayablesComponent implements OnInit {
 
 	ngAfterViewInit() {
 		// this.checkTotalSum();
+	}
+
+	reloadBankDetails() {
+		this._commonApiService.getBanks(this.userdata.center_id).subscribe((data: any) => {
+			this.bankList = data.result;
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	// method to calculate total payed now and balance due
@@ -248,6 +264,38 @@ export class AccountsPayablesComponent implements OnInit {
 
 	onSubmit() {
 		if (this.checkTotalSum()) {
+			let form = {
+				centerid: this.userdata.center_id,
+				bankref: this.submitForm.value.accountarr[0].bankref,
+				vendorid: this.vendor.id,
+			};
+
+			this._commonApiService.getVendorPaymentBankRef(form).subscribe((data: any) => {
+				if (data.body.result[0].count > 0) {
+					// warning
+					this.iswarning = true;
+					this._cdr.markForCheck();
+				} else if (data.body.result1.length === 1) {
+					// check if the last paid amount is the same is current paid amount and if yes throw a warning.
+					if (data.body.result1[0].payment_now_amt === this.submitForm.value.accountarr[0].receivedamount) {
+						this.iswarning = true;
+						this._cdr.markForCheck();
+					} else {
+						this.finalSubmit();
+					}
+				} else {
+					this.finalSubmit();
+				}
+			});
+		}
+	}
+
+	cancel() {
+		this.iswarning = false;
+	}
+
+	finalSubmit() {
+		if (this.checkTotalSum()) {
 			this.submitForm.patchValue({
 				invoicesplit: this.invoicesplitArr,
 				vendor: this.vendor,
@@ -260,18 +308,18 @@ export class AccountsPayablesComponent implements OnInit {
 					creditusedamount: this.vendor.credit_amt,
 				});
 			}
-
-			this._commonApiService.addBulkVendorPymtReceived(this.submitForm.value).subscribe((data: any) => {
-				if (data.body === 'success') {
-					this.submitForm.reset();
-					this.dialogRef.close('close');
-					this._loadingService.openSnackBar('Payments Recorded Successfully', '');
-				} else {
-					// todo nothing as of now
-				}
-				this._cdr.markForCheck();
-			});
 		}
+
+		this._commonApiService.addBulkVendorPymtReceived(this.submitForm.value).subscribe((data: any) => {
+			if (data.body === 'success') {
+				this.submitForm.reset();
+				this.dialogRef.close('close');
+				this._loadingService.openSnackBar('Payments Recorded Successfully', '');
+			} else {
+				// todo nothing as of now
+			}
+			this._cdr.markForCheck();
+		});
 	}
 
 	close() {
@@ -320,5 +368,19 @@ export class AccountsPayablesComponent implements OnInit {
 			vendor: '',
 		});
 		this._cdr.markForCheck();
+	}
+
+	handleChange(event) {
+		if (event.value === '0') {
+			this.submitForm.patchValue({
+				bank_name: '',
+				bank_id: 0,
+			});
+		} else {
+			this.submitForm.patchValue({
+				bank_name: event.value.bankname,
+				bank_id: event.value.id,
+			});
+		}
 	}
 }

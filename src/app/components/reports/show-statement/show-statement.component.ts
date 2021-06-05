@@ -1,19 +1,6 @@
-import {
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	Inject,
-	OnInit,
-	ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import {
-	MatDialog,
-	MatDialogConfig,
-	MatDialogRef,
-	MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Customer } from 'src/app/models/Customer';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -22,6 +9,7 @@ import { CustomerViewDialogComponent } from '../../customers/customer-view-dialo
 import * as xlsx from 'xlsx';
 import { InvoiceSuccessComponent } from '../../invoice-success/invoice-success.component';
 import { WhatsappDialogComponent } from '../../social/whatsapp/whatsapp-dialog/whatsapp-dialog.component';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-show-statement',
@@ -30,7 +18,7 @@ import { WhatsappDialogComponent } from '../../social/whatsapp/whatsapp-dialog/w
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShowStatementComponent implements OnInit {
-	statementdata: any;
+	statementdata = [];
 
 	data: any;
 	openingbalance: any;
@@ -47,29 +35,37 @@ export class ShowStatementComponent implements OnInit {
 		private _authservice: AuthenticationService,
 		@Inject(MAT_DIALOG_DATA) data: any,
 		public _dialog: MatDialog,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
 	) {
 		this.data = data;
 	}
 
 	ngOnInit() {
-		this._commonApiService
-			.getCustomerStatement(this.data)
-			.subscribe((data: any) => {
-				this.statementdata = data.body;
-				if (this.statementdata[0].txn_type === 'invoice') {
-					this.openingbalance =
-						this.statementdata[0].balance_amt -
-						this.statementdata[0].credit_amt;
-				} else if (this.statementdata[0].txn_type === 'Payment') {
-					this.openingbalance =
-						this.statementdata[0].balance_amt - this.statementdata[0].debit_amt;
-				}
+		this._commonApiService.getCustomerStatement(this.data).subscribe((data: any) => {
+			this.statementdata = data.body;
 
-				this.closingbalance = this.statementdata[0].balance_amt;
+			this._cdr.markForCheck();
+		});
 
-				this._cdr.markForCheck();
-			});
+		this._commonApiService.getCustomerClosingBalanceStatement(this.data).subscribe((data: any) => {
+			this.closingbalance = data.body[0].balance;
+			this._cdr.markForCheck();
+		});
+
+		this._commonApiService.getCustomerOpeningBalanceStatement(this.data).subscribe((data: any) => {
+			this.openingbalance = data.body[0].balance;
+			this._cdr.markForCheck();
+		});
+
+		this.dialogRef.keydownEvents().subscribe((event) => {
+			if (event.key === 'Escape') {
+				this.close();
+			}
+		});
+
+		this.dialogRef.backdropClick().subscribe((event) => {
+			this.close();
+		});
 	}
 
 	close() {
@@ -77,14 +73,61 @@ export class ShowStatementComponent implements OnInit {
 	}
 
 	exportToExcel() {
-		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-			this.epltable.nativeElement
-		);
+		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(this.epltable.nativeElement);
 		ws['!cols'] = [];
-		ws['!cols'][1] = { hidden: true };
+
 		const wb: xlsx.WorkBook = xlsx.utils.book_new();
 		xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-		xlsx.writeFile(wb, 'epltable.xlsx');
+		xlsx.writeFile(wb, 'statement.xlsx');
+	}
+
+	// 	tasks.forEach( task => task.start_date = task.start_date.format("YYYY-MM-DD") );
+	// return tasks;
+
+	reformatRefDate(reportData) {
+		reportData.forEach((element) => {
+			element['ref_date_f'] = moment(element['ref_date_f']).format('DD-MM-YYYY');
+		});
+		return reportData;
+	}
+
+	exportCustomerStatement() {
+		const fileName = 'Customer_Statement_Reports.xlsx';
+
+		let reportData = JSON.parse(JSON.stringify(this.statementdata));
+
+		reportData = this.reformatRefDate(reportData);
+
+		reportData.forEach((e) => {
+			delete e['customer'];
+			delete e['place'];
+		});
+
+		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+		//create sheet with empty json/there might be other ways to do this
+		const ws1 = xlsx.utils.json_to_sheet([]);
+		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb1.Sheets.sheet1,
+			[
+				{
+					header: 'Customer Statement Reports',
+					fromdate: `From: ${moment(this.data.startdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.data.enddate).format('DD/MM/YYYY')}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			},
+		);
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+		});
+		xlsx.writeFile(wb1, fileName);
 	}
 
 	goPrintInvoice(row) {
@@ -100,3 +143,11 @@ export class ShowStatementComponent implements OnInit {
 		dialogRef.afterClosed();
 	}
 }
+
+// Received_Amount: ""
+// customer: "Saran Auto Spares"
+// invoice_amount: "17634.00"
+// place: "Tirunelveli - 627806"
+// ref_date_f: "2021-03-31T18:30:00.000Z"
+// refn: "21/04/00010"
+// type: "Invoice"

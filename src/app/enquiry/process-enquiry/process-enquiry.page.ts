@@ -39,7 +39,7 @@ export class ProcessEnquiryPage implements OnInit {
 	submitForm: FormGroup;
 	submitForm1: FormGroup;
 
-	enqDetailsOrig: any;
+	enqDetailsOrig: any = [];
 	selectedEnq: any;
 
 	pageLength: any;
@@ -110,7 +110,7 @@ export class ProcessEnquiryPage implements OnInit {
 		private _fb1: FormBuilder,
 		private spinner: NgxSpinnerService,
 		private _cdr: ChangeDetectorRef,
-		private _snackBar: MatSnackBar
+		private _snackBar: MatSnackBar,
 	) {
 		this.init();
 		this.userdata$ = this._authservice.currentUser;
@@ -125,7 +125,13 @@ export class ProcessEnquiryPage implements OnInit {
 				this.submitForm1.patchValue({
 					enquiry_id: params['enqid'],
 					centerid: this.userdata.center_id,
+					createdby: this.userdata.userid,
 				});
+
+				this.submitForm.patchValue({
+					createdby: this.userdata.userid,
+				});
+
 				this.enqDetailsOrig = [];
 				this.reloadEnqDetails('');
 				this._cdr.markForCheck();
@@ -147,6 +153,7 @@ export class ProcessEnquiryPage implements OnInit {
 		this.submitForm = this._fb.group({
 			customerctrl: [null, [Validators.required, RequireMatch]],
 			enquiries: this._fb.array([]),
+			createdby: [],
 		});
 
 		this.submitForm1 = this._fb1.group({
@@ -159,6 +166,7 @@ export class ProcessEnquiryPage implements OnInit {
 			tempdesc: [''],
 
 			tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
+			createdby: [],
 		});
 
 		this.searchProducts();
@@ -180,7 +188,7 @@ export class ProcessEnquiryPage implements OnInit {
 					} else {
 						return empty();
 					}
-				})
+				}),
 			)
 
 			.subscribe((data: any) => {
@@ -210,12 +218,12 @@ export class ProcessEnquiryPage implements OnInit {
 
 			this.status = this.enqDetailsOrig.customerDetails[0].estatus;
 
-			this.populateEnquiry(this.enqDetailsOrig.enquiryDetails);
+			this.populateEnquiry(this.enqDetailsOrig?.enquiryDetails);
 
 			this.spinner.hide();
 
 			if (type === 'loadingnow') {
-				let v1 = 220 + this.enqDetailsOrig.enquiryDetails.length * 70 + 70;
+				let v1 = 220 + this.enqDetailsOrig?.enquiryDetails.length * 70 + 70;
 				this.ScrollToPoint(0, v1);
 			} else {
 				this.ScrollToTop();
@@ -288,7 +296,7 @@ export class ProcessEnquiryPage implements OnInit {
 					centerid: this.userdata.center_id,
 					searchstring: value,
 				});
-			})
+			}),
 		);
 		return group;
 	}
@@ -310,7 +318,7 @@ export class ProcessEnquiryPage implements OnInit {
 					} else {
 						return empty();
 					}
-				})
+				}),
 			)
 
 			.subscribe((data: any) => {
@@ -479,7 +487,13 @@ export class ProcessEnquiryPage implements OnInit {
 		this.clicked = true; // disable all buttons after submission
 		this._cdr.markForCheck();
 		this.spinner.show();
-		this._commonApiService.moveToSale(this.submitForm.value.enquiries).subscribe((data: any) => {
+
+		let formToMoveSale = {
+			enquries: this.submitForm.value.enquiries,
+			userid: this.userdata.userid,
+		};
+
+		this._commonApiService.moveToSale(formToMoveSale).subscribe((data: any) => {
 			this.spinner.hide();
 			if (data.body.result === 'success') {
 				this._router.navigate([`/home/enquiry/open-enquiry/O/weekly`]);
@@ -507,9 +521,47 @@ export class ProcessEnquiryPage implements OnInit {
 	}
 
 	async presentAlertConfirm() {
+		let atleastOneValidEntry = this.submitForm.value.enquiries.filter((e) => {
+			return e.giveqty !== 0;
+		});
+
+		if (atleastOneValidEntry.length === 0) {
+			// attn move all to backorder to be implemented
+			this.moveToSaleFinalConfirm('Only Backorders, Nothing to move to sale. Continue?', 'Continue');
+		} else {
+			this.moveToSaleFinalConfirm('Are you sure, Orders processing completed?', 'Yes, Move to Sale');
+		}
+
+		// const alert = await this.alertController.create({
+		// 	header: 'Confirm!',
+		// 	message: 'Are you sure, Orders processing completed?',
+		// 	buttons: [
+		// 		{
+		// 			text: 'Cancel',
+		// 			role: 'cancel',
+		// 			cssClass: 'secondary',
+		// 			handler: (blah) => {
+		// 				console.log('Confirm Cancel: blah');
+		// 			},
+		// 		},
+		// 		{
+		// 			text: 'Yes, Move to Sale',
+		// 			handler: () => {
+		// 				console.log('Confirm Okay');
+		// 				this.executeDeletes();
+		// 				this.moveToSale();
+		// 			},
+		// 		},
+		// 	],
+		// });
+
+		// await alert.present();
+	}
+
+	async moveToSaleFinalConfirm(param, action) {
 		const alert = await this.alertController.create({
 			header: 'Confirm!',
-			message: 'Are you sure, Orders processing completed?',
+			message: param,
 			buttons: [
 				{
 					text: 'Cancel',
@@ -520,7 +572,7 @@ export class ProcessEnquiryPage implements OnInit {
 					},
 				},
 				{
-					text: 'Yes, Move to Sale',
+					text: action,
 					handler: () => {
 						console.log('Confirm Okay');
 						this.executeDeletes();
@@ -591,11 +643,15 @@ export class ProcessEnquiryPage implements OnInit {
 	}
 
 	onRemoveRows() {
-		this.removeRowArr.sort().reverse();
+		this.removeRowArr.sort(this.compare).reverse();
 
 		this.removeRowArr.forEach((e) => {
 			this.deleteProduct(e);
 		});
+	}
+
+	compare(a: number, b: number) {
+		return a - b;
 	}
 
 	deleteProduct(idx) {
@@ -690,7 +746,7 @@ export class ProcessEnquiryPage implements OnInit {
 				tap(() => {
 					// do nothing check
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				if (data !== 'close') {
@@ -856,6 +912,7 @@ export class ProcessEnquiryPage implements OnInit {
 			product_code: this.submitForm1.value.productctrl.product_code,
 			notes: this.submitForm1.value.tempdesc,
 			status: 'O',
+			created_by: this.userdata.userid,
 		};
 
 		this._commonApiService.addMoreEnquiry(form).subscribe((data: any) => {
@@ -889,7 +946,7 @@ export class ProcessEnquiryPage implements OnInit {
 				filter((val) => !!val),
 				tap(() => {
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {

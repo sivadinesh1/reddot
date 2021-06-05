@@ -284,4 +284,13 @@ export class AdminDashboardPage implements OnInit {
 	navigateToInquiry(param) {
 		this._router.navigate([`/home/enquiry/open-enquiry/${param}/${this.selectedOpsOption}`]);
 	}
+
+	click() {
+		this._commonApiService.createMeeting().subscribe((data: any) => {
+			let testdata = data;
+			console.log('dinesh ' + JSON.stringify(testdata));
+
+			this._cdr.markForCheck();
+		});
+	}
 }

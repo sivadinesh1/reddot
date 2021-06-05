@@ -21,6 +21,7 @@
 							[readOnly]="iscustomerselected"
 							#typehead1
 							required
+							panelWidth="auto"
 							#clist
 							autofocus
 							matTooltipPosition="after"
@@ -34,6 +35,7 @@
 						<mat-autocomplete
 							#auto="matAutocomplete"
 							autoActiveFirstOption
+							panelWidth="auto"
 							[displayWith]="displayFn"
 							(optionSelected)="setCustomerInfo($event, 'click')"
 						>
@@ -107,8 +109,9 @@
 				<div style="justify-content: left; align-self: flex-start; padding-left: 1rem">
 					<div>
 						<div style="height: 53px">
-							<div style="font-size: 14px; color: #7b7b7b">Invoice #</div>
-							<div style="font-size: 18px; font-weight: 500">{{this.submitForm.value.invoiceno}}</div>
+							<div *ngIf="this.saletype !== 'SI'" style="font-size: 14px; color: #7b7b7b">Invoice #</div>
+							<div *ngIf="this.saletype !== 'SI'" style="font-size: 18px; font-weight: 500">{{this.submitForm.value.invoiceno}}</div>
+							<div *ngIf="this.saletype === 'SI'">&nbsp;</div>
 						</div>
 
 						<div *ngIf="mode === 'enquiry' && this.submitForm.value.orderdate !== '' ">
@@ -129,7 +132,7 @@
 				<div style="justify-content: left; align-self: flex-start; padding-left: 1rem">
 					<div>
 						<mat-form-field>
-							<mat-label>Invoice Date</mat-label>
+							<mat-label>{{this.saletype === 'SI'? 'Stock Issue Date' : 'Invoice Date'}}</mat-label>
 							<input
 								matInput
 								readonly
@@ -219,7 +222,7 @@
 					<div class="item4 headstyl-right">Net Value</div>
 				</div>
 				<div class="row2">
-					<ng-container *ngIf="listArr.length === 0 && iscustomerselected">
+					<ng-container *ngIf="listArr?.length === 0 && iscustomerselected">
 						<div style="display: grid; place-items: center; padding: 2rem 2rem">
 							<div style="color: #333333"><h4>Sales cart</h4></div>
 							<div style="color: #666666">There are no items in your Sales cart</div>
@@ -315,10 +318,11 @@
 									#auto2="matAutocomplete"
 									autoActiveFirstOption
 									[displayWith]="displayProdFn"
+									panelWidth="auto"
 									(optionSelected)="setItemDesc($event, 'click')"
 								>
 									<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
-									<ng-container *ngIf="!isLoading && (product_lis !== null && product_lis.length> 0)">
+									<ng-container *ngIf="!isLoading && (product_lis !== null && product_lis?.length> 0)">
 										<mat-option
 											*ngFor="let product of product_lis"
 											[value]="product"
@@ -342,7 +346,7 @@
 											</div>
 										</mat-option>
 									</ng-container>
-									<ng-container *ngIf="!isLoading && (product_lis !== null && product_lis.length === 0)">
+									<ng-container *ngIf="!isLoading && (product_lis !== null && product_lis?.length === 0)">
 										<mat-option style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px; border-bottom: 1px solid lightsteelblue">
 											<span style="color: darkorange">Item Not Found:</span>
 											<span style="font-style: italic; color: #310ac0; cursor: pointer" (click)="addProduct()">+ Add Product</span>
@@ -390,7 +394,7 @@
 				<div class="right">
 					<div style="display: grid; grid-template-columns: 1fr 1fr">
 						<div style="color: #666666; text-align: right; font-size: 14px"># Items</div>
-						<div style="color: #666666; text-align: right; font-size: 14px">{{listArr.length}}</div>
+						<div style="color: #666666; text-align: right; font-size: 14px">{{listArr?.length}}</div>
 
 						<div *ngIf="i_gst" style="color: #666666; text-align: right; font-size: 14px">IGST</div>
 						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="i_gst">{{igstTotal | number:'1.2-2'}}</div>
@@ -536,7 +540,7 @@
 						Save as Draft
 					</button>
 					<button
-						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType === 'stockissue')) "
+						*ngIf="((submitForm.get('status').value === '') && (selInvType === 'stockissue')) "
 						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
@@ -552,7 +556,23 @@
 						Save Estimate
 					</button>
 
-					&nbsp;
+					<button
+						*ngIf="((submitForm.get('status').value === 'D') && (selInvType === 'stockissue')) "
+						style="border-radius: 0px"
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="onSubmit('draft')"
+						type="button"
+						[throttleTime]="500"
+						mat-stroked-button
+						type="button"
+						color="primary"
+						[disabled]="clicked"
+						tabindex="14"
+					>
+						Update Estimate
+					</button>
+
 					<button
 						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
 						style="border-radius: 0px"

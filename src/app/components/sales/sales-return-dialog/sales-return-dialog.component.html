@@ -1,6 +1,6 @@
 <ion-content>
 	<div class="screen-header">
-		<div>&nbsp;</div>
+		<div style="font-size: 16px">SALES RETURN</div>
 
 		<div style="align-items: center">
 			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
@@ -8,8 +8,10 @@
 	</div>
 
 	<div class="action-row">
-		<div>SALES RETURN</div>
-		<div>&nbsp;</div>
+		<div>{{ this.salemasterdata.name }}</div>
+		<div>{{ this.salemasterdata.address1 }}</div>
+		<div>{{ this.salemasterdata.address2 }}</div>
+		<div>{{ this.salemasterdata.district }}</div>
 	</div>
 
 	<div class="customer-info">
@@ -25,7 +27,7 @@
 
 		<div style="padding: 5px">
 			<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Status</div>
-			<div style="font-size: 14px; font-weight: 400">{{ this.salemasterdata?.status === "C" ? "Completed" : "" }}</div>
+			<div style="font-size: 14px; font-weight: 400">{{ this.salemasterdata?.status === 'C' ? 'Completed' : '' }}</div>
 		</div>
 	</div>
 

@@ -157,33 +157,7 @@ export class SalesPage {
 	isFreshSale = false;
 	fromEnquiry: any;
 
-	draftConfirm = [
-		{
-			text: 'Cancel',
-			role: 'cancel',
-			cssClass: 'secondary',
-			handler: (blah) => {
-				console.log('Confirm Cancel: blah');
-			},
-		},
-		{
-			text: 'Sale Orders',
-			cssClass: 'secondary',
-			handler: () => {
-				console.log('Confirm Cancel: blah');
-				this.mainSubmit('draft', 'back');
-			},
-		},
-		{
-			text: 'Add Items',
-			cssClass: 'primary',
-			handler: () => {
-				console.log('Confirm Okay');
-				this.mainSubmit('draft', 'stay');
-			},
-		},
-	];
-
+	draftConfirm: any;
 	generateInvoiceConfirm = [
 		{
 			text: 'Cancel',
@@ -218,13 +192,12 @@ export class SalesPage {
 		private _commonApiService: CommonApiService,
 		private _fb: FormBuilder,
 		private spinner: NgxSpinnerService,
-		private _cdr: ChangeDetectorRef
+		private _cdr: ChangeDetectorRef,
 	) {
 		this.basicinit();
 
 		this.userdata$ = this._authservice.currentUser;
 		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
-			this._authservice.setCurrentMenu('SALE');
 			this.userdata = data;
 
 			this.submitForm.patchValue({
@@ -235,7 +208,6 @@ export class SalesPage {
 
 			// data change
 			this._route.data.subscribe((data) => {
-				this._authservice.setCurrentMenu('SALE');
 				this.selInvType = 'gstinvoice';
 				this.listArr = [];
 				this.cancel();
@@ -251,8 +223,10 @@ export class SalesPage {
 
 				if (this.saletype === 'SI') {
 					this.selInvType = 'stockissue';
+					this._authservice.setCurrentMenu('Stock Issue');
 				} else if (this.saletype === 'TI') {
 					this.selInvType = 'gstinvoice';
+					this._authservice.setCurrentMenu('Sale Orders');
 				}
 
 				if (this.userdata !== undefined) {
@@ -271,6 +245,33 @@ export class SalesPage {
 						});
 					}
 				}
+
+				this.draftConfirm = [
+					{
+						text: 'Cancel',
+						role: 'cancel',
+						cssClass: 'secondary',
+						handler: (blah) => {
+							console.log('Confirm Cancel: blah');
+						},
+					},
+					{
+						text: this.saletype === 'SI' ? 'Save & Exit to Stock Issue List' : 'Save & Exit to Sale Orders List',
+						cssClass: 'secondary',
+						handler: () => {
+							console.log('Confirm Cancel: blah');
+							this.mainSubmit('draft', 'back');
+						},
+					},
+					{
+						text: 'Save & Continue',
+						cssClass: 'primary',
+						handler: () => {
+							console.log('Confirm Okay');
+							this.mainSubmit('draft', 'stay');
+						},
+					},
+				];
 			});
 
 			this._cdr.markForCheck();
@@ -302,7 +303,7 @@ export class SalesPage {
 			misc_charges: [0],
 			net_total: new FormControl(0),
 			taxable_value: new FormControl(0),
-			status: new FormControl(),
+			status: new FormControl(''),
 			enqref: [0],
 			revision: [0],
 			invoicetype: ['gstinvoice', [Validators.required]],
@@ -506,7 +507,7 @@ export class SalesPage {
 				debounceTime(300),
 				tap(() => (this.isCLoading = true)),
 				switchMap((id) => {
-					if (id != null && id.length >= 2) {
+					if (id != null && id.length !== undefined && id.length >= 2) {
 						return this._commonApiService.getCustomerInfo({
 							centerid: this.userdata.center_id,
 							searchstr: id,
@@ -514,7 +515,7 @@ export class SalesPage {
 					} else {
 						return empty();
 					}
-				})
+				}),
 			)
 
 			.subscribe((data: any) => {
@@ -690,10 +691,8 @@ export class SalesPage {
 				sgst: 0,
 			});
 		} else {
-			// debugger;
 			this.cgstTotal = this.listArr
 				.map((item) => {
-					console.log('dinesh ' + item.tax_value / 2);
 					return item.tax_value / 2;
 				})
 				.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
@@ -746,9 +745,7 @@ export class SalesPage {
 	}
 
 	deleteProduct(idx) {
-		let test = this.listArr[idx];
-
-		if (this.listArr[idx].sale_det_id != '') {
+		if (this.listArr[idx].sale_det_id !== '' && this.listArr[idx].sale_det_id !== undefined) {
 			this.listArr[idx].del_flag = 'Y';
 			this.deletedRowArr.push(this.listArr[idx]);
 		}
@@ -981,7 +978,7 @@ export class SalesPage {
 				tap((val) => {
 					this.submitForm.controls[field].setValue(val);
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe();
 	}
@@ -1083,7 +1080,7 @@ export class SalesPage {
 	async presentAlertConfirm(action) {
 		const alert = await this.alertController.create({
 			header: 'Confirm!',
-			message: action === 'draft' ? 'Save & Continue to' : 'Are you sure to Generate/Update Invoice?',
+			message: action === 'draft' ? 'Are you sure to?' : 'Are you sure to Generate/Update Invoice?',
 			cssClass: 'buttonCss',
 			buttons: action === 'draft' ? this.draftConfirm : this.generateInvoiceConfirm,
 		});
@@ -1165,7 +1162,9 @@ export class SalesPage {
 					});
 				}
 
-				if (navto == 'back') {
+				if (navto === 'back' && this.saletype === 'SI') {
+					this.stockIssuesDashboard();
+				} else if (navto === 'back' && this.saletype === 'TI') {
 					this.salesDashboard();
 				}
 			} else {
@@ -1306,11 +1305,14 @@ export class SalesPage {
 	}
 
 	onRemoveRows() {
-		this.removeRowArr.sort().reverse();
-
+		this.removeRowArr.sort(this.compare).reverse();
 		this.removeRowArr.forEach((e) => {
 			this.deleteProduct(e);
 		});
+	}
+
+	compare(a: number, b: number) {
+		return a - b;
 	}
 
 	executeDeletes() {
@@ -1615,7 +1617,7 @@ export class SalesPage {
 					} else {
 						return empty();
 					}
-				})
+				}),
 			)
 
 			.subscribe((data: any) => {
@@ -1629,6 +1631,10 @@ export class SalesPage {
 	// Navigation
 	salesDashboard() {
 		this._router.navigateByUrl('/home/search-sales');
+	}
+
+	stockIssuesDashboard() {
+		this._router.navigateByUrl('/home/search-stock-issues');
 	}
 
 	async add() {
@@ -1806,7 +1812,7 @@ export class SalesPage {
 				tap(() => {
 					// do nothing check
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				if (data !== 'close') {
@@ -1873,7 +1879,7 @@ export class SalesPage {
 				filter((val) => !!val),
 				tap(() => {
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {

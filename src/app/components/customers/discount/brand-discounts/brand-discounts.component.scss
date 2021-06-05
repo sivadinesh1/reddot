@@ -1,16 +1,16 @@
 .content {
 	display: grid;
-	width: 94%;
+	width: 100%;
 	margin: 0 auto;
 	padding: 16px;
 }
 
 .mat-width-ext {
-	width: 240px;
+	width: 90px;
 }
 
 .mat-width-date {
-	width: 240px;
+	width: 140px;
 }
 
 .mat-width-brand {
@@ -24,7 +24,7 @@
 
 .screen-header {
 	display: flex;
-	width: 94%;
+	width: 100%;
 	margin: 0 auto;
 	justify-content: space-between;
 	font-size: 16px;
@@ -141,8 +141,7 @@ td.mat-column-actions {
 			height: auto;
 			position: relative;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
-				0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 			background-color: #fff;
 			border-radius: 3px;
 			+ .mat-row {
@@ -203,4 +202,18 @@ td.mat-column-actions {
 .selected {
 	color: white;
 	background-color: #e6e7f5;
+}
+
+.listItemHeader {
+	display: grid;
+	grid-template-columns: 300px 140px 85px 85px 85px 85px 85px 50px;
+	gap: 16px;
+	padding: 16px;
+}
+
+.listItemRow {
+	display: grid;
+	grid-template-columns: 300px 140px 85px 85px 85px 85px 85px 50px;
+	gap: 16px;
+	padding: 8px 16px;
 }

@@ -175,7 +175,7 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 		const changes = this.submitForm.value;
 
 		if (!this.submitForm.valid) {
-			this.responsemsg = 'Mandatory feilds missing!';
+			this.responsemsg = 'Mandatory fields missing!';
 			return false;
 		} else {
 			this.responsemsg = '';

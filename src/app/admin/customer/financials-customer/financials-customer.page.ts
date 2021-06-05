@@ -1,10 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ViewChild,
-	ElementRef,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Customer } from 'src/app/models/Customer';
 import { User } from 'src/app/models/User';
@@ -19,18 +13,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { CustomerPaymentDialogComponent } from 'src/app/components/customers/customer-payment-dialog/customer-payment-dialog.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ShowStatementComponent } from 'src/app/components/reports/show-statement/show-statement.component';
 
 @Component({
 	selector: 'app-financials-customer',
 	templateUrl: './financials-customer.page.html',
 	styleUrls: ['./financials-customer.page.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinancialsCustomerPage implements OnInit {
 	center_id: any;
@@ -45,7 +35,6 @@ export class FinancialsCustomerPage implements OnInit {
 	pcount: any;
 	noMatch: any;
 	responseMsg: string;
-	pageLength: any;
 
 	resultsize = 0;
 	customerslist: any;
@@ -66,6 +55,7 @@ export class FinancialsCustomerPage implements OnInit {
 
 	startdate = new Date();
 	enddate = new Date();
+	pageLength = 0;
 
 	searchType = [
 		{ name: 'All', id: 'all', checked: true },
@@ -75,40 +65,25 @@ export class FinancialsCustomerPage implements OnInit {
 	@ViewChild('searchbartab1', { static: true }) searchbartab1: IonSearchbar;
 	@ViewChild('searchbartab2', { static: true }) searchbartab2: IonSearchbar;
 	@ViewChild('searchbartab3', { static: true }) searchbartab3: IonSearchbar;
-	@ViewChild('searchbartab4', { static: true }) searchbartab4: IonSearchbar;
 
 	@ViewChild('InvoiceTablePaginator') invoiceTablePaginator: MatPaginator;
+
 	@ViewChild('PaymentTablePaginator') pymtTablePaginator: MatPaginator;
-	@ViewChild('LedgerTablePaginator') ledgerTablePaginator: MatPaginator;
+	@ViewChild('PaymentOverviewTablePaginator') pymtOverviewTablePaginator: MatPaginator;
 
 	@ViewChild('PymtTransactionTablePaginator')
 	pymttransactionTablePaginator: MatPaginator;
 
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
-	@ViewChild('epltable', { static: false }) epltable: ElementRef;
+	// @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
-	@ViewChild('epltable0', { static: false }) epltable0: ElementRef;
+	// @ViewChild('epltable0', { static: false }) epltable0: ElementRef;
 
-	@ViewChild('epltable1', { static: false }) epltable1: ElementRef;
+	// @ViewChild('epltable1', { static: false }) epltable1: ElementRef;
 
 	// table display columns
-	displayedColumns: string[] = [
-		'ledgerdate',
-		'ledgerrefid',
-		'type',
-		'creditamt',
-		'debitamt',
-		'balamt',
-	];
-	saleInvoiceDisplayedColumns: string[] = [
-		'invoicedate',
-		'invoiceno',
-		'nettotal',
-		'paymentstatus',
-		'paidamt',
-		'balamt',
-		'paybtn',
-	];
+	displayedColumns: string[] = ['ledgerdate', 'ledgerrefid', 'type', 'creditamt', 'debitamt', 'balamt'];
+	saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'nettotal', 'paymentstatus', 'paidamt', 'balamt', 'paybtn'];
 
 	paymentDisplayedColumns: string[] = [
 		'pymtdate',
@@ -116,6 +91,7 @@ export class FinancialsCustomerPage implements OnInit {
 		'invoiceno',
 		'invoicedate',
 		'pymtmode',
+		'pymtbank',
 		'bankref',
 		'pymtref',
 		'invoiceamt',
@@ -123,21 +99,15 @@ export class FinancialsCustomerPage implements OnInit {
 		'paidamt',
 	];
 
-	pymtTxnDisplayedColumns: string[] = [
-		'pymtdate',
-		'pymtno',
-		'paidamt',
-		'paymode',
-		'payref',
-	];
+	paymentOverviewDisplayedColumns: string[] = ['pymtdate', 'paidamt', 'paymentno', 'pymtmode', 'pymtbank', 'bankref', 'pymtref'];
+
+	pymtTxnDisplayedColumns: string[] = ['pymtdate', 'pymtno', 'paidamt', 'paymode', 'payref'];
 
 	// data sources
-	ledgerdataSource = new MatTableDataSource<any>();
 	saleInvoicedataSource = new MatTableDataSource<any>();
 
 	paymentdataSource = new MatTableDataSource<any>();
-
-	pymttransactionsdataSource = new MatTableDataSource<any>();
+	paymentOverviewdataSource = new MatTableDataSource<any>();
 
 	tabIndex = 0;
 
@@ -148,24 +118,22 @@ export class FinancialsCustomerPage implements OnInit {
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
 		private _router: Router,
-		private _fb: FormBuilder
+		private _fb: FormBuilder,
 	) {
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.center_id = data.center_id;
-				this.ready = 1;
-				// this.reloadCustomerLedger();
-				// this.reloadSaleInvoiceByCustomer();
-				// this.reloadPaymentsByCustomer();
-				this.init();
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.center_id = data.center_id;
+			this.ready = 1;
+			// this.reloadCustomerLedger();
+			// this.reloadSaleInvoiceByCustomer();
+			// this.reloadPaymentsByCustomer();
+			this.init();
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 180;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.startdate.setTime(this.minDate.getTime() - dateOffset);
@@ -191,7 +159,7 @@ export class FinancialsCustomerPage implements OnInit {
 		this._route.data.subscribe((data) => {
 			this.customerdata = data['customerdata'][0];
 			this.customer_id = this.customerdata.id;
-			this.customer_credit_amount = this.customerdata.credit_amt;
+			this.customer_credit_amount = this.customerdata?.credit_amt;
 		});
 
 		this._route.params.subscribe((params) => {
@@ -204,18 +172,20 @@ export class FinancialsCustomerPage implements OnInit {
 		});
 	}
 
-	init() {
+	async init() {
+		this.tabIndex = 0;
 		if (this.ready === 1 && this.customer_id !== undefined) {
 			this.reloadSaleInvoiceByCustomer();
-			this.reloadCustomerLedger();
+			this.reloadPaymentsOverviewByCustomer();
 			this.reloadPaymentsByCustomer();
-			// this.reloadPymtTransactionByCustomer();
+
 			this.updateCustomerCreditBalance();
 		}
+		this._cdr.markForCheck();
 	}
 
 	initForm() {
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 180;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.submitForm.patchValue({
@@ -231,7 +201,7 @@ export class FinancialsCustomerPage implements OnInit {
 	}
 
 	initStatementForm() {
-		const dateOffset = 24 * 60 * 60 * 1000 * 30;
+		const dateOffset = 24 * 60 * 60 * 1000 * 180;
 		this.startdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.submitForm.patchValue({
@@ -243,32 +213,13 @@ export class FinancialsCustomerPage implements OnInit {
 		this._cdr.detectChanges();
 	}
 
-	reloadCustomerLedger() {
-		this._commonApiService
-			.getLedgerCustomer(this.center_id, this.customer_id)
-			.subscribe((data: any) => {
-				this.totalOutstandingBalance = data[0]?.balance_amt | 0;
-				// DnD - code to add a "key/Value" in every object of array
-				this.ledgerdataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
-
-				this.ledgerdataSource.sort = this.sort;
-				this.pageLength = data.length;
-				this._cdr.markForCheck();
-			});
-	}
-
 	ngOnInit() {}
 
 	ngAfterViewInit() {
 		this.saleInvoicedataSource.paginator = this.invoiceTablePaginator;
 		this.paymentdataSource.paginator = this.pymtTablePaginator;
-		this.ledgerdataSource.paginator = this.ledgerTablePaginator;
-
-		this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
+		this.paymentOverviewdataSource.paginator = this.pymtOverviewTablePaginator;
+		this._cdr.markForCheck();
 	}
 
 	radioClickHandle() {
@@ -289,9 +240,9 @@ export class FinancialsCustomerPage implements OnInit {
 	applyFilter3(filterValue: string) {
 		filterValue = filterValue.trim(); // Remove whitespace
 		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-		this.ledgerdataSource.filter = filterValue;
+		this.paymentdataSource.filter = filterValue;
 
-		if (this.ledgerdataSource.filteredData.length > 0) {
+		if (this.paymentdataSource.filteredData.length > 0) {
 			this.isTableHasData = true;
 		} else {
 			this.isTableHasData = false;
@@ -301,9 +252,9 @@ export class FinancialsCustomerPage implements OnInit {
 	applyFilter2(filterValue: string) {
 		filterValue = filterValue.trim(); // Remove whitespace
 		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-		this.paymentdataSource.filter = filterValue;
+		this.paymentOverviewdataSource.filter = filterValue;
 
-		if (this.paymentdataSource.filteredData.length > 0) {
+		if (this.paymentOverviewdataSource.filteredData.length > 0) {
 			this.isTableHasData = true;
 		} else {
 			this.isTableHasData = false;
@@ -329,29 +280,14 @@ export class FinancialsCustomerPage implements OnInit {
 	applyFilter1(filterValue: string) {
 		filterValue = filterValue.trim(); // Remove whitespace
 		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-		this.saleInvoicedataSource.filter = filterValue;
 
+		this.saleInvoicedataSource.filter = filterValue;
+		// debugger;
 		if (this.saleInvoicedataSource.filteredData.length > 0) {
 			this.isTableHasData = true;
 		} else {
 			this.isTableHasData = false;
 		}
-	}
-
-	applyFilter4(filterValue: string) {
-		filterValue = filterValue.trim(); // Remove whitespace
-		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-		this.pymttransactionsdataSource.filter = filterValue;
-
-		if (this.pymttransactionsdataSource.filteredData.length > 0) {
-			this.isTableHasData = true;
-		} else {
-			this.isTableHasData = false;
-		}
-	}
-
-	resetTab4() {
-		this.searchbartab4.value = '';
 	}
 
 	resetTab2() {
@@ -371,11 +307,9 @@ export class FinancialsCustomerPage implements OnInit {
 		if ($event.index === 0) {
 			this.reloadSaleInvoiceByCustomer();
 		} else if ($event.index === 1) {
-			this.reloadPaymentsByCustomer();
+			this.reloadPaymentsOverviewByCustomer();
 		} else if ($event.index === 2) {
-			this.reloadCustomerLedger();
-		} else if ($event.index === 3) {
-			this.reloadPymtTransactionByCustomer();
+			this.reloadPaymentsByCustomer();
 		}
 
 		this._cdr.markForCheck();
@@ -400,9 +334,9 @@ export class FinancialsCustomerPage implements OnInit {
 				invoiceno: invoiceno,
 			})
 			.subscribe((data: any) => {
-				this.saleInvoicedataSource = data.body;
+				this.saleInvoicedataSource.data = data.body;
 				this.saleInvoicedataSource.sort = this.sort;
-				this.pageLength = data.length;
+				this.pageLength = data.body.length;
 
 				this._cdr.markForCheck();
 			});
@@ -429,25 +363,29 @@ export class FinancialsCustomerPage implements OnInit {
 				this.paymentdataSource.data = data.body;
 
 				this.paymentdataSource.sort = this.sort;
-				this.pageLength = data.length;
 
 				this._cdr.markForCheck();
 			});
 	}
 
-	reloadPymtTransactionByCustomer() {
-		this._commonApiService
-			.getPymtTransactionByCustomer(this.center_id, this.customer_id)
-			.subscribe((data: any) => {
-				// DnD - code to add a "key/Value" in every object of array
-				this.pymttransactionsdataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
+	reloadPaymentsOverviewByCustomer() {
+		let center_id = this.center_id;
+		let fromdate = this.submitForm.value.fromdate;
+		let todate = this.submitForm.value.todate;
 
-				this.pymttransactionsdataSource.sort = this.sort;
-				this.pageLength = data.length;
+		this._commonApiService
+			.getPaymentsOverviewByCustomer({
+				centerid: center_id,
+				customerid: this.customer_id,
+				fromdate: fromdate,
+				todate: todate,
+
+				searchtype: 'all',
+			})
+			.subscribe((data: any) => {
+				this.paymentOverviewdataSource.data = data.body;
+
+				this.paymentOverviewdataSource.sort = this.sort;
 
 				this._cdr.markForCheck();
 			});
@@ -468,10 +406,7 @@ export class FinancialsCustomerPage implements OnInit {
 			invoicedata: element,
 		};
 
-		const dialogRef = this._dialog.open(
-			CustomerPaymentDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(CustomerPaymentDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -480,7 +415,7 @@ export class FinancialsCustomerPage implements OnInit {
 				tap(() => {
 					this.init();
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				console.log('object dinesh ');
@@ -490,23 +425,18 @@ export class FinancialsCustomerPage implements OnInit {
 					dialogConfigSuccess.autoFocus = true;
 					dialogConfigSuccess.width = '25%';
 					dialogConfigSuccess.height = '25%';
-					dialogConfigSuccess.data = 'Add receivables succesful';
+					dialogConfigSuccess.data = 'Receivables added succesfully';
 
-					const dialogRef = this._dialog.open(
-						SuccessMessageDialogComponent,
-						dialogConfigSuccess
-					);
+					const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 				}
 			});
 	}
 
 	updateCustomerCreditBalance() {
-		this._commonApiService
-			.getCustomerDetails(this.center_id, this.customer_id)
-			.subscribe((data: any) => {
-				this.customer_credit_amount = data.credit_amt;
-				this._cdr.markForCheck();
-			});
+		this._commonApiService.getCustomerDetails(this.center_id, this.customer_id).subscribe((data: any) => {
+			this.customer_credit_amount = data?.credit_amt;
+			this._cdr.markForCheck();
+		});
 	}
 
 	openDialog(): void {
@@ -520,6 +450,7 @@ export class FinancialsCustomerPage implements OnInit {
 			customerid: this.customer_id,
 			startdate: this.statementForm.value.startdate,
 			enddate: this.statementForm.value.enddate,
+			saletype: 'gstinvoice',
 		};
 
 		dialogConfig.position = { top: '0', right: '0' };

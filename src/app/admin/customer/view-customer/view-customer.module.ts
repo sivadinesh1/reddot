@@ -10,15 +10,7 @@ import { ViewCustomerPage } from './view-customer.page';
 import { SharedModule } from '../../../shared.module';
 
 @NgModule({
-  imports: [
-
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    SharedModule,
-    ReactiveFormsModule,
-    ViewCustomerPageRoutingModule
-  ],
-  declarations: [ViewCustomerPage]
+	imports: [CommonModule, FormsModule, IonicModule, SharedModule, ReactiveFormsModule, ViewCustomerPageRoutingModule],
+	declarations: [ViewCustomerPage],
 })
-export class ViewCustomerPageModule { }
+export class ViewCustomerPageModule {}

@@ -25,17 +25,17 @@ export class PricePipePipe implements PipeTransform {
 				var f1 = InrRSOut.toString().substring(0, 1);
 				var f2 = InrRSOut.toString().substring(1, 3);
 				if (f2 == '00') {
-					RV = f1 + ' Lacs';
+					RV = f1 + ' L';
 				} else {
-					RV = f1 + '.' + f2 + ' Lacs';
+					RV = f1 + '.' + f2 + ' L';
 				}
 			} else if (InrRSOut >= 1000000 && InrRSOut < 10000000) {
 				var f1 = InrRSOut.toString().substring(0, 2);
 				var f2 = InrRSOut.toString().substring(2, 4);
 				if (f2 == '00') {
-					RV = f1 + ' Lacs';
+					RV = f1 + ' L';
 				} else {
-					RV = f1 + '.' + f2 + ' Lacs';
+					RV = f1 + '.' + f2 + ' L';
 				}
 			} else if (InrRSOut >= 10000000 && InrRSOut < 100000000) {
 				var f1 = InrRSOut.toString().substring(0, 1);

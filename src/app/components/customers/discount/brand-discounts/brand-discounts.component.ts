@@ -1,14 +1,7 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ChangeDetectionStrategy,
-	ViewChild,
-	Inject,
-	ElementRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild, Inject, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FormBuilder, FormGroup, Validators, NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -39,6 +32,7 @@ export class BrandDiscountsComponent implements OnInit {
 	vendor_id: any;
 	resultList: any;
 	submitForm: FormGroup;
+	submitForm1: FormGroup;
 
 	isLinear = true;
 	customer_id: any;
@@ -59,6 +53,7 @@ export class BrandDiscountsComponent implements OnInit {
 
 	elements: any;
 	responsemsg: any;
+	responsemsg1: any;
 
 	pageLength: any;
 	isTableHasData = true;
@@ -68,96 +63,81 @@ export class BrandDiscountsComponent implements OnInit {
 	mode = 'add';
 	brandname = '';
 
-	@ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
-
-	displayedColumns: string[] = [
-		'brandname',
-		'type',
-		'effdate',
-		'gstzero',
-		'gstfive',
-		'gsttwelve',
-		'gsteighteen',
-		'gsttwentyeight',
-		'actions',
-	];
-	dataSource = new MatTableDataSource<Brand>();
-
-	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-	@ViewChild(MatSort, { static: true }) sort: MatSort;
-
-	@ViewChild('epltable', { static: false }) epltable: ElementRef;
+	dataRecords: any;
 
 	constructor(
 		private _cdr: ChangeDetectorRef,
 		private _router: Router,
 		private _fb: FormBuilder,
+		private _snackBar: MatSnackBar,
 		private dialogRef: MatDialogRef<BrandDiscountsComponent>,
 		private _route: ActivatedRoute,
 		private _authservice: AuthenticationService,
 		@Inject(MAT_DIALOG_DATA) elements: any,
 		public alertController: AlertController,
 		public _navigationService: NavigationService,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
 	) {
-		this.elements = elements;
-
+		this.elements = elements[0];
+		debugger;
 		const currentUser = this._authservice.currentUserValue;
 		this.center_id = currentUser.center_id;
 
 		this.submitForm = this._fb.group({
 			customer_id: [this.elements.id, Validators.required],
 			center_id: [this.center_id, Validators.required],
-			brand_id: [null, Validators.required],
-			disctype: [this.elements.type, Validators.required],
-			effDiscStDate: new Date(
-				new NullToQuotePipe()
-					.transform(this.elements.startdate)
-					.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-			),
+			brand_id: [this.elements.brand_id, Validators.required],
+			disctype: ['NET', Validators.required],
+			effDiscStDate: [new Date(new NullToQuotePipe().transform(this.elements.startdate).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3'))],
 			gstzero: [this.elements.gstzero, Validators.required],
 			gstfive: [this.elements.gstfive, Validators.required],
 			gsttwelve: [this.elements.gsttwelve, Validators.required],
 			gsteighteen: [this.elements.gsteighteen, Validators.required],
 			gsttwentyeight: [this.elements.gsttwentyeight, Validators.required],
 		});
+
+		this.submitForm1 = this._fb.group({
+			customer_id: [this.elements.id, Validators.required],
+			center_id: [this.center_id, Validators.required],
+			brand_id: [null, Validators.required],
+			disctype: ['NET', Validators.required],
+			effDiscStDate: [new Date(), Validators.required],
+			gstzero: [null, Validators.required],
+			gstfive: [null, Validators.required],
+			gsttwelve: [null, Validators.required],
+			gsteighteen: [null, Validators.required],
+			gsttwentyeight: [null, Validators.required],
+		});
+
+		this.responsemsg = '';
+		this.responsemsg1 = '';
+
+		this._cdr.markForCheck();
 	}
 
 	ngOnInit() {
-		this.dataSource.paginator = this.paginator;
 		this.init();
 	}
 
 	init() {
-		this._commonApiService
-			.getDiscountsByCustomerByBrand(this.center_id, this.elements.id)
-			.subscribe((data: any) => {
-				// this.resultList = data;
-				// DnD - code to add a "key/Value" in every object of array
-				this.dataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
+		this._commonApiService.getDiscountsByCustomerByBrand(this.center_id, this.elements.id).subscribe((data: any) => {
+			this.dataRecords = data;
 
-				this.dataSource.sort = this.sort;
-				this.pageLength = data.length;
+			this.pageLength = data.length;
 
-				if (data.length === 0) {
-					this.isTableHasData = false;
-				} else {
-					this.isTableHasData = true;
-				}
+			if (data.length === 0) {
+				this.isTableHasData = false;
+			} else {
+				this.isTableHasData = true;
+			}
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
-		this._commonApiService
-			.getBrandsMissingDiscounts(this.center_id, 'A', this.elements.id)
-			.subscribe((data: any) => {
-				this.brandsList = data;
-				this._cdr.markForCheck();
-			});
+		this._commonApiService.getBrandsMissingDiscounts(this.center_id, 'A', this.elements.id).subscribe((data: any) => {
+			this.brandsList = data;
+			this._cdr.markForCheck();
+		});
 	}
 
 	highlight(row) {
@@ -165,16 +145,26 @@ export class BrandDiscountsComponent implements OnInit {
 	}
 
 	internalEdit(elements) {
+		debugger;
+		this.submitForm1.reset();
+		this.responsemsg = '';
+
+		this.submitForm1.patchValue({
+			customer_id: elements.id,
+			center_id: this.center_id,
+			brand_id: elements.brand_id,
+			disctype: 'NET',
+		});
+
+		// this.submitForm.controls['invoiceno'].setErrors(null);
+		this.submitForm1.setErrors(null);
+
 		this.mode = 'update';
 		this.brandname = elements.brand_name;
 
-		this.submitForm.patchValue({
+		this.submitForm1.patchValue({
 			brand_id: elements.brand_id,
-			effDiscStDate: new Date(
-				new NullToQuotePipe()
-					.transform(elements.startdate)
-					.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
-			),
+			effDiscStDate: new Date(new NullToQuotePipe().transform(elements.startdate).replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')),
 			gstzero: elements.gstzero,
 			gstfive: elements.gstfive,
 			gsttwelve: elements.gsttwelve,
@@ -186,15 +176,16 @@ export class BrandDiscountsComponent implements OnInit {
 
 	// discount date selection
 	handleDicountDateChange(event) {
-		this.submitForm.patchValue({
+		this.submitForm1.patchValue({
 			effDiscStDate: event.target.value,
 		});
 		this._cdr.markForCheck();
 	}
 
 	submit(action) {
-		if (!this.submitForm.valid) {
-			this.responsemsg = 'Mandatory feilds missing!';
+		debugger;
+		if (!this.submitForm1.valid) {
+			this.responsemsg = 'All Mandatory Fields';
 			return false;
 		} else {
 			this.responsemsg = '';
@@ -203,32 +194,28 @@ export class BrandDiscountsComponent implements OnInit {
 		if (action === 'add') {
 			// update discount table, currently only one set of values.
 			// FTRIMPL - date based discounts
-			this._commonApiService
-				.addDiscountsByBrand(this.submitForm.value)
-				.subscribe((data: any) => {
-					// if successfully update
-					if (data.body.result === 'success') {
-						this._commonApiService
-							.getBrandsMissingDiscounts(this.center_id, 'A', this.elements.id)
-							.subscribe((data: any) => {
-								this.brandsList = data;
-								this._cdr.markForCheck();
-							});
-						this.dialogRef.close('success');
-					}
-				});
+			this._commonApiService.addDiscountsByBrand(this.submitForm1.value).subscribe((data: any) => {
+				// if successfully update
+				if (data.body.result === 'success') {
+					this._commonApiService.getBrandsMissingDiscounts(this.center_id, 'A', this.elements.id).subscribe((data: any) => {
+						this.brandsList = data;
+						this._cdr.markForCheck();
+					});
+					this.openSnackBar('Discounts Updated, Successfully', '');
+					this.dialogRef.close('success');
+				}
+			});
 		} else if (action === 'update') {
 			// update discount table, currently only one set of values.
 			// FTRIMPL - date based discounts
 
-			this._commonApiService
-				.updateDefaultCustomerDiscount(this.submitForm.value)
-				.subscribe((data: any) => {
-					// if successfully update
-					if (data.body === 1) {
-						this.dialogRef.close('success');
-					}
-				});
+			this._commonApiService.updateDefaultCustomerDiscount(this.submitForm1.value).subscribe((data: any) => {
+				// if successfully update
+				if (data.body === 1) {
+					this.openSnackBar('Brand Discount Updated, Successfully', '');
+					this.dialogRef.close('success');
+				}
+			});
 		}
 	}
 
@@ -238,5 +225,33 @@ export class BrandDiscountsComponent implements OnInit {
 
 	close() {
 		this.dialogRef.close();
+	}
+
+	defaultEdit() {
+		debugger;
+		if (!this.submitForm.valid) {
+			this.responsemsg1 = 'All Mandatory Fields';
+			return false;
+		} else {
+			this.responsemsg = '';
+		}
+
+		// update discount table, currently only one set of values.
+		debugger;
+		this._commonApiService.updateDefaultCustomerDiscount(this.submitForm.value).subscribe((data: any) => {
+			debugger;
+			// if successfully update
+			if (data.body === 1) {
+				this.openSnackBar('Default Discounts Updated, Successfully', '');
+				this.dialogRef.close(data);
+			}
+		});
+	}
+
+	openSnackBar(message: string, action: string) {
+		this._snackBar.open(message, action, {
+			duration: 2000,
+			panelClass: ['mat-toolbar', 'mat-primary'],
+		});
 	}
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { User } from 'src/app/models/User';
@@ -23,6 +23,7 @@ import * as moment from 'moment';
 	selector: 'app-vpurchase-accounts-payments',
 	templateUrl: './vpurchase-accounts-payments.page.html',
 	styleUrls: ['./vpurchase-accounts-payments.page.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VpurchaseAccountsPaymentsPage implements OnInit {
 	center_id: any;
@@ -78,7 +79,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 
 	// data sources
 	paymentdataSource = new MatTableDataSource<any>();
-	pymttransactionsdataSource = new MatTableDataSource<any>();
+	// pymttransactionsdataSource = new MatTableDataSource<any>();
 	purchaseInvoicedataSource = new MatTableDataSource<any>();
 
 	tabIndex = 0;
@@ -97,7 +98,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
 		private _router: Router,
-		private _fb: FormBuilder
+		private _fb: FormBuilder,
 	) {
 		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
@@ -111,10 +112,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			}),
 			todate: [this.todate, Validators.required],
 			fromdate: [this.fromdate, Validators.required],
-			invoiceno: new FormControl({
-				value: '',
-				disabled: true,
-			}),
+			invoiceno: [''],
 			searchtype: new FormControl('all'),
 		});
 
@@ -129,7 +127,9 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 
 		this._route.params.subscribe((params) => {
 			if (this.userdata !== undefined) {
+				this.tabIndex = 0;
 				this.init();
+				this.initForm();
 			}
 		});
 	}
@@ -168,7 +168,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 
 			this.filteredVendor = this.submitForm.controls['vendorctrl'].valueChanges.pipe(
 				startWith(''),
-				map((vendor) => (vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()))
+				map((vendor) => (vendor ? this.filtervendor(vendor) : this.vendor_lis.slice())),
 			);
 
 			this._cdr.markForCheck();
@@ -181,16 +181,17 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			vendorctrl: event.option.value.name,
 		});
 
-		this.tabIndex = 0;
 		this._cdr.markForCheck();
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.tabIndex = 0;
+	}
 
 	ngAfterViewInit() {
 		this.purchaseInvoicedataSource.paginator = this.invoiceTablePaginator;
 		this.paymentdataSource.paginator = this.pymtTablePaginator;
-		this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
+		// this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
 	}
 
 	fromDateSelected($event) {
@@ -397,7 +398,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 				tap(() => {
 					this.init();
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe();
 	}
@@ -426,7 +427,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 						this.init();
 
 						this._cdr.markForCheck();
-					})
+					}),
 				)
 				.subscribe((data: any) => {
 					if (data === 'success') {
@@ -502,7 +503,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
+			},
 		);
 
 		//start frm A2 here
@@ -575,7 +576,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
+			},
 		);
 
 		//start frm A2 here

@@ -2,16 +2,7 @@
 	<div class="search-wrap">
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
-				<div class="title" (click)="goSalesAddScreen()" style="cursor: pointer">SALE RETURNS</div>
-
-				<!-- <div style="justify-self: end"> -->
-				<!-- <mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
-						<mat-radio-button class="radio-button" value="{{op.id}}" *ngFor="let op of searchType" [checked]="op.checked"
-							>{{op.name}}</mat-radio-button
-						>
-					</mat-radio-group> -->
-
-				<!-- </div> -->
+				<div class="title" style="cursor: pointer">SALE RETURNS</div>
 
 				<div style="justify-self: end; padding-top: 20px">
 					<mat-form-field style="width: 140px">
@@ -45,12 +36,24 @@
 							<mat-icon>close</mat-icon>
 						</button>
 						<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
-							<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
-								<span>{{ customer.name }} </span>
+							<mat-option
+								*ngFor="let customer of filteredCustomer | async"
+								[value]="customer"
+								style="height: 70px; border-bottom: 1px solid lightsteelblue"
+							>
+								<div style="display: grid; grid-template-columns: 1fr">
+									<div>
+										<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
+										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address1 }}</div>
+										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address2 }},{{ customer.address3 }}</div>
+									</div>
+								</div>
+								<!-- <span>{{ customer.name }} </span> -->
 							</mat-option>
 						</mat-autocomplete>
 					</mat-form-field>
 				</div>
+
 				<div>
 					<mat-form-field class="mat-date-wrapper" style="padding-top: 20px">
 						<mat-label>From</mat-label>

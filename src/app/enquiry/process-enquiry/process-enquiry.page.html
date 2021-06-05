@@ -54,7 +54,7 @@
 					</div>
 					<div *ngIf="iscustomerselected" style="padding: 0.5rem 0.5rem 0.5rem 0px; font-size: 12px; color: #666666">
 						<div style="font-weight: 500; font-size: 14px">Remarks</div>
-						<div>{{customerdata?.remarks}}</div>
+						<div *ngIf="enqDetailsOrig?.enquiryDetails">{{enqDetailsOrig?.enquiryDetails[0]?.remarks || ''}}</div>
 					</div>
 				</div>
 
@@ -324,7 +324,15 @@
 					</span>
 					<span style="padding: 0px 10px; display: grid; align-content: flex-end">
 						<div style="font-size: 24px; display: flex">
-							<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportToExcel()" />
+							<img
+								matTooltip="Download"
+								matTooltipClass="tooltip"
+								src="/assets/images/svg/direct-download.svg"
+								style="cursor: pointer"
+								width="32px"
+								height="32px"
+								(click)="exportToExcel()"
+							/>
 						</div>
 					</span>
 				</div>

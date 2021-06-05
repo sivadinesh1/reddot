@@ -8,14 +8,17 @@
 	</div>
 
 	<div class="action-row">
-		<div>INQUIRY</div>
+		<div>ENQUIRY</div>
 		<div>
-			<span style="padding: 0px 6px" class="cursor">
-				<img src="/assets/images/svg/whatsapp.svg" style="cursor: pointer" width="24px" height="24px" (click)="openShareDialog()" />
-			</span>
-
 			<span style="padding: 0px 6px"
-				><img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="24px" height="24px" (click)="exportToExcel()"
+				><img
+					matTooltip="Download"
+					matTooltipClass="tooltip"
+					src="/assets/images/svg/direct-download.svg"
+					style="cursor: pointer"
+					width="24px"
+					height="24px"
+					(click)="exportToExcel()"
 			/></span>
 			<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		</div>
@@ -24,34 +27,33 @@
 	<div class="customer-info">
 		<div>
 			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Inquiry #</div>
-				<div style="font-size: 14px; font-weight: 400">{{ this.enquirymasterdata?.enqid }}</div>
-			</div>
-
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Inquiry Date</div>
-				<div style="font-size: 14px; font-weight: 400">{{ this.enquirymasterdata?.enquiry_date | date: "dd/MMM/yyyy" }}</div>
+				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Enquiry Date</div>
+				<div style="font-size: 14px; font-weight: 400">{{ this.enquirymasterdata?.enquiry_date | date: 'dd/MMM/yyyy' }}</div>
 			</div>
 
 			<div style="padding: 5px">
 				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Status</div>
 				<div style="font-size: 14px; font-weight: 400">
 					{{
-						this.enquirymasterdata?.estatus === "E"
-							? "Closed Inquiry"
-							: this.enquirymasterdata?.estatus === "D"
-							? "In Progress"
-							: this.enquirymasterdata?.estatus === "P"
-							? "Ready to Invoice"
-							: this.enquirymasterdata?.estatus === "O"
-							? "New Inquiry"
-							: ""
+						this.enquirymasterdata?.estatus === 'E'
+							? 'Closed Inquiry'
+							: this.enquirymasterdata?.estatus === 'D'
+							? 'In Progress'
+							: this.enquirymasterdata?.estatus === 'P'
+							? 'Ready to Invoice'
+							: this.enquirymasterdata?.estatus === 'O'
+							? 'New Inquiry'
+							: ''
 					}}
 				</div>
 			</div>
 			<div style="padding: 5px">
 				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Processed Date</div>
-				<div style="font-size: 14px; font-weight: 400">{{ this.enquirymasterdata?.processed_date || 'N/A'}}</div>
+				<div style="font-size: 14px; font-weight: 400">{{ this.enquirymasterdata?.processed_date || 'N/A' }}</div>
+			</div>
+			<div style="padding: 5px">
+				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Remarks</div>
+				<div style="font-size: 14px; font-weight: 400">{{ this.enquirydetailsdata[0]?.remarks }}</div>
 			</div>
 		</div>
 		<div>
@@ -93,7 +95,7 @@
 					<th style="text-align: right; padding-right: 5px; font-weight: 500">R. Qty</th>
 				</tr>
 			</thead>
-			
+
 			<tbody>
 				<div *ngFor="let item of enquirydetailsdata ? enquirydetailsdata : []; let idx = index" class="list-item">
 					<div style="text-align: left; padding-left: 5px">{{ idx + 1 }}</div>

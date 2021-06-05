@@ -45,6 +45,7 @@
 		"i": "^0.3.6",
 		"moment": "^2.29.1",
 		"ngx-device-detector": "^2.0.6",
+		"ngx-skeleton-loader": "^2.9.1",
 		"ngx-spinner": "^11.0.1",
 		"npm": "^7.10.0",
 		"phonegap-plugin-barcodescanner": "^8.1.0",

@@ -4,6 +4,7 @@
 	font-weight: 500;
 	color: #222222;
 	justify-content: space-between;
+	padding-bottom: 16px;
 }
 
 .form {
@@ -42,7 +43,7 @@
 
 .item-details {
 	display: grid;
-	grid-template-columns: 180px 180px 200px 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
 	align-items: center;
 	grid-gap: 10px;
 	padding-left: 12px;

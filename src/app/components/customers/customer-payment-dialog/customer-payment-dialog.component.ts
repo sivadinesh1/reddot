@@ -41,6 +41,8 @@ export class CustomerPaymentDialogComponent implements OnInit {
 
 	errmsg: any;
 	balancedue: any;
+	bankList: any;
+	iswarning = false;
 
 	constructor(
 		private _fb: FormBuilder,
@@ -53,7 +55,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
 		private _router: Router,
 		private _route: ActivatedRoute,
 		private _cdr: ChangeDetectorRef,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
 	) {
 		this.customer = data.customerdata;
 		this.invoice = data.invoicedata;
@@ -83,6 +85,9 @@ export class CustomerPaymentDialogComponent implements OnInit {
 			customer: [this.customer, Validators.required],
 			centerid: [this.userdata.center_id, Validators.required],
 			accountarr: this._fb.array([]),
+			bank_id: '',
+			bank_name: '',
+			createdby: this.userdata.userid,
 		});
 
 		// adds first record
@@ -103,6 +108,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
 		this.dialogRef.backdropClick().subscribe((event) => {
 			this.close();
 		});
+		this.reloadBankDetails();
 	}
 
 	// initialize the values
@@ -131,6 +137,14 @@ export class CustomerPaymentDialogComponent implements OnInit {
 
 	ngAfterViewInit() {
 		this.getBalanceDue();
+	}
+
+	reloadBankDetails() {
+		this._commonApiService.getBanks(this.userdata.center_id).subscribe((data: any) => {
+			this.bankList = data.result;
+
+			this._cdr.markForCheck();
+		});
 	}
 
 	// method to calculate total payed now and balance due
@@ -167,19 +181,68 @@ export class CustomerPaymentDialogComponent implements OnInit {
 
 	onSubmit() {
 		if (this.checkTotalSum()) {
-			this._commonApiService.addPymtReceived(this.submitForm.value).subscribe((data: any) => {
-				if (data.body === 'success') {
-					this.submitForm.reset();
-					this.dialogRef.close('success');
+			let form = {
+				centerid: this.userdata.center_id,
+				bankref: this.submitForm.value.accountarr[0].bankref,
+				customerid: this.submitForm.value.customer.id,
+			};
+			debugger;
+			this._commonApiService.getPaymentBankRef(form).subscribe((data: any) => {
+				debugger;
+				if (data.body.result[0].count > 0) {
+					// warning
+					this.iswarning = true;
+					this._cdr.markForCheck();
+				} else if (data.body.result1.length === 1) {
+					// check if the last paid amount is the same is current paid amount and if yes throw a warning.
+					if (data.body.result1[0].payment_now_amt === this.submitForm.value.accountarr[0].receivedamount) {
+						this.iswarning = true;
+						this._cdr.markForCheck();
+					} else {
+						this.finalSubmit();
+					}
 				} else {
-					// todo nothing as of now
+					this.finalSubmit();
 				}
-				this._cdr.markForCheck();
 			});
 		}
 	}
 
+	finalSubmit() {
+		if (this.checkTotalSum()) {
+			if (this.checkTotalSum()) {
+				this._commonApiService.addPymtReceived(this.submitForm.value).subscribe((data: any) => {
+					if (data.body === 'success') {
+						this.submitForm.reset();
+						this.dialogRef.close('success');
+					} else {
+						// todo nothing as of now
+					}
+					this._cdr.markForCheck();
+				});
+			}
+		}
+	}
+
+	cancel() {
+		this.iswarning = false;
+	}
+
 	close() {
 		this.dialogRef.close();
+	}
+
+	handleChange(event) {
+		if (event.value === '0') {
+			this.submitForm.patchValue({
+				bank_name: '',
+				bank_id: 0,
+			});
+		} else {
+			this.submitForm.patchValue({
+				bank_name: event.value.bankname,
+				bank_id: event.value.id,
+			});
+		}
 	}
 }

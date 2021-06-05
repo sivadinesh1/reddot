@@ -40,7 +40,7 @@ export class VendorAddDialogComponent implements OnInit {
 		private dialogRef: MatDialogRef<VendorAddDialogComponent>,
 		private _route: ActivatedRoute,
 		private _authservice: AuthenticationService,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
 	) {
 		this.submitForm = this._formBuilder.group({
 			center_id: [''],
@@ -57,7 +57,7 @@ export class VendorAddDialogComponent implements OnInit {
 			phone: ['', Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
 			mobile: ['', Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
 			mobile2: ['', Validators.compose([PhoneValidator.invalidCountryPhone(country)])],
-			whatsapp: ['', Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])],
+			whatsapp: ['', Validators.compose([PhoneValidator.invalidCountryPhone(country)])],
 			email: ['', [patternValidator(EMAIL_REGEX)]],
 		});
 

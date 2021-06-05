@@ -1,5 +1,5 @@
 <div class="screen-header">
-	<div>Payment Receivables</div>
+	<div>Enter Payment Received</div>
 	<div>
 		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
 	</div>
@@ -21,63 +21,73 @@
 
 		<div formArrayName="accountarr" class="list-block">
 			<div *ngFor="let product of accountarr.controls; let idx = index">
-				<div class="item-details">
+				<div>
 					<ng-container [formGroupName]="idx">
-						<div>
-							<mat-form-field class="example-full-width">
-								<mat-label>Amount Received</mat-label>
-								<input matInput type="number" formControlName="receivedamount" autocomplete="off" />
-								<mat-error *ngIf="product.controls['receivedamount'].hasError('required')"> Required field </mat-error>
-								<mat-error *ngIf="product.controls['receivedamount'].hasError('max')"> Paid mount exceeds invoice amount </mat-error>
-
-								<!-- <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon> -->
-							</mat-form-field>
-						</div>
-
-						<div>
-							<ion-item class="input-item" lines="none">
+						<div class="item-details">
+							<div>
 								<mat-form-field class="example-full-width">
-									<mat-label>Payment Date</mat-label>
-									<input
-										matInput
-										readonly
-										[max]="maxDate"
-										[matDatepicker]="paymentdate"
-										formControlName="receiveddate"
-										required
-										(focus)="paymentdate.open()"
-										autocomplete="off"
-									/>
-									<mat-datepicker-toggle matSuffix [for]="paymentdate"></mat-datepicker-toggle>
-									<mat-datepicker #paymentdate></mat-datepicker>
-									<mat-error *ngIf="product.controls['receiveddate'].hasError('required')"> Required field </mat-error>
+									<mat-label>Amount Received</mat-label>
+									<input matInput type="number" formControlName="receivedamount" autocomplete="off" />
+									<mat-error *ngIf="product.controls['receivedamount'].hasError('required')"> Required field </mat-error>
+									<mat-error *ngIf="product.controls['receivedamount'].hasError('max')"> Paid mount exceeds invoice amount </mat-error>
+
+									<!-- <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon> -->
 								</mat-form-field>
-							</ion-item>
-						</div>
+							</div>
 
-						<div class="vendor">
-							<mat-form-field class="example-full-width">
-								<mat-label>Payment Mode</mat-label>
-								<mat-select formControlName="pymtmode">
-									<mat-option *ngFor="let item of pymtmodes$ | async" [value]="item.id">
-										{{ item.pymt_mode_name }}
-									</mat-option>
-								</mat-select>
-								<mat-error>This field is required</mat-error>
-							</mat-form-field>
-						</div>
+							<div>
+								<ion-item class="input-item" lines="none">
+									<mat-form-field class="example-full-width">
+										<mat-label>Payment Date</mat-label>
+										<input
+											matInput
+											readonly
+											[max]="maxDate"
+											[matDatepicker]="paymentdate"
+											formControlName="receiveddate"
+											required
+											(focus)="paymentdate.open()"
+											autocomplete="off"
+										/>
+										<mat-datepicker-toggle matSuffix [for]="paymentdate"></mat-datepicker-toggle>
+										<mat-datepicker #paymentdate></mat-datepicker>
+										<mat-error *ngIf="product.controls['receiveddate'].hasError('required')"> Required field </mat-error>
+									</mat-form-field>
+								</ion-item>
+							</div>
 
-						<div>
-							<mat-form-field class="example-full-width">
-								<mat-label>Bank Reference#</mat-label>
-								<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" autocomplete="off" />
-							</mat-form-field>
-						</div>
-						<div>
-							<mat-form-field class="example-full-width">
-								<mat-label>Notes</mat-label>
-								<input matInput type="text" formControlName="pymtref" autocomplete="off" />
-							</mat-form-field>
+							<div class="vendor">
+								<mat-form-field class="example-full-width">
+									<mat-label>Payment Mode</mat-label>
+									<mat-select formControlName="pymtmode">
+										<mat-option *ngFor="let item of pymtmodes$ | async" [value]="item.id">
+											{{ item.pymt_mode_name }}
+										</mat-option>
+									</mat-select>
+									<mat-error>This field is required</mat-error>
+								</mat-form-field>
+							</div>
+							<div>
+								<mat-form-field style="width: 100%">
+									<mat-label>Bank</mat-label>
+									<mat-select (selectionChange)="handleChange($event)">
+										<mat-option value="0"> Select The Bank from List </mat-option>
+										<mat-option *ngFor="let item of bankList" [value]="item"> {{ item.bankname }} </mat-option>
+									</mat-select>
+								</mat-form-field>
+							</div>
+							<div style="display: grid; grid-column: 1 / 3">
+								<mat-form-field class="example-full-width">
+									<mat-label>Bank Reference#</mat-label>
+									<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" autocomplete="off" />
+								</mat-form-field>
+							</div>
+							<div style="display: grid; grid-column: 3 / 6">
+								<mat-form-field class="example-full-width">
+									<mat-label>Notes</mat-label>
+									<input matInput type="text" formControlName="pymtref" autocomplete="off" />
+								</mat-form-field>
+							</div>
 						</div>
 					</ng-container>
 				</div>
@@ -116,7 +126,27 @@
 	</div>
 
 	<div style="text-align: center" class="error">{{ errmsg }}</div>
-	<div class="submit">
+	<div class="submit" *ngIf="!iswarning">
 		<button mat-raised-button color="primary" type="submit" name="action" class="cursor" [disabled]="!submitForm.valid">Add Receivables</button>
+	</div>
+	<div class="submit" *ngIf="iswarning">
+		<div
+			style="
+				font-size: 14px;
+				color: orangered;
+				font-style: italic;
+				text-align: center;
+				display: flex;
+				justify-content: flex-end !important;
+				align-items: center;
+				padding-top: 16px;
+			"
+			><b>Warning!: </b> Duplicate Bank reference (or) Current paid amount is same as last payment. please check again and proceed. </div
+		>&nbsp;&nbsp;
+		<button mat-stroked-button color="primary" type="button" (click)="cancel()" class="cursor" [disabled]="!submitForm.valid">Cancel & Recheck</button
+		>&nbsp;&nbsp;
+		<button mat-raised-button color="primary" type="button" (click)="finalSubmit()" class="cursor" [disabled]="!submitForm.valid"
+			>Continue to Add Receivables</button
+		>
 	</div>
 </form>

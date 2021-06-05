@@ -343,7 +343,8 @@
 								tabindex="3"
 								autocomplete="off"
 							/>
-							<mat-hint *ngIf="selected_description" matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
+							<mat-hint *ngIf="selected_description" 
+							matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
 
 							<button mat-button matSuffix mat-icon-button tabindex="-1" aria-label="Clear" type="button" (click)="clearProdInput()">
 								<mat-icon tabindex="-1">close</mat-icon>
@@ -351,6 +352,7 @@
 
 							<mat-autocomplete
 								#auto1="matAutocomplete"
+								panelWidth="auto"
 								autoActiveFirstOption
 								[displayWith]="displayProdFn"
 								(optionSelected)="setItemDesc($event, 'click')"
@@ -366,7 +368,7 @@
 											<div>
 												<div style="font-size: 15px; padding: 2px; line-height: 1em">
 													{{ product.product_code }} &nbsp;&nbsp;
-													<span style="color: blue">MRP: {{ product.mrp | currency: "INR"}}</span>
+													<span style="color: blue">Latest MRP: {{ product.mrp | currency: "INR"}}</span>
 												</div>
 												<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ product.description }}</div>
 											</div>
@@ -387,7 +389,7 @@
 					</div>
 					<div>
 						<mat-form-field class="example-full-width">
-							<mat-label>Purchase Price</mat-label>
+							<mat-label>P. Price</mat-label>
 							<input
 								matInput
 								type="number"

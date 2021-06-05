@@ -24,7 +24,7 @@
 
 .purchase-wrap {
 	display: grid;
-	width: 94%;
+	width: 96%;
 	margin: 0 auto;
 	height: auto;
 	padding-bottom: 100px;
@@ -36,7 +36,7 @@
 
 		.row1 {
 			display: grid;
-			grid-template-columns: 30px 40px 130px minmax(250px, 450px) 90px 90px 90px 90px 90px 90px;
+			grid-template-columns: 30px 40px 130px minmax(150px, 450px) 80px 80px 80px 80px 80px 80px;
 			align-items: center;
 			border-bottom: 2px solid rgb(173, 173, 173);
 			color: '#a5a5a6';
@@ -51,7 +51,7 @@
 			// max-height: 500px;
 			.list-item {
 				display: grid;
-				grid-template-columns: 30px 40px 130px minmax(250px, 450px) 90px 90px 90px 90px 90px 90px;
+				grid-template-columns: 30px 40px 130px minmax(250px, 450px) 80px 80px 80px 80px 80px 80px;
 				align-self: center;
 				border-bottom: 1px solid #e0d9d9;
 				font-size: 13px;
@@ -220,7 +220,7 @@
 
 	.left {
 		display: grid;
-		grid-template-columns: 1fr 120px minmax(80px, 100px) minmax(80px, 100px) 150px;
+		grid-template-columns: 1fr 80px minmax(80px, 100px) minmax(80px, 100px) 100px;
 		align-items: center;
 		grid-gap: 10px;
 		background-color: #ffffee;

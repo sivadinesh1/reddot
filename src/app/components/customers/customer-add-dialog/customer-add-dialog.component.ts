@@ -65,11 +65,11 @@ export class CustomerAddDialogComponent implements OnInit {
 			email: ['', [patternValidator(EMAIL_REGEX)]],
 
 			disctype: ['NET', Validators.required],
-			gstzero: [0],
-			gstfive: [0],
-			gsttwelve: [0],
-			gsteighteen: [0],
-			gsttwentyeight: [0],
+			gstzero: [0, [Validators.max(100), Validators.min(0)]],
+			gstfive: [0, [Validators.max(100), Validators.min(0)]],
+			gsttwelve: [0, [Validators.max(100), Validators.min(0)]],
+			gsteighteen: [0, [Validators.max(100), Validators.min(0)]],
+			gsttwentyeight: [0, [Validators.max(100), Validators.min(0)]],
 		});
 
 		this._commonApiService.getStates().subscribe((data: any) => {
@@ -123,6 +123,7 @@ export class CustomerAddDialogComponent implements OnInit {
 
 		this._commonApiService.addCustomer(this.submitForm.value).subscribe((data: any) => {
 			if (data.body.result === 'success') {
+				this.clear();
 				this.dialogRef.close('success');
 			}
 		});

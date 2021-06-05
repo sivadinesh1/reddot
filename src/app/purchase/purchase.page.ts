@@ -130,7 +130,7 @@ export class PurchasePage implements OnInit {
 			},
 		},
 		{
-			text: 'Purchase Orders',
+			text: 'Save & Exit to Purchase Orders List',
 			cssClass: 'secondary',
 			handler: () => {
 				console.log('Confirm Cancel: blah');
@@ -138,7 +138,7 @@ export class PurchasePage implements OnInit {
 			},
 		},
 		{
-			text: 'Add Items',
+			text: 'Save & Continue',
 			cssClass: 'primary',
 			handler: () => {
 				console.log('Confirm Okay');
@@ -160,7 +160,7 @@ export class PurchasePage implements OnInit {
 		private _commonApiService: CommonApiService,
 		private _fb: FormBuilder,
 		private spinner: NgxSpinnerService,
-		private _cdr: ChangeDetectorRef
+		private _cdr: ChangeDetectorRef,
 	) {
 		this.init();
 
@@ -384,7 +384,7 @@ export class PurchasePage implements OnInit {
 					} else {
 						return empty();
 					}
-				})
+				}),
 			)
 
 			.subscribe((data: any) => {
@@ -416,7 +416,7 @@ export class PurchasePage implements OnInit {
 					} else {
 						return empty();
 					}
-				})
+				}),
 			)
 
 			.subscribe((data: any) => {
@@ -444,7 +444,7 @@ export class PurchasePage implements OnInit {
 
 		if (isduplicate) {
 			var index = onlyProductCodeArr.indexOf(this.lineItemData.product_code);
-			
+
 			const alert = await this.alertController.create({
 				header: 'Confirm!',
 				message: `The Item already added ROW # (${index + 1}). Do you want to add again?`,
@@ -884,7 +884,7 @@ export class PurchasePage implements OnInit {
 				tap((val) => {
 					this.listArr[idx].qty = val;
 					this.qtyChange(idx);
-				})
+				}),
 			)
 			.subscribe();
 	}
@@ -901,7 +901,7 @@ export class PurchasePage implements OnInit {
 				tap((val) => {
 					this.submitForm.controls[field].setValue(val);
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe();
 	}
@@ -953,7 +953,7 @@ export class PurchasePage implements OnInit {
 
 		const alert = await this.alertController.create({
 			header: 'Confirm!',
-			message: 'Save & Continue to',
+			message: 'Are you sure to?',
 			cssClass: 'buttonCss',
 			buttons: this.draftConfirm,
 		});
@@ -1056,11 +1056,15 @@ export class PurchasePage implements OnInit {
 	}
 
 	onRemoveRows() {
-		this.removeRowArr.sort().reverse();
+		this.removeRowArr.sort(this.compare).reverse();
 
 		this.removeRowArr.forEach((e) => {
 			this.deleteProduct(e);
 		});
+	}
+
+	compare(a: number, b: number) {
+		return a - b;
 	}
 
 	executeDeletes() {
@@ -1257,7 +1261,7 @@ export class PurchasePage implements OnInit {
 				tap(() => {
 					// do nothing check
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe((data: any) => {
 				if (data !== 'close') {

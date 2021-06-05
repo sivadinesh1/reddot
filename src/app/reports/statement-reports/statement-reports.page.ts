@@ -47,7 +47,7 @@ export class StatementReportsPage implements OnInit {
 		private _route: ActivatedRoute,
 		private _authservice: AuthenticationService,
 
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
 	) {
 		this.init();
 		this.userdata$ = this._authservice.currentUser;
@@ -81,7 +81,7 @@ export class StatementReportsPage implements OnInit {
 
 			this.filteredCustomer = this.statementForm.controls['customerctrl'].valueChanges.pipe(
 				startWith(''),
-				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice())),
 			);
 		});
 	}
@@ -139,11 +139,6 @@ export class StatementReportsPage implements OnInit {
 
 			if (this.statementForm.value.customerid !== 'all') {
 				this.openingbalance = this.statementdata[0]?.balance_amt;
-				// if (this.statementdata[0].txn_type === 'invoice') {
-				// 	this.openingbalance = this.statementdata[0].balance_amt - this.statementdata[0].credit_amt;
-				// } else if (this.statementdata[0].txn_type === 'Payment') {
-				// 	this.openingbalance = this.statementdata[0].balance_amt - this.statementdata[0].debit_amt;
-				// }
 			}
 
 			if (this.statementForm.value.customerid !== 'all') {

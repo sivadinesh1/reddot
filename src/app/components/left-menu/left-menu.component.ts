@@ -1,9 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,6 +13,7 @@ interface Page {
 	link: string;
 	name: string;
 	icon: string;
+	children?: Page[];
 }
 
 @Component({
@@ -36,6 +32,8 @@ export class LeftMenuComponent implements OnInit {
 	userdata$: Observable<User>;
 	userdata: any;
 	panelOpenState = false;
+	expanded = false; // Customers Menu
+	expanded1 = false; // Vendors Menu
 
 	pages: Page[] = [];
 	secondarymenus: Page[] = [];
@@ -57,15 +55,28 @@ export class LeftMenuComponent implements OnInit {
 			icon: '/assets/images/svg/sales.svg',
 		},
 		{
-			name: 'Receivables',
-			link: '/home/payments',
-			icon: '/assets/images/svg/money.svg',
-		},
-		{
 			name: 'Customers',
 			link: '/home/view-customers',
 			icon: '/assets/images/svg/customers.svg',
+			children: [
+				{
+					name: 'List',
+					link: '/home/view-customers',
+					icon: '/assets/images/svg/money.svg',
+				},
+				{
+					name: 'Receivables',
+					link: '/home/payments',
+					icon: '/assets/images/svg/money.svg',
+				},
+				{
+					name: 'Statements',
+					link: '/home/customer-accounts-statement',
+					icon: '/assets/images/svg/money.svg',
+				},
+			],
 		},
+
 		{
 			name: 'Sale Returns',
 			link: '/home/search-return-sales',
@@ -73,7 +84,7 @@ export class LeftMenuComponent implements OnInit {
 		},
 		{
 			name: 'Stock Issue',
-			link: 'home/sales/edit/0/SI',
+			link: '/home/search-stock-issues',
 			icon: '/assets/images/svg/bullet-list.svg',
 		},
 		{
@@ -83,14 +94,26 @@ export class LeftMenuComponent implements OnInit {
 		},
 
 		{
-			name: 'Payments',
-			link: '/home/vpayments',
-			icon: '/assets/images/svg/payments.svg',
-		},
-		{
 			name: 'Vendors',
 			link: '/home/view-vendors',
 			icon: '/assets/images/svg/vendors.svg',
+			children: [
+				{
+					name: 'List',
+					link: '/home/view-vendors',
+					icon: '/assets/images/svg/payments.svg',
+				},
+				{
+					name: 'Payments',
+					link: '/home/vpayments',
+					icon: '/assets/images/svg/payments.svg',
+				},
+				{
+					name: 'Statements',
+					link: '/home/vpurchase-accounts-statement',
+					icon: '/assets/images/svg/money.svg',
+				},
+			],
 		},
 		{
 			name: 'Products',
@@ -107,6 +130,12 @@ export class LeftMenuComponent implements OnInit {
 			name: 'Reports',
 			link: '/home/reports-home',
 			icon: '/assets/images/svg/growth.svg',
+		},
+
+		{
+			name: 'Settings',
+			link: '/home/admin-dashboard',
+			icon: '/assets/images/svg/settings.svg',
 		},
 	];
 
@@ -157,35 +186,33 @@ export class LeftMenuComponent implements OnInit {
 		private _router: Router,
 		private _modalcontroller: ModalController,
 		private _route: ActivatedRoute,
-		private _cdr: ChangeDetectorRef
+		private _cdr: ChangeDetectorRef,
 	) {
 		this.clickedMenudata$ = this._authservice.currentMenu;
 
-		this.clickedMenudata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.clickedItem = data;
+		this.clickedMenudata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.clickedItem = data;
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
 
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
 
-				if (this.userdata !== undefined) {
-					if (this.userdata?.role === 'ADMIN') {
-						this.pages = this.admin_pages;
-						this.secondarymenus = this.secondary_menus;
-					} else {
-						this.pages = this.user_pages;
-					}
+			if (this.userdata !== undefined) {
+				if (this.userdata?.role === 'ADMIN') {
+					this.pages = this.admin_pages;
+					this.secondarymenus = this.secondary_menus;
+				} else {
+					this.pages = this.user_pages;
 				}
-				this._cdr.markForCheck();
-			});
+			}
+			this._cdr.markForCheck();
+		});
+		this.expanded = false;
+		this.expanded1 = false;
 	}
 
 	ngOnInit() {}
@@ -206,11 +233,14 @@ export class LeftMenuComponent implements OnInit {
 	}
 
 	routeTo(name: string, url: string) {
+		console.log('dinesh..1');
 		this._authservice.setCurrentMenu(name);
 
 		this.clickedItem = name;
 		if (this.userdata.role === 'ADMIN' && this.clickedItem === 'Home') {
 			this._router.navigateByUrl('/home/admin-dashboard');
+		} else if (name === 'Settings') {
+			this.openSettings();
 		} else {
 			this._router.navigateByUrl(url);
 		}
@@ -249,7 +279,35 @@ export class LeftMenuComponent implements OnInit {
 		this._router.navigate(['home/users-list']);
 	}
 
+	showNewSales($event) {
+		$event.stopPropagation();
+		this._router.navigate([`home/sales/edit/0/TI`]);
+	}
+
+	goStockIssue($event) {
+		$event.stopPropagation();
+		this._router.navigate([`home/sales/edit/0/SI`]);
+	}
+
+	goEnquiryScreen($event) {
+		$event.stopPropagation();
+		this._router.navigateByUrl(`/home/enquiry`);
+	}
+
 	editCenter() {
 		this._router.navigate([`/home/center/edit`, this.userdata.center_id]);
+	}
+
+	goPurchaseAddScreen($event) {
+		$event.stopPropagation();
+		this._router.navigateByUrl(`/home/purchase/edit/0`);
+	}
+
+	toggleSubMenu(param) {
+		if (param === 'vendor') {
+			this.expanded1 = !this.expanded1;
+		} else if (param === 'customer') {
+			this.expanded = !this.expanded;
+		}
 	}
 }

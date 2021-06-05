@@ -163,8 +163,7 @@ td.mat-column-actions {
 			height: auto;
 			position: relative;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
-				0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 			background-color: #fff;
 			border-radius: 3px;
 			+ .mat-row {
@@ -232,13 +231,15 @@ td.mat-column-actions {
 
 .example-container {
 	display: grid;
-	width: 100%;
+	width: auto;
+	overflow: auto;
 	margin: 0 auto;
 }
 
 .row1 {
 	display: grid;
-	grid-template-columns: 1fr 1fr 150px 150px 150px 150px 100px;
+
+	grid-template-columns: 1fr 120px 270px 115px 115px 130px 40px;
 	gap: 10px;
 }
 

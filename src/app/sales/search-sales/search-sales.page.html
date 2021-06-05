@@ -3,8 +3,8 @@
 		<form [formGroup]="submitForm">
 			<div class="form-wrap">
 				<div class="btn-grad" (click)="goSalesAddScreen()" style="cursor: pointer">
-					<mat-icon style="font-size: 30px; width: 30px !important; height: 30px !important">add_circle_outline</mat-icon>
-					<span style="padding-left: 10px; font-size: 20px">Sales</span>
+					<mat-icon style="font-size: 30px; width: 30px !important; height: 30px !important">add</mat-icon>
+					<span style="padding-left: 10px; font-size: 20px">Add Sale</span>
 				</div>
 				<div style="justify-self: end">
 					<mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
@@ -37,8 +37,19 @@
 								<mat-icon>close</mat-icon>
 							</button>
 							<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
-								<mat-option *ngFor="let customer of filteredCustomer | async" [value]="customer">
-									<span>{{ customer.name }} </span>
+								<mat-option
+									*ngFor="let customer of filteredCustomer | async"
+									[value]="customer"
+									style="height: 70px; border-bottom: 1px solid lightsteelblue"
+								>
+									<div style="display: grid; grid-template-columns: 1fr">
+										<div>
+											<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
+											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address1 }}</div>
+											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address2 }},{{ customer.address3 }}</div>
+										</div>
+									</div>
+									<!-- <span>{{ customer.name }} </span> -->
 								</mat-option>
 							</mat-autocomplete>
 						</mat-form-field>
@@ -118,11 +129,6 @@
 						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
 						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
 					</mat-tab>
-
-					<mat-tab label="StockIssue ({{(stockIssueSales$| async)?.length }})">
-						<ng-template [ngTemplateOutlet]="stockIssueMsgRef"></ng-template>
-						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-					</mat-tab>
 				</mat-tab-group>
 			</div>
 			<div style="position: absolute; justify-self: flex-end; top: 32px; z-index: 1">
@@ -154,39 +160,14 @@
 			<div class="txt-right-align">TOTAL VALUE</div>
 			<div class="txt-center-align">STATUS</div>
 			<div>
-				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportDraftSalesToExcel()" />
-			</div>
-		</div>
-		<div class="headerRow" style="background-color: #dfdfdf">
-			<div>&nbsp;</div>
-			<div>&nbsp;</div>
-			<div>&nbsp;</div>
-			<div>&nbsp;</div>
-
-			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | pricePipe }}</div>
-			<div>&nbsp;</div>
-			<div>&nbsp;</div>
-		</div>
-	</ng-template>
-
-	<ng-template #stockIssueMsgRef>
-		<div class="header header-style">
-			<div>#</div>
-			<div>CUSTOMER NAME</div>
-			<div>INVOICE #</div>
-			<div>INV DATE</div>
-
-			<div class="txt-right-align"># ITEMS</div>
-			<div class="txt-right-align">TOTAL VALUE</div>
-			<div class="txt-center-align">STATUS</div>
-			<div>
 				<img
-					src="/assets/images/svg/download-excel.svg"
+					matTooltip="Download"
+					matTooltipClass="tooltip"
+					src="/assets/images/svg/direct-download.svg"
 					style="cursor: pointer"
 					width="32px"
 					height="32px"
-					(click)="exportStockIssueSalesToExcel()"
+					(click)="exportDraftSalesToExcel()"
 				/>
 			</div>
 		</div>
@@ -197,7 +178,7 @@
 			<div>&nbsp;</div>
 
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | pricePipe}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR" }}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 		</div>
@@ -216,7 +197,15 @@
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>
-				<img src="/assets/images/svg/download-excel.svg" style="cursor: pointer" width="32px" height="32px" (click)="exportCompletedSalesToExcel()" />
+				<img
+					matTooltip="Download"
+					matTooltipClass="tooltip"
+					src="/assets/images/svg/direct-download.svg"
+					style="cursor: pointer"
+					width="32px"
+					height="32px"
+					(click)="exportCompletedSalesToExcel()"
+				/>
 			</div>
 		</div>
 		<div class="headerRow" style="background-color: #dfdfdf">
@@ -226,7 +215,7 @@
 			<div>&nbsp;</div>
 
 			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
-			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | pricePipe}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
@@ -277,17 +266,7 @@
 					>print
 				</mat-icon>
 			</div>
-			<div class="item" style="text-align: center" *ngIf="item.sale_type === 'stockissue'">
-				<mat-icon
-					#tooltip="matTooltip"
-					matTooltip="Print Estimate"
-					matTooltipClass="tooltip"
-					(mousedown)="tooltip.hide()"
-					[ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-					(click)="goPrintEnquiry(item)"
-					>print
-				</mat-icon>
-			</div>
+
 			<!-- *ngIf="this.deleteAccess === 'Y'" -->
 			<div class="item" *ngIf="item.status === 'D'" style="text-align: center">
 				<mat-icon
@@ -302,25 +281,35 @@
 			</div>
 
 			<div *ngIf="tabIndex === 1">
-				<mat-icon
-					#tooltip="matTooltip"
-					matTooltip="More Menu Options"
+				<img
+					matTooltip="Sales Return"
 					matTooltipClass="tooltip"
-					(mousedown)="tooltip.hide()"
-					[matMenuTriggerFor]="menu"
-					[matMenuTriggerData]="{item: item}"
+					src="/assets/images/svg/return.svg"
 					style="cursor: pointer"
-					>more_vert</mat-icon
-				>
+					width="24px"
+					height="24px"
+					color="red"
+					(click)="salesReturn(item)"
+				/>
 			</div>
 		</div>
 
 		<div class="no-records" *ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0">No item in status "Draft"</div>
 		<div class="no-records" *ngIf="tabIndex === 1 && (fullfilledSales$| async)?.length === 0">No item in status "Fullfilled"</div>
-		<div class="no-records" *ngIf="tabIndex === 2 && (stockIssueSales$| async)?.length === 0">No item in status "Stock Issue"</div>
 	</ng-template>
 </ion-content>
-
+<!-- 
+DnD - sample vertical menu
+<mat-icon
+	#tooltip="matTooltip"
+	matTooltip="More Menu Options"
+	matTooltipClass="tooltip"
+	(mousedown)="tooltip.hide()"
+	[matMenuTriggerFor]="menu"
+	[matMenuTriggerData]="{item: item}"
+	style="cursor: pointer"
+>more_vert</mat-icon
+>
 <mat-menu #menu="matMenu">
 	<ng-template matMenuContent let-aliasMenuItems="item">
 		<button mat-menu-item (click)="salesReturn(aliasMenuItems)">
@@ -328,4 +317,4 @@
 			<span>Sales Return</span>
 		</button>
 	</ng-template>
-</mat-menu>
+</mat-menu> -->

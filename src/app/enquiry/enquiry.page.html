@@ -1,6 +1,6 @@
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
 	<div class="screen-header">
-		<span style="font-size: 18px">Add New Inquiry</span>
+		<span style="font-size: 18px">Add New Enquiry</span>
 	</div>
 
 	<form [formGroup]="submitForm" #myForm="ngForm" (ngSubmit)="onSubmit()">
@@ -93,8 +93,8 @@
 				<div class="row2">
 					<ng-container *ngIf="getLength() === 0">
 						<div style="display: grid; place-items: center; padding: 2rem 2rem">
-							<div style="color: #333333"><h4>Inquiry cart</h4></div>
-							<div style="color: #666666">There are no items in your Inquiry cart</div>
+							<div style="color: #333333"><h4>Enquiry cart</h4></div>
+							<div style="color: #666666">There are no items in your Enquiry cart</div>
 						</div>
 					</ng-container>
 
@@ -249,7 +249,7 @@
 						[disabled]="clicked"
 						tabindex="6"
 					>
-						Add Inquiry
+						Add Enquiry
 					</button>
 				</div>
 			</div>

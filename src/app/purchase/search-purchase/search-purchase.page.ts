@@ -1,18 +1,8 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonApiService } from '../../services/common-api.service';
 import { AuthenticationService } from '../../services/authentication.service';
 
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
 import { Purchase } from '../../models/Purchase';
@@ -91,7 +81,7 @@ export class SearchPurchasePage implements OnInit {
 		private _route: ActivatedRoute,
 		public alertController: AlertController,
 		private _dialog: MatDialog,
-		private _authservice: AuthenticationService
+		private _authservice: AuthenticationService,
 	) {
 		const dateOffset = 24 * 60 * 60 * 1000 * 7;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
@@ -107,13 +97,11 @@ export class SearchPurchasePage implements OnInit {
 
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
-				this.init();
-				this._cdr.markForCheck();
-			});
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
+			this.init();
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
 			if (this.userdata !== undefined) {
@@ -125,45 +113,36 @@ export class SearchPurchasePage implements OnInit {
 	ngOnInit() {}
 
 	async init() {
-		this._commonApiService
-			.getAllActiveVendors(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.vendor_lis = data;
+		this._commonApiService.getAllActiveVendors(this.userdata.center_id).subscribe((data: any) => {
+			this.vendor_lis = data;
 
-				this.filteredVendor = this.submitForm.controls[
-					'vendorctrl'
-				].valueChanges.pipe(
-					startWith(''),
-					map((vendor) =>
-						vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
-					)
-				);
+			this.filteredVendor = this.submitForm.controls['vendorctrl'].valueChanges.pipe(
+				startWith(''),
+				map((vendor) => (vendor ? this.filtervendor(vendor) : this.vendor_lis.slice())),
+			);
 
-				this.search();
-				this._cdr.markForCheck();
-			});
+			this.search();
+			this._cdr.markForCheck();
+		});
 	}
 
 	filtervendor(value: any) {
 		if (typeof value == 'object') {
-			return this.vendor_lis.filter(
-				(vendor) =>
-					vendor.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-			);
+			return this.vendor_lis.filter((vendor) => vendor.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0);
 		} else if (typeof value == 'string') {
-			return this.vendor_lis.filter(
-				(vendor) => vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0
-			);
+			return this.vendor_lis.filter((vendor) => vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0);
 		}
 	}
 
 	getPosts(event) {
+		debugger;
 		this.submitForm.patchValue({
 			vendorid: event.option.value.id,
 			vendorctrl: event.option.value.name,
 		});
 
 		this.tabIndex = 0;
+		this.search();
 		this._cdr.markForCheck();
 	}
 
@@ -202,12 +181,8 @@ export class SearchPurchasePage implements OnInit {
 		this.filteredValues = value.filter((data: any) => data.status === 'C');
 
 		// to calculate the count on each status
-		this.draftPurchase$ = this.purchases$.pipe(
-			map((arr: any) => arr.filter((f) => f.status === 'D'))
-		);
-		this.fullfilledPurchase$ = this.purchases$.pipe(
-			map((arr: any) => arr.filter((f) => f.status === 'C'))
-		);
+		this.draftPurchase$ = this.purchases$.pipe(map((arr: any) => arr.filter((f) => f.status === 'D')));
+		this.fullfilledPurchase$ = this.purchases$.pipe(map((arr: any) => arr.filter((f) => f.status === 'C')));
 		this.calculateSumTotals();
 		this.tabIndex = 0;
 		this._cdr.markForCheck();
@@ -238,21 +213,17 @@ export class SearchPurchasePage implements OnInit {
 	}
 
 	delete(item) {
-		this._commonApiService
-			.deletePurchaseData(item.id)
-			.subscribe((data: any) => {
-				if (data.result === 'success') {
-					this._commonApiService
-						.deletePurchaseMaster(item.id)
-						.subscribe((data1: any) => {
-							if (data1.result === 'success') {
-								this.presentAlert('Draft Purchase Deleted!');
-							}
+		this._commonApiService.deletePurchaseData(item.id).subscribe((data: any) => {
+			if (data.result === 'success') {
+				this._commonApiService.deletePurchaseMaster(item.id).subscribe((data1: any) => {
+					if (data1.result === 'success') {
+						this.presentAlert('Draft Purchase Deleted!');
+					}
 
-							this.init();
-						});
-				}
-			});
+					this.init();
+				});
+			}
+		});
 	}
 
 	async presentAlertConfirm(item) {
@@ -285,9 +256,7 @@ export class SearchPurchasePage implements OnInit {
 		let value = await lastValueFrom(this.filteredPurchase$);
 
 		if ($event.index === 0) {
-			this.filteredValues = value.filter(
-				(data: any) => data.status === 'D' || data.status === 'C'
-			);
+			this.filteredValues = value.filter((data: any) => data.status === 'D' || data.status === 'C');
 		}
 
 		// DnD
@@ -335,10 +304,7 @@ export class SearchPurchasePage implements OnInit {
 		dialogConfig.data = row;
 		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(
-			PurchaseEntryDialogComponent,
-			dialogConfig
-		);
+		const dialogRef = this._dialog.open(PurchaseEntryDialogComponent, dialogConfig);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('The dialog was closed');
@@ -423,18 +389,14 @@ export class SearchPurchasePage implements OnInit {
 			[
 				{
 					header: 'Draft Purchase Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
+			},
 		);
 
 		//start frm A2 here
@@ -524,18 +486,14 @@ export class SearchPurchasePage implements OnInit {
 			[
 				{
 					header: 'Completed Purchase Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format(
-						'DD/MM/YYYY'
-					)}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format(
-						'DD/MM/YYYY'
-					)}`,
+					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
 				},
 			],
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
+			},
 		);
 
 		//start frm A2 here

@@ -29,7 +29,6 @@ export class SearchSalesPage implements OnInit {
 
 	draftSales$: Observable<Sales[]>;
 	fullfilledSales$: Observable<Sales[]>;
-	stockIssueSales$: Observable<Sales[]>;
 
 	filteredSales$: Observable<Sales[]>;
 
@@ -77,7 +76,6 @@ export class SearchSalesPage implements OnInit {
 	saletypeList = [
 		{ id: 'all', value: 'All' },
 		{ id: 'GI', value: 'Invoice' },
-		{ id: 'SI', value: 'Stock Issue' },
 	];
 
 	searchType = [
@@ -105,7 +103,7 @@ export class SearchSalesPage implements OnInit {
 		public alertController: AlertController,
 		public _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
-		private _authservice: AuthenticationService
+		private _authservice: AuthenticationService,
 	) {
 		this.submitForm = this._fb.group({
 			customerid: ['all'],
@@ -153,8 +151,6 @@ export class SearchSalesPage implements OnInit {
 		});
 	}
 
-	// [{"id":4,"center_id":2,"role_id":1,"operation":"VIEW","resource":"SALE","is_access":"Y"},{"id":5,"center_id":2,"role_id":1,"operation":"EDIT","resource":"SALE","is_access":"Y"},{"id":6,"center_id":2,"role_id":1,"operation":"DELETE","resource":"SALE","is_access":"Y"}]
-
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
 			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.name.toLowerCase()));
@@ -169,7 +165,7 @@ export class SearchSalesPage implements OnInit {
 
 			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
 				startWith(''),
-				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice())),
 			);
 		});
 
@@ -208,9 +204,8 @@ export class SearchSalesPage implements OnInit {
 		});
 
 		this.tabIndex = 0;
-		this._cdr.markForCheck();
-
 		this.search();
+		this._cdr.markForCheck();
 	}
 
 	async search() {
@@ -241,7 +236,7 @@ export class SearchSalesPage implements OnInit {
 
 		// to calculate the count on each status
 		this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.status === 'D' && f.sale_type === 'gstinvoice')));
-		this.stockIssueSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.status === 'D' && f.sale_type === 'stockissue')));
+
 		this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.status === 'C')));
 		this.calculateSumTotals();
 		this.tabIndex = 0;
@@ -252,11 +247,7 @@ export class SearchSalesPage implements OnInit {
 		if (item.status === 'C') {
 			this.editCompletedSalesConfirm(item);
 		} else {
-			if (item.sale_type === 'stockissue') {
-				this._router.navigateByUrl(`/home/sales/edit/${item.id}/SI`);
-			} else {
-				this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
-			}
+			this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
 		}
 	}
 
@@ -354,8 +345,6 @@ export class SearchSalesPage implements OnInit {
 			this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'gstinvoice');
 		} else if ($event.index === 1) {
 			this.filteredValues = value.filter((data: any) => data.status === 'C');
-		} else if ($event.index === 2) {
-			this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'stockissue');
 		}
 
 		this.calculateSumTotals();
@@ -558,112 +547,7 @@ export class SearchSalesPage implements OnInit {
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
-		);
-
-		//start frm A2 here
-		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
-			skipHeader: false,
-			origin: 'A2',
-		});
-
-		xlsx.writeFile(wb1, fileName);
-	}
-
-	async exportStockIssueSalesToExcel() {
-		this.arr = [];
-		const fileName = 'Stock_Issue_Sale_Reports.xlsx';
-
-		this.arr = await lastValueFrom(this.stockIssueSales$);
-
-		let reportData = JSON.parse(JSON.stringify(this.arr));
-
-		reportData.forEach((e) => {
-			e['Customer Name'] = e['customer_name'];
-			delete e['customer_name'];
-
-			e['Invoice #'] = e['invoice_no'];
-			delete e['invoice_no'];
-
-			e['Invoice Date'] = e['invoice_date'];
-			delete e['invoice_date'];
-
-			e['Sale Type'] = e['sale_type'];
-			delete e['sale_type'];
-
-			e['Total Qty'] = e['total_qty'];
-			delete e['total_qty'];
-
-			e['# of Items'] = e['no_of_items'];
-			delete e['no_of_items'];
-
-			e['Taxable Value'] = e['taxable_value'];
-			delete e['taxable_value'];
-
-			e['CGST'] = e['cgst'];
-			delete e['cgst'];
-
-			e['SGST'] = e['sgst'];
-			delete e['sgst'];
-
-			e['IGST'] = e['igst'];
-			delete e['igst'];
-
-			e['IGST'] = e['igst'];
-			delete e['igst'];
-
-			e['Total Value'] = e['total_value'];
-			delete e['total_value'];
-
-			e['Net Total'] = e['net_total'];
-			delete e['net_total'];
-
-			e['Sale Date Time'] = e['sale_datetime'];
-			delete e['sale_datetime'];
-
-			delete e['id'];
-			delete e['center_id'];
-			delete e['customer_id'];
-			delete e['lr_no'];
-			delete e['lr_date'];
-			delete e['received_date'];
-			delete e['order_no'];
-			delete e['order_date'];
-			delete e['transport_charges'];
-
-			delete e['unloading_charges'];
-			delete e['misc_charges'];
-			delete e['status'];
-			delete e['revision'];
-			delete e['tax_applicable'];
-			delete e['roundoff'];
-			delete e['retail_customer_name'];
-			delete e['retail_customer_address'];
-			delete e['no_of_boxes'];
-
-			delete e['stock_issue_date_ref'];
-			delete e['stock_issue_ref'];
-		});
-		this.arr.splice(0, 1);
-
-		const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
-		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
-		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
-
-		//then add ur Title txt
-		xlsx.utils.sheet_add_json(
-			wb1.Sheets.sheet1,
-			[
-				{
-					header: 'Stock Issue Sale Reports',
-					fromdate: `From: ${moment(this.submitForm.value.fromdate).format('DD/MM/YYYY')}`,
-					todate: `To: ${moment(this.submitForm.value.todate).format('DD/MM/YYYY')}`,
-				},
-			],
-			{
-				skipHeader: true,
-				origin: 'A1',
-			}
+			},
 		);
 
 		//start frm A2 here
@@ -766,7 +650,7 @@ export class SearchSalesPage implements OnInit {
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
+			},
 		);
 
 		//start frm A2 here

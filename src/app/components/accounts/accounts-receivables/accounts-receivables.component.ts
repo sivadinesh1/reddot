@@ -58,6 +58,9 @@ export class AccountsReceivablesComponent implements OnInit {
 	invoicesplitArr = [];
 	advanceCreditUsed = 0;
 
+	bankList: any;
+	iswarning = false;
+
 	constructor(
 		private _fb: FormBuilder,
 		public dialog: MatDialog,
@@ -70,7 +73,7 @@ export class AccountsReceivablesComponent implements OnInit {
 		private _route: ActivatedRoute,
 		private _cdr: ChangeDetectorRef,
 		private _commonApiService: CommonApiService,
-		private _loadingService: LoadingService
+		private _loadingService: LoadingService,
 	) {
 		this.invoicesdata = data.invoicesdata;
 
@@ -78,6 +81,7 @@ export class AccountsReceivablesComponent implements OnInit {
 
 		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
 			this.userdata = data;
+
 			this.init();
 			this._cdr.markForCheck();
 		});
@@ -96,12 +100,14 @@ export class AccountsReceivablesComponent implements OnInit {
 
 			this.filteredCustomer = this.submitForm.controls['customer'].valueChanges.pipe(
 				startWith(''),
-				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice())),
 			);
 		});
 
 		// fetch all payment mode list
 		this.pymtmodes$ = this._commonApiService.getAllActivePymtModes(this.userdata.center_id, 'A');
+
+		this.reloadBankDetails();
 	}
 
 	// filter customers as we type
@@ -124,6 +130,9 @@ export class AccountsReceivablesComponent implements OnInit {
 			appliedamount: [],
 			creditsused: 'NO',
 			creditusedamount: 0,
+			bank_id: '',
+			bank_name: '',
+			createdby: this.userdata.userid,
 		});
 
 		this.dialogRef.keydownEvents().subscribe((event) => {
@@ -135,6 +144,28 @@ export class AccountsReceivablesComponent implements OnInit {
 		this.dialogRef.backdropClick().subscribe((event) => {
 			this.close();
 		});
+	}
+
+	reloadBankDetails() {
+		this._commonApiService.getBanks(this.userdata.center_id).subscribe((data: any) => {
+			this.bankList = data.result;
+
+			this._cdr.markForCheck();
+		});
+	}
+
+	handleChange(event) {
+		if (event.value === '0') {
+			this.submitForm.patchValue({
+				bank_name: '',
+				bank_id: 0,
+			});
+		} else {
+			this.submitForm.patchValue({
+				bank_name: event.value.bankname,
+				bank_id: event.value.id,
+			});
+		}
 	}
 
 	// on blur of received amount
@@ -247,6 +278,38 @@ export class AccountsReceivablesComponent implements OnInit {
 
 	onSubmit() {
 		if (this.checkTotalSum()) {
+			let form = {
+				centerid: this.userdata.center_id,
+				bankref: this.submitForm.value.accountarr[0].bankref,
+				customerid: this.customer.id,
+			};
+			debugger;
+			this._commonApiService.getPaymentBankRef(form).subscribe((data: any) => {
+				if (data.body.result[0].count > 0) {
+					// warning
+					this.iswarning = true;
+					this._cdr.markForCheck();
+				} else if (data.body.result1.length === 1) {
+					// check if the last paid amount is the same is current paid amount and if yes throw a warning.
+					if (data.body.result1[0].payment_now_amt === this.submitForm.value.accountarr[0].receivedamount) {
+						this.iswarning = true;
+						this._cdr.markForCheck();
+					} else {
+						this.finalSubmit();
+					}
+				} else {
+					this.finalSubmit();
+				}
+			});
+		}
+	}
+
+	cancel() {
+		this.iswarning = false;
+	}
+
+	finalSubmit() {
+		if (this.checkTotalSum()) {
 			this.submitForm.patchValue({
 				invoicesplit: this.invoicesplitArr,
 				customer: this.customer,
@@ -320,6 +383,8 @@ export class AccountsReceivablesComponent implements OnInit {
 			customerid: 'all',
 			customer: '',
 		});
+		this.initAccount();
+		this.iscustomerselected = false;
 		this._cdr.markForCheck();
 	}
 }

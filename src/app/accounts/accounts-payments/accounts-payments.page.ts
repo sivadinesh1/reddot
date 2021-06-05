@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Observable, lastValueFrom } from 'rxjs';
 import { Customer } from 'src/app/models/Customer';
 import { User } from 'src/app/models/User';
@@ -23,6 +23,7 @@ import * as moment from 'moment';
 	selector: 'app-accounts-payments',
 	templateUrl: './accounts-payments.page.html',
 	styleUrls: ['./accounts-payments.page.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountsPaymentsPage implements OnInit {
 	center_id: any;
@@ -57,6 +58,8 @@ export class AccountsPaymentsPage implements OnInit {
 
 	@ViewChild('InvoiceTablePaginator') invoiceTablePaginator: MatPaginator;
 	@ViewChild('PaymentTablePaginator') pymtTablePaginator: MatPaginator;
+	@ViewChild('PymtOverviewTablePaginator') pymtOverviewTablePaginator: MatPaginator;
+
 	@ViewChild('PymtTransactionTablePaginator')
 	pymttransactionTablePaginator: MatPaginator;
 
@@ -68,19 +71,25 @@ export class AccountsPaymentsPage implements OnInit {
 	saleInvoiceDisplayedColumns: string[] = ['invoicedate', 'invoiceno', 'customername', 'nettotal', 'paidamt', 'balamt', 'paybtn'];
 	paymentDisplayedColumns: string[] = [
 		'customername',
-		'pymtdate',
 		'paymentno',
+		'pymtdate',
+		'paidamt',
 		'invoiceno',
 		'invoicedate',
+		'invoiceamount',
 		'pymtmodename',
+		'pymtbank',
 		'bankref',
 		'pymtref',
-		'paidamt',
 	];
+
+	paymentOverviewDisplayedColumns: string[] = ['customername', 'pymtdate', 'paymentno', 'paidamt', 'pymtmodename', 'pymtbank', 'bankref', 'pymtref'];
+
 	pymtTxnDisplayedColumns: string[] = ['custname', 'pymtno', 'pymtdate', 'paidamt', 'paymode', 'bankref', 'payref'];
 
 	// data sources
 	paymentdataSource = new MatTableDataSource<any>();
+	paymentOverviewdataSource = new MatTableDataSource<any>();
 	pymttransactionsdataSource = new MatTableDataSource<any>();
 	saleInvoicedataSource = new MatTableDataSource<any>();
 
@@ -101,7 +110,7 @@ export class AccountsPaymentsPage implements OnInit {
 		private _commonApiService: CommonApiService,
 		private _route: ActivatedRoute,
 		private _router: Router,
-		private _fb: FormBuilder
+		private _fb: FormBuilder,
 	) {
 		const dateOffset = 24 * 60 * 60 * 1000 * 365;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
@@ -115,15 +124,12 @@ export class AccountsPaymentsPage implements OnInit {
 			}),
 			todate: [this.todate, Validators.required],
 			fromdate: [this.fromdate, Validators.required],
-			invoiceno: new FormControl({
-				value: '',
-				disabled: true,
-			}),
+			invoiceno: [''],
 			searchtype: new FormControl('all'),
 		});
 
 		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
-			this._authservice.setCurrentMenu('RECEIVABLES');
+			this._authservice.setCurrentMenu('Receivables');
 			this.userdata = data;
 			this.ready = 1;
 			this.init();
@@ -133,7 +139,9 @@ export class AccountsPaymentsPage implements OnInit {
 
 		this._route.params.subscribe((params) => {
 			if (this.userdata !== undefined) {
+				this.tabIndex = 0;
 				this.init();
+				this.initForm();
 			}
 		});
 	}
@@ -164,9 +172,11 @@ export class AccountsPaymentsPage implements OnInit {
 
 	async init() {
 		if (this.ready === 1) {
+			this.tabIndex = 0;
 			this.reloadSaleInvoiceByCenter();
-			this.reloadPaymentsByCenter();
-			//this.reloadTransactionsByCenter(this.userdata.center_id);
+			this._cdr.markForCheck();
+			// this.reloadPaymentsByCenter();
+			// this.reloadPaymentsOverviewByCenter();
 		}
 
 		this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
@@ -174,7 +184,7 @@ export class AccountsPaymentsPage implements OnInit {
 
 			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
 				startWith(''),
-				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice()))
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice())),
 			);
 		});
 	}
@@ -193,6 +203,7 @@ export class AccountsPaymentsPage implements OnInit {
 	ngAfterViewInit() {
 		this.saleInvoicedataSource.paginator = this.invoiceTablePaginator;
 		this.paymentdataSource.paginator = this.pymtTablePaginator;
+		this.paymentOverviewdataSource.paginator = this.pymtOverviewTablePaginator;
 		this.pymttransactionsdataSource.paginator = this.pymttransactionTablePaginator;
 	}
 
@@ -211,6 +222,11 @@ export class AccountsPaymentsPage implements OnInit {
 			this.initForm();
 			this.reloadSaleInvoiceByCenter();
 		} else if ($event.index === 1) {
+			const dateOffset = 24 * 60 * 60 * 1000 * 365;
+			this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+			this.initForm();
+			this.reloadPaymentsOverviewByCenter();
+		} else if ($event.index === 2) {
 			const dateOffset = 24 * 60 * 60 * 1000 * 365;
 			this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 			this.initForm();
@@ -271,6 +287,18 @@ export class AccountsPaymentsPage implements OnInit {
 	applyFilterTab2(filterValue: string) {
 		filterValue = filterValue.trim(); // Remove whitespace
 		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+		this.paymentOverviewdataSource.filter = filterValue;
+
+		if (this.paymentOverviewdataSource.filteredData.length > 0) {
+			this.isTableHasData = true;
+		} else {
+			this.isTableHasData = false;
+		}
+	}
+
+	applyFilterTab3(filterValue: string) {
+		filterValue = filterValue.trim(); // Remove whitespace
+		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
 		this.paymentdataSource.filter = filterValue;
 
 		if (this.paymentdataSource.filteredData.length > 0) {
@@ -278,6 +306,32 @@ export class AccountsPaymentsPage implements OnInit {
 		} else {
 			this.isTableHasData = false;
 		}
+	}
+
+	reloadPaymentsOverviewByCenter() {
+		let fromdate = this.submitForm.value.fromdate;
+		let todate = this.submitForm.value.todate;
+
+		this._commonApiService
+			.getPaymentsOverviewByCenter({
+				centerid: this.userdata.center_id,
+				fromdate: fromdate,
+				todate: todate,
+				customerid: 'all',
+				searchtype: 'all',
+			})
+			.subscribe((data: any) => {
+				this.paymentdata = data.body;
+
+				// DnD - code to add a "key/Value" in every object of array
+				this.paymentOverviewdataSource.data = data.body;
+
+				this.paymentOverviewdataSource.sort = this.sort;
+
+				this.pageLength = data.body.length;
+
+				this._cdr.markForCheck();
+			});
 	}
 
 	reloadPaymentsByCenter() {
@@ -306,25 +360,9 @@ export class AccountsPaymentsPage implements OnInit {
 				});
 
 				this.paymentdataSource.sort = this.sort;
-				this.pageLength = data.length;
 
 				this._cdr.markForCheck();
 			});
-	}
-
-	reloadTransactionsByCenter(center_id) {
-		this._commonApiService.getPymtTransactionsByCenter(center_id).subscribe((data: any) => {
-			this.pymttransactionsdataSource.data = data.map((el) => {
-				var o = Object.assign({}, el);
-				o.isExpanded = false;
-				return o;
-			});
-
-			this.pymttransactionsdataSource.sort = this.sort;
-			this.pageLength = data.length;
-
-			this._cdr.markForCheck();
-		});
 	}
 
 	reloadSaleInvoiceByCenter() {
@@ -351,7 +389,6 @@ export class AccountsPaymentsPage implements OnInit {
 				});
 
 				this.saleInvoicedataSource.sort = this.sort;
-				this.pageLength = data.length;
 
 				this._cdr.markForCheck();
 			});
@@ -381,7 +418,6 @@ export class AccountsPaymentsPage implements OnInit {
 				});
 
 				this.saleInvoicedataSource.sort = this.sort;
-				this.pageLength = data.length;
 
 				this._cdr.markForCheck();
 			});
@@ -405,21 +441,49 @@ export class AccountsPaymentsPage implements OnInit {
 			})
 			.subscribe((data: any) => {
 				this.paymentdata = data.body;
-				this.paymentdataSource = data.body;
+				this.paymentdataSource.data = data.body;
 
 				this.paymentdataSource.sort = this.sort;
-				this.pageLength = data.length;
+				this.pageLength = data.body.length;
+				this._cdr.markForCheck();
+			});
+	}
+
+	searchReceivedPaymentsOverview() {
+		let fromdate = this.submitForm.value.fromdate;
+		let todate = this.submitForm.value.todate;
+		let customerid = this.submitForm.value.customerid;
+		let searchtype = this.submitForm.value.searchtype;
+		let invoiceno = this.submitForm.value.invoiceno;
+
+		this._commonApiService
+			.getPaymentsOverviewByCenter({
+				centerid: this.userdata.center_id,
+				fromdate: fromdate,
+				todate: todate,
+				customerid: customerid,
+				searchtype: searchtype,
+				invoiceno: invoiceno,
+			})
+			.subscribe((data: any) => {
+				this.paymentdata = data.body;
+				this.paymentOverviewdataSource.data = data.body;
+
+				this.paymentOverviewdataSource.sort = this.sort;
+				this.pageLength = data.body.length;
 
 				this._cdr.markForCheck();
 			});
 	}
 
-	clearPendingPymtCustomers() {
+	clearCustomers() {
 		this.submitForm.patchValue({
-			customerctrl: null,
+			customerid: 'all',
+			customerctrl: 'All Customers',
 		});
+		this.submitForm.controls['customerctrl'].setErrors(null);
 		this._cdr.markForCheck();
-		this.searchPendingPayments();
+		// this.searchPendingPayments();
 	}
 
 	radioClickHandle() {
@@ -464,7 +528,7 @@ export class AccountsPaymentsPage implements OnInit {
 				tap(() => {
 					this.init();
 					this._cdr.markForCheck();
-				})
+				}),
 			)
 			.subscribe();
 	}
@@ -493,7 +557,7 @@ export class AccountsPaymentsPage implements OnInit {
 						this.init();
 
 						this._cdr.markForCheck();
-					})
+					}),
 				)
 				.subscribe((data: any) => {
 					if (data === 'success') {
@@ -502,7 +566,7 @@ export class AccountsPaymentsPage implements OnInit {
 						dialogConfigSuccess.autoFocus = true;
 						dialogConfigSuccess.width = '25%';
 						dialogConfigSuccess.height = '25%';
-						dialogConfigSuccess.data = 'Add receivables succesful';
+						dialogConfigSuccess.data = 'Receivables added succesfully';
 
 						const dialogRef = this._dialog.open(SuccessMessageDialogComponent, dialogConfigSuccess);
 					}
@@ -562,7 +626,7 @@ export class AccountsPaymentsPage implements OnInit {
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
+			},
 		);
 		//start frm A2 here
 		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
@@ -634,7 +698,7 @@ export class AccountsPaymentsPage implements OnInit {
 			{
 				skipHeader: true,
 				origin: 'A1',
-			}
+			},
 		);
 
 		//start frm A2 here
