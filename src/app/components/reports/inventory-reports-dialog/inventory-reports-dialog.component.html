@@ -23,7 +23,7 @@
 		<div>
 			<div style="font-size: 12px; color: #747474">Brand:</div>
 			<div style="font-size: 16px; color: black">{{ this.resultList[0]?.brand_name }}</div>
-		</div> 
+		</div>
 		<div>&nbsp;</div>
 		<div>
 			<div style="font-size: 12px; color: #747474">Records:</div>
@@ -34,45 +34,73 @@
 		<table style="width: 80%; margin: 0 auto">
 			<thead>
 				<tr class="header">
-					<th style="text-align: left">Invoice #</th>
-					<th style="text-align: left">Invoice Date</th>
+					<th style="text-align: left">Ref #</th>
+					<th style="text-align: left">Ref Date</th>
 					<th style="text-align: left">Customer/Vendor</th>
-
-					<th style="text-align: right">Purchase</th>
-					<th style="text-align: right">Sale</th>
+					<th style="text-align: left">Txn Type</th>
+					<th style="text-align: right">Txn Qty</th>
 
 					<th style="text-align: right">Stock Balance</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr *ngFor="let item of resultList ? resultList : []; let idx = index" class="list-item plain-row-color-nohover">
-					<td
-						style="text-align: left; color: blue; cursor: pointer"
-						(click)="openDialog(item.module, item.invoice_no, item.sale_id, item.purchase_id, item.customer_id, item.vendor_id)"
-					>
-						{{ item?.invoice_no }}
+					<td *ngIf="item.module === 'Sale'" style="text-align: left; color: blue; cursor: pointer">
+						<span (click)="openDialog(item.module, item.invoice_no, item.sale_id, item.purchase_id, item.customer_id, item.vendor_id)">
+							{{ item?.invoice_no }}
+						</span>
 					</td>
-					<td style="text-align: left">{{ item?.invoice_date }}</td>
-					<td style="text-align: left">
-						{{ item.customer_name === null ? item.vendor_name : item.customer_name }}
+					<td *ngIf="item.module === 'Purchase'" style="text-align: left; color: blue; cursor: pointer">
+						<span (click)="openDialog(item.module, item.invoice_no, item.sale_id, item.purchase_id, item.customer_id, item.vendor_id)">
+							{{ item?.pur_inv_no }}
+						</span>
+					</td>
+					<td *ngIf="item.module === 'SaleReturn'" style="text-align: left; color: blue; cursor: pointer">
+						<span (click)="openDialog(item.module, item.invoice_no, item.sale_id, item.purchase_id, item.customer_id, item.vendor_id)">
+							{{ item?.credit_note_no }}
+						</span>
+					</td>
+
+					<td *ngIf="item.module === 'Purchase'" style="text-align: left">{{ item?.pur_invoice_date }}</td>
+					<td *ngIf="item.module === 'Sale'" style="text-align: left">{{ item?.sale_invoice_date }}</td>
+					<td *ngIf="item.module === 'SaleReturn'" style="text-align: left">{{ item?.sale_return_date }}</td>
+
+					<td *ngIf="item.module === 'Purchase'" style="text-align: left">
+						{{ item.vendor_name }}
 						<span *ngIf="item?.action_type === 'New Product'">({{ item?.action_type }})</span>
 					</td>
 
-					<td style="text-align: right">
-						<span *ngIf="item?.module === 'Purchase'">
+					<td *ngIf="item.module === 'Sale'" style="text-align: left">
+						{{ item.customer_name }}
+					</td>
+
+					<td *ngIf="item.module === 'SaleReturn'" style="text-align: left">
+						{{ item.sale_return_customer_name }}
+					</td>
+
+					<td *ngIf="item.module === 'Purchase'" style="text-align: left">Purchase</td>
+					<td *ngIf="item.module === 'Sale'" style="text-align: left">Sale</td>
+					<td *ngIf="item.module === 'SaleReturn'" style="text-align: left">Sale Return</td>
+
+					<td *ngIf="item?.module === 'Purchase'" style="text-align: right">
+						<span>
 							{{ item?.txn_qty }}
 							<span *ngIf="item?.action_type === 'Mod/Del'">({{ item?.action_type }})</span>
 						</span>
-						<span *ngIf="item?.module !== 'Purchase'"> - </span>
 					</td>
 
-					<td style="text-align: right">
-						<span *ngIf="item?.module === 'Sale'">
+					<td *ngIf="item?.module === 'Sale'" style="text-align: right">
+						<span>
 							{{ item?.txn_qty }}
 							<span *ngIf="item?.action_type === 'Mod/Del'">({{ item?.action_type }})</span>
 							<span *ngIf="item?.action_type === 'Edited'">({{ item?.action_type }})</span>
 						</span>
-						<span *ngIf="item?.module !== 'Sale'"> - </span>
+					</td>
+
+					<td *ngIf="item?.module === 'SaleReturn'" style="text-align: right">
+						<span>
+							{{ item?.txn_qty }}
+						</span>
 					</td>
 
 					<td style="text-align: right">{{ item?.stock_level }}</td>

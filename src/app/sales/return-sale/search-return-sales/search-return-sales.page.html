@@ -197,6 +197,17 @@
 			<div class="item cursor" style="text-align: center">
 				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="salesReturn(item)">remove_red_eye </mat-icon>
 			</div>
+			<div>
+				<mat-icon
+					#tooltip="matTooltip"
+					matTooltip="Print Sale"
+					matTooltipClass="tooltip"
+					(mousedown)="tooltip.hide()"
+					[ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+					(click)="goPrintCreditNote(item)"
+					>print
+				</mat-icon>
+			</div>
 		</div>
 
 		<div class="no-records" *ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0">No item in status "Approved"</div>

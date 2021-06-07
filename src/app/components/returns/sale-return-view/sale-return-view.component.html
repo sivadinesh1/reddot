@@ -21,7 +21,7 @@
 				<tr class="header">
 					<th style="text-align: left">SNo</th>
 					<th style="text-align: left">CODE</th>
-					<th style="text-align: left">DESCRIPTION</th>
+					<th style="text-align: left">REASON</th>
 					<th style="text-align: right">RETURN QTY</th>
 					<th style="text-align: right">RECEIVED QTY</th>
 					<th style="text-align: right">MRP</th>
@@ -33,8 +33,11 @@
 			<tbody>
 				<tr *ngFor="let item of salereturndetailsdata ? salereturndetailsdata : []; let idx = index" class="list-item row-color">
 					<td style="text-align: left">{{ idx + 1 }}</td>
-					<td>{{ item.product_code }}</td>
-					<td>{{ item.description }}</td>
+					<td>
+						<div>{{ item.product_code }}</div>
+						<div>{{ item.description }}</div>
+					</td>
+					<td>{{ item.reason }}</td>
 
 					<td style="text-align: right">{{ item?.return_qty }}</td>
 					<td style="text-align: right">{{ item?.received_qty }}</td>

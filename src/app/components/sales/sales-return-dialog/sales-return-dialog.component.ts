@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -16,6 +16,9 @@ export class SalesReturnDialogComponent implements OnInit {
 	salemasterdata: any;
 	saledetailsdata: any;
 	customerdata: any;
+	saleReturnTypeList = ['Others', 'Damaged'];
+	selReturnType = 'Others';
+
 	centerdata: any;
 
 	data: any;
@@ -83,9 +86,16 @@ export class SalesReturnDialogComponent implements OnInit {
 			unit_price: element.unit_price,
 			received_now: 0,
 			error: '',
+			reason: 'Others',
+			hsncode: element.hsncode,
+			unit: element.unit,
 		});
 
 		this.calculate();
+	}
+
+	reasonChange($event, idx) {
+		this.returnArr[idx].reason = $event.target.value;
 	}
 
 	calculate() {}
@@ -144,6 +154,7 @@ export class SalesReturnDialogComponent implements OnInit {
 			this.submitForm.push({
 				sale_id: this.salemasterdata.id,
 				center_id: this.salemasterdata.center_id,
+				customer_id: this.salemasterdata.customer_id,
 				to_return_amount: sum_to_return_amount,
 				to_receive_items: sum_to_return_items,
 			});

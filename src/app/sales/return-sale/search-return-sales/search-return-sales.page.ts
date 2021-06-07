@@ -1,18 +1,8 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonApiService } from '../../../services/common-api.service';
 import { AuthenticationService } from '../../../services/authentication.service';
 import * as moment from 'moment';
-import {
-	FormGroup,
-	FormControl,
-	Validators,
-	FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
 import { Sales } from '../../../models/Sales';
@@ -20,11 +10,7 @@ import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
 import { filter, map, startWith } from 'rxjs/operators';
 import { User } from 'src/app/models/User';
-import {
-	MatDialog,
-	MatDialogConfig,
-	DialogPosition,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { SaleReturnViewComponent } from 'src/app/components/returns/sale-return-view/sale-return-view.component';
@@ -103,7 +89,7 @@ export class SearchReturnSalesPage implements OnInit {
 		public alertController: AlertController,
 		public _dialog: MatDialog,
 		private _snackBar: MatSnackBar,
-		private _authservice: AuthenticationService
+		private _authservice: AuthenticationService,
 	) {
 		this.submitForm = this._fb.group({
 			customerid: ['all'],
@@ -122,13 +108,11 @@ export class SearchReturnSalesPage implements OnInit {
 
 		this.userdata$ = this._authservice.currentUser;
 
-		this.userdata$
-			.pipe(filter((data) => data !== null))
-			.subscribe((data: any) => {
-				this.userdata = data;
-				this.init();
-				this._cdr.markForCheck();
-			});
+		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
+			this.userdata = data;
+			this.init();
+			this._cdr.markForCheck();
+		});
 
 		const dateOffset = 24 * 60 * 60 * 1000 * 7;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
@@ -142,33 +126,21 @@ export class SearchReturnSalesPage implements OnInit {
 
 	filtercustomer(value: any) {
 		if (typeof value == 'object') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().match(value.name.toLowerCase())
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.name.toLowerCase()));
 		} else if (typeof value == 'string') {
-			return this.customer_lis.filter(
-				(customer) =>
-					customer.name.toLowerCase().match(value.toLowerCase())
-			);
+			return this.customer_lis.filter((customer) => customer.name.toLowerCase().match(value.toLowerCase()));
 		}
 	}
 
 	async init() {
-		this._commonApiService
-			.getAllActiveCustomers(this.userdata.center_id)
-			.subscribe((data: any) => {
-				this.customer_lis = data;
+		this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
+			this.customer_lis = data;
 
-				this.filteredCustomer = this.submitForm.controls[
-					'customerctrl'
-				].valueChanges.pipe(
-					startWith(''),
-					map((customer) =>
-						customer ? this.filtercustomer(customer) : this.customer_lis.slice()
-					)
-				);
-			});
+			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
+				startWith(''),
+				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice())),
+			);
+		});
 
 		this.search();
 		this._cdr.markForCheck();
@@ -212,10 +184,7 @@ export class SearchReturnSalesPage implements OnInit {
 	}
 
 	async search() {
-		if (
-			this.submitForm.value.searchtype !== 'all' &&
-			this.submitForm.value.searchby.trim().length === 0
-		) {
+		if (this.submitForm.value.searchtype !== 'all' && this.submitForm.value.searchby.trim().length === 0) {
 			console.log('invoice number is mandatory');
 			this.submitForm.controls['searchby'].setErrors({ required: true });
 			this.submitForm.controls['searchby'].markAsTouched();
@@ -237,17 +206,11 @@ export class SearchReturnSalesPage implements OnInit {
 
 		let value = await lastValueFrom(this.filteredSales$);
 
-		this.filteredValues = value.filter(
-			(data: any) => data.return_status === 'A'
-		);
+		this.filteredValues = value.filter((data: any) => data.return_status === 'A');
 
 		// to calculate the count on each status
-		this.draftSales$ = this.sales$.pipe(
-			map((arr: any) => arr.filter((f) => f.return_status === 'A'))
-		);
-		this.fullfilledSales$ = this.sales$.pipe(
-			map((arr: any) => arr.filter((f) => f.return_status === 'C'))
-		);
+		this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.return_status === 'A')));
+		this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.return_status === 'C')));
 		this.calculateSumTotals();
 		this.tabIndex = 0;
 		this._cdr.markForCheck();
@@ -282,17 +245,13 @@ export class SearchReturnSalesPage implements OnInit {
 	delete(item) {
 		this._commonApiService.deleteSaleData(item.id).subscribe((data: any) => {
 			if (data.result === 'success') {
-				this._commonApiService
-					.deleteSaleMaster(item.id)
-					.subscribe((data1: any) => {
-						//  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
-						this._commonApiService
-							.deleteItemHistory(item.id)
-							.subscribe((data: any) => {
-								this.openSnackBar('Deleted Successfully', '');
-								this.init();
-							});
+				this._commonApiService.deleteSaleMaster(item.id).subscribe((data1: any) => {
+					//  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
+					this._commonApiService.deleteItemHistory(item.id).subscribe((data: any) => {
+						this.openSnackBar('Deleted Successfully', '');
+						this.init();
 					});
+				});
 			}
 		});
 	}
@@ -334,13 +293,9 @@ export class SearchReturnSalesPage implements OnInit {
 		let value = await lastValueFrom(this.filteredSales$);
 
 		if ($event.index === 0) {
-			this.filteredValues = value.filter(
-				(data: any) => data.return_status === 'A'
-			);
+			this.filteredValues = value.filter((data: any) => data.return_status === 'A');
 		} else if ($event.index === 1) {
-			this.filteredValues = value.filter(
-				(data: any) => data.return_status === 'C'
-			);
+			this.filteredValues = value.filter((data: any) => data.return_status === 'C');
 		}
 
 		this.calculateSumTotals();
@@ -395,7 +350,7 @@ export class SearchReturnSalesPage implements OnInit {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '50%';
+		dialogConfig.width = '60%';
 		dialogConfig.height = '100%';
 		dialogConfig.data = row;
 		dialogConfig.position = { top: '0', right: '0' };
@@ -422,5 +377,54 @@ export class SearchReturnSalesPage implements OnInit {
 		setTimeout(() => {
 			this.init();
 		}, 1000);
+	}
+
+	goPrintCreditNote(item) {
+		debugger;
+		let submitForm = {
+			sale_return_id: item.sale_return_id,
+			center_id: item.center_id,
+			sale_id: item.sale_id,
+			credit_note_no: item.credit_note_no,
+		};
+
+		this._commonApiService.printCreditNote(submitForm).subscribe((data: any) => {
+			console.log('object...PRINTED');
+
+			const blob = new Blob([data], { type: 'application/pdf' });
+
+			// to save as file in ionic projects dnd
+			// FileSaver.saveAs(blob, '_export_' + new Date().getTime() + '.pdf');
+
+			// dnd - opens as iframe and ready for print (opens with print dialog box)
+			// const blobUrl = URL.createObjectURL(blob);
+			// const iframe = document.createElement('iframe');
+			// iframe.style.display = 'none';
+			// iframe.src = blobUrl;
+			// document.body.appendChild(iframe);
+			// iframe.contentWindow.print();
+
+			// dnd to open in new tab - does not work with pop up blocked
+			var link = document.createElement('a');
+			link.href = window.URL.createObjectURL(blob);
+			link.target = '_blank';
+			link.click();
+			// if need to download with file name
+			//  link.download = "filename.ext"
+
+			// dnd - if need to do anyhting on click - not much use
+			// link.onclick = function () {
+			//   window.open(window.URL.createObjectURL(blob),
+			//     '_blank',
+			//     'width=300,height=250');
+			//   return false;
+			// };
+
+			// var newWin = window.open(url);
+			// if(!newWin || newWin.closed || typeof newWin.closed=='undefined')
+			// {
+			//POPUP BLOCKED
+			// }
+		});
 	}
 }
