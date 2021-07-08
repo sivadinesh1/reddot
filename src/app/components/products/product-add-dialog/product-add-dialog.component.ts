@@ -54,7 +54,7 @@ export class ProductAddDialogComponent implements OnInit {
 		private dialogRef: MatDialogRef<ProductAddDialogComponent>,
 		private _router: Router,
 		private _loadingService: LoadingService,
-		private _authservice: AuthenticationService
+		private _authservice: AuthenticationService,
 	) {
 		this.submitForm = this._formBuilder.group({
 			center_id: [],
@@ -114,16 +114,38 @@ export class ProductAddDialogComponent implements OnInit {
 		});
 	}
 
-	isProdExists() {
+	onSubmit() {
+		if (!this.submitForm.valid) {
+			this.responsemsg = 'Missing required field(s).';
+			this._cdr.markForCheck();
+			return false;
+		} else {
+			// assign PP to UP (until strong use case arise)
+			this.submitForm.patchValue({
+				unit_price: this.submitForm.value.purchase_price,
+			});
+		}
+
+		debugger;
+		this.checkAndAdd();
+	}
+
+	checkAndAdd() {
 		this.pexists = false;
+		debugger;
 		if (this.submitForm.value.product_code.length > 0) {
+			debugger;
 			this._commonApiService.isProdExists(this.submitForm.value.product_code, this.userdata.center_id).subscribe((data: any) => {
+				debugger;
 				if (data.result.length > 0) {
+					debugger;
 					if (data.result[0].id > 0) {
 						this.pexists = true;
 						this.temppcode = data.result[0];
+						this.responsemsg = 'Duplicate Product Code';
 					}
 				} else {
+					this.addProduct();
 					this.pexists = false;
 				}
 
@@ -132,26 +154,7 @@ export class ProductAddDialogComponent implements OnInit {
 		}
 	}
 
-	onSubmit() {
-		this.isProdExists();
-
-		if (!this.submitForm.valid) {
-			this.responsemsg = 'Missing required field(s).';
-			this._cdr.markForCheck();
-			return false;
-		}
-
-		if (this.pexists) {
-			this.responsemsg = 'Product Code already present!';
-			this._cdr.markForCheck();
-			return false;
-		}
-
-		// assign PP to UP (until strong use case arise)
-		this.submitForm.patchValue({
-			unit_price: this.submitForm.value.purchase_price,
-		});
-
+	addProduct() {
 		this._commonApiService.addProduct(this.submitForm.value).subscribe((data: any) => {
 			console.log('successfullly inserted product >>>');
 

@@ -21,7 +21,7 @@
 
 		.row1 {
 			display: grid;
-			grid-template-columns: 30px 40px 130px minmax(250px, 500px) 100px 100px 100px 100px 100px 100px;
+			grid-template-columns: 30px 40px minmax(250px, 500px) 100px 100px 100px 100px 100px 100px;
 			align-items: center;
 			border-bottom: 2px solid rgb(173, 173, 173);
 			color: '#a5a5a6';
@@ -34,7 +34,7 @@
 
 			.list-item {
 				display: grid;
-				grid-template-columns: 30px 40px 130px minmax(250px, 500px) 100px 100px 100px 100px 100px 100px;
+				grid-template-columns: 30px 40px minmax(250px, 500px) 100px 100px 100px 100px 100px 100px;
 
 				align-self: center;
 				border-bottom: 1px solid #e0d9d9;
@@ -245,7 +245,7 @@
 
 .main-add {
 	display: grid;
-	grid-template-columns: 2fr minmax(350px, 450px);
+	grid-template-columns: 2fr minmax(290px, 400px);
 
 	background-color: #7e8bb1;
 

@@ -156,7 +156,7 @@ export class CustomerAccountsStatementPage implements OnInit {
 					let missingcustomers = this.customer_lis.filter((o) => !this.statementdata.some((i) => i.id === o.id));
 
 					var newArray = [...this.statementdata, ...missingcustomers];
-					debugger;
+
 					this.statementdata = [];
 					this.statementdata = newArray.sort((a, b) => a.name.localeCompare(b.name));
 				}

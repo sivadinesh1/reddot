@@ -17,6 +17,7 @@ import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-retur
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-print.component';
 import * as xlsx from 'xlsx';
+import { ConvertToSaleDialogComponent } from 'src/app/components/convert-to-sale-dialog/convert-to-sale-dialog.component';
 
 @Component({
 	selector: 'app-search-stock-issues',
@@ -86,6 +87,8 @@ export class SearchStockIssuesPage implements OnInit {
 	deleteAccess;
 
 	arr: Array<any>;
+
+	color = 'accent';
 
 	// new FormControl({value: '', disabled: true});
 	constructor(
@@ -495,5 +498,70 @@ export class SearchStockIssuesPage implements OnInit {
 		});
 
 		xlsx.writeFile(wb1, fileName);
+	}
+
+	async presentConvertSaleConfirm(item) {
+		const alert = await this.alertController.create({
+			header: 'Confirm!',
+			message: 'This change cannot be rolled back. Are you sure?',
+			buttons: [
+				{
+					text: 'Cancel',
+					role: 'cancel',
+					cssClass: 'secondary',
+					handler: (blah) => {
+						console.log('Confirm Cancel: blah');
+					},
+				},
+				{
+					text: 'Convert to sale',
+					handler: () => {
+						console.log('Confirm Okay');
+
+						this.convertToSale(item);
+					},
+				},
+			],
+		});
+
+		await alert.present();
+	}
+
+	convertToSale(item) {
+		// pass sale id and call backend
+		// refresh the page with latest values (invoice # and inv type)
+		debugger;
+		this._commonApiService
+			.convertToSale({
+				center_id: this.userdata.center_id,
+				sales_id: item.id,
+				old_invoice_no: item.invoice_no,
+				old_stock_issued_date: item.invoice_date,
+				customer_id: item.customer_id,
+				net_total: item.net_total,
+			})
+			.subscribe((data: any) => {
+				console.log('object');
+
+				if (data.body.result === 'success') {
+					this.convertToInvoiceSuccess(data.body.invoiceNo, moment().format('DD-MM-YYYY'));
+				}
+			});
+	}
+
+	convertToInvoiceSuccess(invoice_id, invoice_date) {
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '400px';
+
+		dialogConfig.data = { invoiceid: invoice_id, invoicedate: invoice_date };
+
+		const dialogRef = this._dialog.open(ConvertToSaleDialogComponent, dialogConfig);
+
+		dialogRef.afterClosed().subscribe((data) => {
+			console.log('The dialog was closed');
+			this._router.navigateByUrl('/home/search-sales');
+		});
 	}
 }

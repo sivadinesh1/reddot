@@ -45,6 +45,7 @@
 			</thead>
 			<tbody>
 				<tr *ngFor="let item of resultList ? resultList : []; let idx = index" class="list-item plain-row-color-nohover">
+					<!-- cell 1 -->
 					<td *ngIf="item.module === 'Sale'" style="text-align: left; color: blue; cursor: pointer">
 						<span (click)="openDialog(item.module, item.invoice_no, item.sale_id, item.purchase_id, item.customer_id, item.vendor_id)">
 							{{ item?.invoice_no }}
@@ -55,15 +56,21 @@
 							{{ item?.pur_inv_no }}
 						</span>
 					</td>
+					<td *ngIf="item.module === 'Product'" style="text-align: left; color: blue; cursor: pointer">
+						<span>
+							{{ '-' }}
+						</span>
+					</td>
 					<td *ngIf="item.module === 'SaleReturn'" style="text-align: left; color: blue; cursor: pointer">
 						<span (click)="openDialog(item.module, item.invoice_no, item.sale_id, item.purchase_id, item.customer_id, item.vendor_id)">
 							{{ item?.credit_note_no }}
 						</span>
 					</td>
-
+					<!-- cell 2 -->
 					<td *ngIf="item.module === 'Purchase'" style="text-align: left">{{ item?.pur_invoice_date }}</td>
 					<td *ngIf="item.module === 'Sale'" style="text-align: left">{{ item?.sale_invoice_date }}</td>
 					<td *ngIf="item.module === 'SaleReturn'" style="text-align: left">{{ item?.sale_return_date }}</td>
+					<td *ngIf="item.module === 'Product'" style="text-align: left">{{ '-' }}</td>
 
 					<td *ngIf="item.module === 'Purchase'" style="text-align: left">
 						{{ item.vendor_name }}
@@ -78,10 +85,15 @@
 						{{ item.sale_return_customer_name }}
 					</td>
 
+					<td *ngIf="item.module === 'Product'" style="text-align: left">
+						{{ 'MRP edit / Product' }}
+					</td>
+					<!-- cell 3 -->
 					<td *ngIf="item.module === 'Purchase'" style="text-align: left">Purchase</td>
 					<td *ngIf="item.module === 'Sale'" style="text-align: left">Sale</td>
 					<td *ngIf="item.module === 'SaleReturn'" style="text-align: left">Sale Return</td>
-
+					<td *ngIf="item.module === 'Product'" style="text-align: left">Product</td>
+					<!-- cell 4 -->
 					<td *ngIf="item?.module === 'Purchase'" style="text-align: right">
 						<span>
 							{{ item?.txn_qty }}
@@ -94,6 +106,13 @@
 							{{ item?.txn_qty }}
 							<span *ngIf="item?.action_type === 'Mod/Del'">({{ item?.action_type }})</span>
 							<span *ngIf="item?.action_type === 'Edited'">({{ item?.action_type }})</span>
+						</span>
+					</td>
+
+					<td *ngIf="item?.module === 'Product'" style="text-align: right">
+						<span>
+							{{ item?.txn_qty }}
+							<span *ngIf="item?.action_type === 'MRP Change'">({{ item?.action_type }})</span>
 						</span>
 					</td>
 

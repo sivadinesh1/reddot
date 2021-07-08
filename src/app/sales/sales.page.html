@@ -2,7 +2,7 @@
 	<div class="screen-header">
 		<div style="font-size: 18px">&nbsp;</div>
 		<div>
-			<span style="padding: 10px; background-color: dimgray; font-size: 16px; color: #fff; font-weight: 400">
+			<span style="padding: 10px; background-color: royalblue; font-size: 16px; color: #fff; font-weight: 400">
 				{{this.submitForm.value.invoicetype === 'gstinvoice' ? "GST Invoice": "Stock Issue"}}
 			</span>
 		</div>
@@ -211,7 +211,7 @@
 					<div class="item1 headstyl-center txt-center-align">#</div>
 					<div class="item1 headstyl-center txt-center-align">&nbsp;</div>
 					<div class="item2 headstyl-left">Items Code</div>
-					<div class="item2 headstyl-left">Item Description</div>
+					<!-- <div class="item2 headstyl-left">Item Description</div> -->
 
 					<div class="item3 headstyl-right">Qty</div>
 					<div class="item3 headstyl-right">MRP</div>
@@ -240,10 +240,11 @@
 							style="color: rgb(2, 2, 193); cursor: pointer"
 							(click)="showInventoryReportsDialog(item.product_code, item.product_id)"
 						>
-							{{item.product_code}}
+							<div>{{item.product_code}} </div>
+							<div>{{item.product_desc}}</div>
 						</div>
-
-						<div class="item2">{{item.product_desc}}</div>
+						<!-- <div>&nbsp;</div> -->
+						<!-- <div class="item2">{{item.product_desc}}</div> -->
 
 						<div style="text-align: right" class="num-format-cell-style">
 							<mat-form-field style="margin-bottom: -1.25em; width: 80px; text-align: right">
@@ -609,7 +610,7 @@
 
 					&nbsp;
 
-					<button
+					<!-- <button
 						*ngIf="((submitForm.get('status').value === 'D') && (selInvType === 'stockissue')) "
 						style="border-radius: 0px"
 						appPreventDoubleClick
@@ -624,7 +625,7 @@
 						tabindex="17"
 					>
 						Convert to Sale Invoice
-					</button>
+					</button> -->
 				</div>
 			</div>
 		</ng-container>

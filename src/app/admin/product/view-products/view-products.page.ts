@@ -1,26 +1,26 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core'
-import { CommonApiService } from 'src/app/services/common-api.service'
-import { ActivatedRoute, Router } from '@angular/router'
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
+import { CommonApiService } from 'src/app/services/common-api.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { AuthenticationService } from '../../../services/authentication.service'
-import { filter, tap } from 'rxjs/operators'
+import { AuthenticationService } from '../../../services/authentication.service';
+import { filter, tap } from 'rxjs/operators';
 
-import { User } from '../../../models/User'
-import { MatDialogConfig, MatDialog } from '@angular/material/dialog'
+import { User } from '../../../models/User';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 
-import { ProductAddDialogComponent } from 'src/app/components/products/product-add-dialog/product-add-dialog.component'
+import { ProductAddDialogComponent } from 'src/app/components/products/product-add-dialog/product-add-dialog.component';
 
-import { MatPaginator } from '@angular/material/paginator'
-import { MatTableDataSource } from '@angular/material/table'
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
-import { MatSort } from '@angular/material/sort'
-import { Observable } from 'rxjs'
-import { Product } from 'src/app/models/Product'
-import { ProductEditDialogComponent } from 'src/app/components/products/product-edit-dialog/product-edit-dialog.component'
-import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component'
-import { MatSnackBar } from '@angular/material/snack-bar'
-import * as xlsx from 'xlsx'
-import * as moment from 'moment'
+import { MatSort } from '@angular/material/sort';
+import { Observable } from 'rxjs';
+import { Product } from 'src/app/models/Product';
+import { ProductEditDialogComponent } from 'src/app/components/products/product-edit-dialog/product-edit-dialog.component';
+import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import * as xlsx from 'xlsx';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-view-products',
@@ -30,27 +30,27 @@ import * as moment from 'moment'
 	encapsulation: ViewEncapsulation.None,
 })
 export class ViewProductsPage implements OnInit {
-	productinfo: any
+	productinfo: any;
 
-	center_id: any
+	center_id: any;
 
-	pcount: any
-	pageLength: any
-	isTableHasData = false
+	pcount: any;
+	pageLength: any;
+	isTableHasData = false;
 
-	userdata$: Observable<User>
-	userdata: any
+	userdata$: Observable<User>;
+	userdata: any;
 
-	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator
-	@ViewChild(MatSort, { static: true }) sort: MatSort
+	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+	@ViewChild(MatSort, { static: true }) sort: MatSort;
 
-	@ViewChild('epltable', { static: false }) epltable: ElementRef
+	@ViewChild('epltable', { static: false }) epltable: ElementRef;
 
-	displayedColumns: string[] = ['productcode', 'description', 'name', 'rackno', 'avlstock', 'mrp', 'actions']
-	dataSource = new MatTableDataSource<Product>()
+	displayedColumns: string[] = ['productcode', 'description', 'name', 'rackno', 'avlstock', 'mrp', 'actions'];
+	dataSource = new MatTableDataSource<Product>();
 
-	tempsearchstring = ''
-	mrp_flag = false
+	tempsearchstring = '';
+	mrp_flag = false;
 
 	constructor(
 		private _cdr: ChangeDetectorRef,
@@ -61,101 +61,102 @@ export class ViewProductsPage implements OnInit {
 		private _router: Router,
 		private _authservice: AuthenticationService,
 	) {
-		this.userdata$ = this._authservice.currentUser
+		this.userdata$ = this._authservice.currentUser;
 		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
-			this.userdata = data
-			this.center_id = this.userdata.center_id
+			this.userdata = data;
+			this.center_id = this.userdata.center_id;
 
-			this._cdr.markForCheck()
-		})
+			this._cdr.markForCheck();
+		});
 
 		this._route.params.subscribe((params) => {
-			this.tempsearchstring = ''
+			this.tempsearchstring = '';
 			if (this.userdata !== undefined) {
-				this.reset()
+				this.reset();
 			}
-		})
+		});
 	}
 
 	ngOnInit() {
-		this.dataSource.paginator = this.paginator
+		this.dataSource.paginator = this.paginator;
 	}
 
 	addProduct() {
-		this._router.navigate([`/home/product/add`])
+		this._router.navigate([`/home/product/add`]);
 	}
 
 	editProduct(item) {
-		this._router.navigateByUrl(`/home/product/edit/${this.center_id}/${item.product_id}`)
+		this._router.navigateByUrl(`/home/product/edit/${this.center_id}/${item.product_id}`);
 	}
 
 	ionViewDidEnter() {}
 
 	openDialog(searchstring): void {
 		this._commonApiService.getProductInfo({ centerid: this.center_id, searchstring: searchstring }).subscribe((data: any) => {
-			this.tempsearchstring = searchstring
+			this.tempsearchstring = searchstring;
 
 			// DnD - code to add a "key/Value" in every object of array
 			this.dataSource.data = data.body.map((el) => {
-				var o = Object.assign({}, el)
-				o.isExpanded = false
-				return o
-			})
+				var o = Object.assign({}, el);
+				o.isExpanded = false;
+				return o;
+			});
 
-			this.dataSource.sort = this.sort
-			this.pageLength = data.body.length
+			this.dataSource.sort = this.sort;
+			this.pageLength = data.body.length;
 
 			if (data.body.length === 0) {
-				this.isTableHasData = false
+				this.isTableHasData = false;
 			} else {
-				this.isTableHasData = true
+				this.isTableHasData = true;
 			}
 
 			if (searchstring.length === 0) {
-				this.reset()
-				this.isTableHasData = false
+				this.reset();
+				this.isTableHasData = false;
 			}
 
-			this._cdr.markForCheck()
-		})
+			this._cdr.markForCheck();
+		});
 	}
 
 	reset() {
-		this.dataSource.data = []
-		this.pageLength = 0
-		this.isTableHasData = false
+		this.dataSource.data = [];
+		this.pageLength = 0;
+		this.isTableHasData = false;
 	}
 
 	add() {
-		const dialogConfig = new MatDialogConfig()
-		dialogConfig.disableClose = true
-		dialogConfig.autoFocus = true
-		dialogConfig.width = '500px'
-		dialogConfig.height = '100%'
-		dialogConfig.position = { top: '0', right: '0' }
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '500px';
+		dialogConfig.height = '100%';
+		dialogConfig.position = { top: '0', right: '0' };
+		dialogConfig.panelClass = 'app-full-bleed-dialog';
 
-		const dialogRef = this._dialog.open(ProductAddDialogComponent, dialogConfig)
+		const dialogRef = this._dialog.open(ProductAddDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
 			.pipe(
 				filter((val) => !!val),
 				tap(() => {
-					this._cdr.markForCheck()
+					this._cdr.markForCheck();
 				}),
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
-					this.openSnackBar('Product added successfully', '')
+					this.openSnackBar('Product added successfully', '');
 				}
-			})
+			});
 	}
 
 	checked(event) {
 		if (event.checked) {
-			this.mrp_flag = true
+			this.mrp_flag = true;
 		} else {
-			this.mrp_flag = false
+			this.mrp_flag = false;
 		}
 	}
 
@@ -163,18 +164,18 @@ export class ViewProductsPage implements OnInit {
 		this._snackBar.open(message, action, {
 			duration: 2000,
 			panelClass: ['mat-toolbar', 'mat-primary'],
-		})
+		});
 	}
 	edit(product: Product) {
-		const dialogConfig = new MatDialogConfig()
-		dialogConfig.disableClose = true
-		dialogConfig.autoFocus = true
-		dialogConfig.width = '500px'
-		dialogConfig.height = '100%'
-		dialogConfig.data = product
-		dialogConfig.position = { top: '0', right: '0' }
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '500px';
+		dialogConfig.height = '100%';
+		dialogConfig.data = product;
+		dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(ProductEditDialogComponent, dialogConfig)
+		const dialogRef = this._dialog.open(ProductEditDialogComponent, dialogConfig);
 
 		dialogRef
 			.afterClosed()
@@ -182,26 +183,26 @@ export class ViewProductsPage implements OnInit {
 				filter((val) => !!val),
 				tap(() => {
 					// do nothing
-					this.openDialog(this.tempsearchstring)
-					this._cdr.markForCheck()
+					this.openDialog(this.tempsearchstring);
+					this._cdr.markForCheck();
 				}),
 			)
 			.subscribe((data: any) => {
 				if (data === 'success') {
-					this.openSnackBar('Product edited successfully', '')
+					this.openSnackBar('Product edited successfully', '');
 				}
-			})
+			});
 	}
 
 	async exportCompletedPurchaseToExcel() {
-		const fileName = `Full_Stock_List_${moment().format('DD-MM-YYYY')}.xlsx`
+		const fileName = `Full_Stock_List_${moment().format('DD-MM-YYYY')}.xlsx`;
 
 		this._commonApiService.fetchFullProductInventoryReports({ centerid: this.center_id, mrp_split: this.mrp_flag }).subscribe((reportdata: any) => {
-			let reportData = JSON.parse(JSON.stringify(reportdata.body))
+			let reportData = JSON.parse(JSON.stringify(reportdata.body));
 
-			const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([])
-			const wb1: xlsx.WorkBook = xlsx.utils.book_new()
-			xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1')
+			const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+			const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+			xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
 
 			//then add ur Title txt
 			xlsx.utils.sheet_add_json(
@@ -215,16 +216,16 @@ export class ViewProductsPage implements OnInit {
 					skipHeader: true,
 					origin: 'A1',
 				},
-			)
+			);
 
 			//start frm A2 here
 			xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
 				skipHeader: false,
 				origin: 'A2',
-			})
+			});
 
-			xlsx.writeFile(wb1, fileName)
-		})
+			xlsx.writeFile(wb1, fileName);
+		});
 	}
 }
 

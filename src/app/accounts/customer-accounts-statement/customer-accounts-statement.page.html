@@ -97,7 +97,8 @@
 				position: relative;
 			"
 		>
-			<div style="font-size: 14px; color: grey; align-self: flex-end"> Matching Records: {{this.statementdata.length}} </div>&nbsp;&nbsp;&nbsp;&nbsp;
+			<div style="font-size: 18px; color: #5d5f80; align-self: flex-end"> Matching Records: {{this.statementdata.length}} </div
+			>&nbsp;&nbsp;&nbsp;&nbsp;
 			<div>
 				<div style="font-size: 13px; color: grey"> Opening Balance </div>
 				<div style="font-size: 18px"> {{openingbalance | currency: "INR"}} </div> </div
@@ -183,12 +184,12 @@
 				</div>
 			</div>
 
-			<table style="width: 80%; display: grid; margin: 0 auto; padding-top: 32px">
+			<table style="width: 90%; display: grid; margin: 0 auto; padding-top: 32px">
 				<thead>
 					<tr class="header1">
 						<th style="text-align: left">S.No</th>
-						<th style="text-align: left">Ref Date</th>
 						<th style="text-align: left">Customer</th>
+						<th style="text-align: left">Ref Date</th>
 						<th style="text-align: left">Location</th>
 						<th style="text-align: left">Txn Type</th>
 						<th style="text-align: left">Reference</th>
@@ -200,12 +201,23 @@
 					<tr *ngFor="let item of statementdata ? statementdata : []; let idx = index" class="list-item1 row-color">
 						<ng-content *ngIf="check(item)"></ng-content>
 
-						<td style="grid-column: 1/-1; padding: 16px 0px" *ngIf="newrow">
-							<b>{{item.name}}</b>
-							Opening Balance:{{getCurrentCustomerOB(item)}} &nbsp;&nbsp;&nbsp;&nbsp; Closing Balance:{{getCurrentCustomerCB(item)}}
+						<td style="grid-column: 1/-1">
+							<div
+								style="display: grid; grid-template-columns: 1fr 1fr; padding: 8px 0px; margin-bottom: 6px; background-color: aliceblue"
+								*ngIf="newrow"
+							>
+								<div style="font-size: 16px; font-weight: 400; padding-left: 8px"> {{item.name}} </div>
+								<div style="justify-self: right">
+									<span style="font-size: 15px; font-weight: 400; padding-right: 16px; color: mediumblue">
+										<span style="opacity: 0.7">Opening Balance:&nbsp;</span>{{getCurrentCustomerOB(item) | currency: "INR"}}
+									</span>
+									<span style="font-size: 15px; font-weight: 400; padding-right: 16px; color: mediumblue">
+										<span style="opacity: 0.7">Closing Balance:&nbsp;</span>{{getCurrentCustomerCB(item) | currency: "INR"}}
+									</span>
+								</div>
+							</div>
 						</td>
-
-						<td style="text-align: left">{{ idx + 1 }}</td>
+						<td style="text-align: left; padding-left: 8px">{{ idx + 1 }}</td>
 						<td>{{ item.name }}</td>
 						<td>{{ item.ref_date_f | date: 'dd/MMM/yyyy' }}</td>
 
@@ -214,7 +226,7 @@
 						<td>{{ item.refn }}</td>
 
 						<td style="text-align: right">{{ item.invoice_amount | currency: "INR" }}</td>
-						<td style="text-align: right"> {{ +item?.Received_Amount | currency: "INR" }} </td>
+						<td style="text-align: right; padding-right: 8px"> {{ +item?.Received_Amount | currency: "INR" }} </td>
 					</tr>
 				</tbody>
 			</table>

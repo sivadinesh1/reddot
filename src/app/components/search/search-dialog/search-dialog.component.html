@@ -32,7 +32,8 @@
 			<div class="col">Product Info</div>
 			<div class="col">Brand</div>
 			<div class="col">Rack Info</div>
-			<div class="col txt-right-align">Available Qty</div>
+			<div class="col txt-right-align">Available Stock</div>
+			<div class="col txt-right-align">Committed Stock</div>
 			<div class="col txt-right-align">MRP</div>
 		</div>
 		<div class="row2">
@@ -54,6 +55,9 @@
 					<div class="item3">{{ item.rackno }}</div>
 					<div class="item3" style="text-align: right">
 						{{ item.available_stock }}
+					</div>
+					<div class="item3" style="text-align: right">
+						{{ item.true_stock - item.available_stock }}
 					</div>
 					<div class="item3" style="text-align: right">{{ item.mrp }}</div>
 				</div>

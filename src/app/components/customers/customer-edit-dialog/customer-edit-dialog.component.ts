@@ -26,7 +26,7 @@ export class CustomerEditDialogComponent implements OnInit {
 	isLinear = true;
 	customer: Customer;
 	statesdata: any;
-	cexists: any;
+	cexists = false;
 	responseMsg: any;
 
 	constructor(
@@ -38,7 +38,7 @@ export class CustomerEditDialogComponent implements OnInit {
 		private _authservice: AuthenticationService,
 		private _loadingService: LoadingService,
 		@Inject(MAT_DIALOG_DATA) customer: Customer,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
 	) {
 		const currentUser = this._authservice.currentUserValue;
 		this.center_id = currentUser.center_id;

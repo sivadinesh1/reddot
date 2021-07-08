@@ -1,35 +1,16 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectorRef,
-	ViewChild,
-	Inject,
-	ChangeDetectionStrategy,
-	ElementRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, Inject, ChangeDetectionStrategy, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from '../../../services/common-api.service';
-import {
-	Validators,
-	FormBuilder,
-	AbstractControl,
-	NgForm,
-} from '@angular/forms';
+import { Validators, FormBuilder, AbstractControl, NgForm } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
-import {
-	GSTN_REGEX,
-	country,
-	PINCODE_REGEX,
-	EMAIL_REGEX,
-} from 'src/app/util/helper/patterns';
+import { GSTN_REGEX, country, PINCODE_REGEX, EMAIL_REGEX } from 'src/app/util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Customer } from 'src/app/models/Customer';
 import { LoadingService } from '../../loading/loading.service';
 
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
 
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -60,24 +41,9 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 	responsemsg: any;
 	selectedRowIndex: any;
 
-	displayedColumns: string[] = [
-		'stat',
-		'address1',
-		'address2',
-		'district',
-		'state',
-		'pin',
-		'actions',
-		'delete',
-	];
-	dataSource = new MatTableDataSource<any>();
-
-	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-	@ViewChild(MatSort, { static: true }) sort: MatSort;
-
-	@ViewChild('epltable', { static: false }) epltable: ElementRef;
-
 	@ViewChild('myForm', { static: true }) myForm: NgForm;
+
+	dataRecords: any;
 
 	constructor(
 		private _cdr: ChangeDetectorRef,
@@ -89,7 +55,7 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 		private _snackBar: MatSnackBar,
 		private _loadingService: LoadingService,
 		@Inject(MAT_DIALOG_DATA) customer: Customer,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
 	) {
 		const currentUser = this._authservice.currentUserValue;
 		this.center_id = currentUser.center_id;
@@ -116,7 +82,6 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.dataSource.paginator = this.paginator;
 		this.init();
 	}
 
@@ -147,87 +112,87 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 	}
 
 	reloadAddresses() {
-		this._commonApiService
-			.getShippingAddressByCustomer(this.customer.id)
-			.subscribe((data: any) => {
-				// this.resultList = data;
-				// DnD - code to add a "key/Value" in every object of array
-				this.dataSource.data = data.map((el) => {
-					var o = Object.assign({}, el);
-					o.isExpanded = false;
-					return o;
-				});
+		this._commonApiService.getShippingAddressByCustomer(this.customer.id).subscribe((data: any) => {
+			this.dataRecords = data;
 
-				this.dataSource.sort = this.sort;
-				this.pageLength = data.length;
+			this.pageLength = data.length;
 
-				if (data.length === 0) {
-					this.isTableHasData = false;
-				} else {
-					this.isTableHasData = true;
-				}
+			if (data.length === 0) {
+				this.isTableHasData = false;
+			} else {
+				this.isTableHasData = true;
+			}
 
-				this._cdr.markForCheck();
-			});
+			this._cdr.markForCheck();
+		});
+	}
+
+	cancelUpdate() {
+		this.mode = 'add';
+		this.responsemsg = '';
+		this.myForm.resetForm();
+
+		this.reloadAddresses();
+
+		this.submitForm.patchValue({
+			customer_id: this.customer.id,
+			center_id: this.center_id,
+		});
 	}
 
 	onSubmit() {
-		const changes = this.submitForm.value;
-
 		if (!this.submitForm.valid) {
 			this.responsemsg = 'Mandatory fields missing!';
 			return false;
 		} else {
 			this.responsemsg = '';
 		}
-
+		console.log('dinesh ' + this.dataRecords);
+		debugger;
 		if (this.mode === 'add') {
-			const insertVendor$ = this._commonApiService.insertCustomerShippingAddress(
-				this.submitForm.value
-			);
-
-			this._loadingService
-				.showLoaderUntilCompleted(insertVendor$)
-				.subscribe((data: any) => {
-					this.responsemsg = '';
-					this.myForm.resetForm();
-					this.addSnackBar();
-					this.reloadAddresses();
-
-					this.submitForm.patchValue({
-						customer_id: this.customer.id,
-						center_id: this.center_id,
-					});
-				});
+			this.insertCustomerShippingAddress();
 		} else if (this.mode === 'update') {
-			const updateVendor$ = this._commonApiService.updateCustomerShippingAddress(
-				this.submitForm.value.id,
-				changes
-			);
-
-			this._loadingService
-				.showLoaderUntilCompleted(updateVendor$)
-				.subscribe((data: any) => {
-					this.responsemsg = '';
-					this.myForm.resetForm();
-					this.updateSnackBar();
-					this.reloadAddresses();
-
-					this.submitForm.patchValue({
-						customer_id: this.customer.id,
-						center_id: this.center_id,
-					});
-				});
+			this.updateCustomerShippingAddress();
 		}
+	}
+	insertCustomerShippingAddress() {
+		const insertVendor$ = this._commonApiService.insertCustomerShippingAddress(this.submitForm.value);
+
+		this._loadingService.showLoaderUntilCompleted(insertVendor$).subscribe((data: any) => {
+			this.responsemsg = '';
+			this.myForm.resetForm();
+			this.addSnackBar();
+			this.reloadAddresses();
+
+			this.submitForm.patchValue({
+				customer_id: this.customer.id,
+				center_id: this.center_id,
+			});
+		});
+	}
+
+	updateCustomerShippingAddress() {
+		const updateVendor$ = this._commonApiService.updateCustomerShippingAddress(this.submitForm.value.id, this.submitForm.value);
+
+		this._loadingService.showLoaderUntilCompleted(updateVendor$).subscribe((data: any) => {
+			this.responsemsg = '';
+			this.mode = 'add';
+			this.myForm.resetForm();
+			this.updateSnackBar();
+			this.reloadAddresses();
+
+			this.submitForm.patchValue({
+				customer_id: this.customer.id,
+				center_id: this.center_id,
+			});
+		});
 	}
 
 	inactivateCSA(element) {
-		this._commonApiService
-			.inactivateCSA({ id: element.id })
-			.subscribe((data: any) => {
-				this.deleteSnackBar();
-				this.init();
-			});
+		this._commonApiService.inactivateCSA({ id: element.id }).subscribe((data: any) => {
+			this.deleteSnackBar();
+			this.init();
+		});
 	}
 
 	internalEdit(elements) {
@@ -263,9 +228,7 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 
 @Component({
 	selector: 'update-snack-bar',
-	template: `<span class="snackbar">
-		Update shipping address successful !!!
-	</span>`,
+	template: `<span class="snackbar"> Update shipping address successful !!! </span>`,
 	styles: [
 		`
 			.snackbar {
@@ -278,9 +241,7 @@ export class UpdateSnackBarComponent {}
 
 @Component({
 	selector: 'add-snack-bar',
-	template: `<span class="snackbar">
-		Add shipping address successful !!!
-	</span>`,
+	template: `<span class="snackbar"> Add shipping address successful !!! </span>`,
 	styles: [
 		`
 			.snackbar {
@@ -293,9 +254,7 @@ export class AddSnackBarComponent {}
 
 @Component({
 	selector: 'delete-snack-bar',
-	template: `<span class="snackbar">
-		Deleting shipping address successful !!!
-	</span>`,
+	template: `<span class="snackbar"> Deleting shipping address successful !!! </span>`,
 	styles: [
 		`
 			.snackbar {

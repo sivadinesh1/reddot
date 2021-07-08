@@ -170,6 +170,7 @@ export class ProcessEnquiryPage implements OnInit {
 		});
 
 		this.searchProducts();
+		this.searchCustomers();
 	}
 
 	searchProducts() {
@@ -302,14 +303,14 @@ export class ProcessEnquiryPage implements OnInit {
 	}
 
 	searchCustomers() {
-		let search = '';
+		//let search = '';
 		this.submitForm.controls['customerctrl'].valueChanges
 			.pipe(
 				debounceTime(300),
 				tap(() => (this.isCLoading = true)),
 				switchMap((id) => {
 					console.log(id);
-					search = id;
+					//		search = id;
 					if (id != null && id.length >= 2) {
 						return this._commonApiService.getCustomerInfo({
 							centerid: this.userdata.center_id,

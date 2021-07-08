@@ -38,6 +38,8 @@ export class SearchDialogComponent implements OnInit {
 	}
 
 	openDialog(searchstring): void {
+		this.resultList = [];
+
 		if (this.searchByFlag === 'Item') {
 			this._commonApiService
 				.getProductInfo({ centerid: this.center_id, searchstring: searchstring, searchby: this.searchByFlag })

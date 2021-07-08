@@ -114,10 +114,10 @@
 </div>
 
 <mat-menu #menu="matMenu" yPosition="above" xPosition="before">
-	<button mat-menu-item>
+	<!-- <button mat-menu-item>
 		<mat-icon>person</mat-icon>
 		<span>Profile</span>
-	</button>
+	</button> -->
 	<button mat-menu-item [matMenuTriggerFor]="admin">
 		<span style="padding-right: 16px; vertical-align: middle">
 			<img src="../../assets/images/svg/manager.svg" width="24px" height="24px" style="vertical-align: middle" />
@@ -136,7 +136,7 @@
 
 <mat-menu #admin="matMenu">
 	<button mat-menu-item (click)="editCenter()">
-		<span>Center</span>
+		<span>Company</span>
 	</button>
 
 	<button mat-menu-item (click)="viewUsers()">

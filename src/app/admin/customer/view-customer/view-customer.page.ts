@@ -147,6 +147,7 @@ export class ViewCustomerPage implements OnInit {
 		dialogConfig.height = '100%';
 		dialogConfig.position = { top: '0', right: '0' };
 		dialogConfig.data = customer;
+		dialogConfig.panelClass = 'app-full-bleed-dialog';
 
 		const dialogRef = this._dialog.open(CustomerEditDialogComponent, dialogConfig);
 
@@ -176,7 +177,7 @@ export class ViewCustomerPage implements OnInit {
 	editShippingAddress(customer: Customer) {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
+		dialogConfig.autoFocus = false;
 		dialogConfig.width = '80%';
 		dialogConfig.height = '80%';
 		dialogConfig.data = customer;

@@ -32,7 +32,7 @@
 
 .header1 {
 	display: grid;
-	grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 110px 110px;
+	grid-template-columns: 40px 1fr 100px 1fr 100px 1fr 110px 110px;
 	padding: 10px;
 	font-size: 14px;
 	font-weight: 300;
@@ -42,8 +42,8 @@
 
 .list-item1 {
 	display: grid;
-	grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 110px 110px;
-	padding: 6px;
+	grid-template-columns: 40px 1fr 100px 1fr 100px 1fr 110px 110px;
+	padding: 8px 6px;
 	font-size: 12px;
 }
 
