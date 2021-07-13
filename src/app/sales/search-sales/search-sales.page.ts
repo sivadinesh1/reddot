@@ -197,6 +197,22 @@ export class SearchSalesPage implements OnInit {
 		this.search();
 	}
 
+	// const dateOffset = 24 * 60 * 60 * 1000 * 7;
+	// 	this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+
+	clear() {
+		const dateOffset = 24 * 60 * 60 * 1000 * 7;
+		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+
+		this.submitForm.patchValue({
+			customerid: ['all'],
+			customerctrl: 'All Customers',
+			fromdate: this.fromdate,
+			todate: new Date(),
+		});
+		this._cdr.markForCheck();
+	}
+
 	getPosts(event) {
 		this.submitForm.patchValue({
 			customerid: event.option.value.id,
@@ -204,7 +220,7 @@ export class SearchSalesPage implements OnInit {
 		});
 
 		this.tabIndex = 0;
-		this.search();
+		//	this.search();
 		this._cdr.markForCheck();
 	}
 
@@ -255,9 +271,9 @@ export class SearchSalesPage implements OnInit {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '400px';
+		dialogConfig.width = '600px';
 
-		dialogConfig.data = row.id;
+		dialogConfig.data = row;
 
 		const dialogRef = this._dialog.open(InvoiceSuccessComponent, dialogConfig);
 
@@ -284,14 +300,14 @@ export class SearchSalesPage implements OnInit {
 	toDateSelected($event) {
 		this.todate = $event.target.value;
 		this.tabIndex = 0;
-		this.search();
+		//	this.search();
 		this._cdr.markForCheck();
 	}
 
 	fromDateSelected($event) {
 		this.fromdate = $event.target.value;
 		this.tabIndex = 0;
-		this.search();
+		//this.search();
 		this._cdr.markForCheck();
 	}
 

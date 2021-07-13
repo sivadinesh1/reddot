@@ -135,7 +135,6 @@ export class SearchPurchasePage implements OnInit {
 	}
 
 	getPosts(event) {
-		debugger;
 		this.submitForm.patchValue({
 			vendorid: event.option.value.id,
 			vendorctrl: event.option.value.name,

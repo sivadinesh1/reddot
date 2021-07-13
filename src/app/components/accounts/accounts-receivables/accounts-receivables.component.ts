@@ -283,7 +283,7 @@ export class AccountsReceivablesComponent implements OnInit {
 				bankref: this.submitForm.value.accountarr[0].bankref,
 				customerid: this.customer.id,
 			};
-			debugger;
+
 			this._commonApiService.getPaymentBankRef(form).subscribe((data: any) => {
 				if (data.body.result[0].count > 0) {
 					// warning

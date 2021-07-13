@@ -530,7 +530,7 @@ export class SearchStockIssuesPage implements OnInit {
 	convertToSale(item) {
 		// pass sale id and call backend
 		// refresh the page with latest values (invoice # and inv type)
-		debugger;
+
 		this._commonApiService
 			.convertToSale({
 				center_id: this.userdata.center_id,

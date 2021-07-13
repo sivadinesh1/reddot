@@ -12,13 +12,14 @@
 		</div>
 		<div class="search_box">
 			<ion-searchbar
+				style="width: 300px"
 				autofocus
-				debounce="300"
+				debounce="400"
 				placeholder="{{ placeHolderTxt }}"
 				#mySearchbar
 				show-cancel-button="focus"
 				(ionClear)="reset()"
-				(ionInput)="openDialog($event.target.value)"
+				(ionChange)="openDialog($event.target.value)"
 			></ion-searchbar>
 		</div>
 		<div class="close">

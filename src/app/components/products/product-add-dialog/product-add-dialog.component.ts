@@ -126,19 +126,15 @@ export class ProductAddDialogComponent implements OnInit {
 			});
 		}
 
-		debugger;
 		this.checkAndAdd();
 	}
 
 	checkAndAdd() {
 		this.pexists = false;
-		debugger;
+
 		if (this.submitForm.value.product_code.length > 0) {
-			debugger;
 			this._commonApiService.isProdExists(this.submitForm.value.product_code, this.userdata.center_id).subscribe((data: any) => {
-				debugger;
 				if (data.result.length > 0) {
-					debugger;
 					if (data.result[0].id > 0) {
 						this.pexists = true;
 						this.temppcode = data.result[0];

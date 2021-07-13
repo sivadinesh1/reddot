@@ -116,7 +116,7 @@ export class LeftMenuComponent implements OnInit {
 			],
 		},
 		{
-			name: 'Products',
+			name: 'Products & Stock',
 			link: '/home/view-products',
 			icon: '/assets/images/svg/product.svg',
 		},

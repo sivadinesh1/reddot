@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map, filter } from 'rxjs/operators';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { isPlatformBrowser, } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
-import { Platform, } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 
 import { Storage } from '@ionic/storage';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -13,152 +13,126 @@ import { environment } from 'src/environments/environment';
 import { User } from '../models/User';
 import { CommonApiService } from 'src/app/services/common-api.service';
 
-
 @Injectable({
-    providedIn: 'root'
+	providedIn: 'root',
 })
 export class AuthenticationService {
+	private currentUserSubject = new BehaviorSubject<User>(null);
+	public currentUser: Observable<User> = this.currentUserSubject.asObservable();
 
-    private currentUserSubject = new BehaviorSubject<User>(null);
-    public currentUser: Observable<User> = this.currentUserSubject.asObservable();
+	private currentMenuSubject = new BehaviorSubject<any>(null);
+	public currentMenu: Observable<any> = this.currentMenuSubject.asObservable();
 
+	private currentPermisssionSubject = new BehaviorSubject<any>(null);
+	public currentPermisssion: Observable<any> = this.currentPermisssionSubject.asObservable();
 
-    private currentMenuSubject = new BehaviorSubject<any>(null);
-    public currentMenu: Observable<any> = this.currentMenuSubject.asObservable();
+	restApiUrl = environment.restApiUrl;
 
-    private currentPermisssionSubject = new BehaviorSubject<any>(null);
-    public currentPermisssion: Observable<any> = this.currentPermisssionSubject.asObservable();
+	storagemode: any;
+	device: any;
+	errormsg = 'Something went wrong. Contact administrator.';
 
-    restApiUrl = environment.restApiUrl;
+	token: any;
 
-    storagemode: any;
-    device: any;
-    errormsg = 'Something went wrong. Contact administrator.';
+	constructor(
+		private httpClient: HttpClient,
+		private plt: Platform,
+		private storage: Storage,
+		private _commonApiService: CommonApiService,
+		private nativeStorage: NativeStorage,
 
-    token: any;
+		@Inject(PLATFORM_ID) private platformId: any,
+	) {
+		this.plt.ready().then(async () => {
+			if (isPlatformBrowser(this.platformId)) {
+				await this.storage.create();
+				this.storagemode = this.storage;
+				this.device = 'browser';
+			} else {
+				this.storagemode = this.nativeStorage;
+				this.device = 'mobile';
+			}
 
+			this.reloadLocalStorage();
+		});
+	}
 
+	async reloadLocalStorage() {
+		let tempCurrentUser = await this.getLocalStoreItems('currentUser');
+		let tempMenuUser = await this.getLocalStoreItems('currentMenu');
+		let tempCurrentPermission = await this.getLocalStoreItems('currentPermission');
 
-    constructor(
-        private httpClient: HttpClient, private plt: Platform,
-        private storage: Storage, private _commonApiService: CommonApiService,
-        private nativeStorage: NativeStorage,
+		if (tempCurrentUser) {
+			this.currentUserSubject.next(JSON.parse(tempCurrentUser));
+		}
+		if (tempMenuUser) {
+			this.currentMenuSubject.next(tempMenuUser);
+		}
 
-        @Inject(PLATFORM_ID) private platformId: any
-    ) {
-        this.plt.ready().then(async () => {
+		if (tempCurrentPermission) {
+			this.currentPermisssionSubject.next(tempCurrentPermission);
+		}
+	}
 
-            if (isPlatformBrowser(this.platformId)) {
-                this.storagemode = this.storage;
-                this.device = 'browser';
-            } else {
-                this.storagemode = this.nativeStorage;
-                this.device = 'mobile';
-            }
+	async setLocalStoreItems(key, value) {
+		await this.storagemode.set(key, value);
+	}
 
-            this.reloadLocalStorage();
+	async getLocalStoreItems(key): Promise<string> {
+		return await this.storagemode.get(key);
+	}
 
-        });
-    }
+	register(username, password) {
+		return this.httpClient.post<any>(`${this.restApiUrl}/api/register`, { username, password }).pipe(
+			map(async (userData: any) => {
+				await this.storagemode.clear();
 
+				let tokenStr = 'Bearer ' + userData.additionalinfo;
 
-    async reloadLocalStorage() {
-        let tempCurrentUser = await this.getLocalStoreItems('currentUser');
-        let tempMenuUser = await this.getLocalStoreItems('currentMenu');
-        let tempCurrentPermission = await this.getLocalStoreItems('currentPermission');
+				await this.storagemode.set('username', username);
+				await this.storagemode.set('token', tokenStr);
+				await this.storagemode.set('currentUser', JSON.stringify(userData.obj));
 
+				this.currentUserSubject.next(userData.obj);
 
-        if (tempCurrentUser) {
-            this.currentUserSubject.next(JSON.parse(tempCurrentUser));
-        }
-        if (tempMenuUser) {
-            this.currentMenuSubject.next(tempMenuUser);
-        }
+				return userData;
+			}),
+		);
+	}
 
-        if (tempCurrentPermission) {
-            this.currentPermisssionSubject.next(tempCurrentPermission);
-        }
+	async logOut() {
+		await this.storagemode.clear();
+		this.currentUserSubject.next(null);
+	}
 
-    }
+	public get currentUserValue(): User {
+		return this.currentUserSubject.value;
+	}
 
-    setLocalStoreItems(key, value) {
-        this.storagemode.set(key, value);
-    }
+	login(username: string, password: string) {
+		return this.httpClient.post<any>(`${this.restApiUrl}/api/auth/login`, { username, password }).pipe(
+			map(async (data: any) => {
+				if (data.result === 'success') {
+					await this.storagemode.clear();
 
-    getLocalStoreItems(key): Promise<string> {
-        return this.storagemode.get(key);
-    }
+					await this.storagemode.set('currentUser', JSON.stringify(data.obj));
 
-    register(username, password) {
+					this.currentUserSubject.next(data.obj);
+				}
+				return data;
+			}),
+		);
+	}
 
-        return this.httpClient.post<any>(`${this.restApiUrl}/api/register`, { username, password }).pipe(
-            map(
-                userData => {
-                    this.storagemode.clear();
+	fetchPermissions(center_id: string, role_id: string) {
+		this._commonApiService.fetchPermissions(center_id, role_id).subscribe(async (data) => {
+			await this.storagemode.set('currentPermission', JSON.stringify(data));
+			this.currentPermisssionSubject.next(data);
+		});
+	}
 
-                    let tokenStr = 'Bearer ' + userData.additionalinfo;
-
-                    this.storagemode.set('username', username);
-                    this.storagemode.set('token', tokenStr);
-                    this.storagemode.set('currentUser', JSON.stringify(userData.obj));
-
-                    this.currentUserSubject.next(userData.obj);
-
-
-                    return userData;
-                }
-            )
-
-        );
-    }
-
-    async logOut() {
-        await this.storagemode.clear();
-        this.currentUserSubject.next(null);
-    }
-
-
-    public get currentUserValue(): User {
-        return this.currentUserSubject.value;
-    }
-
-
-    login(username: string, password: string) {
-
-        return this.httpClient.post<any>(`${this.restApiUrl}/api/auth/login`, { username, password })
-            .pipe(map(data => {
-
-
-                if (data.result === 'success') {
-                    this.storagemode.clear();
-
-                    this.storagemode.set('currentUser', JSON.stringify(data.obj));
-
-                    this.currentUserSubject.next(data.obj);
-                }
-                return data;
-            }));
-    }
-
-    fetchPermissions(center_id: string, role_id: string) {
-        this._commonApiService.fetchPermissions(center_id, role_id)
-            .subscribe((data) => {
-                this.storagemode.set('currentPermission', JSON.stringify(data));
-                this.currentPermisssionSubject.next(data);
-            });
-    }
-
-
-    setCurrentMenu(clickedMenu) {
-        this.storagemode.set('currentMenu', clickedMenu);
-        this.currentMenuSubject.next(clickedMenu);
-    }
-
+	async setCurrentMenu(clickedMenu) {
+		await this.storagemode.set('currentMenu', clickedMenu);
+		this.currentMenuSubject.next(clickedMenu);
+	}
 }
-
-
-
-
-
-
-

@@ -179,7 +179,7 @@ export class ProcessEnquiryPage implements OnInit {
 			.pipe(
 				debounceTime(300),
 				tap(() => (this.isLoading = true)),
-				switchMap((id) => {
+				switchMap((id: any) => {
 					search = id;
 					if (id != null && id.length >= 0) {
 						return this._commonApiService.getProductInfo({
@@ -308,7 +308,7 @@ export class ProcessEnquiryPage implements OnInit {
 			.pipe(
 				debounceTime(300),
 				tap(() => (this.isCLoading = true)),
-				switchMap((id) => {
+				switchMap((id: any) => {
 					console.log(id);
 					//		search = id;
 					if (id != null && id.length >= 2) {

@@ -79,7 +79,7 @@ export class BrandDiscountsComponent implements OnInit {
 		private _commonApiService: CommonApiService,
 	) {
 		this.elements = elements[0];
-		debugger;
+
 		const currentUser = this._authservice.currentUserValue;
 		this.center_id = currentUser.center_id;
 
@@ -145,7 +145,6 @@ export class BrandDiscountsComponent implements OnInit {
 	}
 
 	internalEdit(elements) {
-		debugger;
 		this.submitForm1.reset();
 		this.responsemsg = '';
 
@@ -183,7 +182,6 @@ export class BrandDiscountsComponent implements OnInit {
 	}
 
 	submit(action) {
-		debugger;
 		if (!this.submitForm1.valid) {
 			this.responsemsg = 'All Mandatory Fields';
 			return false;
@@ -228,7 +226,6 @@ export class BrandDiscountsComponent implements OnInit {
 	}
 
 	defaultEdit() {
-		debugger;
 		if (!this.submitForm.valid) {
 			this.responsemsg1 = 'All Mandatory Fields';
 			return false;
@@ -237,9 +234,8 @@ export class BrandDiscountsComponent implements OnInit {
 		}
 
 		// update discount table, currently only one set of values.
-		debugger;
+
 		this._commonApiService.updateDefaultCustomerDiscount(this.submitForm.value).subscribe((data: any) => {
-			debugger;
 			// if successfully update
 			if (data.body === 1) {
 				this.openSnackBar('Default Discounts Updated, Successfully', '');

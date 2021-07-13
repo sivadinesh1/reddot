@@ -148,7 +148,7 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 			this.responsemsg = '';
 		}
 		console.log('dinesh ' + this.dataRecords);
-		debugger;
+
 		if (this.mode === 'add') {
 			this.insertCustomerShippingAddress();
 		} else if (this.mode === 'update') {

@@ -1,9 +1,4 @@
-import {
-	Component,
-	OnInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -12,7 +7,8 @@ import { PhoneValidator } from '../../util/validators/phone.validator';
 import { AuthenticationService } from '../../services/authentication.service';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
-
+//import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
+import { lastValueFrom } from 'rxjs';
 @Component({
 	selector: 'app-login',
 	templateUrl: './login.page.html',
@@ -51,29 +47,17 @@ export class LoginPage implements OnInit {
 		private _cdr: ChangeDetectorRef,
 		private _commonApiService: CommonApiService,
 		private authenticationService: AuthenticationService,
-		private deviceService: DeviceDetectorService
+		private deviceService: DeviceDetectorService,
 	) {
 		// displays sample phone # in UI, placeholder="{{ this.countries[0].sample_phone }}"
-		this.countries = [
-			new CountryPhone('IN', 'India'),
-			new CountryPhone('US', 'United States'),
-		];
+		this.countries = [new CountryPhone('IN', 'India'), new CountryPhone('US', 'United States')];
 
 		const country = new FormControl(this.countries[0], Validators.required);
 
 		this.loginForm = new FormGroup({
-			phone: new FormControl(
-				'',
-				Validators.compose([
-					Validators.required,
-					PhoneValidator.invalidCountryPhone(country),
-				])
-			),
+			phone: new FormControl('', Validators.compose([Validators.required, PhoneValidator.invalidCountryPhone(country)])),
 
-			password: new FormControl(
-				'',
-				Validators.compose([Validators.minLength(5), Validators.required])
-			),
+			password: new FormControl('', Validators.compose([Validators.minLength(5), Validators.required])),
 		});
 	}
 
@@ -103,45 +87,39 @@ export class LoginPage implements OnInit {
 		this.router.navigate(['auth/gp-login']);
 	}
 
-	doLogin(): void {
+	async doLogin(): Promise<void> {
 		let username = this.loginForm.controls.phone.value;
 		let password = this.loginForm.controls.password.value;
 
-		//login
-		this.authenticationService
-			.login(username, password)
-			.subscribe(async (data) => {
-				if (data.result === 'success') {
-					let role = data.role;
-					this.responsemsg = '';
-				
-					this.authenticationService.fetchPermissions(
-						data.obj.center_id,
-						data.obj.role_id
-					);
+		let data = await lastValueFrom(this.authenticationService.login(username, password));
 
-					if (role === 'ADMIN') {
-						this.router.navigate([`/home/admin-dashboard`]);
-						this.authenticationService.setCurrentMenu('HOME');
-						this.invalidLogin = false;
-					} else {
-						this.router.navigate([`/home/dashboard`]);
-						this.authenticationService.setCurrentMenu('HOME');
-						this.invalidLogin = false;
-					}
-					this._cdr.detectChanges();
-				} else if (data.result === 'error') {
-					this.invalidLogin = true;
-					if (data.statusCode === '601') {
-						this.responsemsg = 'User not Found.';
-					} else if (data.statusCode === '600') {
-						this.responsemsg = 'Login Failed. Invalid Credentials';
-					} else if (data.statusCode === '100') {
-						this.responsemsg = 'Login Failed. Database Connection Error';
-					}
-					this._cdr.detectChanges();
-				}
-			});
+		if (data.result === 'success') {
+			let role = data.role;
+			this.responsemsg = '';
+
+			this.authenticationService.fetchPermissions(data.obj.center_id, data.obj.role_id);
+
+			if (role === 'ADMIN') {
+				this.router.navigate([`/home/admin-dashboard`]);
+				this.authenticationService.setCurrentMenu('HOME');
+				this.invalidLogin = false;
+			} else {
+				this.router.navigate([`/home/dashboard`]);
+				this.authenticationService.setCurrentMenu('HOME');
+				this.invalidLogin = false;
+			}
+			this._cdr.detectChanges();
+		} else if (data.result === 'error') {
+			this.invalidLogin = true;
+			if (data.statusCode === '601') {
+				this.responsemsg = 'User not Found.';
+			} else if (data.statusCode === '600') {
+				this.responsemsg = 'Login Failed. Invalid Credentials';
+			} else if (data.statusCode === '100') {
+				this.responsemsg = 'Login Failed. Database Connection Error';
+			}
+			this._cdr.detectChanges();
+		}
 	}
 
 	ngOnDestroy() {}

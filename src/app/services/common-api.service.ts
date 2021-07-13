@@ -54,7 +54,7 @@ export class CommonApiService {
 				observe: 'response',
 			})
 			.pipe(
-				map((res) => {
+				map((res: any) => {
 					return res.body;
 				}),
 			);
@@ -63,7 +63,7 @@ export class CommonApiService {
 	search_Products(name: string): Observable<any> {
 		name = name.toLowerCase();
 		return of(states.filter((x) => x && x.toLowerCase().indexOf(name) >= 0)).pipe(
-			map((result) => {
+			map((result: any) => {
 				return result.map((x) => ({ state: x, name: x }));
 			}),
 		);
@@ -682,6 +682,14 @@ export class CommonApiService {
 
 	getCustomerOpeningBalanceStatement(statementForm) {
 		return this.httpClient.post(`${this.restApiUrl}/api/reports/customer-opening-balance-statement`, statementForm, { observe: 'response' });
+	}
+
+	getProductStockWithAllMRP(product_id) {
+		return this.httpClient.get(`${this.restApiUrl}/api/stock/all-products-with-mrp/${product_id}`);
+	}
+
+	deleteProductFromStock(product_id, mrp) {
+		return this.httpClient.delete(`${this.restApiUrl}/api/stock/delete-product-from-stock/${product_id}/${mrp}`);
 	}
 }
 

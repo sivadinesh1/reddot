@@ -1,15 +1,5 @@
-import {
-	Component,
-	OnInit,
-	Inject,
-	ViewChild,
-	HostListener,
-} from '@angular/core';
-import {
-	MatDialog,
-	MAT_DIALOG_DATA,
-	MatDialogRef,
-} from '@angular/material/dialog';
+import { Component, OnInit, Inject, ViewChild, HostListener } from '@angular/core';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonApiService } from 'src/app/services/common-api.service';
 
 @Component({
@@ -54,10 +44,10 @@ export class InvoiceSuccessComponent implements OnInit {
 
 	constructor(
 		private dialogRef: MatDialogRef<InvoiceSuccessComponent>,
-		@Inject(MAT_DIALOG_DATA) public invoice_id: any,
-		private _commonApiService: CommonApiService
+		@Inject(MAT_DIALOG_DATA) public rawdata: any,
+		private _commonApiService: CommonApiService,
 	) {
-		this.data = invoice_id;
+		this.data = rawdata;
 	}
 
 	ngOnInit() {
@@ -91,7 +81,7 @@ export class InvoiceSuccessComponent implements OnInit {
 		this.isPrint = true;
 
 		let submitForm = {
-			sale_id: this.invoice_id,
+			sale_id: this.data.id,
 			print_type: this.selectedoptionArr,
 			print_ship_to: this.checked,
 		};
@@ -140,7 +130,7 @@ export class InvoiceSuccessComponent implements OnInit {
 		this.isPrint = true;
 
 		let submitForm = {
-			sale_id: this.invoice_id,
+			sale_id: this.data.invoice_id,
 			print_type: this.selectedoptionArr,
 		};
 

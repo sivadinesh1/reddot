@@ -65,7 +65,6 @@ export class AllCustomerOutstandingReportsPage implements OnInit {
 			}
 		});
 
-		debugger;
 		let reportData = JSON.parse(JSON.stringify(this.outstandingBalanceList));
 
 		reportData.forEach((e) => {

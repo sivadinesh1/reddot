@@ -380,7 +380,6 @@ export class SearchReturnSalesPage implements OnInit {
 	}
 
 	goPrintCreditNote(item) {
-		debugger;
 		let submitForm = {
 			sale_return_id: item.sale_return_id,
 			center_id: item.center_id,

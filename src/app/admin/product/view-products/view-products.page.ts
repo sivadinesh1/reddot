@@ -21,6 +21,7 @@ import { SuccessMessageDialogComponent } from 'src/app/components/success-messag
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as xlsx from 'xlsx';
 import * as moment from 'moment';
+import { ProductCorrectionDialogComponent } from 'src/app/components/products/product-correction-dialog/product-correction-dialog.component';
 
 @Component({
 	selector: 'app-view-products',
@@ -190,6 +191,34 @@ export class ViewProductsPage implements OnInit {
 			.subscribe((data: any) => {
 				if (data === 'success') {
 					this.openSnackBar('Product edited successfully', '');
+				}
+			});
+	}
+
+	correctProduct(product: Product) {
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '500px';
+		dialogConfig.height = '100%';
+		dialogConfig.data = product;
+		dialogConfig.position = { top: '0', right: '0' };
+
+		const dialogRef = this._dialog.open(ProductCorrectionDialogComponent, dialogConfig);
+
+		dialogRef
+			.afterClosed()
+			.pipe(
+				filter((val) => !!val),
+				tap(() => {
+					// do nothing
+					this.openDialog(this.tempsearchstring);
+					this._cdr.markForCheck();
+				}),
+			)
+			.subscribe((data: any) => {
+				if (data === 'success') {
+					this.openSnackBar('Product Corrected successfully', '');
 				}
 			});
 	}

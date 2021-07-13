@@ -9,7 +9,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { IonicStorageModule } from '@ionic/storage';
+
 import { HttpClientModule } from '@angular/common/http';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
@@ -24,6 +24,7 @@ import { registerLocaleData, CurrencyPipe } from '@angular/common';
 import localeIn from '@angular/common/locales/en-IN';
 import { HomePageModule } from './home/home.module';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { IonicStorageModule } from '@ionic/storage-angular';
 
 registerLocaleData(localeIn);
 // import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
@@ -38,7 +39,10 @@ registerLocaleData(localeIn);
 		SharedModule,
 		HomePageModule,
 		IonicModule.forRoot(),
-		IonicStorageModule.forRoot(),
+		IonicStorageModule.forRoot({
+			/* config */
+		}),
+
 		// BackButtonDisableModule.forRoot({
 		//   preserveScrollPosition: true
 		// }),

@@ -121,6 +121,7 @@ import { ShowVendorStatementComponent } from './components/reports/show-vendor-s
 import { SelectOnFocusDirective } from './util/directives/select-focus.directive';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { PricePipePipe } from './util/pipes/price-formatter.pipe';
+import { ProductCorrectionDialogComponent } from './components/products/product-correction-dialog/product-correction-dialog.component';
 
 const components = [
 	NullToQuotePipe,
@@ -171,6 +172,7 @@ const components = [
 
 	ProductAddDialogComponent,
 	ProductEditDialogComponent,
+	ProductCorrectionDialogComponent,
 
 	BrandAddDialogComponent,
 	BrandEditDialogComponent,

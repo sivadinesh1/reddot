@@ -37,9 +37,10 @@
 				<form [formGroup]="submitForm">
 					<div class="row1">
 						<ion-searchbar
+							style="width: 300px"
 							autofocus
-							debounce="300"
-							placeholder="Type to search from results"
+							debounce="400"
+							placeholder="Type to search"
 							#searchbartab1
 							show-cancel-button="focus"
 							(ionClear)="resetTab1()"
@@ -237,9 +238,10 @@
 		<form [formGroup]="submitForm">
 			<div class="row1">
 				<ion-searchbar
+					style="width: 300px"
 					autofocus
-					debounce="300"
-					placeholder="Type to search from results"
+					debounce="400"
+					placeholder="Type to search"
 					#searchbartab1
 					show-cancel-button="focus"
 					(ionClear)="resetTab2()"

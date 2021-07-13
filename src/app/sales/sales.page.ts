@@ -58,6 +58,7 @@ export class SalesPage {
 	submitForm: FormGroup;
 
 	customername: string = '';
+	customernameprint: string = '';
 
 	no_of_boxes: any;
 
@@ -95,6 +96,7 @@ export class SalesPage {
 
 	testTotal: any;
 	invoiceid: any;
+	final_invoice_no: any;
 	invoicedate = new Date();
 
 	isLoading = false;
@@ -353,6 +355,7 @@ export class SalesPage {
 				});
 
 				this.customername = custData[0].name;
+				this.customernameprint = custData[0].name;
 				// record orignal customer id from enquiry, can ignore while submitting
 				// as there will be no reference in ledger/payment tables
 				this.orig_customerid = custData[0].id;
@@ -464,7 +467,7 @@ export class SalesPage {
 						});
 
 						this.customername = custData[0].name;
-
+						this.customernameprint = custData[0].name;
 						this.iscustomerselected = true;
 
 						this.setTaxLabel(custData[0].code);
@@ -506,7 +509,7 @@ export class SalesPage {
 			.pipe(
 				debounceTime(300),
 				tap(() => (this.isCLoading = true)),
-				switchMap((id) => {
+				switchMap((id: any) => {
 					if (id != null && id.length !== undefined && id.length >= 2) {
 						return this._commonApiService.getCustomerInfo({
 							centerid: this.userdata.center_id,
@@ -941,9 +944,9 @@ export class SalesPage {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '400px';
-
-		dialogConfig.data = this.invoiceid;
+		dialogConfig.width = '600px';
+		debugger;
+		dialogConfig.data = { customer_name: this.customernameprint, id: this.invoiceid, invoice_no: this.final_invoice_no };
 
 		const dialogRef = this.dialog.open(InvoiceSuccessComponent, dialogConfig);
 
@@ -1125,6 +1128,7 @@ export class SalesPage {
 
 			if (data.body.result === 'success') {
 				this.invoiceid = data.body.id;
+				this.final_invoice_no = data.body.invoiceno;
 
 				// check
 				// this.cancel();
@@ -1606,7 +1610,7 @@ export class SalesPage {
 			.pipe(
 				debounceTime(300),
 				tap(() => (this.isLoading = true)),
-				switchMap((id) => {
+				switchMap((id: any) => {
 					if (id != null && id.length >= 1) {
 						return this._commonApiService.getProductInformation({
 							centerid: this.userdata.center_id,

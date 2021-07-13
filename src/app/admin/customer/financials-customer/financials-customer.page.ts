@@ -282,7 +282,7 @@ export class FinancialsCustomerPage implements OnInit {
 		filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
 
 		this.saleInvoicedataSource.filter = filterValue;
-		// debugger;
+
 		if (this.saleInvoicedataSource.filteredData.length > 0) {
 			this.isTableHasData = true;
 		} else {

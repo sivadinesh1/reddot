@@ -373,7 +373,7 @@ export class PurchasePage implements OnInit {
 			.pipe(
 				debounceTime(300),
 				tap(() => (this.isVLoading = true)),
-				switchMap((id) => {
+				switchMap((id: any) => {
 					console.log(id);
 					search = id;
 					if (id != null && id.length >= 2) {
@@ -407,7 +407,7 @@ export class PurchasePage implements OnInit {
 			.pipe(
 				debounceTime(300),
 				tap(() => (this.isLoading = true)),
-				switchMap((id) => {
+				switchMap((id: any) => {
 					if (id != null && id.length >= 2) {
 						return this._commonApiService.getProductInfo({
 							centerid: this.userdata.center_id,
