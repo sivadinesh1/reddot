@@ -20,9 +20,20 @@
 	padding-left: 1rem;
 	padding-top: 0.2rem;
 	padding-bottom: 0.2rem;
-	grid-template-columns: 80px 80px 150px;
+	grid-template-columns: 80px 80px 150px 150px;
 }
 
-.listHeader {
+.listHeader,
+.listHeader1 {
 	background-color: aliceblue;
+}
+
+.listHeader1,
+.listItem1 {
+	display: grid;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	padding-top: 0.2rem;
+	padding-bottom: 0.2rem;
+	grid-template-columns: 70px 70px 100px 1fr;
 }

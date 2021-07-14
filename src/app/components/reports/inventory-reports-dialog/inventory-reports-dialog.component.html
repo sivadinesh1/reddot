@@ -105,7 +105,13 @@
 						</span>
 					</td>
 
-					<td *ngIf="item?.module === 'Product'" style="text-align: left; grid-column: 4/-1">
+					<td *ngIf="item?.module === 'Product' && !item?.action_type.startsWith('Stock Correction')" style="text-align: left; grid-column: 4/-1">
+						<span>
+							<span>({{ item?.action_type }})</span>
+						</span>
+					</td>
+
+					<td *ngIf="item?.module === 'Product' && item?.action_type.startsWith('Stock Correction')" style="text-align: left; grid-column: 4/6">
 						<span>
 							<span>({{ item?.action_type }})</span>
 						</span>
@@ -118,6 +124,9 @@
 					</td>
 
 					<td *ngIf="item?.module !== 'Product'" style="text-align: right">{{ item?.stock_level }}</td>
+					<td *ngIf="item?.module === 'Product' && item?.action_type.startsWith('Stock Correction')" style="text-align: right">{{
+						item?.stock_level
+					}}</td>
 				</tr>
 
 				<tr *ngIf="resultList?.length === 0">

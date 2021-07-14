@@ -8,6 +8,7 @@ import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import { HSNCODE_REGEX, DISC_REGEX } from 'src/app/util/helper/patterns';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Product } from 'src/app/models/Product';
+import { NgForm } from '@angular/forms';
 
 @Component({
 	selector: 'app-product-correction-dialog',
@@ -36,10 +37,14 @@ export class ProductCorrectionDialogComponent implements OnInit {
 
 	stocklist: any;
 
-	reasons = [
-		{ key: 'Missing', viewValue: 'Missing' },
-		{ key: 'Others', viewValue: 'Others' },
-	];
+	selecteditem: any;
+
+	selected = 'Others';
+	selreason = false;
+
+	val = {
+		qty: '0',
+	};
 
 	constructor(
 		private _formBuilder: FormBuilder,
@@ -77,7 +82,7 @@ export class ProductCorrectionDialogComponent implements OnInit {
 	}
 
 	delete(item) {
-		this._commonApiService.deleteProductFromStock(item.product_id, item.mrp).subscribe((data: any) => {
+		this._commonApiService.deleteProductFromStock(item.product_id, item.mrp, this.center_id).subscribe((data: any) => {
 			this.dialogRef.close('success');
 		});
 	}
@@ -94,5 +99,43 @@ export class ProductCorrectionDialogComponent implements OnInit {
 
 	close() {
 		this.dialogRef.close();
+	}
+
+	handleChange(event) {
+		this.selreason = true;
+	}
+
+	correct(item) {
+		this.selecteditem = item;
+	}
+
+	update(loginForm: NgForm) {
+		console.log(loginForm.value, loginForm.valid);
+
+		console.log(loginForm.value.qty);
+		console.log('selected item ' + JSON.stringify(this.selecteditem));
+
+		let submitForm = {
+			stock_id: this.selecteditem.stock_id,
+			product_id: this.selecteditem.product_id,
+			mrp: this.selecteditem.mrp,
+			available_stock: +this.selecteditem.available_stock,
+			corrected_stock: loginForm.value.qty,
+			reason: this.selected,
+			center_id: this.center_id,
+		};
+
+		this._commonApiService.stockCorrection(submitForm).subscribe((data: any) => {
+			debugger;
+			if (data.body.result === 'updated') {
+				this.dialogRef.close('success');
+			}
+
+			this._cdr.markForCheck();
+		});
+	}
+
+	clear() {
+		this.selecteditem = null;
 	}
 }

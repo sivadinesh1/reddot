@@ -688,8 +688,12 @@ export class CommonApiService {
 		return this.httpClient.get(`${this.restApiUrl}/api/stock/all-products-with-mrp/${product_id}`);
 	}
 
-	deleteProductFromStock(product_id, mrp) {
-		return this.httpClient.delete(`${this.restApiUrl}/api/stock/delete-product-from-stock/${product_id}/${mrp}`);
+	deleteProductFromStock(product_id, mrp, center_id) {
+		return this.httpClient.delete(`${this.restApiUrl}/api/stock/delete-product-from-stock/${product_id}/${mrp}/${center_id}`);
+	}
+
+	stockCorrection(submitForm) {
+		return this.httpClient.post(`${this.restApiUrl}/api/stock/stock-correction`, submitForm, { observe: 'response' });
 	}
 }
 

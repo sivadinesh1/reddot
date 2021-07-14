@@ -177,6 +177,7 @@ export class SearchSalesPage implements OnInit {
 	// this.form.get('controlname').disable();
 	// this.variable.disable()
 	radioClickHandle() {
+		debugger;
 		if (this.submitForm.value.searchtype === 'invonly') {
 			this.submitForm.get('customerctrl').disable();
 		} else {
@@ -209,7 +210,20 @@ export class SearchSalesPage implements OnInit {
 			customerctrl: 'All Customers',
 			fromdate: this.fromdate,
 			todate: new Date(),
+			invoiceno: [''],
+			searchtype: 'all',
 		});
+
+		this.submitForm.value.invoiceno = '';
+		this.submitForm.get('customerctrl').enable();
+		this.submitForm.controls['invoiceno'].setErrors(null);
+		this.submitForm.controls['invoiceno'].markAsTouched();
+
+		this.searchType = [
+			{ name: 'All', id: 'all', checked: true },
+			{ name: 'Invoice Only', id: 'invonly', checked: false },
+		];
+		debugger;
 		this._cdr.markForCheck();
 	}
 
