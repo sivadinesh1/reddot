@@ -33,7 +33,7 @@ export class SearchSalesPage implements OnInit {
 	filteredSales$: Observable<Sales[]>;
 
 	filteredValues: any;
-	tabIndex = 0;
+	tabIndex = 1;
 
 	resultList: any;
 
@@ -233,7 +233,7 @@ export class SearchSalesPage implements OnInit {
 			customerctrl: event.option.value.name,
 		});
 
-		this.tabIndex = 0;
+		this.tabIndex = 1;
 		//	this.search();
 		this._cdr.markForCheck();
 	}
@@ -262,14 +262,14 @@ export class SearchSalesPage implements OnInit {
 
 		let value = await lastValueFrom(this.filteredSales$);
 
-		this.filteredValues = value.filter((data: any) => data.status === 'D' && data.sale_type === 'gstinvoice');
+		this.filteredValues = value.filter((data: any) => data.status === 'C' && data.sale_type === 'gstinvoice');
 
 		// to calculate the count on each status
 		this.draftSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.status === 'D' && f.sale_type === 'gstinvoice')));
 
 		this.fullfilledSales$ = this.sales$.pipe(map((arr: any) => arr.filter((f) => f.status === 'C')));
 		this.calculateSumTotals();
-		this.tabIndex = 0;
+		this.tabIndex = 1;
 		this._cdr.markForCheck();
 	}
 
@@ -313,14 +313,14 @@ export class SearchSalesPage implements OnInit {
 
 	toDateSelected($event) {
 		this.todate = $event.target.value;
-		this.tabIndex = 0;
+		this.tabIndex = 1;
 		//	this.search();
 		this._cdr.markForCheck();
 	}
 
 	fromDateSelected($event) {
 		this.fromdate = $event.target.value;
-		this.tabIndex = 0;
+		this.tabIndex = 1;
 		//this.search();
 		this._cdr.markForCheck();
 	}
@@ -400,31 +400,35 @@ export class SearchSalesPage implements OnInit {
 	}
 
 	async editCompletedSalesConfirm(item) {
-		const alert = await this.alertController.create({
-			header: 'Confirm!',
-			message: 'Editing completed sales, Are you sure?',
-			buttons: [
-				{
-					text: 'Cancel',
-					role: 'cancel',
-					cssClass: 'secondary',
-					handler: (blah) => {
-						console.log('Confirm Cancel: blah');
-					},
-				},
-				{
-					text: 'Go to sales screen',
-					handler: () => {
-						console.log('Confirm Okay');
-
-						this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
-					},
-				},
-			],
-		});
-
-		await alert.present();
+		this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
 	}
+
+	// async editCompletedSalesConfirm(item) {
+	// 	const alert = await this.alertController.create({
+	// 		header: 'Confirm!',
+	// 		message: 'Editing completed sales, Are you sure?',
+	// 		buttons: [
+	// 			{
+	// 				text: 'Cancel',
+	// 				role: 'cancel',
+	// 				cssClass: 'secondary',
+	// 				handler: (blah) => {
+	// 					console.log('Confirm Cancel: blah');
+	// 				},
+	// 			},
+	// 			{
+	// 				text: 'Go to sales screen',
+	// 				handler: () => {
+	// 					console.log('Confirm Okay');
+
+	// 					this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
+	// 				},
+	// 			},
+	// 		],
+	// 	});
+
+	// 	await alert.present();
+	// }
 
 	openDialog(row): void {
 		const dialogConfig = new MatDialogConfig();

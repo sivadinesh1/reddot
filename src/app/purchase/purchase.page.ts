@@ -353,8 +353,11 @@ export class PurchasePage implements OnInit {
 
 		setTimeout(() => {
 			this.vlist && this.vlist.nativeElement.focus();
+			if (this.rawPurchaseData[0] !== undefined && this.rawPurchaseData[0].id !== 0) {
+				this.plist && this.plist.nativeElement.focus();
+			}
 			this._cdr.detectChanges();
-		});
+		}, 100);
 	}
 
 	clearInput() {

@@ -25,6 +25,8 @@ export class LoginPage implements OnInit {
 	responsemsg: any;
 	apiresponse: any;
 
+	ipAddress: any;
+
 	hide = true;
 
 	validation_messages = {

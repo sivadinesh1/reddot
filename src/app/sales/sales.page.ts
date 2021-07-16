@@ -4,7 +4,7 @@ import { ModalController, PickerController, AlertController } from '@ionic/angul
 import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray, FormGroupDirective } from '@angular/forms';
 
-import { MatDialog, MatDialogConfig, DialogPosition } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 
 import { AuthenticationService } from '../services/authentication.service';
@@ -34,7 +34,7 @@ import { User } from '../models/User';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductAddDialogComponent } from '../components/products/product-add-dialog/product-add-dialog.component';
 import { SuccessMessageDialogComponent } from '../components/success-message-dialog/success-message-dialog.component';
-import { E } from '@angular/cdk/keycodes';
+
 import { InventoryReportsDialogComponent } from '../components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
 
 @Component({
@@ -121,9 +121,6 @@ export class SalesPage {
 	@ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
 	@ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
 
-	// TAB navigation for product list
-	// @ViewChild('typehead', { read: MatAutocompleteTrigger }) autoTrigger: MatAutocompleteTrigger;
-
 	@ViewChild('newrow', { static: true }) newrow: any;
 
 	// TAB navigation for customer list
@@ -145,8 +142,6 @@ export class SalesPage {
 	userdata$: Observable<User>;
 	userdata: any;
 
-	// @ViewChild('stickyHeaderStart', { static: true }) stickyHeaderStart: ElementRef<HTMLElement>;
-
 	@ViewChild(IonContent, { static: false }) content: IonContent;
 
 	question = '+ Add Customer"';
@@ -159,30 +154,8 @@ export class SalesPage {
 	isFreshSale = false;
 	fromEnquiry: any;
 
-	draftConfirm: any;
-	generateInvoiceConfirm = [
-		{
-			text: 'Cancel',
-			role: 'cancel',
-			cssClass: 'secondary',
-			handler: (blah) => {
-				console.log('Confirm Cancel: blah');
-			},
-		},
-
-		{
-			text: 'Okay',
-			cssClass: 'primary',
-			handler: () => {
-				console.log('Confirm Okay');
-				this.mainSubmit('add', 'back');
-			},
-		},
-	];
-
 	constructor(
 		private _modalcontroller: ModalController,
-		private _pickerctrl: PickerController,
 		public dialog: MatDialog,
 		public alertController: AlertController,
 		private _router: Router,
@@ -247,33 +220,6 @@ export class SalesPage {
 						});
 					}
 				}
-
-				this.draftConfirm = [
-					{
-						text: 'Cancel',
-						role: 'cancel',
-						cssClass: 'secondary',
-						handler: (blah) => {
-							console.log('Confirm Cancel: blah');
-						},
-					},
-					{
-						text: this.saletype === 'SI' ? 'Save & Exit to Stock Issue List' : 'Save & Exit to Sale Orders List',
-						cssClass: 'secondary',
-						handler: () => {
-							console.log('Confirm Cancel: blah');
-							this.mainSubmit('draft', 'back');
-						},
-					},
-					{
-						text: 'Save & Continue',
-						cssClass: 'primary',
-						handler: () => {
-							console.log('Confirm Okay');
-							this.mainSubmit('draft', 'stay');
-						},
-					},
-				];
 			});
 
 			this._cdr.markForCheck();
@@ -318,7 +264,7 @@ export class SalesPage {
 
 			productarr: new FormControl(null),
 			roundoff: [0],
-			retail_customer_name: [''],
+			retail_customer_name: ['Cash Sale'],
 			retail_customer_address: [''],
 			retail_customer_phone: [''],
 			hasCustomerChange: [''],
@@ -722,8 +668,14 @@ export class SalesPage {
 	ngAfterViewInit() {
 		setTimeout(() => {
 			this.clist && this.clist.nativeElement.focus();
+
+			if (this.mode === 'edit' && this.id !== '0') {
+				this.plist && this.plist.nativeElement.focus();
+				this.openSnackBar('WARNING: Editing completed sales!', '', 'mat-warn');
+			}
+
 			this._cdr.detectChanges();
-		});
+		}, 100);
 
 		this.autoTrigger1 &&
 			this.autoTrigger1.panelClosingActions.subscribe((x) => {
@@ -854,7 +806,7 @@ export class SalesPage {
 		return invalid;
 	}
 
-	onSubmit(action) {
+	onSubmit(action, subaction) {
 		if (this.listArr.length == 0) {
 			return this.presentAlert('No products added to save!');
 		}
@@ -876,12 +828,6 @@ export class SalesPage {
 			}
 
 			if (this.validateForms()) {
-				if (action === 'add') {
-					this.presentAlertConfirm('add');
-				} else if (action === 'draft') {
-					this.presentAlertConfirm('draft');
-				}
-
 				this.submitForm.patchValue({
 					productarr: this.listArr,
 				});
@@ -912,6 +858,16 @@ export class SalesPage {
 					net_total: this.getNetTotal('rounding'),
 					roundoff: (this.getNetTotal('rounding') - this.getNetTotal('withoutrounding')).toFixed(2),
 				});
+
+				if (action === 'add') {
+					this.mainSubmit('add', 'back');
+				} else if (action === 'draft') {
+					if (subaction === 'continue') {
+						this.mainSubmit('draft', 'stay');
+					} else {
+						this.mainSubmit('draft', 'back');
+					}
+				}
 			}
 		}
 	}
@@ -1080,17 +1036,6 @@ export class SalesPage {
 		}
 	}
 
-	async presentAlertConfirm(action) {
-		const alert = await this.alertController.create({
-			header: 'Confirm!',
-			message: action === 'draft' ? 'Are you sure to?' : 'Are you sure to Generate/Update Invoice?',
-			cssClass: 'buttonCss',
-			buttons: action === 'draft' ? this.draftConfirm : this.generateInvoiceConfirm,
-		});
-
-		await alert.present();
-	}
-
 	mainSubmit(action, navto) {
 		this.executeDeletes();
 
@@ -1149,7 +1094,7 @@ export class SalesPage {
 				} else {
 					// Save as Draft & continue
 					//this.presentAlert('Saved to Draft!');
-					this.openSnackBar('Saved to Draft!', '');
+					this.openSnackBar('INFO: Saved to Draft!', '', 'mat-primary');
 					this.clicked = false;
 
 					this.id = data.body.id;
@@ -1247,12 +1192,8 @@ export class SalesPage {
 	}
 
 	cancel() {
-		//  this.submitForm.reset();
-		//  this.init();
 		this.customerdata = null;
-		// this.submitForm.patchValue({
-		//   productarr: [],
-		// });
+
 		this.customername = '';
 		this.iscustomerselected = false;
 		this.editCompletedSales = false;
@@ -1457,47 +1398,6 @@ export class SalesPage {
 		this.maxOrderDate = $event.target.value;
 	}
 
-	onPrint() {
-		this._commonApiService.print().subscribe((data: any) => {
-			console.log('object...PRINTED');
-
-			const blob = new Blob([data], { type: 'application/pdf' });
-
-			// to save as file in ionic projects dnd
-			// FileSaver.saveAs(blob, '_export_' + new Date().getTime() + '.pdf');
-
-			// dnd - opens as iframe and ready for print (opens with print dialog box)
-			// const blobUrl = URL.createObjectURL(blob);
-			// const iframe = document.createElement('iframe');
-			// iframe.style.display = 'none';
-			// iframe.src = blobUrl;
-			// document.body.appendChild(iframe);
-			// iframe.contentWindow.print();
-
-			// dnd to open in new tab - does not work with pop up blocked
-			var link = document.createElement('a');
-			link.href = window.URL.createObjectURL(blob);
-			link.target = '_blank';
-			link.click();
-			// if need to download with file name
-			//  link.download = "filename.ext"
-
-			// dnd - if need to do anyhting on click - not much use
-			// link.onclick = function () {
-			//   window.open(window.URL.createObjectURL(blob),
-			//     '_blank',
-			//     'width=300,height=250');
-			//   return false;
-			// };
-
-			// var newWin = window.open(url);
-			// if(!newWin || newWin.closed || typeof newWin.closed=='undefined')
-			// {
-			//POPUP BLOCKED
-			// }
-		});
-	}
-
 	clearProdInput() {
 		this.submitForm.patchValue({
 			productctrl: null,
@@ -1680,43 +1580,7 @@ export class SalesPage {
 		this.lineItemData.qty = this.submitForm.value.tempqty;
 		this.lineItemData.mrp = this.submitForm.value.tempmrp;
 
-		// check if product code already in the array, if present throw confirm to continue or cancel
-
-		// let onlyProductCodeArr = this.listArr.map((element) => {
-		// 	return element.product_code;
-		// });
-
-		// let isduplicate = onlyProductCodeArr.includes(this.lineItemData.product_code);
-		// let proceed = false;
-
-		// if (isduplicate) {
-		// 	const alert = await this.alertController.create({
-		// 		header: 'Confirm!',
-		// 		message: 'The Item already added. Do you want to add again?',
-		// 		buttons: [
-		// 			{
-		// 				text: 'Cancel',
-		// 				role: 'cancel',
-		// 				cssClass: 'secondary',
-		// 				handler: (blah) => {
-		// 					console.log('Confirm Cancel: blah');
-		// 				},
-		// 			},
-		// 			{
-		// 				text: 'Continue to Add',
-		// 				handler: () => {
-		// 					console.log('Confirm Okay');
-		// 					proceed = true;
-		// 					this.itemAdd(this.lineItemData);
-		// 				},
-		// 			},
-		// 		],
-		// 	});
-
-		// 	await alert.present();
-		// } else {
 		this.itemAdd(this.lineItemData);
-		// }
 	}
 
 	itemAdd(lineItemData) {
@@ -1744,16 +1608,11 @@ export class SalesPage {
 	}
 
 	setCustomerInfo(event, from) {
-		// below code seems not used
-		// if (from === 'click' && event.option.value === 'new') {
-		// 	this.addCustomer();
-		// }
 		if (event !== undefined) {
 			this.iscustomerselected = true;
 			if (from === 'tab') {
 				this.customer_state_code = event.code;
-				// this.cust_discount_prcnt = event.discount;
-				// this.cust_discount_type = event.discount_type;
+
 				this.customerdata = event;
 
 				if (this.customerdata.name === 'Walk In') {
@@ -1766,8 +1625,7 @@ export class SalesPage {
 				this.setTaxLabel(this.customer_state_code);
 			} else {
 				this.customer_state_code = event.option.value.code;
-				// this.cust_discount_prcnt = event.option.value.discount;
-				// this.cust_discount_type = event.option.value.discount_type;
+
 				this.customerdata = event.option.value;
 
 				if (this.customerdata.name === 'Walk In') {
@@ -1804,8 +1662,10 @@ export class SalesPage {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '80%';
-		dialogConfig.height = '80%';
+		dialogConfig.width = '500px';
+		dialogConfig.height = '100%';
+		dialogConfig.position = { top: '0', right: '0' };
+		dialogConfig.panelClass = 'app-full-bleed-dialog';
 
 		const dialogRef = this._dialog.open(CustomerAddDialogComponent, dialogConfig);
 
@@ -1814,39 +1674,14 @@ export class SalesPage {
 			.pipe(
 				filter((val) => !!val),
 				tap(() => {
-					// do nothing check
 					this._cdr.markForCheck();
 				}),
 			)
 			.subscribe((data: any) => {
-				if (data !== 'close') {
-					this._commonApiService.getCustomerDetails(this.userdata.center_id, data.body.id).subscribe((custData: any) => {
-						this.customerdata = custData[0];
-
-						this.customername = custData[0].name;
-						this.iscustomerselected = true;
-
-						this.setTaxLabel(custData[0].code);
-
-						this.setCustomerInfo(custData[0], 'tab');
-
-						this.submitForm.patchValue({
-							customerctrl: custData[0],
-						});
-
-						this.isCLoading = false;
-						this.autoTrigger1.closePanel();
-
-						this._cdr.markForCheck();
-					});
-				} else {
-					this.iscustomerselected = false;
-					this.autoTrigger1.closePanel();
-
-					this._cdr.markForCheck();
+				if (data === 'success') {
+					this.clearInput();
+					this.openSnackBar('INFO: Customer added successfully!', '', 'mat-primary');
 				}
-
-				this._cdr.markForCheck();
 			});
 	}
 
@@ -1860,10 +1695,10 @@ export class SalesPage {
 		}
 	}
 
-	openSnackBar(message: string, action: string) {
+	openSnackBar(message: string, action: string, color: string) {
 		this._snackBar.open(message, action, {
 			duration: 2000,
-			panelClass: ['mat-toolbar', 'mat-primary'],
+			panelClass: ['mat-toolbar', color],
 		});
 	}
 
@@ -1928,3 +1763,33 @@ export class SalesPage {
 // KEY FIELDS
 // QTY, MRP, DISC(%), TAX(%), NET VALUE(2 TYPE CALC NET/GROSS)
 // TOTAL VALUE - VERTICAL SUMMARY OF ALL ROWS
+
+// after customer is added need to fetch customer details and populate back the customer list
+
+// 		.subscribe((data: any) => {
+// 			if (data !== 'close') {
+// 				this._commonApiService.getCustomerDetails(this.userdata.center_id, data.body.id).subscribe((custData: any) => {
+// 					this.customerdata = custData[0];
+
+// 					this.customername = custData[0].name;
+// 					this.iscustomerselected = true;
+
+// 					this.setTaxLabel(custData[0].code);
+
+// 					this.setCustomerInfo(custData[0], 'tab');
+
+// 					this.submitForm.patchValue({
+// 						customerctrl: custData[0],
+// 					});
+
+// 					this.isCLoading = false;
+// 					this.autoTrigger1.closePanel();
+
+// 					this._cdr.markForCheck();
+// 				});
+// 			} else {
+// 				this.iscustomerselected = false;
+// 				this.autoTrigger1.closePanel();
+
+// 				this._cdr.markForCheck();
+// 			}

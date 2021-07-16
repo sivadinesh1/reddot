@@ -38,11 +38,18 @@
 
 	<div class="invoice-details">
 		<div>
-			<button mat-stroked-button color="primary" (click)="cancel()"> Close </button>
+			<button mat-stroked-button color="primary" (click)="view()"> View as PDF </button>
 		</div>
 		&nbsp;&nbsp;
 		<div>
-			<button *ngIf="isPrint" [disabled]="selectedoptionArr.length === 0" (click)="printActn()" mat-raised-button color="primary"> Print </button>
+			<button *ngIf="isPrint" [disabled]="selectedoptionArr.length === 0" (click)="print()" mat-raised-button color="primary"> Print Invoice</button>
+			<div style="text-align: center">
+				<span style="font-size: 11px; color: grey">Printed:</span>
+				<span style="font-size: 14px; color: blue">
+					{{ this.printcount }}
+				</span>
+				<span style="font-size: 11px; color: grey">times</span>
+			</div>
 		</div>
 	</div>
 </div>

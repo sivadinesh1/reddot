@@ -695,6 +695,10 @@ export class CommonApiService {
 	stockCorrection(submitForm) {
 		return this.httpClient.post(`${this.restApiUrl}/api/stock/stock-correction`, submitForm, { observe: 'response' });
 	}
+
+	getPrintCounterAfterUpdate(sale_id) {
+		return this.httpClient.get(`${this.restApiUrl}/api/sale/update-get-print-counter/${sale_id}`);
+	}
 }
 
 export const states = [

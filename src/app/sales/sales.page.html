@@ -111,7 +111,10 @@
 						<div style="height: 53px">
 							<div *ngIf="this.saletype !== 'SI'" style="font-size: 14px; color: #7b7b7b">Invoice #</div>
 							<div *ngIf="this.saletype !== 'SI'" style="font-size: 18px; font-weight: 500">{{this.submitForm.value.invoiceno}}</div>
-							<div *ngIf="this.saletype === 'SI'">&nbsp;</div>
+							<div *ngIf="this.saletype === 'SI' && this.mode === 'edit' && this.id !== '0' " style="font-size: 14px; color: #7b7b7b">
+								Stock Issue #</div
+							>
+							<div *ngIf="this.saletype === 'SI' && this.mode === 'edit' && this.id !== '0' ">{{this.submitForm.value.invoiceno}}</div>
 						</div>
 
 						<div *ngIf="mode === 'enquiry' && this.submitForm.value.orderdate !== '' ">
@@ -305,6 +308,7 @@
 									formControlName="productctrl"
 									#typehead2
 									#plist
+									autofocus
 									matTooltipPosition="after"
 									tabindex="2"
 									autocomplete="off"
@@ -529,7 +533,7 @@
 						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
-						(throttledClick)="onSubmit('draft')"
+						(throttledClick)="onSubmit('draft', '')"
 						type="button"
 						[throttleTime]="500"
 						mat-stroked-button
@@ -541,11 +545,22 @@
 						Save as Draft
 					</button>
 					<button
+						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
+						mat-stroked-button
+						color="primary"
+						#ddTrigger="matMenuTrigger"
+						[matMenuTriggerFor]="beforeMenu"
+						style="border-radius: 0px; border-left: 1px solid grey"
+					>
+						<mat-icon>arrow_drop_up</mat-icon>
+					</button>
+					&nbsp;
+					<button
 						*ngIf="((submitForm.get('status').value === '') && (selInvType === 'stockissue')) "
 						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
-						(throttledClick)="onSubmit('draft')"
+						(throttledClick)="onSubmit('draft','')"
 						type="button"
 						[throttleTime]="500"
 						mat-stroked-button
@@ -562,7 +577,7 @@
 						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
-						(throttledClick)="onSubmit('draft')"
+						(throttledClick)="onSubmit('draft','')"
 						type="button"
 						[throttleTime]="500"
 						mat-stroked-button
@@ -579,7 +594,7 @@
 						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
-						(throttledClick)="onSubmit('add');"
+						(throttledClick)="onSubmit('add','');"
 						type="button"
 						[throttleTime]="500"
 						mat-raised-button
@@ -596,7 +611,7 @@
 						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"
-						(throttledClick)="onSubmit('add')"
+						(throttledClick)="onSubmit('add','')"
 						type="button"
 						[throttleTime]="500"
 						mat-raised-button
@@ -633,4 +648,10 @@
 
 	<!-- <ngx-spinner size="medium"></ngx-spinner> -->
 	<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="small" color="#fff" type="line-scale"><p style="color: white">Loading...</p></ngx-spinner>
+
+	<mat-menu #beforeMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+		<mat-option>
+			<button mat-button type="button" (click)="onSubmit('draft','continue')">Save Draft & Continue</button>
+		</mat-option>
+	</mat-menu>
 </ion-content>

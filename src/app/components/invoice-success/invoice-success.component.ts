@@ -1,17 +1,22 @@
-import { Component, OnInit, Inject, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonApiService } from 'src/app/services/common-api.service';
+import printJS from 'print-js';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
 	selector: 'app-invoice-success',
 	templateUrl: './invoice-success.component.html',
 	styleUrls: ['./invoice-success.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvoiceSuccessComponent implements OnInit {
 	paletteColour: any;
 	isPrint = true;
 	data: any;
 	checked = false;
+
+	printcount = 0;
 
 	selectedoptionArr = ['Original for Buyer', 'Duplicate For Transporter'];
 
@@ -46,8 +51,10 @@ export class InvoiceSuccessComponent implements OnInit {
 		private dialogRef: MatDialogRef<InvoiceSuccessComponent>,
 		@Inject(MAT_DIALOG_DATA) public rawdata: any,
 		private _commonApiService: CommonApiService,
+		private _cdr: ChangeDetectorRef,
 	) {
 		this.data = rawdata;
+		this.printcount = rawdata.print_count;
 	}
 
 	ngOnInit() {
@@ -77,7 +84,15 @@ export class InvoiceSuccessComponent implements OnInit {
 		}
 	}
 
-	printActn() {
+	view() {
+		this.printActn('view');
+	}
+
+	print() {
+		this.printActn('print');
+	}
+
+	printActn(action) {
 		this.isPrint = true;
 
 		let submitForm = {
@@ -105,8 +120,18 @@ export class InvoiceSuccessComponent implements OnInit {
 			// dnd to open in new tab - does not work with pop up blocked
 			var link = document.createElement('a');
 			link.href = window.URL.createObjectURL(blob);
-			link.target = '_blank';
-			link.click();
+
+			if (action === 'view') {
+				link.target = '_blank';
+				link.click();
+			} else if (action === 'print') {
+				printJS({
+					printable: link.href,
+					type: 'pdf',
+				});
+				this.printCounterCallback();
+			}
+
 			// if need to download with file name
 			//  link.download = "filename.ext"
 
@@ -171,6 +196,13 @@ export class InvoiceSuccessComponent implements OnInit {
 			// {
 			//POPUP BLOCKED
 			// }
+		});
+	}
+
+	printCounterCallback() {
+		this._commonApiService.getPrintCounterAfterUpdate(this.data.id).subscribe((data: any) => {
+			this.printcount = data[0].print_count;
+			this._cdr.markForCheck();
 		});
 	}
 }
