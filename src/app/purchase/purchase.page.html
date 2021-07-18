@@ -343,8 +343,7 @@
 								tabindex="3"
 								autocomplete="off"
 							/>
-							<mat-hint *ngIf="selected_description" 
-							matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
+							<mat-hint *ngIf="selected_description" matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
 
 							<button mat-button matSuffix mat-icon-button tabindex="-1" aria-label="Clear" type="button" (click)="clearProdInput()">
 								<mat-icon tabindex="-1">close</mat-icon>
@@ -439,7 +438,10 @@
 								appSelectOnFocus
 								autocomplete="off"
 							/>
-							<mat-hint matTooltip="Info about the action">Hit Enter to Add</mat-hint>
+							<mat-hint matTooltip="Total Value" *ngIf="selected_description">
+								<span style="font-size: 11px; color: grey">TOTAL: </span>
+								{{(this.submitForm.value.tempmrp * this.submitForm.value.tempqty) | currency: "INR"}}
+							</mat-hint>
 						</mat-form-field>
 					</div>
 					<div>

@@ -1443,6 +1443,7 @@ export class SalesPage {
 					},
 					{
 						text: 'Continue to Add',
+						cssClass: 'primary',
 						handler: () => {
 							console.log('Confirm Okay');
 							proceed = true;
@@ -1481,8 +1482,13 @@ export class SalesPage {
 			this.lineItemData = event.option.value;
 			this.selected_description = event.option.value.description;
 			this.selected_mrp = event.option.value.mrp;
-			this.qty && this.qty.nativeElement.focus();
+
+			setTimeout(() => {
+				this.qty && this.qty.nativeElement.focus();
+				// this.qty && this.qty.nativeElement.select();
+			}, 10);
 		}
+		this.qty && this.qty.nativeElement.focus();
 	}
 
 	displayFn(obj: any): string | undefined {

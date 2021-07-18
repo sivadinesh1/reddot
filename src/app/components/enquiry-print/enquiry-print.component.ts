@@ -1,27 +1,14 @@
-import {
-	Component,
-	OnInit,
-	Inject,
-	ViewChild,
-	HostListener,
-} from '@angular/core';
-import {
-	MatDialog,
-	MAT_DIALOG_DATA,
-	MatDialogRef,
-} from '@angular/material/dialog';
+import { Component, OnInit, Inject, ViewChild, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonApiService } from 'src/app/services/common-api.service';
-import {
-	FormBuilder,
-	FormGroup,
-	FormControl,
-	Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import printJS from 'print-js';
 
 @Component({
 	selector: 'app-enquiry-print',
 	templateUrl: './enquiry-print.component.html',
 	styleUrls: ['./enquiry-print.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnquiryPrintComponent implements OnInit {
 	paletteColour: any;
@@ -29,6 +16,7 @@ export class EnquiryPrintComponent implements OnInit {
 	data: any;
 	selPrintType = 'estimateprint';
 	submitForm: FormGroup;
+	printcount = 0;
 
 	selectedoptionArr = ['Original for Buyer', 'Duplicate For Transporter'];
 
@@ -61,11 +49,14 @@ export class EnquiryPrintComponent implements OnInit {
 
 	constructor(
 		private dialogRef: MatDialogRef<EnquiryPrintComponent>,
-		@Inject(MAT_DIALOG_DATA) public invoice_id: any,
+		@Inject(MAT_DIALOG_DATA) public rawdata: any,
 		private fb: FormBuilder,
-		private _commonApiService: CommonApiService
+		private _commonApiService: CommonApiService,
+		private _cdr: ChangeDetectorRef,
 	) {
-		this.data = invoice_id;
+		this.data = rawdata;
+		this.printcount = rawdata.print_count;
+
 		this.submitForm = this.fb.group({
 			printtype: ['estimateprint', Validators.required],
 		});
@@ -88,31 +79,46 @@ export class EnquiryPrintComponent implements OnInit {
 		}
 	}
 
-	printEstimate() {
+	view() {
+		this.printEstimate('view');
+	}
+
+	print() {
+		this.printEstimate('print');
+	}
+
+	printEstimate(action) {
 		this.isPrint = true;
 
 		if (this.selPrintType === 'estimateprint') {
 			let submitForm = {
-				sale_id: this.invoice_id,
+				sale_id: this.data.id,
 				print_type: ['Original for Buyer'],
 			};
 
-			this._commonApiService
-				.printEstimate(submitForm)
-				.subscribe((data: any) => {
-					console.log('object...PRINTED');
+			this._commonApiService.printEstimate(submitForm).subscribe((data: any) => {
+				console.log('object...PRINTED');
 
-					const blob = new Blob([data], { type: 'application/pdf' });
+				const blob = new Blob([data], { type: 'application/pdf' });
 
-					// dnd to open in new tab - does not work with pop up blocked
-					var link = document.createElement('a');
-					link.href = window.URL.createObjectURL(blob);
+				// dnd to open in new tab - does not work with pop up blocked
+				var link = document.createElement('a');
+				link.href = window.URL.createObjectURL(blob);
+
+				if (action === 'print') {
+					printJS({
+						printable: link.href,
+						type: 'pdf',
+					});
+					this.printCounterCallback();
+				} else {
 					link.target = '_blank';
 					link.click();
-				});
+				}
+			});
 		} else {
 			let submitForm = {
-				sale_id: this.invoice_id,
+				sale_id: this.data.id,
 				print_type: this.selectedoptionArr,
 			};
 
@@ -124,8 +130,17 @@ export class EnquiryPrintComponent implements OnInit {
 				// dnd to open in new tab - does not work with pop up blocked
 				var link = document.createElement('a');
 				link.href = window.URL.createObjectURL(blob);
-				link.target = '_blank';
-				link.click();
+
+				if (action === 'print') {
+					printJS({
+						printable: link.href,
+						type: 'pdf',
+					});
+					this.printCounterCallback();
+				} else {
+					link.target = '_blank';
+					link.click();
+				}
 			});
 		}
 	}
@@ -136,6 +151,13 @@ export class EnquiryPrintComponent implements OnInit {
 		} else {
 			this.selPrintType = 'stockissueprint';
 		}
+	}
+
+	printCounterCallback() {
+		this._commonApiService.getPrintCounterAfterUpdate(this.data.id).subscribe((data: any) => {
+			this.printcount = data[0].print_count;
+			this._cdr.markForCheck();
+		});
 	}
 }
 

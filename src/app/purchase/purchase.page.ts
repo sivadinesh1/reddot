@@ -504,7 +504,10 @@ export class PurchasePage implements OnInit {
 			this.selected_description = event.option.value.description;
 			this.selected_mrp = event.option.value.mrp;
 
-			this.qty && this.qty.nativeElement.focus();
+			setTimeout(() => {
+				this.qty && this.qty.nativeElement.focus();
+				// this.qty && this.qty.nativeElement.select();
+			}, 10);
 		}
 	}
 

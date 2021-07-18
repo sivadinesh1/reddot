@@ -2,7 +2,6 @@ import { Component, OnInit, Inject, ViewChild, HostListener, ChangeDetectionStra
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import printJS from 'print-js';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
 	selector: 'app-invoice-success',

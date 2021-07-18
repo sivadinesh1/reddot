@@ -261,9 +261,9 @@ export class SearchStockIssuesPage implements OnInit {
 		const dialogConfig = new MatDialogConfig();
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
-		dialogConfig.width = '400px';
+		dialogConfig.width = '600px';
 
-		dialogConfig.data = row.id;
+		dialogConfig.data = row;
 
 		const dialogRef = this._dialog.open(EnquiryPrintComponent, dialogConfig);
 
