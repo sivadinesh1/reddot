@@ -37,7 +37,7 @@
 										<div>
 											<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ vendor.name }}</div>
 											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.address1 }}</div>
-											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.address3 }}</div>
+											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.district }}</div>
 										</div>
 									</div>
 								</mat-option>
@@ -97,7 +97,7 @@
 									matInput
 									readonly
 									required
-									tabindex="13"
+									tabindex="9"
 									[matDatepicker]="pickerrcvd"
 									formControlName="orderrcvddt"
 									(focus)="pickerrcvd.open()"
@@ -115,7 +115,7 @@
 				<div>
 					<mat-form-field style="width: 125px">
 						<mat-label>Order #</mat-label>
-						<input matInput #orderno type="text" formControlName="orderno" tabindex="9" appSelectOnFocus autocomplete="off" />
+						<input matInput #orderno type="text" formControlName="orderno" appSelectOnFocus autocomplete="off" />
 
 						<mat-error
 							*ngIf="(submitForm.get('orderno').hasError('required') || submitForm.get('orderno').hasError('patternInvalid'))  && submitForm.get('orderno').touched"
@@ -130,7 +130,6 @@
 						<input
 							matInput
 							readonly
-							tabindex="10"
 							[matDatepicker]="pickerod"
 							formControlName="orderdate"
 							(focus)="pickerod.open()"
@@ -161,7 +160,6 @@
 						<input
 							matInput
 							readonly
-							tabindex="12"
 							[matDatepicker]="pickerlr"
 							(focus)="pickerlr.open()"
 							formControlName="lrdate"
@@ -176,26 +174,26 @@
 				<div>
 					<mat-form-field style="width: 125px">
 						<mat-label># of Boxes</mat-label>
-						<input matInput tabindex="14" type="number" formControlName="noofboxes" appSelectOnFocus autocomplete="off" autocomplete="off" />
+						<input matInput type="number" formControlName="noofboxes" appSelectOnFocus autocomplete="off" autocomplete="off" />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field style="width: 125px">
 						<mat-label>Transportation Cost</mat-label>
-						<input matInput type="number" tabindex="15" formControlName="transport_charges" appSelectOnFocus autocomplete="off" />
+						<input matInput type="number" formControlName="transport_charges" appSelectOnFocus autocomplete="off" />
 					</mat-form-field>
 				</div>
 
 				<div>
 					<mat-form-field style="width: 125px">
 						<mat-label>Unloading Cost</mat-label>
-						<input matInput type="number" tabindex="16" formControlName="unloading_charges" appSelectOnFocus />
+						<input matInput type="number" formControlName="unloading_charges" appSelectOnFocus />
 					</mat-form-field>
 				</div>
 				<div>
 					<mat-form-field style="width: 125px">
 						<mat-label>TDS</mat-label>
-						<input matInput type="number" tabindex="17" formControlName="misc_charges" appSelectOnFocus autocomplete="off" />
+						<input matInput type="number" formControlName="misc_charges" appSelectOnFocus autocomplete="off" />
 					</mat-form-field>
 				</div>
 			</div>

@@ -83,7 +83,7 @@ export class SearchPurchasePage implements OnInit {
 		private _dialog: MatDialog,
 		private _authservice: AuthenticationService,
 	) {
-		const dateOffset = 24 * 60 * 60 * 1000 * 7;
+		const dateOffset = 24 * 60 * 60 * 1000 * 10;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this.submitForm = this._fb.group({

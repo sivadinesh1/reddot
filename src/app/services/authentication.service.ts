@@ -109,6 +109,14 @@ export class AuthenticationService {
 		return this.currentUserSubject.value;
 	}
 
+	superadmin(center_id: string) {
+		return this.httpClient.post<any>(`${this.restApiUrl}/api/auth/super-admin`, { center_id }).pipe(
+			map(async (data: any) => {
+				return data;
+			}),
+		);
+	}
+
 	login(username: string, password: string) {
 		return this.httpClient.post<any>(`${this.restApiUrl}/api/auth/login`, { username, password }).pipe(
 			map(async (data: any) => {

@@ -2,17 +2,20 @@
 	display: grid;
 	width: 100%;
 }
-
+.search-section {
+	display: grid;
+	grid-template-columns: 300px 1fr;
+}
 .form-wrap {
 	display: grid;
 	width: 80%;
-	grid-template-columns: 130px 1fr;
+	grid-template-columns: 130px 600px;
 	gap: 10px;
 	font-size: 1rem;
 }
 .inner-form {
 	display: grid;
-	grid-template-columns: 1fr 140px 140px 230px;
+	grid-template-columns: 1fr 100px 100px 230px;
 	gap: 10px;
 }
 
@@ -34,7 +37,7 @@
 	padding: 10px 0px 100px 16px;
 	position: relative;
 	display: grid;
-	margin: 0 auto;
+	//@at-root: 0 auto;
 }
 
 .header-style {

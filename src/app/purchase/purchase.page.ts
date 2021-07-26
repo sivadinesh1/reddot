@@ -162,22 +162,19 @@ export class PurchasePage implements OnInit {
 		private spinner: NgxSpinnerService,
 		private _cdr: ChangeDetectorRef,
 	) {
-		this.init();
+		// this.init();
 
 		this.userdata$ = this._authservice.currentUser;
 		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
 			this._authservice.setCurrentMenu('PURCHASE');
 			this.userdata = data;
 
-			this.submitForm.patchValue({
-				centerid: data.center_id,
-			});
-
 			this.ready = 1;
 
 			// data change
 			this._route.data.subscribe((data) => {
 				this.clicked = false;
+				this.init();
 				this._authservice.setCurrentMenu('PURCHASE');
 				this.listArr = [];
 				this.rawPurchaseData = data['rawpurchasedata'];
@@ -186,6 +183,9 @@ export class PurchasePage implements OnInit {
 			// param change
 			this._route.params.subscribe((params) => {
 				this.clicked = false;
+				this.submitForm.patchValue({
+					centerid: data.center_id,
+				});
 
 				if (this.userdata !== undefined) {
 					this.initialize();

@@ -5,6 +5,7 @@ import { CommonApiService } from '../services/common-api.service';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray, FormGroupDirective } from '@angular/forms';
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+
 import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
 
 import { AuthenticationService } from '../services/authentication.service';
@@ -36,6 +37,7 @@ import { ProductAddDialogComponent } from '../components/products/product-add-di
 import { SuccessMessageDialogComponent } from '../components/success-message-dialog/success-message-dialog.component';
 
 import { InventoryReportsDialogComponent } from '../components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
+import { ManualInvoiceNumberDialogComponent } from '../components/sales/manual-invoice-number-dialog/manual-invoice-number-dialog.component';
 
 @Component({
 	selector: 'app-sales',
@@ -135,6 +137,8 @@ export class SalesPage {
 	@ViewChild('clist', { static: true }) clist: any;
 
 	@ViewChild('qty', { static: true }) qty: any;
+	@ViewChildren('para') paras: any;
+	paraElements: any;
 
 	customer_lis: Customer[];
 	product_lis: Product[];
@@ -145,7 +149,7 @@ export class SalesPage {
 	@ViewChild(IonContent, { static: false }) content: IonContent;
 
 	question = '+ Add Customer"';
-	ready = 0; // flag check - centerid (localstorage) & customerid (param)
+	//ready = 0; // flag check - centerid (localstorage) & customerid (param)
 
 	// 3 Entry Ways. Via (i)Enquiry to Sale (ii) draft/completed Sale (iii) New Sale
 	// (i && iii) - ignore customerchange flag, if (ii) process customer change flag
@@ -169,20 +173,16 @@ export class SalesPage {
 		private spinner: NgxSpinnerService,
 		private _cdr: ChangeDetectorRef,
 	) {
-		this.basicinit();
-
 		this.userdata$ = this._authservice.currentUser;
 		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
 			this.userdata = data;
 
-			this.submitForm.patchValue({
-				center_id: data.center_id,
-			});
-
-			this.ready = 1;
+			//this.ready = 1;
 
 			// data change
 			this._route.data.subscribe((data) => {
+				this.basicinit();
+
 				this.selInvType = 'gstinvoice';
 				this.listArr = [];
 				this.cancel();
@@ -190,6 +190,10 @@ export class SalesPage {
 			});
 			// param change
 			this._route.params.subscribe((params) => {
+				this.submitForm.patchValue({
+					center_id: this.userdata.center_id,
+				});
+
 				this.clicked = false;
 
 				this.id = params['id'];
@@ -269,6 +273,7 @@ export class SalesPage {
 			retail_customer_phone: [''],
 			hasCustomerChange: [''],
 			old_customer_id: [''],
+			inv_gen_mode: ['A'],
 		});
 	}
 
@@ -397,6 +402,7 @@ export class SalesPage {
 						retail_customer_name: this.rawSalesData[0].retail_customer_name,
 						retail_customer_address: this.rawSalesData[0].retail_customer_address,
 						retail_customer_phone: this.rawSalesData[0].retail_customer_phone,
+						inv_gen_mode: this.rawSalesData[0].inv_gen_mode,
 					});
 
 					if (this.rawSalesData[0].status === 'C' || this.rawSalesData[0].status === 'D') {
@@ -697,6 +703,14 @@ export class SalesPage {
 					this.setItemDesc(this.autoTrigger2.activeOption.value, 'tab');
 				}
 			});
+
+		setTimeout(() => {
+			console.log('inside set time para');
+			this.paraElements = this.paras.map((para) => {
+				console.log('Paras: ', para.nativeElement);
+				return para.nativeElement;
+			});
+		}, 100);
 	}
 
 	deleteProduct(idx) {
@@ -901,7 +915,7 @@ export class SalesPage {
 		dialogConfig.disableClose = true;
 		dialogConfig.autoFocus = true;
 		dialogConfig.width = '600px';
-		debugger;
+
 		dialogConfig.data = { customer_name: this.customernameprint, id: this.invoiceid, invoice_no: this.final_invoice_no };
 
 		const dialogRef = this.dialog.open(InvoiceSuccessComponent, dialogConfig);
@@ -1439,6 +1453,26 @@ export class SalesPage {
 						handler: (blah) => {
 							console.log('Confirm Cancel: blah');
 							this.clearProdInput();
+							this.plist && this.plist.nativeElement.focus();
+							this.plist && this.plist.nativeElement.select();
+						},
+					},
+					{
+						text: 'Edit Item Row',
+
+						cssClass: 'secondary',
+						handler: (blah) => {
+							//this.qty.nativeElement.focus();
+							this.clearProdInput();
+							debugger;
+
+							setTimeout(() => {
+								this.paraElements[index] && this.paraElements[index].focus();
+								this.paraElements[index] && this.paraElements[index].select();
+
+								//	this.qty && this.qty.nativeElement.focus();
+								// this.qty && this.qty.nativeElement.select();
+							}, 10);
 						},
 					},
 					{
@@ -1460,6 +1494,11 @@ export class SalesPage {
 
 		this._cdr.markForCheck();
 	}
+
+	// colorMe(index) {
+	// 	console.log('Index: ', index);
+	// 	this.paraElements[index].style.backgroundColor = '#5789D8';
+	//   }
 
 	addLineItemData(event, from) {
 		if (from === 'tab') {
@@ -1547,7 +1586,9 @@ export class SalesPage {
 		this._router.navigateByUrl('/home/search-stock-issues');
 	}
 
-	async add() {
+	async add($event) {
+		$event.preventDefault();
+
 		let invdt = '';
 		if (this.submitForm.value.invoicedate === null) {
 			invdt = moment().format('DD-MM-YYYY');
@@ -1758,6 +1799,44 @@ export class SalesPage {
 		await modal.present();
 	}
 
+	openManualInvoiceDialog(): void {
+		const dialogConfig = new MatDialogConfig();
+		dialogConfig.disableClose = true;
+		dialogConfig.autoFocus = true;
+		dialogConfig.width = '600px';
+		dialogConfig.height = '100%';
+		dialogConfig.data = this.customerdata;
+		dialogConfig.position = { top: '0', right: '0' };
+
+		const dialogRef = this._dialog.open(ManualInvoiceNumberDialogComponent, dialogConfig);
+
+		// dialogRef.afterClosed().subscribe((result) => {
+		// 	console.log('The dialog was closed');
+		// });
+
+		dialogRef
+			.afterClosed()
+			.pipe(
+				filter((val) => !!val),
+				tap(() => {
+					this._cdr.markForCheck();
+				}),
+			)
+			.subscribe((data: any) => {
+				if (data !== '') {
+					console.log('dinesh manual invoice #' + data);
+
+					this.submitForm.patchValue({
+						inv_gen_mode: 'M',
+						invoiceno: data,
+					});
+
+					this.openSnackBar(`INFO: Manual Invoice# ${data} Created!`, '', 'mat-primary');
+					// set the inv_get_mode to 'M"
+				}
+			});
+	}
+
 	// @HostListener('window:beforeunload', ['$event'])
 	// beforeUnloadHander($event) {
 	// 	$event.returnValue = 'Your changes will not be saved';
@@ -1799,3 +1878,8 @@ export class SalesPage {
 
 // 				this._cdr.markForCheck();
 // 			}
+
+// @HostListener('unloaded')
+// ngOnDestroy() {
+//     console.log('Cleared');
+// }

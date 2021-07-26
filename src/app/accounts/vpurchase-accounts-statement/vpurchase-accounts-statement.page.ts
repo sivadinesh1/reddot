@@ -11,6 +11,7 @@ import { filter, map, startWith, tap, debounceTime, switchMap } from 'rxjs/opera
 
 import { User } from '../../models/User';
 import { Vendor } from 'src/app/models/Vendor';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-vpurchase-accounts-statement',
@@ -162,12 +163,86 @@ export class VpurchaseAccountsStatementPage implements OnInit {
 		this._cdr.markForCheck();
 	}
 
+	reformatRefDate(reportData) {
+		reportData.forEach((element) => {
+			element['ledger_date'] = moment(element['ledger_date']).format('DD-MM-YYYY');
+		});
+		return reportData;
+	}
+
 	exportToExcel() {
-		const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(this.epltable.nativeElement);
-		ws['!cols'] = [];
-		ws['!cols'][1] = { hidden: true };
+		const fileName = 'Vendor_Statement_Reports.xlsx';
+
+		let reportData = JSON.parse(JSON.stringify(this.statementdata));
+
+		reportData = this.reformatRefDate(reportData);
+
+		reportData.forEach((e) => {
+			delete e['center_id'];
+			delete e['vendor_id'];
+			delete e['txn_type'];
+
+			e['Credit'] = e['credit_amt'];
+			delete e['credit_amt'];
+
+			e['Debit'] = e['debit_amt'];
+			delete e['debit_amt'];
+
+			e['Balance Amount'] = e['balance_amt'];
+			delete e['balance_amt'];
+
+			e['Purchase Reference'] = e['purchase_ref_id'];
+			delete e['purchase_ref_id'];
+
+			e['Payment Reference'] = e['payment_ref_id'];
+			delete e['payment_ref_id'];
+
+			e['Date'] = e['ledger_date'];
+			delete e['ledger_date'];
+		});
+
 		const wb: xlsx.WorkBook = xlsx.utils.book_new();
-		xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-		xlsx.writeFile(wb, 'epltable.xlsx');
+		//create sheet with empty json/there might be other ways to do this
+		const ws = xlsx.utils.json_to_sheet([]);
+
+		ws['!cols'] = [{ width: 16 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 32 }];
+
+		var wsrows = [
+			{ hpt: 30 }, // row 1 sets to the height of 12 in points
+			{ hpx: 30 }, // row 2 sets to the height of 16 in pixels
+		];
+
+		ws['!rows'] = wsrows; // ws - worksheet
+
+		const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+		ws['!merges'] = merge;
+
+		xlsx.utils.book_append_sheet(wb, ws, 'sheet1');
+		//then add ur Title txt
+		xlsx.utils.sheet_add_json(
+			wb.Sheets.sheet1,
+			[
+				{
+					header: 'Statement Reports',
+					dummy1: '',
+					fromdate: `From: ${moment(this.statementForm.value.startdate).format('DD/MM/YYYY')}`,
+					todate: `To: ${moment(this.statementForm.value.enddate).format('DD/MM/YYYY')}`,
+					openingbalance: `Open/Bal: ${this.openingbalance}`,
+					closingbalance: `Close/Bal: ${this.closingbalance}`,
+				},
+			],
+			{
+				skipHeader: true,
+				origin: 'A1',
+			},
+		);
+		//start frm A2 here
+		xlsx.utils.sheet_add_json(wb.Sheets.sheet1, reportData, {
+			skipHeader: false,
+			origin: 'A2',
+			header: ['Date', 'Credit', 'Debit', 'Balance Amount', 'Invoice Reference', 'Purchase Reference', 'Payment Reference'],
+		});
+		xlsx.writeFile(wb, fileName);
 	}
 }

@@ -39,14 +39,14 @@
 							[displayWith]="displayFn"
 							(optionSelected)="setCustomerInfo($event, 'click')"
 						>
-							<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+							<mat-option *ngIf="isCLoading" class="is-loading" style="width: 400px"><mat-spinner diameter="20"></mat-spinner></mat-option>
 							<ng-container *ngIf="!isCLoading">
 								<mat-option *ngFor="let customer of customer_lis" [value]="customer" style="height: 70px; border-bottom: 1px solid lightsteelblue">
 									<div style="display: grid; grid-template-columns: 1fr">
 										<div>
 											<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
 											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address1 }}</div>
-											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address2 }},{{ customer.address3 }}</div>
+											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address2 }},{{ customer.district }}</div>
 										</div>
 									</div>
 								</mat-option>
@@ -107,10 +107,23 @@
 
 			<div style="display: grid; grid-template-columns: 1fr 1fr">
 				<div style="justify-content: left; align-self: flex-start; padding-left: 1rem">
-					<div>
+					<div *ngIf="iscustomerselected">
 						<div style="height: 53px">
 							<div *ngIf="this.saletype !== 'SI'" style="font-size: 14px; color: #7b7b7b">Invoice #</div>
-							<div *ngIf="this.saletype !== 'SI'" style="font-size: 18px; font-weight: 500">{{this.submitForm.value.invoiceno}}</div>
+							<div *ngIf="this.saletype !== 'SI'" style="font-size: 18px; font-weight: 500"
+								>{{this.submitForm.value.invoiceno}}
+								<span *ngIf="this.id === '0'"
+									><mat-icon
+										#tooltip="matTooltip"
+										matTooltip="Create Manual Invoice #"
+										matTooltipClass="tooltip"
+										(mousedown)="tooltip.hide()"
+										[ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+										(click)="openManualInvoiceDialog()"
+										>edit
+									</mat-icon></span
+								>
+							</div>
 							<div *ngIf="this.saletype === 'SI' && this.mode === 'edit' && this.id !== '0' " style="font-size: 14px; color: #7b7b7b">
 								Stock Issue #</div
 							>
@@ -262,6 +275,7 @@
 									max="999999"
 									appSelectOnFocus
 									autocomplete="off"
+									#para
 								/>
 								<mat-hint *ngIf="item.qtyerror!== '' " style="color: red; font-size: 12px; margin-top: -4px">{{item.qtyerror}}</mat-hint>
 							</mat-form-field>
@@ -326,7 +340,9 @@
 									panelWidth="auto"
 									(optionSelected)="setItemDesc($event, 'click')"
 								>
-									<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+									<mat-option *ngIf="isLoading" class="is-loading" style="width: 380px">
+										<mat-spinner diameter="20"></mat-spinner>
+									</mat-option>
 									<ng-container *ngIf="!isLoading && (product_lis !== null && product_lis?.length> 0)">
 										<mat-option
 											*ngFor="let product of product_lis"
@@ -383,7 +399,7 @@
 								formControlName="tempqty"
 								required
 								#qty
-								(keydown.enter)="add()"
+								(keydown.enter)="add($event)"
 								appSelectOnFocus
 								autocomplete="off"
 							/>
@@ -394,7 +410,7 @@
 						</mat-form-field>
 					</div>
 					<div>
-						<button mat-stroked-button color="primary" tabindex="4" #newrow [disabled]="!iscustomerselected" type="button" (click)="add()">
+						<button mat-stroked-button color="primary" tabindex="4" #newrow [disabled]="!iscustomerselected" type="button" (click)="add($event)">
 							+ New Row
 						</button>
 					</div>
@@ -527,7 +543,7 @@
 						color="primary"
 						type="button"
 						[disabled]="clicked"
-						tabindex="12"
+						tabindex="-1"
 					>
 						Cancel</button
 					>&nbsp;
@@ -543,7 +559,7 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
-						tabindex="13"
+						tabindex="-1"
 					>
 						Save as Draft
 					</button>
@@ -551,6 +567,7 @@
 						*ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
 						mat-stroked-button
 						color="primary"
+						tabindex="-1"
 						#ddTrigger="matMenuTrigger"
 						[matMenuTriggerFor]="beforeMenu"
 						style="border-radius: 0px; border-left: 1px solid grey"
@@ -570,7 +587,7 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
-						tabindex="14"
+						tabindex="-1"
 					>
 						Save Estimate
 					</button>
@@ -587,7 +604,7 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
-						tabindex="14"
+						tabindex="-1"
 					>
 						Update Estimate
 					</button>
@@ -604,7 +621,7 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
-						tabindex="15"
+						tabindex="-1"
 					>
 						Generate Invoice
 					</button>
@@ -621,7 +638,7 @@
 						type="button"
 						color="primary"
 						[disabled]="clicked"
-						tabindex="16"
+						tabindex="-1"
 					>
 						Update Invoice
 					</button>
@@ -654,7 +671,7 @@
 
 	<mat-menu #beforeMenu="matMenu" [overlapTrigger]="false" xPosition="before">
 		<mat-option>
-			<button mat-button type="button" (click)="onSubmit('draft','continue')">Save Draft & Continue</button>
+			<button mat-button type="button" tabindex="-1" (click)="onSubmit('draft','continue')">Save Draft & Continue</button>
 		</mat-option>
 	</mat-menu>
 </ion-content>

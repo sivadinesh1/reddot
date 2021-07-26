@@ -122,6 +122,7 @@ import { SelectOnFocusDirective } from './util/directives/select-focus.directive
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { PricePipePipe } from './util/pipes/price-formatter.pipe';
 import { ProductCorrectionDialogComponent } from './components/products/product-correction-dialog/product-correction-dialog.component';
+import { ManualInvoiceNumberDialogComponent } from './components/sales/manual-invoice-number-dialog/manual-invoice-number-dialog.component';
 
 const components = [
 	NullToQuotePipe,
@@ -145,6 +146,7 @@ const components = [
 	SearchDialogComponent,
 	SettingsDialogComponent,
 	InventoryReportsDialogComponent,
+	ManualInvoiceNumberDialogComponent,
 
 	VendorEditDialogComponent,
 	VendorAddDialogComponent,

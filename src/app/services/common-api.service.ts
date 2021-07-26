@@ -699,6 +699,14 @@ export class CommonApiService {
 	getPrintCounterAfterUpdate(sale_id) {
 		return this.httpClient.get(`${this.restApiUrl}/api/sale/update-get-print-counter/${sale_id}`);
 	}
+
+	getPrintCounter(sale_id) {
+		return this.httpClient.get(`${this.restApiUrl}/api/sale/get-print-counter/${sale_id}`);
+	}
+
+	getDuplicateInvoiceNoCheked(submitForm) {
+		return this.httpClient.post(`${this.restApiUrl}/api/sale/duplicate-invoiceno-check`, submitForm, { observe: 'response' });
+	}
 }
 
 export const states = [

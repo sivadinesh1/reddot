@@ -83,11 +83,11 @@
 					<td *ngIf="item.module.startsWith('Purchase')" style="text-align: left">
 						Purchase
 						<span *ngIf="item?.action_type.startsWith('Edited')">({{ item?.action_type }})</span>
-						<span *ngIf="item?.action_type.startsWith('Mod/Del')"> - ({{ item?.action_type }})</span>
+						<span *ngIf="item?.action_type.startsWith('Deleted MRP -')"> - ({{ item?.action_type }})</span>
 					</td>
 					<td *ngIf="item.module === 'Sale'" style="text-align: left"
 						>Sale
-						<span *ngIf="item?.action_type.startsWith('Mod/Del')"> - ({{ item?.action_type }})</span>
+						<span *ngIf="item?.action_type.startsWith('Deleted MRP -')"> - ({{ item?.action_type }})</span>
 						<span *ngIf="item?.action_type.startsWith('Edited')"> - ({{ item?.action_type }})</span>
 					</td>
 					<td *ngIf="item.module === 'SaleReturn'" style="text-align: left">Sale Return</td>

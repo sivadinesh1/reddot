@@ -1,22 +1,15 @@
 <ion-content>
 	<div class="search-wrap">
-		<div>
-			<div style="padding: 1rem 0rem 0rem 2rem; font-size: 1.2rem; font-weight: 400"> Sale Orders </div>
-			<div style="padding-left: 2rem; font-size: 12px; color: grey; padding-bottom: 1rem">
-				<span style="border-bottom: 1px solid #9f9fa5; padding-bottom: 2px"> Search Orders or View, Edit, Print, Delete Order </span>
+		<div class="search-section">
+			<div>
+				<div style="padding: 1rem 0rem 0rem 2rem; font-size: 1.2rem; font-weight: 400"> Sale Orders </div>
+				<div style="padding-left: 2rem; font-size: 12px; color: grey; padding-bottom: 1rem">
+					<span style="border-bottom: 1px solid #9f9fa5; padding-bottom: 2px"> Search, Edit, Print, Delete - Orders </span>
+				</div>
 			</div>
-		</div>
 
-		<form [formGroup]="submitForm" class="advance-search">
-			<mat-accordion class="example-headers-align" multi>
-				<mat-expansion-panel>
-					<mat-expansion-panel-header>
-						<mat-panel-title> Completed Sales</mat-panel-title>
-						<mat-panel-description>
-							Advance Search Filter
-							<mat-icon>search</mat-icon>
-						</mat-panel-description>
-					</mat-expansion-panel-header>
+			<div>
+				<form [formGroup]="submitForm" class="advance-search">
 					<div class="form-wrap">
 						<div style="justify-self: start">
 							<mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
@@ -59,7 +52,7 @@
 													<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
 													<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address1 }}</div>
 													<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey"
-														>{{ customer.address2 }},{{ customer.address3 }}</div
+														>{{ customer.address2 }},{{ customer.district }}</div
 													>
 												</div>
 											</div>
@@ -84,6 +77,7 @@
 									/>
 									<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
 									<mat-datepicker #fromdate></mat-datepicker>
+									<mat-hint>Default 10 days</mat-hint>
 								</mat-form-field>
 							</div>
 							<div style="padding-top: 20px">
@@ -126,10 +120,9 @@
 							</div>
 						</div>
 					</div>
-				</mat-expansion-panel>
-			</mat-accordion>
-		</form>
-
+				</form>
+			</div>
+		</div>
 		<div class="main-box" [@.disabled]="true">
 			<div>
 				<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">

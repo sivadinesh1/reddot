@@ -251,6 +251,10 @@ const routes: Routes = [
 				(m) => m.AllCustomerOutstandingReportsPageModule,
 			),
 	},
+  {
+    path: 'superadmin',
+    loadChildren: () => import('./superadmin/superadmin.module').then( m => m.SuperadminPageModule)
+  },
 ];
 @NgModule({
 	imports: [

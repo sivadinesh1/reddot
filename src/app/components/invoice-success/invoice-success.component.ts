@@ -68,6 +68,11 @@ export class InvoiceSuccessComponent implements OnInit {
 		});
 	}
 
+	ngAfterViewInit() {
+		this.printCounter();
+		this._cdr.markForCheck();
+	}
+
 	cancel() {
 		this.dialogRef.close();
 	}
@@ -200,6 +205,13 @@ export class InvoiceSuccessComponent implements OnInit {
 
 	printCounterCallback() {
 		this._commonApiService.getPrintCounterAfterUpdate(this.data.id).subscribe((data: any) => {
+			this.printcount = data[0].print_count;
+			this._cdr.markForCheck();
+		});
+	}
+
+	printCounter() {
+		this._commonApiService.getPrintCounter(this.data.id).subscribe((data: any) => {
 			this.printcount = data[0].print_count;
 			this._cdr.markForCheck();
 		});

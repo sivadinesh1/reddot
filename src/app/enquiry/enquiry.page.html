@@ -31,14 +31,14 @@
 						[displayWith]="displayFn"
 						(optionSelected)="setCustomerInfo($event, 'click')"
 					>
-						<mat-option *ngIf="isCLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+						<mat-option *ngIf="isCLoading" class="is-loading" style="width: 400px"><mat-spinner diameter="20"></mat-spinner></mat-option>
 						<ng-container *ngIf="!isCLoading">
 							<mat-option *ngFor="let customer of customer_lis" [value]="customer" style="height: 70px; border-bottom: 1px solid lightsteelblue">
 								<div style="display: grid; grid-template-columns: 1fr">
 									<div>
 										<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
 										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address1 }}</div>
-										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address2 }},{{ customer.address3 }}</div>
+										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address2 }},{{ customer.district }}</div>
 									</div>
 								</div>
 							</mat-option>

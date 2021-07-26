@@ -126,7 +126,6 @@ export class ProductCorrectionDialogComponent implements OnInit {
 		};
 
 		this._commonApiService.stockCorrection(submitForm).subscribe((data: any) => {
-			debugger;
 			if (data.body.result === 'updated') {
 				this.dialogRef.close('success');
 			}

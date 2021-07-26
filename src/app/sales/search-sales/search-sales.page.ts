@@ -129,7 +129,7 @@ export class SearchSalesPage implements OnInit {
 			this._cdr.markForCheck();
 		});
 
-		const dateOffset = 24 * 60 * 60 * 1000 * 7;
+		const dateOffset = 24 * 60 * 60 * 1000 * 10;
 		this.fromdate.setTime(this.minDate.getTime() - dateOffset);
 
 		this._route.params.subscribe((params) => {
@@ -177,7 +177,6 @@ export class SearchSalesPage implements OnInit {
 	// this.form.get('controlname').disable();
 	// this.variable.disable()
 	radioClickHandle() {
-		debugger;
 		if (this.submitForm.value.searchtype === 'invonly') {
 			this.submitForm.get('customerctrl').disable();
 		} else {
@@ -223,7 +222,7 @@ export class SearchSalesPage implements OnInit {
 			{ name: 'All', id: 'all', checked: true },
 			{ name: 'Invoice Only', id: 'invonly', checked: false },
 		];
-		debugger;
+
 		this._cdr.markForCheck();
 	}
 

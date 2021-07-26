@@ -261,10 +261,14 @@ export class CustomerAccountsStatementPage implements OnInit {
 		let tmpcust = '';
 
 		let count = 0;
-		this.statementdata.slice().forEach((e, index) => {
+
+		let reportData = JSON.parse(JSON.stringify(this.statementdata));
+		reportData = this.reformatRefDate(reportData);
+
+		reportData.slice().forEach((e, index) => {
 			if (tmpcust !== e.id) {
-				this.statementdata.splice(index - count--, 0, {
-					Customer: e.customer,
+				reportData.splice(index - count--, 0, {
+					name: e.name,
 					'Open/Balance': this.getCurrentCustomerOB(e),
 					'Close/Balance': this.getCurrentCustomerCB(e),
 				});
@@ -273,13 +277,67 @@ export class CustomerAccountsStatementPage implements OnInit {
 			}
 		});
 
-		let reportData = JSON.parse(JSON.stringify(this.statementdata));
+		reportData.forEach((e) => {
+			e['Date'] = e['ref_date_f'];
+			delete e['ref_date_f'];
 
-		reportData = this.reformatRefDate(reportData);
+			e['Customer Name'] = e['name'];
+			delete e['name'];
+
+			e['Reference'] = e['refn'];
+			delete e['refn'];
+
+			e['Type'] = e['type'];
+			delete e['type'];
+
+			e['Invoice Amount'] = e['invoice_amount'];
+			delete e['invoice_amount'];
+
+			e['Received Amount'] = e['Received_Amount'];
+			delete e['Received_Amount'];
+
+			delete e['id'];
+			delete e['center_id'];
+
+			delete e['state_id'];
+			delete e['code'];
+			delete e['phone'];
+			delete e['mobile'];
+			delete e['mobile2'];
+			delete e['whatsapp'];
+			delete e['isactive'];
+
+			delete e['credit_amt'];
+			delete e['balance_amt'];
+			delete e['last_paid_date'];
+			delete e['place'];
+
+			delete e['address1'];
+			delete e['address2'];
+			delete e['district'];
+			delete e['description'];
+			delete e['pin'];
+			delete e['gst'];
+			delete e['email'];
+		});
 
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		//create sheet with empty json/there might be other ways to do this
 		const ws1 = xlsx.utils.json_to_sheet([]);
+
+		ws1['!cols'] = [{ width: 16 }, { width: 32 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 40 }];
+
+		var wsrows = [
+			{ hpt: 30 }, // row 1 sets to the height of 12 in points
+			{ hpx: 30 }, // row 2 sets to the height of 16 in pixels
+		];
+
+		ws1['!rows'] = wsrows; // ws - worksheet
+
+		const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+		ws1['!merges'] = merge;
+
 		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
 		//then add ur Title txt
 		xlsx.utils.sheet_add_json(
@@ -287,6 +345,7 @@ export class CustomerAccountsStatementPage implements OnInit {
 			[
 				{
 					header: 'Customer Statement Reports',
+					dummy1: '',
 					fromdate: `From: ${moment(this.statementForm.value.startdate).format('DD/MM/YYYY')}`,
 					todate: `To: ${moment(this.statementForm.value.enddate).format('DD/MM/YYYY')}`,
 				},
@@ -296,10 +355,12 @@ export class CustomerAccountsStatementPage implements OnInit {
 				origin: 'A1',
 			},
 		);
+
 		//start frm A2 here
 		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
 			skipHeader: false,
 			origin: 'A2',
+			header: ['Date', 'Customer Name', 'Type', 'Invoice Amount', 'Received Amount', 'Open/Balance', 'Close/Balance', 'Reference'],
 		});
 		xlsx.writeFile(wb1, fileName);
 	}
@@ -311,20 +372,59 @@ export class CustomerAccountsStatementPage implements OnInit {
 
 		reportData = this.reformatRefDate(reportData);
 
+		reportData.forEach((e) => {
+			e['Customer Name'] = e['name'];
+
+			e['Type'] = e['type'];
+			delete e['type'];
+
+			e['Invoice Amount'] = e['invoice_amount'];
+			delete e['invoice_amount'];
+
+			e['Received Amount'] = e['Received_Amount'];
+			delete e['Received_Amount'];
+
+			e['Reference'] = e['refn'];
+			delete e['refn'];
+
+			delete e['id'];
+			delete e['name'];
+			delete e['place'];
+			e['Date'] = e['ref_date_f'];
+			delete e['ref_date_f'];
+		});
+
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 		//create sheet with empty json/there might be other ways to do this
 		const ws1 = xlsx.utils.json_to_sheet([]);
+
+		//var ws = XLSX.utils.json_to_sheet(data, {header:['def','abc']});
+
+		ws1['!cols'] = [{ width: 16 }, { width: 32 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 32 }];
+
+		var wsrows = [
+			{ hpt: 30 }, // row 1 sets to the height of 12 in points
+			{ hpx: 30 }, // row 2 sets to the height of 16 in pixels
+		];
+
+		ws1['!rows'] = wsrows; // ws - worksheet
+
+		const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+		ws1['!merges'] = merge;
+
 		xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
 		//then add ur Title txt
 		xlsx.utils.sheet_add_json(
 			wb1.Sheets.sheet1,
 			[
 				{
-					header: 'Customer Statement Reports',
+					header: 'Statement Reports',
+					dummy1: '',
 					fromdate: `From: ${moment(this.statementForm.value.startdate).format('DD/MM/YYYY')}`,
 					todate: `To: ${moment(this.statementForm.value.enddate).format('DD/MM/YYYY')}`,
 					openingbalance: `Open/Bal: ${this.openingbalance}`,
-					closingbalance: `close/Bal: ${this.closingbalance}`,
+					closingbalance: `Close/Bal: ${this.closingbalance}`,
 				},
 			],
 			{
@@ -336,6 +436,7 @@ export class CustomerAccountsStatementPage implements OnInit {
 		xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
 			skipHeader: false,
 			origin: 'A2',
+			header: ['Date', 'Customer Name', 'Type', 'Invoice Amount', 'Received Amount', 'Reference'],
 		});
 		xlsx.writeFile(wb1, fileName);
 	}
