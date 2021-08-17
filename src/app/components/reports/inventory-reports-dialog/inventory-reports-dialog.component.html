@@ -81,7 +81,8 @@
 					</td>
 					<!-- cell 4 [[TXN TYPE]] -->
 					<td *ngIf="item.module.startsWith('Purchase')" style="text-align: left">
-						Purchase
+						{{ item?.module }}
+						<span *ngIf="item?.action_type.startsWith('Edited')">({{ item?.action_type }})</span>
 						<span *ngIf="item?.action_type.startsWith('Edited')">({{ item?.action_type }})</span>
 						<span *ngIf="item?.action_type.startsWith('Deleted MRP -')"> - ({{ item?.action_type }})</span>
 					</td>

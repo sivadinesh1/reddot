@@ -9,7 +9,7 @@ import { User } from '../../../models/User';
 import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 
 import { ProductAddDialogComponent } from 'src/app/components/products/product-add-dialog/product-add-dialog.component';
-
+import { IonSearchbar, ModalController } from '@ionic/angular';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
@@ -22,6 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import * as xlsx from 'xlsx';
 import * as moment from 'moment';
 import { ProductCorrectionDialogComponent } from 'src/app/components/products/product-correction-dialog/product-correction-dialog.component';
+import { InventoryReportsDialogComponent } from 'src/app/components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
 
 @Component({
 	selector: 'app-view-products',
@@ -61,6 +62,7 @@ export class ViewProductsPage implements OnInit {
 		private _dialog: MatDialog,
 		private _router: Router,
 		private _authservice: AuthenticationService,
+		private _modalcontroller: ModalController,
 	) {
 		this.userdata$ = this._authservice.currentUser;
 		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
@@ -255,6 +257,20 @@ export class ViewProductsPage implements OnInit {
 
 			xlsx.writeFile(wb1, fileName);
 		});
+	}
+
+	async showInventoryReportsDialog(element) {
+		const modal = await this._modalcontroller.create({
+			component: InventoryReportsDialogComponent,
+			componentProps: { center_id: this.center_id, product_code: element.product_code, product_id: element.product_id },
+			cssClass: 'select-modal',
+		});
+
+		modal.onDidDismiss().then((result) => {
+			this._cdr.markForCheck();
+		});
+
+		await modal.present();
 	}
 }
 

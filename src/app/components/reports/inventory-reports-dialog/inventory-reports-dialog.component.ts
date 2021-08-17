@@ -23,7 +23,7 @@ export class InventoryReportsDialogComponent implements OnInit {
 		private _commonApiService: CommonApiService,
 		private _modalcontroller: ModalController,
 		private _cdr: ChangeDetectorRef,
-		private _dialog: MatDialog
+		private _dialog: MatDialog,
 	) {}
 
 	ngOnInit() {
@@ -42,9 +42,10 @@ export class InventoryReportsDialogComponent implements OnInit {
 	}
 
 	openDialog(action, invoice, sale_id, purchase_id, customer_id, vendor_id): void {
-		if (action === 'Sale') {
+		debugger;
+		if (action.startsWith('Sale')) {
 			this.openSaleDialog({ id: sale_id, center_id: this.center_id, customer_id: customer_id });
-		} else if (action === 'Purchase') {
+		} else if (action.startsWith('Purchase')) {
 			this.openPurchaseDialog({ id: purchase_id, center_id: this.center_id, vendor_id: vendor_id });
 		}
 	}

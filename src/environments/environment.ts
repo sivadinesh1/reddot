@@ -3,9 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  restApiUrl: 'http://localhost:5050',
-
+	production: false,
+	restApiUrl: 'http://localhost:5050',
+	versionCheckURL: 'http://localhost:8100/version.json',
 };
 
 export const errorApiUrl = 'http://localhost:5555';

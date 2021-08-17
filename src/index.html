@@ -26,3 +26,10 @@
 		<app-root></app-root>
 	</body>
 </html>
+
+<!-- 
+@almothafar issue is related to new feature called: inline critical CSS . try to disable it on angular.json file:
+
+"optimization": {"fonts": true, "scripts": true, "styles":{"minify":true,"inlineCritical":false}},
+
+seems It doesn't play well with embedded svg as background on css. -->

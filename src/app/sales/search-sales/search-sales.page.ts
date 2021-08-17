@@ -290,7 +290,10 @@ export class SearchSalesPage implements OnInit {
 
 		const dialogRef = this._dialog.open(InvoiceSuccessComponent, dialogConfig);
 
-		dialogRef.afterClosed();
+		// dialogRef.afterClosed();
+		dialogRef.afterClosed().subscribe((result) => {
+			this.search();
+		});
 	}
 
 	goPrintEnquiry(row) {

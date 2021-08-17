@@ -1,57 +1,38 @@
 import { Component, ChangeDetectionStrategy, OnInit, ViewChild } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 
-import { NetworkService } from './services/network.service';
 import { LoadingService } from './services/loading.service';
+import { VersionCheckService } from './services/version-check.service';
 import { RouterOutlet } from '@angular/router';
-
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+	selector: 'app-root',
+	templateUrl: 'app.component.html',
+	styleUrls: ['app.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  @ViewChild(RouterOutlet, { static: true }) outlet: RouterOutlet;
+	@ViewChild(RouterOutlet, { static: true }) outlet: RouterOutlet;
 
-  isConnected; any;
+	isConnected;
+	any;
 
+	constructor(
+		private platform: Platform,
+		private _loadingservice: LoadingService,
 
-  constructor(
-    private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar, private _loadingservice: LoadingService,
-    private networkService: NetworkService,
-  ) {
-    this.initializeApp();
-  }
+		private _versionCheckService: VersionCheckService,
+	) {
+		this.initializeApp();
+	}
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+	initializeApp() {
+		this.platform.ready().then(() => {});
+	}
 
-      this.networkService.getNetworkStatus().subscribe((connected: boolean) => {
-        this.isConnected = connected;
-
-        if (!connected) {
-          this._loadingservice.presentToastWithOptions('Oops !!! Internet Connection Lost.', 'bottom', false, '');
-          this.networkService.openNetworkSettings();
-        }
-
-      });
-
-
-    });
-  }
-
-  ngOnInit(): void {
-
-  }
-
-
+	ngOnInit(): void {
+		this._versionCheckService.initVersionCheck(environment.versionCheckURL);
+	}
 }

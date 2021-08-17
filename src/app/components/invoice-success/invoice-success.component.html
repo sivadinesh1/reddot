@@ -46,7 +46,7 @@
 			<div style="text-align: center">
 				<span style="font-size: 11px; color: grey">Printed:</span>
 				<span style="font-size: 14px; color: blue">
-					{{ this.printcount }}
+					{{ this.printcount === -1 ? 'M' : this.printcount }}
 				</span>
 				<span style="font-size: 11px; color: grey">times</span>
 			</div>

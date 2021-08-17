@@ -164,7 +164,7 @@
 
 			<div class="txt-right-align"># ITEMS</div>
 			<div class="txt-right-align">TOTAL VALUE</div>
-			<div class="txt-center-align">STATUS</div>
+			<div class="txt-center-align">&nbsp;</div>
 			<div>
 				<img
 					matTooltip="Download"
@@ -252,6 +252,7 @@
 					(click)="goSalesEditScreen(item)"
 					>edit
 				</mat-icon>
+				<span style="position: relative; color: #6d78d2; top: -5px">&nbsp;Edit</span>
 			</div>
 
 			<div class="item" style="text-align: center">
@@ -264,8 +265,9 @@
 					(click)="openDialog(item)"
 					>remove_red_eye
 				</mat-icon>
+				<span style="position: relative; color: #6d78d2; top: -5px">&nbsp;View</span>
 			</div>
-			<div class="item" style="text-align: center" *ngIf="item.sale_type === 'gstinvoice'">
+			<div class="item" style="text-align: center" *ngIf="item.sale_type === 'gstinvoice' && item.status !== 'D'">
 				<mat-icon
 					#tooltip="matTooltip"
 					matTooltip="Print Sale"
@@ -275,6 +277,7 @@
 					(click)="goPrintInvoice(item)"
 					>print
 				</mat-icon>
+				<span style="font-size: 12px; font-weight: 600">[{{item.print_count === -1 ? 'M': item.print_count}}] </span>
 			</div>
 
 			<!-- *ngIf="this.deleteAccess === 'Y'" -->
@@ -286,8 +289,8 @@
 					(mousedown)="tooltip.hide()"
 					[ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
 					(click)="presentAlertConfirm(item)"
-					>delete_outline
-				</mat-icon>
+					>delete_outline </mat-icon
+				><span style="position: relative; color: red; top: -5px">&nbsp;Delete</span>
 			</div>
 
 			<div *ngIf="tabIndex === 1">

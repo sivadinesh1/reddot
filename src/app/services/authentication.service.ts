@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, filter } from 'rxjs/operators';
-import { NativeStorage } from '@ionic-native/native-storage/ngx';
+
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { Platform } from '@ionic/angular';
@@ -39,7 +39,6 @@ export class AuthenticationService {
 		private plt: Platform,
 		private storage: Storage,
 		private _commonApiService: CommonApiService,
-		private nativeStorage: NativeStorage,
 
 		@Inject(PLATFORM_ID) private platformId: any,
 	) {
@@ -49,7 +48,6 @@ export class AuthenticationService {
 				this.storagemode = this.storage;
 				this.device = 'browser';
 			} else {
-				this.storagemode = this.nativeStorage;
 				this.device = 'mobile';
 			}
 

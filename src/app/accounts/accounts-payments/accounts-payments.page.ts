@@ -518,7 +518,7 @@ export class AccountsPaymentsPage implements OnInit {
 		dialogConfig.width = '80%';
 		dialogConfig.height = '80%';
 		dialogConfig.data = { invoicesdata: this.invoicesdata };
-
+debugger;
 		const dialogRef = this._dialog.open(AccountsReceivablesComponent, dialogConfig);
 
 		dialogRef
